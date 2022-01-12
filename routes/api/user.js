@@ -1,70 +1,128 @@
+// const {
+//   response
+// } = require('express');
+// const {
+//   DEC8_BIN
+// } = require('mysql/lib/protocol/constants/charsets');
+// const res = require('express/lib/response');
 var express = require('express');
-const mysql = require('mysql'); // mysql 모듈 로드
-
-// var router = express.Router();
-
-// /* GET users listing. */
-// router.get('/', function(req, res, next) {
-//   res.send('respond with a resource');
-// });
-
+var router = express.Router();
+const mysql = require('mysql');
 
 const connt = require("../../config/db")
+var url = require('url');
 
-var router = express.Router();
+// DB 커넥션 생성
+var connection = mysql.createConnection(connt); 
+connection.connect();
 
-// /* GET home page. */
-// router.post('/', async(req, res) => {
-//   try {
-//     const sql = "select * from user";
-//     var connection = mysql.createConnection(connt); // DB 커넥션 생성
-//          connection.connect();
-//          let user;
-//     connection.query(sql, function(err, results, fields) {
-//       if(err) {
-//         console.log(err);
-//       }
-//       user = results;
-//       res.status(200).json(user);
-//       // console.log(user);
-//     });
-//     console.log(user)
-    
+// 회원가입
+router.post('/', async (request, response, next) => {
+  const param = [request.body.userEmail, request.body.userNick, request.body.userPwd]
 
-//   } catch (error) {
-    
-//     res.status(401).send(error.message);
-//   }
-  
-// });
+  connection.query('insert into user(`userEmail`, `userNick`, `userPwd`) values (?, ?, ?)', param, (err, row) => {
+    if (err) {
+      console.log(err);
+      response.json({msg:"query error"});
+    }
+  });
+  response.json({msg:"success"});
+  response.end()
+});
 
-router.post('/user', async(request, response) => {
+// 닉네임 중복확인
+router.get('/nick/:userNick', async (req, res) => {
   try {
-  // const {
-  //   body: {userEmail,
-  //          userNick,
-  //          userPwd}
-  // } = request
-  // const sql = "insert into user(userEmail, userNick, userPwd) values()";
-  // var connection = mysql.createConnection(connt); // DB 커넥션 생성
-  //      connection.connect();
-  //      let user;
-  //      connection.query(sql, function(err, results, fields) {
-  //       if(err) {
-  //         console.log(err);
-  //       }
-  //       user = results;
-  //       res.status(200).json(user);
-  //       // console.log(user);
-  //     });
-  //     console.log(user)
-
-  let {userEmail, userNick, userPwd} = request.body;
-  res.send('respond with a resource');
-  }
-  catch(error) {
+    const param = decodeURIComponent(req.params.userNick);
+    let nick;
+    connection.query('select count(*) as checkNick from user where userNick = ?', param, (err, results) => {
+      if (err) {
+        console.log(err);
+      }
+      nick = results;
+      res.send(nick);
+    });
+    console.log(nick);
+  } catch (error) {
     res.status(401).send(error.message);
   }
+});
+
+//전체 회원 조회
+router.get('/', async (req, res) => {
+  try {
+    const sql = "select * from user";   
+    let user;
+    connection.query(sql, function (err, results, fields) {
+      if (err) {
+        console.log(err);
+      }
+      user = results;
+      res.status(200).json(user);
+      // console.log(user);
+    });
+    console.log(user)
+
+  } catch (error) {
+
+    res.status(401).send(error.message);
+  }
+
+});
+
+// 회원 상세보기
+router.get('/:uid', async (req, res) => {
+  try {
+    const param = req.params.uid;
+    let user;
+    connection.query('select * from user where uid = ?', param, (err, results, fields) => {
+      if (err) {
+        console.log(err);
+      }
+      user = results;
+      res.status(200).json(user);
+    });
+    console.log(user)
+  } catch (error) {
+    res.status(401).send(error.message);
+  }
+});
+
+// 회원정보수정
+router.patch('/:uid', (req, res) => {
+  const param = [req.body.userNick, req.body.userPwd, req.body.userSchool, req.body.userAdres1, req.body.userAdres2, req.body.userImg, req.params.uid];
+  console.log(param);
+  const sql = "update user set userNick = ?, userPwd = ?, userSchool = ?, userAdres1 = ?, userAdres2 = ?, userImg = ? where uid = ?";
+  connection.query(sql, param, (err, row) => {
+    if (err) {
+      console.error(err);
+    }
+  });
+});
+
+//패스워드 변경
+router.patch('/pwdUpdate/:uid', (req, res) => {
+  const param = [req.body.userPwd, req.params.uid];
+  const sql = "update user set userPwd = ? where uid = ?";
+  connection.query(sql, param, (err, row) => {
+    if (err) {
+      console.error(err);
+    }
+    res.json({msg : "success"});
+  });
+});
+
+// 회원 삭제
+router.delete('/:uid', (req, res) => {
+  const param = req.params.uid;
+  // console.log(param);
+  const sql = "delete from user where uid = ?";
+  connection.query(sql, param, (err, row) => {
+    if (err) {
+      console.log(err)
+    }
+    res.end();
+  });
 });
 
 
