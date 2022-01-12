@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+        integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+    <title>Document</title>
+</head>
+<style>
+    .pwdUpdate-wrap {
+        text-align: center;
+    }
+
+    .pwdUpdate-wrap .header {
+        color: black;
+        background: white;
+        z-index: 1;
+        padding: 10px 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        font-size: 20px;
+        font-weight: 600;
+        box-sizing: border-box;
+    }
+
+    .pwdUpdate-wrap .header span {
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .pwd-change-text {
+        font-size: 18px;
+        font-weight: 500;
+    }
+
+    .pwdUpdate-wrap .content {
+        margin-top: 80px;
+        width: 80vw;
+        font-size: 14px;
+        text-align: center;
+        display: inline-block;
+    }
+
+    .inputPw-wrap .inputPw {
+        width: 100%;
+        box-sizing: border-box;
+        height: 40px;
+        outline: none;
+        padding: 0 8px !important;
+        border: none;
+        border-bottom: 1px solid rgb(212, 212, 212);
+    }
+
+    .inputPw-wrap .inputPw:first-child {
+        margin-bottom: 15px;
+    }
+
+    .pw-restrict {
+        text-align: left;
+        color: rgb(141, 141, 141);
+    }
+
+    .pwUpdate-btn-wrap {
+        text-align: center;
+    }
+
+    .pwUpdate-btn {
+        background: #ff7950;
+        width: 100%;
+        border: none;
+        border-radius: 4px;
+        height: 40px;
+        font-size: 15px;
+        font-weight: bold;
+        color: white;
+        cursor: pointer;
+    }
+
+    @media screen and (max-width:355px) {
+        .pw-restrict {
+            font-size: 13px;
+        }
+    }
+
+    @media screen and (max-width:330px) {
+        .pw-restrict {
+            font-size: 12px;
+        }
+    }
+</style>
+
+<body>
+    <div class="pwdUpdate-wrap">
+        <div class="header">
+            <p>비밀번호 변경</p>
+        </div>
+        <form action="/user/pwdUpdate" method="post">
+            <div class="content">
+                <div class="inputInfo">
+                    <div class="inputPw-wrap">
+                        <input type="hidden" id="uid" name="uid" value="req.params.uid">
+                        <input type="password" id="userPwd1" class="inputPw" placeholder="새 비밀번호" />
+                        <input type="password" id="userPwd2" name="userPwd" class="inputPw" placeholder="비밀번호 확인" />
+                    </div>
+                </div>
+                <p class="pw-restrict">* 8~16자 영문, 숫자, 특수문자를 사용하세요.</p>
+                <div class="pwUpdate-btn-wrap">
+                    <button type="submit" class="pwUpdate-btn">변경 완료</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+
+<script>
+    var newURL = window.location.pathname;
+    var slash = newURL.split('/');
+
+    console.log(newURL);
+    console.log(slash);
+    
+    const uidInput = document.getElementById('uid');
+    const uid = uidInput.setAttribute('value', slash[3]);
+    console.log(uidInput.value);
+</script>
+
+</html>

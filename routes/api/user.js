@@ -8,18 +8,20 @@
 var express = require('express');
 var router = express.Router();
 const mysql = require('mysql');
+const bcrypt = require('bcrypt');
 
 const connt = require("../../config/db")
 var url = require('url');
+
+const password_hash = bcrypt.hashSync('dummy', 10);
 
 // DB 커넥션 생성
 var connection = mysql.createConnection(connt); 
 connection.connect();
 
 // 회원가입
-router.post('/', async (request, response, next) => {
+router.post('/', async (request, response) => {
   const param = [request.body.userEmail, request.body.userNick, request.body.userPwd]
-
   connection.query('insert into user(`userEmail`, `userNick`, `userPwd`) values (?, ?, ?)', param, (err, row) => {
     if (err) {
       console.log(err);
@@ -100,17 +102,23 @@ router.patch('/:uid', (req, res) => {
   });
 });
 
-//패스워드 변경
-router.patch('/pwdUpdate/:uid', (req, res) => {
-  const param = [req.body.userPwd, req.params.uid];
+// //패스워드 변경
+router.get('/pwdUpdate/:uid', (req, res) => {
+  console.log(__dirname);
+  res.sendFile('/Users/flash51/ecoce_server/views/pwdUpdate.html');
+});
+
+router.post('/pwdUpdate', (req, res) => {
+  const param = [req.body.userPwd, req.body.uid];
   const sql = "update user set userPwd = ? where uid = ?";
   connection.query(sql, param, (err, row) => {
-    if (err) {
-      console.error(err);
-    }
-    res.json({msg : "success"});
+      if (err) {
+          console.error(err);
+      }
+      res.json({ msg: "success" });
   });
 });
+
 
 // 회원 삭제
 router.delete('/:uid', (req, res) => {
