@@ -12,6 +12,7 @@ const bcrypt = require('bcrypt');
 
 const connt = require("../../config/db")
 var url = require('url');
+var models = require("../../models");
 
 const password_hash = bcrypt.hashSync('dummy', 10);
 
@@ -55,6 +56,7 @@ router.get('/', async (req, res) => {
   try {
     const sql = "select * from user";   
     let user;
+    models.user.findAll().then(console.log);
     connection.query(sql, function (err, results, fields) {
       if (err) {
         console.log(err);
