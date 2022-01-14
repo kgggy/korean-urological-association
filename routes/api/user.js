@@ -9,29 +9,105 @@ var express = require('express');
 var router = express.Router();
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 const connt = require("../../config/db")
 var url = require('url');
 var models = require("../../models");
 
-const password_hash = bcrypt.hashSync('dummy', 10);
 
 // DB 커넥션 생성
 var connection = mysql.createConnection(connt); 
 connection.connect();
 
 // 회원가입
-router.post('/', async (request, response) => {
-  const param = [request.body.userEmail, request.body.userNick, request.body.userPwd]
-  connection.query('insert into user(`userEmail`, `userNick`, `userPwd`) values (?, ?, ?)', param, (err, row) => {
-    if (err) {
-      console.log(err);
-      response.json({msg:"query error"});
-    }
+router.post('/', async (req, res) => {
+  // const inputPwd = request.body.userPwd;
+  // const salt = crypto.randomBytes(100).toString('base64');
+  // const hashPassword = crypto
+  //   .createHash('sha512')
+  //   .update(inputPwd + salt)
+  //   .digest('hex');
+  // const createSalt = () =>
+  //   new Promise((resolve, reject) => {
+  //     crypto.randomBytes(64, (err, buf) => {
+  //       if (err) reject(err);
+  //       resolve(buf.toString('base64'));
+  //     });
+  //   });
+
+  // const createHashedPassword = (plainPassword) =>
+  //   new Promise(async (resolve, reject) => {
+  //     const salt = await createSalt();
+  //     crypto.pbkdf2(plainPassword, salt, 9999, 64, 'sha512', (err, key) => {
+  //       if (err) reject(err);
+  //       resolve({ userPwd: key.toString('base64'), salt });
+  //     });
+  //   });
+
+  // const { userPwd, salt } = await createHashedPassword(request.body.userPwd);  --> crypto 이용
+
+  let { userEmail, userNick, userPwd} = req.body;
+  const sameEmailUser = await models.user.findOne({ where: {userEmail} });
+  if (sameEmailUser !== null) {
+    return res.json({
+      registerSuccess: false,
+      message: "이미 존재하는 이메일입니다",
+    });
+  }
+
+  const sameNickNameUser = await models.user.findOne({ where: {userNick} });
+  if (sameNickNameUser !== null) {
+    return res.json({
+      registerSuccess: false,
+      message: "이미 존재하는 닉네임입니다.",
+    });
+  }
+
+
+
+  // 솔트 생성 및 해쉬화 진행
+  bcrypt.genSalt(saltRounds, (err, salt) => {
+    // 솔트 생성 실패시
+    if (err)
+      return res.status(500).json({
+        registerSuccess: false,
+        message: "비밀번호 솔트 생성 실패.",
+      });
+
+    // salt 생성에 성공시 hash 진행
+    bcrypt.hash(userPwd, salt, async (err, hash) => {
+      if (err)
+        return res.status(500).json({
+          registerSuccess: false,
+          message: "비밀번호 해쉬화 실패.",
+        });
+
+      // 비밀번호를 해쉬된 값으로 대체합니다.
+      userPwd = hash;
+
+      // const param = [req.body.userEmail, req.body.userNick, userPwd]
+      // connection.query('insert into user(`userEmail`, `userNick`, `userPwd`) values (?, ?, ?)', param, (err, rows, fields) => {
+      //   if (err) {
+      //     console.log(err);
+      //     res.json({ msg: "query error" });
+      //   } else {
+      //     res.json({ msg: "success" });
+      //   }
+      // });
+      const user = await new models.user({
+        userEmail,
+        userNick,
+        userPwd,
+      });
+
+      user.save((err) => {
+        if (err) return res.json({ registerSuccess: false, message: err });
+      });
+      return res.json({ registerSuccess: true });
+    });
+    });
   });
-  response.json({msg:"success"});
-  response.end()
-});
 
 // 닉네임 중복확인
 router.get('/nick/:userNick', async (req, res) => {
