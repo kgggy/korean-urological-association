@@ -54,57 +54,74 @@ var upload = multer({ //multer안에 storage정보
 
 });
 
+//탄소실천, 챌린지 게시글(사진) 업로드
 router.post('/uploadFiles', upload.array('file'), async function (req, res) {
     // console.log(req.files);
     // console.log(req.query);
     // console.log(uuid());
 
-    //객체배열을 2차원 배열형태로 변환
-    // const jsonObj = req.files;
-    // const post = Object.keys(jsonObj).map(function(key) {
-    //     const obj = jsonObj[key]
-    //     return Object.keys(obj).map(function (val) {
-    //         return obj[val]
-    //     })
-    // });
-
-    req.files.map(data => {
-        console.log("폼에 정의된 필드명 : ", data.fieldname);
-        console.log("사용자가 업로드한 파일 명 : ", data.originalname);
-        console.log("파일의 엔코딩 타입 : ", data.encoding);
-        console.log("파일의 Mime 타입 : ", data.mimetype);
-        console.log("파일이 저장된 폴더 : ", data.destination);
-        console.log("destinatin에 저장된 파일 명 : ", data.filename);
-        console.log("업로드된 파일의 전체 경로 ", data.path);
-        console.log("파일의 바이트(byte 사이즈)", data.size);
-    })
+    // req.files.map(data => {
+    //     console.log("폼에 정의된 필드명 : ", data.fieldname);
+    //     console.log("사용자가 업로드한 파일 명 : ", data.originalname);
+    //     console.log("파일의 엔코딩 타입 : ", data.encoding);
+    //     console.log("파일의 Mime 타입 : ", data.mimetype);
+    //     console.log("파일이 저장된 폴더 : ", data.destination);
+    //     console.log("destinatin에 저장된 파일 명 : ", data.filename);
+    //     console.log("업로드된 파일의 전체 경로 ", data.path);
+    //     console.log("파일의 바이트(byte 사이즈)", data.size);
+    // })
 
     const paths = req.files.map(data => data.path);
     //console.log(paths);
     try {
-        // const param1 = [uuid(), req.query.certiTitleId, req.query.uid];
-        //console.log(param2);
         const contentId = uuid();
-        for(let i=0; i < paths.length ; i++) {
-            // const sql1 = "insert into certiContent(certiContentId, certiTitleId, uid) values(?, ?, ?);";
-            const param2 = [contentId, paths[i]]
-            const sql2 = "insert into file(certiContentId, fileRoute) values (?, ?);";
-            connection.query(sql2, param2, (err) => {
-                if (err) {
-                    return res.json({
-                        msg: "error"
-                    });
-                }
-                return res.json({
-                    msg: "success"
+        const param1 = [contentId, req.query.certiTitleId, req.query.uid];
+        const sql1 = "insert into certiContent(certiContentId, certiTitleId, uid) values(?, ?, ?)";
+        connection.query(sql1, param1, (err) => {
+            if (err) {
+                throw err;
+            }
+            for (let i = 0; i < paths.length; i++) {
+                const param2 = [contentId, paths[i], i];
+                // console.log(param2);
+                const sql2 = "insert into file(certiContentId, fileRoute, fileNo) values (?, ?, ?)";
+                connection.query(sql2, param2, (err) => {
+                    if (err) {
+                        throw err;
+                    } else {
+                      return;
+                    }
                 });
-            });
 
-        }
+            };
+        });
+        return res.json({
+            msg: "success"
+        });
     } catch (error) {
         res.send(error.message);
     }
-    return;
+});
+
+//탄소실천, 챌린지 글 삭제
+router.delete('/:certiContentId', async (req, res) => {
+    try {
+        const param = req.params.certiContentId;
+        const sql = "delete from certiContent where certiContentId = ?";
+        connection.query(sql, param, (err, row) => {
+            if (err) {
+                console.log(err);
+                response.json({
+                    msg: "query error"
+                });
+            }
+            res.json({
+                msg: "content delete success"
+            })
+        });
+    } catch (error) {
+        res.send(error.message);
+    }
 });
 
 

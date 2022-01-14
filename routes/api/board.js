@@ -142,7 +142,7 @@ router.delete('/:writId', async (req, res) => {
     } catch (error) {
         res.send(error.message);
     }
-})
+});
 
 //조회수 증가
 router.patch('/writHit/:writId', async (req, res) => {
