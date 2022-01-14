@@ -8,13 +8,13 @@
 var express = require('express');
 var router = express.Router();
 const mysql = require('mysql');
-const bcrypt = require('bcrypt');
+//const bcrypt = require('bcrypt');
 
 const connt = require("../../config/db")
 var url = require('url');
 var models = require("../../models");
 
-const password_hash = bcrypt.hashSync('dummy', 10);
+//const password_hash = bcrypt.hashSync('dummy', 10);
 
 // DB 커넥션 생성
 var connection = mysql.createConnection(connt); 
