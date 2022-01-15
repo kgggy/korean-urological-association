@@ -9,7 +9,7 @@ var url = require('url');
 var connection = mysql.createConnection(connt);
 connection.connect();
 
-//각 커뮤니티별 글 전체 목록 조회
+//탄소실천, 챌린지 주제 전체 조회
 router.get('/:certiDivision', async (req, res) => {
     try {
         const param = req.params.certiDivision;
@@ -30,27 +30,25 @@ router.get('/:certiDivision', async (req, res) => {
     }
 });
 
-//각 커뮤니티별 글 상세조회
-router.get('/:boardId/:writId', async (req, res) => {
+//탄소실천, 챌린지 주제별 전체 썸네일 조회
+router.get('/certiContents/:certiTitleId', async (req, res) => {
     try {
-        const boardId = req.params.boardId;
-        const writId = req.params.writId;
-        const sql = "select p.*\
-                       from community c\
-                       join post p\
-                         on c.boardId = p.boardId\
-                      where p.boardId = ? and p.writId = ?";
-        connection.q
-        let notice;
-        connection.query(sql, [boardId, writId], (err, result) => {
+        const param = req.params.certiTitleId;
+        const sql = "select f.fileRoute, c.certiContentId\
+                       from file f \
+                       join certiContent c\
+                         on f.certiContentId = c.certiContentId\
+                      where c.certiTitleId = ? and f.fileNo = 0";
+        let certiContents;
+        connection.query(sql, param, (err, results) => {
             if (err) {
                 console.log(err);
                 response.json({
                     msg: "query error"
                 });
             }
-            notice = result;
-            res.status(200).json(notice);
+            certiContents = results;
+            res.status(200).json(certiContents);
         });
     } catch (error) {
         res.status(401).send(error.message);
