@@ -10,11 +10,9 @@ var router = express.Router();
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-
 const connt = require("../../config/db")
 var url = require('url');
 var models = require("../../models");
-
 
 // DB 커넥션 생성
 var connection = mysql.createConnection(connt); 
