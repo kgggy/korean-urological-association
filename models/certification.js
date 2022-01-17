@@ -37,6 +37,14 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(2),
       allowNull: true,
       comment: "단계"
+    },
+    certiImage: {
+      type: DataTypes.STRING(100),
+      allowNull: true
+    },
+    certificationcol: {
+      type: DataTypes.STRING(45),
+      allowNull: true
     }
   }, {
     sequelize,

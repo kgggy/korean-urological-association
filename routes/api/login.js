@@ -122,7 +122,7 @@ router.post('/', async (req, res) => {
 
   if (emailChk == null) {
     return res.json({
-      registerSuccess: false,
+      emailChk: false,
       message: "이메일을 다시 확인해주세요.",
     });
   }
@@ -148,14 +148,21 @@ router.post('/', async (req, res) => {
   
   const password = await makePasswordHashed(userEmail, userPwd);
   const dbPwd = await models.user.findOne({ attributes: ['userPwd'], where: { userEmail } });
-  console.log(dbPwd);
-  if (password == dbPwd.userPwd) {
-    res.json({ message: "로그인 완료" });
+  console.log(`dbPwd: ${dbPwd.userPwd}`);
+  if (password == dbPwd.userPwd) {  // dbPwd: ['userPwd'] 해도 됨
+    res.json({
+      loginSuccess: true,
+      message: "로그인 완료"
+    });
     // console.log(password);
     // console.log(dbPwd);
   } else {
-    res.json({ message: "비밀번호를 확인해주세요." });
+    res.json({
+      pwdChk: false,
+      message: "비밀번호를 확인해주세요.",
+    });
   }
+});
   // const dbPwd = await models.user.findOne({ where: { userPwd } });
   // const dbMail = await models.user.findOne({ where: {userEmail} });
 
@@ -173,7 +180,7 @@ router.post('/', async (req, res) => {
     //     message: "비밀번호가 틀립니다.",
     //   });
     // }
-});
+
 
 // router.post('/1', async (req, res) => {
 // const makePasswordHashed = (userEmail, plainPassword) => {

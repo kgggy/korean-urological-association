@@ -46,7 +46,8 @@ router.post('/', async (req, res) => {
   // const { userPwd, salt } = await createHashedPassword(request.body.userPwd);  --> crypto 이용
 
   let { userEmail, userNick, userPwd} = req.body;
-  const sameEmailUser = await models.user.findOne({ where: {userEmail} });
+  const sameEmailUser = await models.user.findOne({ where: { userEmail } });
+  
   if (sameEmailUser !== null) {
     return res.json({
       registerSuccess: false,
@@ -106,24 +107,6 @@ router.post('/', async (req, res) => {
     });
     });
   });
-
-// 닉네임 중복확인
-router.get('/nick/:userNick', async (req, res) => {
-  try {
-    const param = decodeURIComponent(req.params.userNick);
-    let nick;
-    connection.query('select count(*) as checkNick from user where userNick = ?', param, (err, results) => {
-      if (err) {
-        console.log(err);
-      }
-      nick = results;
-      res.send(nick);
-    });
-    console.log(nick);
-  } catch (error) {
-    res.status(401).send(error.message);
-  }
-});
 
 //전체 회원 조회
 router.get('/', async (req, res) => {

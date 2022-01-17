@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('file', {
     certiContentId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(35),
       allowNull: true,
       comment: "인증글번호",
       references: {
@@ -11,7 +11,7 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
     writId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(35),
       allowNull: true,
       comment: "게시글번호",
       references: {
@@ -25,9 +25,13 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true,
       comment: "파일경로"
     },
-    fileType: {
-      type: DataTypes.STRING(45),
+    fileNo: {
+      type: DataTypes.INTEGER,
       allowNull: false
+    },
+    fileOrgName: {
+      type: DataTypes.STRING(45),
+      allowNull: true
     }
   }, {
     sequelize,
@@ -43,14 +47,14 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
       {
-        name: "file_ibfk_1",
+        name: "certiContentId",
         using: "BTREE",
         fields: [
           { name: "certiContentId" },
         ]
       },
       {
-        name: "file_ibfk_2",
+        name: "writId",
         using: "BTREE",
         fields: [
           { name: "writId" },
