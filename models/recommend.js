@@ -70,7 +70,8 @@ module.exports = function(sequelize, DataTypes) {
   recommend.associate = function (models) {
     recommend.belongsTo(models.user, {
       foreignKey: "uid"
-    })
+    });
+    
   };
   return recommend;
 };

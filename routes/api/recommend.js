@@ -134,12 +134,8 @@ router.post('/add/post', async (req, res) => {
 });
 
 //좋아요한 유저 목록 조회
-router.get('/likeUserList', async (req, res) => {
-
+router.get('/likeUserList/certi', async (req, res) => {
     const { certiContentId } = req.body;
-    // const dbUid = await models.recommend.findAll({ where: {certiContentId: certiContentId}, raw: true});
-    // console.log(dbUid);
-    // console.log(dbUid.certiContentId);
     const dbUid = await models.recommend.findAll({
         where: { certiContentId: certiContentId },
         raw: true,
@@ -148,9 +144,28 @@ router.get('/likeUserList', async (req, res) => {
             attributes: ['userNick', 'userImg']
         }]
     });
-    res.json({ dbUid });
-    
-    
+    res.json(dbUid);
+});
+
+router.get('/likeUserList/post', async (req, res) => {
+    const { writId } = req.body;
+    const dbUid = await models.recommend.findAll({
+        where: { writId: writId },
+        raw: true,
+        include: [{
+            model: models.user,
+            attributes: ['userNick', 'userImg']
+        }]
+    });
+    const dbWritId = await models.recommend.findOne({ where: { writId: writId }, attributes: ['writId'] });
+    if (dbUid[0]['writId'] !== dbWritId['writId']) {
+        console.log(dbUid[0]['writId']);
+        console.log(dbWritId['writId']);
+        
+        res.json({ existPost: false, msg: "글이 없습니다." })
+    } else {
+        res.json(dbUid);
+    }
 });
 
 module.exports = router;
