@@ -117,23 +117,6 @@ router.patch('/:uid', (req, res) => {
   });
 });
 
-// //패스워드 변경
-// router.get('/pwdUpdate/:uid', (req, res) => {
-//   console.log(__dirname);
-//   res.sendFile('/Users/flash51/ecoce_server/views/pwdUpdate.html');
-// });
-
-// router.post('/pwdUpdate', (req, res) => {
-//   const param = [req.body.userPwd, req.body.uid];
-//   const sql = "update user set userPwd = ? where uid = ?";
-//   connection.query(sql, param, (err, row) => {
-//       if (err) {
-//           console.error(err);
-//       }
-//       res.json({ msg: "success" });
-//   });
-// });
-
 //패스워드 변경
 router.post('/pwdUpdate/:uid', async (req, res) => {
   const uid = req.params.uid;
@@ -159,25 +142,13 @@ router.post('/pwdUpdate/:uid', async (req, res) => {
 
   const password = await makePasswordHashed(userPwd);
   console.log(`password: ${password}`);
-  // const dbPwd = await models.user.findOne({ attributes: ['userPwd'], where: { uid: uid } });
-  // console.log(`dbPwd: ${dbPwd.userPwd}`);
-  // if (password == dbPwd.userPwd) {  // dbPwd: ['userPwd'] 해도 됨
-  //   res.json({
-  //     pwdChange: true,
-  //     message: "비밀번호 변경 완료"
-  //   });
-  // } else {
-  //   res.json({
-  //     pwdChange: false,
-  //     message: "비밀번호를 다시 확인해주세요.",
-  //   });
-  // }
+
   const dbPwd = await models.user.findOne({ attributes: ['userPwd'], where: { uid: uid } });
   console.log(`dbPwd: ${dbPwd.userPwd}`);
   if (password == dbPwd.userPwd) {  // dbPwd: ['userPwd'] 해도 됨
     res.json({
       isSamePreviousPwd: true,
-      message: "기존 비밀번호와 다르게 입력해주세요."
+      msg: "기존 비밀번호와 다르게 입력해주세요."
     });
     // console.log(password);
     // console.log(dbPwd);
@@ -187,7 +158,7 @@ router.post('/pwdUpdate/:uid', async (req, res) => {
     }, { where: { uid: uid } });
     res.json({
       pwdUpdate: true,
-      message: "패스워드 변경 완료"
+      msg: "패스워드 변경 완료"
     });
   }
 });

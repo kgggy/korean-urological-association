@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('recommend', {
+  var recommend = sequelize.define('recommend', {
     rcmdId: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -16,16 +16,16 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
     writId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
+      type: DataTypes.STRING(35),
+      allowNull: true,
       references: {
         model: 'post',
         key: 'writId'
       }
     },
     certiContentId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
+      type: DataTypes.STRING(35),
+      allowNull: true,
       references: {
         model: 'certiContent',
         key: 'certiContentId'
@@ -59,7 +59,7 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
       {
-        name: "certiContentId",
+        name: "recommend_ibfk_3",
         using: "BTREE",
         fields: [
           { name: "certiContentId" },
@@ -67,4 +67,11 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
+  recommend.associate = function (models) {
+    recommend.belongsTo(models.user, {
+      foreignKey: "uid"
+    });
+    
+  };
+  return recommend;
 };

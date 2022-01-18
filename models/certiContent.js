@@ -2,8 +2,7 @@ const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('certiContent', {
     certiContentId: {
-      autoIncrement: true,
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(35),
       allowNull: false,
       primaryKey: true,
       comment: "인증글번호"

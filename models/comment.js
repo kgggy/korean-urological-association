@@ -9,7 +9,7 @@ module.exports = function(sequelize, DataTypes) {
       comment: "댓글번호"
     },
     writId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(35),
       allowNull: true,
       comment: "글번호",
       references: {
@@ -28,7 +28,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     cmtContent: {
       type: DataTypes.STRING(300),
-      allowNull: false,
+      allowNull: true,
       comment: "댓글내용"
     },
     cmtDate: {
@@ -38,7 +38,7 @@ module.exports = function(sequelize, DataTypes) {
       comment: "댓글작성일자"
     },
     certiContentId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(35),
       allowNull: true,
       comment: "인증글번호",
       references: {
@@ -72,7 +72,7 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
       {
-        name: "comment_ibfk_1",
+        name: "writId",
         using: "BTREE",
         fields: [
           { name: "writId" },
