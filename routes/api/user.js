@@ -15,7 +15,7 @@ var url = require('url');
 var models = require("../../models");
 
 // DB 커넥션 생성
-var connection = mysql.createConnection(connt); 
+var connection = mysql.createConnection(connt);
 connection.connect();
 
 // 회원가입
@@ -45,8 +45,16 @@ router.post('/', async (req, res) => {
 
   // const { userPwd, salt } = await createHashedPassword(request.body.userPwd);  --> crypto 이용
 
-  let { userEmail, userNick, userPwd} = req.body;
-  const sameEmailUser = await models.user.findOne({ where: {userEmail} });
+  let {
+    userEmail,
+    userNick,
+    userPwd
+  } = req.body;
+  const sameEmailUser = await models.user.findOne({
+    where: {
+      userEmail
+    }
+  });
   if (sameEmailUser !== null) {
     return res.json({
       registerSuccess: false,
@@ -54,7 +62,11 @@ router.post('/', async (req, res) => {
     });
   }
 
-  const sameNickNameUser = await models.user.findOne({ where: {userNick} });
+  const sameNickNameUser = await models.user.findOne({
+    where: {
+      userNick
+    }
+  });
   if (sameNickNameUser !== null) {
     return res.json({
       registerSuccess: false,
@@ -100,12 +112,17 @@ router.post('/', async (req, res) => {
       });
 
       user.save((err) => {
-        if (err) return res.json({ registerSuccess: false, message: err });
+        if (err) return res.json({
+          registerSuccess: false,
+          message: err
+        });
       });
-      return res.json({ registerSuccess: true });
-    });
+      return res.json({
+        registerSuccess: true
+      });
     });
   });
+});
 
 // 닉네임 중복확인
 router.get('/nick/:userNick', async (req, res) => {
@@ -128,7 +145,7 @@ router.get('/nick/:userNick', async (req, res) => {
 //전체 회원 조회
 router.get('/', async (req, res) => {
   try {
-    const sql = "select * from user";   
+    const sql = "select * from user";
     let user;
     models.user.findAll().then(console.log);
     connection.query(sql, function (err, results, fields) {
@@ -167,7 +184,7 @@ router.get('/:uid', async (req, res) => {
 });
 
 // 회원정보수정
-router.patch('/:uid', (req, res) => {
+router.patch('/:uid', async (req, res) => {
   const param = [req.body.userNick, req.body.userPwd, req.body.userSchool, req.body.userAdres1, req.body.userAdres2, req.body.userImg, req.params.uid];
   console.log(param);
   const sql = "update user set userNick = ?, userPwd = ?, userSchool = ?, userAdres1 = ?, userAdres2 = ?, userImg = ? where uid = ?";
@@ -179,34 +196,58 @@ router.patch('/:uid', (req, res) => {
 });
 
 // //패스워드 변경
-router.get('/pwdUpdate/:uid', (req, res) => {
+router.get('/pwdUpdate/:uid', async (req, res) => {
   console.log(__dirname);
   res.sendFile('/Users/flash51/ecoce_server/views/pwdUpdate.html');
 });
 
-router.post('/pwdUpdate', (req, res) => {
+router.post('/pwdUpdate', async (req, res) => {
   const param = [req.body.userPwd, req.body.uid];
   const sql = "update user set userPwd = ? where uid = ?";
   connection.query(sql, param, (err, row) => {
-      if (err) {
-          console.error(err);
-      }
-      res.json({ msg: "success" });
+    if (err) {
+      console.error(err);
+    }
+    res.json({
+      msg: "success"
+    });
   });
 });
 
 
 // 회원 삭제
-router.delete('/:uid', (req, res) => {
-  const param = req.params.uid;
-  // console.log(param);
-  const sql = "delete from user where uid = ?";
-  connection.query(sql, param, (err, row) => {
-    if (err) {
-      console.log(err)
-    }
-    res.end();
-  });
+router.delete('/:uid', async (req, res) => {
+  try {
+    const param = req.params.uid;
+    const sql = "delete from user where uid = ?";
+    connection.query(sql, param, (err, row) => {
+      if (err) {
+        console.log(err)
+      }
+      res.json({
+        msg: "success"
+      });
+    });
+  } catch (error) {
+    res.send(error.message);
+  }
+});
+
+//다른 회원 정보 상세조회(민감정보 제외)
+router.get('/all/:uid', async (req, res) => {
+  try {
+    const param = req.params.uid;
+    let alluser;
+    connection.query('select userNick, userImg from user where uid = ?', param, (err, results, fields) => {
+      if (err) {
+        console.log(err);
+      }
+      alluser = results;
+      res.status(200).json(alluser);
+    });
+  } catch (error) {
+    res.status(401).send(error.message);
+  }
 });
 
 
