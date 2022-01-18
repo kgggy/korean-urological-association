@@ -13,11 +13,11 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const models = require("../../models");
 const connt = require("../../config/db")
-var url = require('url'); 
+var url = require('url');
 const crypto = require('crypto');
 
 // DB 커넥션 생성
-var connection = mysql.createConnection(connt); 
+var connection = mysql.createConnection(connt);
 connection.connect();
 
 // 토큰 확인 
@@ -28,17 +28,20 @@ router.post('/tokenCheck', async (request, response, next) => {
   connection.query('select * from user where userToken = ?', param, (err, result, row) => {
     if (err) {
       console.log(err);
-      response.json({ msg: "querry error" });
+      response.json({
+        msg: "querry error"
+      });
     }
     if (Object.keys(result).length == 0) {
-      token = { msg: "error" };
+      token = {
+        msg: "error"
+      };
     } else {
       token = result;
     }
     response.json(token);
   });
 });
-
   
   //로그인
 router.post('/', async (req, res) => {
@@ -52,6 +55,7 @@ router.post('/', async (req, res) => {
   // } 
 
   const emailChk = await models.user.findOne({ where: { userEmail } });
+
   if (emailChk == null) {
     return res.json({
       emailChk: false,
@@ -74,10 +78,10 @@ router.post('/', async (req, res) => {
 
       crypto.pbkdf2(plainPassword, salt, 9999, 64, 'sha512', (err, key) => {
         if (err) reject(err);
-        resolve(key.toString('base64')); 
+        resolve(key.toString('base64'));
       });
     });
-  
+
   const password = await makePasswordHashed(userEmail, userPwd);
   const dbPwd = await models.user.findOne({ where: { userEmail } });
   console.log(dbPwd);
@@ -94,8 +98,6 @@ router.post('/', async (req, res) => {
   }
 });
 
-
-
 //token값 저장
 router.patch('/:uid', async (request, response, next) => {
   const param = [request.body.userToken, request.params.uid]
@@ -103,10 +105,14 @@ router.patch('/:uid', async (request, response, next) => {
   connection.query('update user set userToken = ? where uid = ?', param, (err, row) => {
     if (err) {
       console.log(err);
-      response.json({msg:"query error"});
+      response.json({
+        msg: "query error"
+      });
     }
   });
-  response.json({msg:"success"});
+  response.json({
+    msg: "success"
+  });
   response.end()
 });
 

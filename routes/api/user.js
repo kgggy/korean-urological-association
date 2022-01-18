@@ -163,6 +163,14 @@ router.post('/pwdUpdate/:uid', async (req, res) => {
   }
 });
 
+//   models.user.update({
+//     userPwd: password
+//   }, { where: { uid: uid } });
+//   res.json({
+//     pwdUpdate: true,
+//     message: "패스워드 변경 완료"
+//   })
+// });
 
   
 // 회원 삭제
