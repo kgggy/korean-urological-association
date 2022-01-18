@@ -132,22 +132,22 @@ router.get('/one/:writId', async (req, res) => {
 });
 
 //게시글 작성 및 파일첨부
-router.post('/', upload.array('file'), async (req, res) => {
+router.post('/', upload.array('file'), async (req, res, next) => {
     const paths = req.files.map(data => data.path);
     const orgName = req.files.map(data => data.originalname);
 
     try {
-        const writId = uuid();
-        const param1 = [writId, req.body.boardId, req.body.uid, req.body.writTitle, req.body.writContent];
+        const boardWritId = uuid();
+        const param1 = [boardWritId, req.body.boardId, req.body.uid, req.body.writTitle, req.body.writContent];
         const sql1 = "insert into post(writId, boardId, uid, writTitle, writContent) values(?, ?, ?, ?, ?)";
         connection.query(sql1, param1, (err, row) => {
             if (err) {
                 throw err;
             }
             for (let i = 0; i < paths.length; i++) {
-                const param2 = [contentId, paths[i], i, orgName[i]];
+                const param2 = [boardWritId, paths[i], i, orgName[i]];
                 // console.log(param2);
-                const sql2 = "insert into file(certiContentId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
+                const sql2 = "insert into file(writId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
                 connection.query(sql2, param2, (err) => {
                     if (err) {
                         throw err;

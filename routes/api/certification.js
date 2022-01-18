@@ -97,18 +97,17 @@ router.get('/certiContents/:certiTitleId', async (req, res) => {
 router.get('/one/:certiContentId', async (req, res) => {
     try {
         const param = req.params.certiContentId;
-        const sql = "select f.*, m.*, m.uid comuser, c.*, c.uid certiuser,\
-                        (select count(*) from recommend where certiContentId = ?) as rcount\
+        const sql = "select f.fileRoute,\
+                            (select count(*) from recommend where certiContentId = ?) as rcount,\
+                            (select count(*) from comment where certiContentId = ?) as mcount,\
+                             c.uid\
                        from certiContent c\
                   left join file f on c.certiContentId = f.certiContentId\
                   left join comment m on m.certiContentId = c.certiContentId\
                   left join recommend r on r.certiContentId = c.certiContentId\
-                        and r.certiContentId = m.certiContentId\
-                      where c.certiContentId = ?\
-                      order by cmtDate desc\
-                      limit 5";
+                 where c.certiContentId = ?";
         let certi;
-        connection.query(sql, [param, param], (err, result) => {
+        connection.query(sql, [param, param, param], (err, result) => {
             if (err) {
                 console.error(err);
                 res.json({

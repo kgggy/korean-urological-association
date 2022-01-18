@@ -13,11 +13,11 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const models = require("../../models");
 const connt = require("../../config/db")
-var url = require('url'); 
+var url = require('url');
 const crypto = require('crypto');
 
 // DB 커넥션 생성
-var connection = mysql.createConnection(connt); 
+var connection = mysql.createConnection(connt);
 connection.connect();
 
 // 토큰 확인 
@@ -28,10 +28,14 @@ router.post('/tokenCheck', async (request, response, next) => {
   connection.query('select * from user where userToken = ?', param, (err, result, row) => {
     if (err) {
       console.log(err);
-      response.json({ msg: "querry error" });
+      response.json({
+        msg: "querry error"
+      });
     }
     if (Object.keys(result).length == 0) {
-      token = { msg: "error" };
+      token = {
+        msg: "error"
+      };
     } else {
       token = result;
     }
@@ -39,27 +43,27 @@ router.post('/tokenCheck', async (request, response, next) => {
   });
 });
 
-  
-  
-  
-  
-// router.post('/1', async(req, res) => {
-  // let { userEmail } = req.body;
-  // console.log(await models.user.findOne({ where: { userEmail } }));
-  // const aaa = await models.user.findOne({ where: { userEmail } });
 
-  // aaa, async(error, user) => {
-  //   // 에러는 500
-  //   if (error) {
-  //     return res.status(500).json({ error: "오류" });
-  //   }
-  //   if (!user) {
-  //     return res.status(403).json({
-  //       loginSuccess: false,
-  //       message: "해당되는 이메일이 없습니다."
-  //     });
-  //   }
-    // email이 맞으니 pw가 일치하는지 검증합니다.
+
+
+
+// router.post('/1', async(req, res) => {
+// let { userEmail } = req.body;
+// console.log(await models.user.findOne({ where: { userEmail } }));
+// const aaa = await models.user.findOne({ where: { userEmail } });
+
+// aaa, async(error, user) => {
+//   // 에러는 500
+//   if (error) {
+//     return res.status(500).json({ error: "오류" });
+//   }
+//   if (!user) {
+//     return res.status(403).json({
+//       loginSuccess: false,
+//       message: "해당되는 이메일이 없습니다."
+//     });
+//   }
+// email이 맞으니 pw가 일치하는지 검증합니다.
 //     if (user) {
 //       const checkPW = () => {
 //         bcrypt.compare(req.body.userPwd, models.user.userPwd, (error, isMatch) => {
@@ -103,21 +107,28 @@ router.post('/tokenCheck', async (request, response, next) => {
 //   res.end();
 // });
 
-  
-  //로그인
+
+//로그인
 router.post('/', async (req, res) => {
   // var userPwd = req.body.userPwd;
   // console.log(userPwd)
-  const { userPwd, userEmail } = req.body;
+  const {
+    userPwd,
+    userEmail
+  } = req.body;
 
-  if(userEmail == null) {
+  if (userEmail == null) {
     return res.json({
-    isEmailEmpty : true,
-    message: "이메일을 입력해주세요.",
-  });
-  } 
+      isEmailEmpty: true,
+      message: "이메일을 입력해주세요.",
+    });
+  }
 
-  const emailChk = await models.user.findOne({ where: { userEmail } });
+  const emailChk = await models.user.findOne({
+    where: {
+      userEmail
+    }
+  });
   // console.log(emailChk);
 
   if (emailChk == null) {
@@ -142,19 +153,25 @@ router.post('/', async (req, res) => {
 
       crypto.pbkdf2(plainPassword, salt, 9999, 64, 'sha512', (err, key) => {
         if (err) reject(err);
-        resolve(key.toString('base64')); 
+        resolve(key.toString('base64'));
       });
     });
-  
+
   const password = await makePasswordHashed(userEmail, userPwd);
-  const dbPwd = await models.user.findOne({ attributes: ['userPwd'], where: { userEmail } });
+  const dbPwd = await models.user.findOne({
+    where: {
+      userEmail
+    }
+  });
   console.log(dbPwd);
   if (password == dbPwd.userPwd) {
-    res.json({ message: "로그인 완료" });
+    res.json(dbPwd);
     // console.log(password);
     // console.log(dbPwd);
   } else {
-    res.json({ message: "비밀번호를 확인해주세요." });
+    res.json({
+      message: "비밀번호를 확인해주세요."
+    });
   }
   // const dbPwd = await models.user.findOne({ where: { userPwd } });
   // const dbMail = await models.user.findOne({ where: {userEmail} });
@@ -165,14 +182,14 @@ router.post('/', async (req, res) => {
   // if (password == userPwd && emailChk == userEmail) {
   //   return res.json({ message: "로그인 완료" });
   // }
-  
-    // const sameNickNameUser = await models.user.findOne({ where: {  } });
-    // if (sameNickNameUser !== password) {
-    //   return res.json({
-    //     registerSuccess: false,
-    //     message: "비밀번호가 틀립니다.",
-    //   });
-    // }
+
+  // const sameNickNameUser = await models.user.findOne({ where: {  } });
+  // if (sameNickNameUser !== password) {
+  //   return res.json({
+  //     registerSuccess: false,
+  //     message: "비밀번호가 틀립니다.",
+  //   });
+  // }
 });
 
 // router.post('/1', async (req, res) => {
@@ -194,7 +211,7 @@ router.post('/', async (req, res) => {
 //         });
 //     });
 //   };
-  
+
 
 //   const { userEmail, password: plainPassword } = req.body;
 //   const password = await makePasswordHashed(userEmail, plainPassword);
@@ -215,10 +232,14 @@ router.patch('/:uid', async (request, response, next) => {
   connection.query('update user set userToken = ? where uid = ?', param, (err, row) => {
     if (err) {
       console.log(err);
-      response.json({msg:"query error"});
+      response.json({
+        msg: "query error"
+      });
     }
   });
-  response.json({msg:"success"});
+  response.json({
+    msg: "success"
+  });
   response.end()
 });
 
