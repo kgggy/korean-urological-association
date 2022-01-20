@@ -10,6 +10,8 @@ const comment = require('./api/comment.js');
 const mypage = require('./api/mypage.js');
 const recommend = require('./api/recommend.js');
 const calculator = require('./api/calculator.js');
+const m_user = require('./admin_api/m_user.js');
+const m_board = require('./admin_api/m_board.js');
 
 
 router.use('/login', login);
@@ -21,5 +23,8 @@ router.use('/comment', comment);
 router.use('/mypage', mypage);
 router.use('/recommend', recommend);
 router.use('/calculator', calculator);
+router.use('/user', m_user);
+router.use('/m_board', m_board);
+
 
 module.exports = router;

@@ -64,29 +64,6 @@ router.post('/', async (req, res) => {
   res.json({ msg: "success" });
 });
 
-//전체 회원 조회
-router.get('/', async (req, res) => {
-  try {
-    const sql = "select * from user";   
-    let user;
-    models.user.findAll().then(console.log);
-    connection.query(sql, function (err, results, fields) {
-      if (err) {
-        console.log(err);
-      }
-      user = results;
-      res.status(200).json(user);
-      // console.log(user);
-    });
-    console.log(user)
-
-  } catch (error) {
-
-    res.status(401).send(error.message);
-  }
-
-});
-
 // 회원 상세보기
 router.get('/:uid', async (req, res) => {
   try {
