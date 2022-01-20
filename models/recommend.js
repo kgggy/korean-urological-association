@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  var recommend = sequelize.define('recommend', {
+  return sequelize.define('recommend', {
     rcmdId: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -67,11 +67,4 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
-  recommend.associate = function (models) {
-    recommend.belongsTo(models.user, {
-      foreignKey: "uid"
-    });
-    
-  };
-  return recommend;
 };

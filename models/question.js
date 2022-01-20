@@ -1,8 +1,7 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('question', {
+module.exports = function (sequelize, DataTypes) {
+  var question = sequelize.define('question', {
     qtnId: {
-      autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
@@ -49,4 +48,11 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
+  question.associate = function (models) {
+    question.belongsTo(models.calOption, {
+      foreignKey: "qtnId"
+    });
+
+  };
+  return question;
 };

@@ -13,7 +13,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       comment: "옵션번호",
       references: {
-        model: 'option',
+        model: 'calOption',
         key: 'optId'
       }
     },
