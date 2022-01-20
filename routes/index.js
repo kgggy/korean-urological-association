@@ -9,6 +9,7 @@ const certification = require('./api/certification.js');
 const comment = require('./api/comment.js');
 const mypage = require('./api/mypage.js');
 const recommend = require('./api/recommend.js');
+const calculator = require('./api/calculator.js');
 
 
 router.use('/login', login);
@@ -19,5 +20,6 @@ router.use('/certification', certification);
 router.use('/comment', comment);
 router.use('/mypage', mypage);
 router.use('/recommend', recommend);
+router.use('/calculator', calculator);
 
 module.exports = router;
