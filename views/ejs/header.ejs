@@ -1,0 +1,73 @@
+
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$('#lnb ul li').eq(menu).addClass('on');
+
+				if($('#Gall').hasClass('on')){
+					$('#TopSubMenuGa').show();
+				}else{
+					$('#TopSubMenuGa').hide();
+				}
+				
+				if($('#Notice').hasClass('on')){
+					$('#TopSubMenuNotice').show();
+				}else{
+					$('#TopSubMenuNotice').hide();
+				}
+			});
+			
+			function MM_openBrWindow(theURL,winName,features,number,mode) {
+				if(number != '')
+					theURL += '?mode=' + mode + '&number=' + number;
+				else
+					theURL += '?mode=' + mode;
+				window.open(theURL,winName,features);
+			}
+			function winOpen(){
+				var win = window.open('/members_list', 'members_list','width=540,height=900,scrollbars=yes');
+				win.focus();
+			}	
+		</script>
+	</head>
+	
+	<body>
+		<!--상단-->
+		<div id="head">
+			<p>
+				<span class="float_l"><a href="/admin/web/orgm_list" style="color: #fff;">(사)중소기업융합 대구경북연합회</a></span>
+				<span class="float_r">관리자님 환영합니다.
+				<button class="btn_small_red hand" onclick="window.location.href='/admin/web/logout'">로그아웃</button>
+				<button class="btn_small_blue hand" onclick="winOpen();">모바일전자수첩</button>
+				</span>
+			</p>
+		</div>
+	
+		<div id="lnb">
+			<ul style="display: flex;">
+				<li style="width:184px; display: list-item;"><a href="/admin/web/orgm_list">회원관리</a></li>
+				<li id="Notice" style="width:184px; display: list-item;"><a href="/admin/web/board_list?category=notice">공지사항관리</a></li>				
+				<li style="width:184px; display: list-item;"><a href="/admin/web/board_list?category=congrats">경조사관리</a></li>
+				<!--<li style="width:184px; display: list-item;"><a href="/admin/web/board_list?category=event">행사참석관리</a></li>-->
+				<!--<li style="width:184px; display: list-item;"><a href="/admin/web/calendar">연간일정관리</a></li>-->
+				<li id="Gall" style="width:184px; display: list-item;"><a href="/admin/web/hongbo_board_list?category=sub_others">행사안내관리</a></li>								
+				<li style="width:184px; display: list-item;"><a href="/admin/web/event_board_list">행사참석관리</a></li>			
+				<li style="width:184px; display: list-item;"><a href="/admin/web/admin_list">권한설정</a></li>
+				<li style="width:184px; display: list-item;"><a href="/admin/web/code_list">코드관리</a></li>								
+			</ul>
+			
+			<ul id="TopSubMenuNotice" style="display:none;">
+				<li><a href="/admin/web/board_list?category=notice">공지사항</a></li>
+				<li><a href="/admin/web/board_list?category=free">홍보게시판</a></li>
+				<li><a href="/admin/web/board_list?category=event">융합뉴스</a></li>
+				<li><a href="/admin/web/board_list?category=gallery">갤러리</a></li>
+			</ul>
+
+			<ul id="TopSubMenuGa" style="display:none;">
+				<li><a href="/admin/web/hongbo_board_list?category=sub_others">골프대회</a></li>
+				<li><a href="/admin/web/hongbo_board_list?category=sub_directors">월례회</a></li>
+				<li><a href="/admin/web/hongbo_board_list?category=sub_mou">국내외여행</a></li>
+				<li><a href="/admin/web/hongbo_board_list?category=sub_meeting">봉사활동</a></li>
+			</ul>
+			
+		</div>
+	<div id="container">

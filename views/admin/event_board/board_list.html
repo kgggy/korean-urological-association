@@ -1,0 +1,127 @@
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("#board_btn").click(function(){
+			location.href="board_write";
+		});
+		
+		/*page_navi*/
+		var page_navi = tag_place("<%=page_navi%>");
+		$('#page_navi').html(page_navi);
+		/*page_navi*/
+		
+		$('#brd_search').click(function(){
+			var search_type = $("select[name='search_type']").val();
+			$("#search_type").attr("value", search_type);
+			var frm = document.boardForm;
+			frm.action = '/admin/web/event_board_list';
+			frm.submit();
+		});
+		
+		$("#search_text").keydown(function(e){
+			if(e.keyCode == 13) $('#brd_search').click();
+		});
+		
+		$(".brd_del").click(function() {
+			var board_no = $("#board_no").val($(this).attr('brd_no'));
+			if (confirm("삭제하시겠습니까?")) {
+				var form = document.boardForm;
+				form.action = '/admin/web/event_board_del';	
+				form.submit();	
+			}
+		});
+	});
+	
+	function brd_del() {
+		var board_no = $("#board_no").val($(this).attr('brd_no'));
+	}
+	
+	function goPage(p_num){
+		var frm = document.boardForm;
+		frm.action = 'board_list';
+		frm.nowPage.value = p_num;
+		frm.submit();
+	}
+</script>
+
+	<form id="boardForm" name="boardForm" method="post" action="" onsubmit="return false;" autocomplete="off">
+		<input type="hidden" name="nowPage" value="<%=nowPage%>"/>
+		<input type="hidden" id="number" name="number" value="" />
+		<input type="hidden" id="filename" name="filename" value="" />
+		<input type="hidden" id="board_no" name="board_no" value="" />
+		<div class="board_search">
+			<h3 class="float_l">행사관리</h3>
+			<p class="float_r">
+				<select name="search_type">
+					<option value="board_title" <%if(search_type=="board_title"){%> selected="selected" <%}%>>행사명</option>
+					<option value="board_content" <%if(search_type=="board_content"){%> selected="selected" <%}%>>내용</option>
+				</select>
+				<input type="text" name="search_text" id="search_text" value="<%=search_text%>" style="ime-mode:active;"/>
+				<input type="button" id="brd_search" value="검색"  class="btn_small_black"  />
+			</p>
+		</div>
+		<div class="board_list">
+			<table>
+				<colgroup>
+					<col width="7%" />
+					<col />
+					<col width="18%" />					
+					<col width="25%" />
+					<col width="15%" /
+					<col width="10%" />
+				</colgroup>
+				<thead>
+					<tr>
+						<th>번호</th>
+						<th>행사명</th>
+						<th>접수기간</th>
+						<th>행사일시</th>						
+						<th>신청자확인</th>
+						<th>비고</th>
+					</tr>
+				</thead>
+				<tbody>
+					<% 
+					for(var i = 0; i < data.length; i++){
+						var numCount = total_cnt - ((nowPage -1) * pageSize) -i;
+						
+						if(data[i].create_name == null) data[i].create_name = "--";
+					%>
+					<tr>					
+					<td><%=numCount%></td>
+					<td class="title hand" onclick="MM_openBrWindow('/admin/web/event_board_view','','width=550,height=450,scrollbars=1','<%=data[i].board_no %>','view')"><%=data[i].board_title %></td>
+					<td><%=data[i].board_startdate  %> ~ <%=data[i].board_enddate  %></td>
+					<td><%=data[i].board_eventsdate  %> ~ <%=data[i].board_eventedate  %></td>										
+					<%if(data[i].req_num != "0"){%>
+					<td><span onclick="MM_openBrWindow('/admin/web/event_request_list','','width=850,height=600,scrollbars=1','<%=data[i].board_no %>','view')" style="cursor: pointer;">
+						신청자 Total : <%=data[i].req_num%> 명</span> 
+						<span onclick="MM_openBrWindow('/admin/web/event_request_list','','width=850,height=600,scrollbars=1','<%=data[i].board_no %>','view')" style="cursor: pointer;color: red;">
+						[보기]</span></td>
+					<%}else{%>
+					<td>신청내역없음</td>
+					<%}%>
+					<td><div style="text-align:left;padding-left:10px;"><a href="#" onclick="MM_openBrWindow('/admin/web/event_board_write','','width=850,height=640,scrollbars=1', '<%=data[i].board_no %>', 'modify')"><img src="../../../images/admin/icon_edit.gif" alt="수정" /></a>
+					<img class="brd_del hand" brd_no="<%=data[i].board_no %>" src="../../../images/admin/icon_delete.gif" alt="삭제" />
+					<% if(data[i].comment_cnt != 0){%>
+					<img class="hand" onclick="MM_openBrWindow('/admin/web/event_comment_view','','width=550,height=450,scrollbars=1','<%=data[i].board_no %>','comment')" src="../../../images/admin/icon_comment.gif" alt="댓글" />
+					<% }%></div>
+					</td>
+					</tr>
+					<% } %>
+					<%if(data.length == 0){%>
+						<tr>
+							<td colspan="6">
+								등록된 목록이 없습니다.
+							</td>
+						</tr>
+					<%}%>
+				</tbody>
+			</table>
+		</div>
+	</form>
+	<div class="mt_20">
+		<div class="paging" id="page_navi">
+		</div>
+		<p class="float_r">
+			<input type="button" value="등록" class="btn_big_blue" onclick="MM_openBrWindow('/admin/web/event_board_write','','width=850,height=640','','write')" />
+		</p>
+	</div>

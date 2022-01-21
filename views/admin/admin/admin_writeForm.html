@@ -1,0 +1,227 @@
+<script type="text/javascript">
+$(document).ready(function(){
+	var window_width_before = $(window).width()+16;
+	var window_height_before = $(window).height()+66;
+	defaultWindowSize();
+	
+	var ad_id = $('input[name="ad_id"]');
+	var ad_pw = $('input[name="ad_pw"]');
+	var ad_nm = $('input[name="ad_nm"]');
+	
+	//저장
+	$('#saveBtn').click(function(){
+		if(idChk()){
+			var frm = document.adminForm;
+			if($.trim(ad_id.val())==''){
+				alert('아이디를 입력해주세요');
+				ad_id.focus();
+				return false;
+			}else if($('#orgMember_SearchName').text()==''){
+				alert('이름을 조회하세요');
+				$( '#orgMemberSearch_Form' ).show();
+				$( 'input[name="search_name"]' ).focus();
+				window.resizeTo(450, 370);
+				return false;
+			}else if($.trim(ad_pw.val())==''){
+				alert('비밀번호를 입력해주세요');
+				ad_pw.focus();
+				return false;
+			}
+			frm.action = 'admin_save';
+			frm.submit();
+		}else{
+			alert("아이디 중복입니다.");
+			ad_id.focus();
+			return false;
+		}
+	});
+	
+	//수정
+	$('#modifyBtn').click(function(){
+		var frm = document.adminForm;
+		if($.trim(ad_pw.val())==''){
+			alert('비밀번호를 입력해주세요');
+			ad_pw.focus();
+			return false;
+		}
+		frm.action = 'admin_save';
+		frm.submit();
+	});
+	
+	// 조회
+	$('button[name="orgMemberSearchBtn"]').click(function() {
+		$( '#orgMemberSearch_Form' ).show();
+		$( 'input[name="search_name"]' ).focus();
+		window.resizeTo(450, 370);
+		return;
+	});
+	
+	$("#orgMemberSearch_Result").dialog({
+		bgiframe: true,
+		width: 400,
+		buttons: {
+			'선택': function() {
+				var $radioChecked = $( '.search_mem_radio:checked' );
+				var $radio = $( '.search_mem_radio' );
+				var index = $radio.index($radioChecked);
+				var trCount = $("#orgMemberSearch_Result table tbody tr").length;
+				
+				var checkWorkSeq = $radioChecked.attr("seq");
+				var checkName = $radioChecked.parents("tr").find(".td1").text();
+				var checkPhone = $radioChecked.parents("tr").find(".td2").text();
+				var checkWork = $radioChecked.parents("tr").find(".td3").text();
+				
+				var mag = "선택된 사람의 정보입니다.\n\n대표자 : "+checkName+"\n휴대폰 : "+ checkPhone + "\n상호 : "+checkWork+"\n\n위 사람을 등록하시겠습니까?";
+				if(index==-1) {
+					alert( '등록할 관리자를 선택하세요.' );
+					return;
+				} else if(confirm(mag)) {
+					$( 'input[name="orgmem_no"]' ).val(checkWorkSeq);
+					$( '#orgMember_SearchName' ).text(checkName);
+					$( '#orgMemberSearch_Form' ).hide();
+					$(this).dialog('close');
+					defaultWindowSize();
+				}
+				
+			},
+			'닫기': function() {
+				$(this).dialog('close');
+			}
+		} 
+	});
+	$("#orgMemberSearch_Result").dialog('close');
+});
+
+function defaultWindowSize() {
+	window.resizeTo(450, 320);	
+}
+
+function nameNullCheck() {
+	var search_name = document.member_searchForm.search_name.value;
+	if(search_name==null || search_name=='') {
+		alert( '이름을 입력하세요.' );
+		return false;
+	} else {
+		$.ajax({
+			type : "post",  
+		    url : "admin_addForSearch",   
+		    dataType : "json",
+		    data : $('form[name="member_searchForm"]').serialize(),
+		    success : function(data){
+		    	//alert("data == " + data);
+		    	var html = "";
+		    	html += "<div class='popup_list board_list'>";
+		    		html += "<table>";
+		    			html += "<colgroup>";
+		    				html += "<col width='23%' />";
+		    				html += "<col width='32%' />";
+		    				html += "<col />";
+		    			html += "</colgroup>";
+		    			html += "<thead>";
+		    				html += "<tr>";
+		    					html += "<th>대표자</th>";
+		    					html += "<th>핸드폰</th>";
+		    					html += "<th>상호</th>";
+		    				html += "</tr>";
+		    			html += "</thead>";
+		    			html += "<tbody>";
+		    	$.each(data, function(index) {
+		    		html += "<tr>";
+		    			html += "<td class='td1'><input type='radio' name='search_mem_radio' class='search_mem_radio' seq='"+data[index].orgmem_no+"' />&nbsp;"+data[index].orgmem_name+"</td>";
+		    			html += "<td class='td2 align_c'>"+data[index].orgmem_phone+"</td>";
+		    			html += "<td class='td3 title'>"+data[index].orgmem_company_name+"</td>"; 
+		    		html += "</tr>";
+		    	});
+		    		html += "</tbody>";
+		    		html += "</table>";
+				html += "</div>";
+				
+				$( '#orgMemberSearch_Result' ).html( html );
+				$( '#orgMemberSearch_Result' ).dialog('open');
+		    }, error : function(xhr, status, error) { // error 발생했을때
+		    	$( '#orgMemberSearch_Result' ).html( '조회된 정보가 없습니다.' );
+				$( '#orgMemberSearch_Result' ).dialog('open');
+	      	}
+		});
+		
+	}
+}
+
+//아이디 중복체크
+function idChk(){
+	var returnValue = false;
+	var ad_id = $('input[name="ad_id"]').val();
+	
+	$.ajax({
+		type : "post",  
+	    url : "/admin/web/admin_id_chk",    
+	    dataType : "text",
+	    data : {'ad_id' : ad_id},      
+	    success : function(data){
+	    	if(data == "success") returnValue = true;
+	    },
+	    async:false
+	});
+	
+	return returnValue;
+}
+</script>
+<div class="content">
+	<h2><span class="float_l">권한설정</span><img onclick="window.close();"src="/images/admin/btn_close.gif" alt="" class="float_r hand" /></h2>
+	<form action="admin_save" id="adminForm" name="adminForm" method="post" onsubmit="idChk(); return false;" autocomplete="off">
+		<input type="hidden" name="mode" value="<%=mode%>"/>
+		<input type="hidden" name="orgmem_no" />
+		
+		<table>
+			<tr>
+				<th>아이디</th>
+				<td>
+					<%if(mode != 'write'){%>
+						<%=data[0].ad_id%>
+						<input type="hidden" name="ad_id" value="<%=data[0].ad_id%>" style="ime-mode:inactive;"/>
+					<%}else{%>
+						<input type="text" name="ad_id" value="" style="ime-mode:inactive;"/>
+					<%}%>
+				</td>
+			</tr>
+			<tr>
+				<th>회원</th>
+				<td>
+					<%if(mode != 'write'){%>
+						<%=data[0].ad_nm%>
+					<%}else{%>
+						<!-- <input type="text" name="ad_nm" value="" style="width: 40%"/> -->
+						<span id="orgMember_SearchName"></span>
+						<button name="orgMemberSearchBtn" id="orgMemberSearchBtn" class="btn_small_blue hand">조회</button>
+					<%}%>
+				</td>
+			</tr>
+			<tr>
+				<th>비밀번호</th>
+				<td><input type="password" name="ad_pw"/></td>
+			</tr>
+		</table>
+	
+		<p class="btn">
+			<%if(mode=='write'){%>
+				<button id="saveBtn" class="btn_big_blue hand" name="btn">등록</button>
+			<%}else if(mode=='modify'){%>
+				<button id="modifyBtn" class="btn_big_blue hand" name="btn">수정</button>
+			<%}%>
+			<button class="btn_big_black hand" onclick="window.close();">취소</button>
+		</p>
+	</form>
+	
+	<div id="orgMemberSearch_Form" style="display: none;">
+		<form action='admin_addForSearch' id='member_searchForm' name='member_searchForm' method='post' onsubmit="nameNullCheck(); return false;" autocomplete="off">
+			<table>
+				<tr>
+					<td style='width:20%;'>대표자</td>
+					<td><input type='text' name='search_name' style='width:50%; ime-mode:active;'/>&nbsp;<button name='orgMemberSearch_detailBtn' class='btn_small_blue hand'>조회</button></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	
+	<div id="orgMemberSearch_Result" title="조회 결과"></div>
+</div>

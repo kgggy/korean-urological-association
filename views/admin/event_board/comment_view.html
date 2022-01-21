@@ -1,0 +1,74 @@
+<script type="text/javascript">
+	 $(document).ready(function() {
+		 comment_ajax();
+		 
+		$(".comment_del").live('click', function(){
+			var comment_no = $(this).attr("comment_no");
+			
+			if(confirm("삭제하시겠습니까?")){
+				$.ajax({
+					type : "post",  
+				    url : "/free_comment_save",    
+				    dataType : "text",
+				    data : {"comment_no" : comment_no, "mode" : "delete"},      
+				    success : function(data){
+				    	if(data == "success"){
+				    		alert("댓글이 삭제되었습니다.");
+				    		comment_ajax(board_no);
+				    	}else{
+				    		alert("댓글삭제에 실패하였습니다.");
+				    		return false;
+				    	} 
+				    }
+				});	
+			}
+		});
+	});
+	 
+	 
+	function comment_ajax(){
+		 
+		var board_no = $("#board_no").val();
+		var comment_html = "";
+		 
+		$.ajax({
+			type : "post",  
+		    url : "/free_comment_list",    
+		    dataType : "json",
+		    data : {"board_no" : board_no},      
+		    success : function(data){
+		    	var connectorNo = data.connectorNo;
+		    	 
+		    	if($(data.result).length > 0){
+		    		var comment_insertUser = "";
+		    		
+		    		$(data.result).each(function(key, data){
+		    			if(data.orgmem_no == "5555555") {
+		    				comment_insertUser = "PC(공용)"
+		    			} else {
+		    				comment_insertUser = data.orgmem_name;
+		    			}
+		    			comment_html += "<dl>";
+		    			comment_html += "	<dt><p>"+comment_insertUser+" <span>"+data.c_date+"</span></p> ";
+	    			 	comment_html += "		<span class='hand comment_del' comment_no="+data.comment_no+"><img src='/images/admin/icon_delete.gif' alt='삭제' /></span>";
+		    			comment_html += "	</dt>";
+		    			comment_html += "	<dd>"+data.comment_content+"</dd>";
+		    			comment_html += "</dl>";
+		    			
+		    		});	 
+		    	}else{
+		    		comment_html = "<p class='mt_50 align_c'>등록된 댓글이 없습니다.</p>";
+		    	}
+		    	 
+		    	$(".comment_view").html(comment_html);
+		    }
+		});		 
+	 }
+</script>
+
+<h2><span class="float_l">댓글</span><img onclick="window.close();" src="../../../images/admin/btn_close.gif" alt="" class="float_r hand" /></h2>
+	<input type="hidden" name="board_no" id="board_no" value="<%=board_no %>"/>
+ 	<div class="content">
+ 		<div class="comment_view">
+		</div>
+	</div>

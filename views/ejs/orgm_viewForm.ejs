@@ -1,0 +1,150 @@
+<script type="text/javascript">
+	$(document).ready(function(){
+	});
+</script>
+	<h2><span class="float_l">회원관리</span><img onclick="window.close();" src="../../../images/admin/btn_close.gif" alt="" class="float_r hand" /></h2>
+ 	<div class="content"> 
+		<table class="mb_10">
+			<tr>
+				<% if(db_data.length > 0 && db_data[0].orgmem_img != null && db_data[0].orgmem_img != '') {%>
+					<th><img src="../../../file/member/<%=db_data[0].orgmem_img %>" alt="사진" width="117px"/></th>
+				<% }else{ %>
+					<th><img src="../../../../images/nomal_img.jpg" alt="" width="117px"/><!-- <img src="../../../../images/icon_dispatch.png" alt="" width="117px"/> --></th>
+				<% } %>
+				
+				<td colspan="4">
+					<dl>
+						<dt>
+							<!-- <strong><%=db_data[0].orgmem_name %></strong>  -->
+						</dt>
+						<dd>
+						</dd>
+					</dl>
+				</td>
+			</tr>
+		</table>
+
+		<table> 
+<!--			<tr>
+				<th>등록번호</th>
+				<td><%=db_data[0].orgmem_reg_no %></td>
+			</tr>-->
+			<tr>
+				<th>회사명/직위</th>
+				<td>
+					<%if(db_data[0].orgmem_company_name !=null && db_data[0].orgmem_company_name!='null' && db_data[0].orgmem_company_name!=''){%>
+						<%=db_data[0].orgmem_company_name%>
+					<%}%>
+				</td>
+			</tr>
+			
+			<tr>
+				<th>휴대폰</th>
+				<td>
+					<%if(db_data[0].orgmem_phone1 !=null && db_data[0].orgmem_phone1!='null' && db_data[0].orgmem_phone1!=''){%>
+						<%=db_data[0].orgmem_phone1 %>-<%=db_data[0].orgmem_phone2 %>-<%=db_data[0].orgmem_phone3 %>
+					<%}%>
+				</td>
+			</tr>
+			
+			<tr>
+				<th>전화</th>
+				<td>
+					<%if(db_data[0].orgmem_tel1 !=null && db_data[0].orgmem_tel1!='null' && db_data[0].orgmem_tel1!=''){%>
+						<%=db_data[0].orgmem_tel1 %>-<%=db_data[0].orgmem_tel2 %>-<%=db_data[0].orgmem_tel3 %>
+					<%}%>
+				</td>
+			</tr>
+			
+			<tr>
+				<th>팩스</th>
+				<td>
+					<%if(db_data[0].orgmem_fax1 !=null && db_data[0].orgmem_fax1!='null' && db_data[0].orgmem_fax1!=''){%>
+						<%=db_data[0].orgmem_fax1 %>-<%=db_data[0].orgmem_fax2 %>-<%=db_data[0].orgmem_fax3 %>
+					<%}%>
+				</td>
+			</tr>
+			
+			<tr>
+				<th>우편번호</th>
+				<td>
+					<%if(db_data[0].zip_code !=null && db_data[0].zip_code!='null' && db_data[0].zip_code!=''){%>
+						<%=db_data[0].zip_code %>
+					<%}%>
+				</td>
+			</tr>
+			
+			<tr>
+				<th>주소</th>
+				<td>
+					<%if(db_data[0].orgmem_address !=null && db_data[0].orgmem_address!='null' && db_data[0].orgmem_address!=''){%>
+						<%=db_data[0].orgmem_address %>
+					<%}%>
+				</td>
+			</tr>
+			
+			<tr>
+				<th>이메일</th>
+				<td>
+					<%if(db_data[0].orgmem_email !=null && db_data[0].orgmem_email!='null' && db_data[0].orgmem_email!=''){%>
+						<%=db_data[0].orgmem_email %>
+					<%}%>
+				</td>
+			</tr>
+			
+			<tr>
+				<th>생산품목</th>
+				<td>
+					<%if(db_data[0].link2 !=null && db_data[0].link2!='null' && db_data[0].link2!=''){%>
+						<%=db_data[0].link2 %>
+					<%}%>
+				</td>
+			</tr
+			><tr>
+				<th>비고</th>
+				<td>
+					<%if(db_data[0].link1 !=null && db_data[0].link1!='null' && db_data[0].link1!=''){%>
+						<%=db_data[0].link1 %>
+					<%}%>
+				</td>
+			</tr>
+			
+			<tr>
+				<th>입회일</th>
+				<td>
+					<%if(db_data[0].orgmem_birth_month !=null && db_data[0].orgmem_birth_month!='null' && db_data[0].orgmem_birth_month!=''){%>
+						<%=db_data[0].orgmem_birth_month %>
+					<%}%>
+				</td>
+			</tr>
+			
+						
+			<tr>
+				<th>수정인</th>
+				<td>
+					<%if(db_data[0].create_id !=null && db_data[0].create_id!='null' && db_data[0].create_id!='' && db_data[0].create_id!='undefined'){%>
+						<%=db_data[0].create_id %>
+					<%}%>
+				</td>
+			</tr>
+			
+			<tr>
+				<th>수정날짜</th>
+				<td>
+					<%if(db_data[0].c_date !=null && db_data[0].c_date!='null' && db_data[0].c_date!='' && db_data[0].c_date!='undefined'){%>
+						<%=db_data[0].c_date %>
+					<%}%>
+				</td>
+			</tr>
+
+		</table>
+
+		<p class="btn">
+			<% if(db_data[0].org_grant == modivision || modivision == '0000') { %>
+			<button class="btn_big_blue hand" onclick="location.href='orgm_modify?mode=modify&number=<%=db_data[0].orgmem_no %>'">수정</button>
+			<%} else{%>
+									
+			<%}%>
+			<button class="btn_big_black hand" onclick="window.close();">취소</button>
+		</p>
+	</div>

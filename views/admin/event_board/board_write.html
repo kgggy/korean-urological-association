@@ -1,0 +1,358 @@
+<script type="text/javascript">
+$(document).ready(function(){
+
+	hour_sel();
+
+	$("#btn").click(function() {
+		var brdTitle = $("#brdTitle").val();
+		var brdContent = $("#brdContent").val();
+		
+		if (brdTitle == "") {
+			alert("제목을 입력하세요.");
+			$("#brdTitle").focus();
+			return false;
+		}
+		
+		if($('input[name="brdPushYn"]').is(':checked')) { // push가 체크되면
+			$('input[name="brdPushYn_result"]').val("Y");
+		} else {
+			$('input[name="brdPushYn_result"]').val("N");
+		}
+		
+		if (brdContent == "") {
+			alert("내용을 입력하세요.");
+			$("#brdContent").focus();
+			return false;
+		}
+		$("#boardwrite").attr("action","event_board_save");
+		$("#boardwrite").submit();
+	});
+
+	
+	
+});
+
+function file_del(no, name) {
+	if(confirm("실제 파일이 삭제됩니다 \n정말 삭제하시겠습니까?")){
+		$('#file_no').val(no);
+		$('#file_name').val(name);
+		$("#boardwrite").attr("action", "event_board_file_del");
+		$("#boardwrite").submit();
+	}
+}
+
+function hour_sel(){
+	var htmls = [];
+	var val = "";
+
+	for(var i = 0; i < 24; i++)	 {
+		if(i < 10 ) {
+			val = "0" + i;
+		}else {
+			val = i;
+		}
+		htmls[i] = "<option value = "+val+">"+val+"</option>";
+	}	
+	$("#event_hour").append(htmls.join(""));
+}
+
+</script>
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>		
+<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=2645652d4e8cd1be1b5db6da98d8ce0a&libraries=services"></script>
+	<h2><span class="float_l">행사관리</span><img src="../../../images/admin/btn_close.gif" alt="" class="float_r hand" onclick="window.close();"/></h2>
+	<div class="content">
+		<form action="" id="boardwrite" method="post" enctype="multipart/form-data" autocomplete="off">
+			<input type="hidden" name="file_no" value="" id="file_no"/>
+			<input type="hidden" name="file_name" value="" id="file_name"/>
+			<% if(data.length > 0) {%>
+				<input type="hidden" name="mode" value="modify"/> 
+				<input type="hidden" id="number" name="number" value="<%=data[0].board_no %>"/>
+				<input type="hidden" id="file_del" name="file_del" value=""/>
+			<% }else{ %>
+				<input type="hidden" name="mode" value="write"/>
+			<% } %>
+			<table>
+				<colgroup>
+					<col width="18%"/>
+					<col width="32%"/>
+					<col width="18%"/>
+					<col width="32%"/>
+				</colgroup>
+				<tr>
+					<th>행사명</th>
+					<% if(data.length > 0) {%>
+						<td colspan="3"><input type="text" id="brdTitle" name="brdTitle" value="<%=data[0].board_title %>" style="ime-mode:active;"/></td>
+					<% }else{ %>
+						<td colspan="3"><input type="text" id="brdTitle" name="brdTitle" style="ime-mode:active;"/></td>
+					<% } %>
+				</tr>
+				<% if(data.length == 0) {%>
+				<tr>
+					<th>PUSH알림</th>
+					<td colspan="3">
+						<input type="checkbox" name="brdPushYn" value="Y" />
+						<input type="hidden" name="brdPushYn_result"/>
+					</td>
+				</tr>				
+				<% }%>
+				<tr>
+					<th>우선순위</th>
+					<% if(data.length > 0) {%>
+						<td colspan="3"><input type="text" id="sort" name="sort" value="<%=data[0].sort %>" style="width:50px;" /></td>
+					<% }else{ %>
+						<td colspan="3"><input type="text" id="sort" name="sort" style="width:50px;" /></td>
+					<% } %>					
+				</tr>	
+				<tr>
+					<th>접수기간</th>
+					<% if(data.length > 0) {%>
+						<td colspan="3">
+							<input type="text" id="datepicker" name="boardStartdate" value="<%=data[0].board_startdate %>" style="width:80px;height: 25px;" /> ~
+							<input type="text" id="datepicker2" name="boardEnddate" value="<%=data[0].board_enddate %>" style="width:80px;height: 25px;" />
+						</td>
+					<% }else{ %>
+						<td colspan="3">
+							<input type="text" id="datepicker" name="boardStartdate" style="width:80px;height: 25px;margin-bottom: 5px; margin-top: 5px;" /> ~   
+							<input type="text" id="datepicker2" name="boardEnddate" style="width:80px;height: 25px;margin-bottom: 5px; margin-top: 5px;" />
+						</td>
+					<% } %>
+				</tr>
+				<tr>
+					<th>행사일</th>
+					<% if(data.length > 0) {%>
+						<td colspan="3">
+							<input type="text" id="boardEventsdate" name="boardEventsdate" value="<%=data[0].board_eventsdate %>" style="width:80px;height: 25px;" /> 
+							<input type="text" id="boardEventstime" name="boardEventstime" value="<%=data[0].board_eventstime %>" style="width:70px;height: 25px;" />부터 &nbsp;&nbsp;&nbsp;
+							<input type="text" id="boardEventedate" name="boardEventedate" value="<%=data[0].board_eventedate %>" style="width:80px;height: 25px;" /> 
+							<input type="text" id="boardEventetime" name="boardEventetime" value="<%=data[0].board_eventetime %>" style="width:70px;height: 25px;" />까지
+						</td>
+					<% }else{ %>
+						<td colspan="3">
+							<input type="text" id="boardEventsdate" name="boardEventsdate" style="width:80px;height: 25px;" /> 
+							<input type="text" id="boardEventstime" name="boardEventstime" style="width:70px;height: 25px;" />부터 &nbsp;&nbsp;&nbsp;
+							<input type="text" id="boardEventedate" name="boardEventedate" style="width:80px;height: 25px;" /> 
+							<input type="text" id="boardEventetime" name="boardEventetime" style="width:70px;height: 25px;" />까지							
+						</td>
+					<% } %>					
+					</tr>									
+				<tr>
+					<th>첨부파일</th>
+					<% if(data.length > 0) { %>
+					<td name="file_name" colspan="3">
+					<% 	for(var i = 0; i < data_file.length; i++) { %>
+						<li>
+							<%=data_file[i].file_name %>
+							<a href="#" onclick="javascript:file_del('<%=data_file[i].file_no %>','<%=data_file[i].file_dtname %>');">
+								<img src="../../../images/admin/icon_delete.gif" alt="삭제" />
+							</a>
+						</li>
+					<% 	} %>
+					<%  if(data_file.length < 3) {
+							for(var i = data_file.length; i < 3; i++) { %>
+							<li><input type="file" id="brdFileImg[<%=i%>]" name="brdFileImg[<%=i%>]" /></li>
+						<% 	} %>
+						</td>
+					<%	} %>
+					<% }else{ %>
+						<td name="file_name" colspan="3">
+							<li><input type="file" id="brdFileImg[0]" name="brdFileImg[0]" /></li>
+							<li><input type="file" id="brdFileImg[1]" name="brdFileImg[1]" /></li>
+							<li><input type="file" id="brdFileImg[2]" name="brdFileImg[2]" /></li>
+						</td>
+					<% } %> 
+				</tr>
+				<tr>
+						<th>행사장소</th>
+						<td colspan="3">
+						<% if(data.length > 0) {%>							
+							<input type="text" id="boardAddress" name="boardAddress" value="<%=data[0].board_address %>" style="width:500px;height: 28px;margin-top: -5px;" readonly/>															
+							<input type="hidden" name="boardXgps" id="boardXgps" value="<%=data[0].board_xgps %>" />
+							<input type="hidden" name="boardYgps" id="boardYgps" value="<%=data[0].board_ygps %>" />
+						<% }else{ %>
+							<input type="text" id="boardAddress" name="boardAddress" style="width:500px;height: 28px;margin-top: -5px;" readonly/>
+							<input type="hidden" name="boardXgps" id="boardXgps" value="" />
+							<input type="hidden" name="boardYgps" id="boardYgps" value="" />
+						<% } %>		
+						<button type="button" name="" id="" style="height: 30px; margin-top: 5px;" onClick="javascript:address_search();">주소검색</button>
+						</td>
+				</tr>
+				<tr>
+					<th>행사 상세장소 </th>
+					<td colspan="3">
+					<% if(data.length > 0) {%>							
+						<input type="text" id="boardAddress_detail" name="boardAddress_detail" value="<%=data[0].board_address_detail %>" style="width:500px;height: 28px;margin-top: -5px;" />																					
+					<% }else{ %>
+						<input type="text" id="boardAddress_detail" name="boardAddress_detail" style="width:500px;height: 28px;margin-top: -5px;" />						
+					<% } %>							
+					</td>
+			</tr>
+				<tr>
+						<td colspan="4">
+							<div id="map" style="width:100%px;height:300px;margin-top:10px;display:none"></div>
+						</td>
+				</tr>
+				<tr>
+						<th>행사소개</th>
+					<% if(data.length > 0) {%>
+						<td colspan="3" class="align_c"><textarea style="height:150px;" id="brdContent" name="brdContent"><%=data[0].board_content %></textarea></td>
+					<% }else{ %>
+						<td colspan="3" class="align_c"><textarea style="height:120px;" id="brdContent" name="brdContent"></textarea></td>
+					<% } %>
+				</tr>
+			</table>
+		</form>
+		<p class="btn">
+			<button type="button" class="btn_big_blue hand" id="btn">등록</button>
+			<button type="button" class="btn_big_black hand" id="btn_bak" onclick="window.close();">취소</button>
+		</p>
+	</div>
+	<script>
+		var mode = tag_place("<%=mode%>");			
+		var board_eventsdate_code = "";
+		var board_eventedate_code = "";
+		
+		if(mode=="write") {
+			//document.getElementById('boardEventsdate').value = new Date().toISOString().slice(0, 16);
+			//document.getElementById('boardEventedate').value = new Date().toISOString().slice(0, 16);	
+		}
+		$(function() {
+			//input을 datepicker로 선언
+			$("#datepicker").datepicker({
+				dateFormat: 'yy-mm-dd', //Input Display Format 변경
+				prevText: '이전 달',
+				nextText: '다음 달',
+				monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+				monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+				dayNames: ['일','월','화','수','목','금','토'],
+				dayNamesShort: ['일','월','화','수','목','금','토'],
+				dayNamesMin: ['일','월','화','수','목','금','토'],
+				showMonthAfterYear: true,
+				changeMonth: true,
+				changeYear: true,
+				yearSuffix: '년'      
+			});
+			$("#datepicker2").datepicker({
+				dateFormat: 'yy-mm-dd', //Input Display Format 변경
+				prevText: '이전 달',
+				nextText: '다음 달',
+				monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+				monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+				dayNames: ['일','월','화','수','목','금','토'],
+				dayNamesShort: ['일','월','화','수','목','금','토'],
+				dayNamesMin: ['일','월','화','수','목','금','토'],
+				showMonthAfterYear: true,
+				changeMonth: true,
+				changeYear: true,
+				yearSuffix: '년'      
+			});
+			$("#boardEventsdate").datepicker({
+				dateFormat: 'yy-mm-dd', //Input Display Format 변경
+				prevText: '이전 달',
+				nextText: '다음 달',
+				monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+				monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+				dayNames: ['일','월','화','수','목','금','토'],
+				dayNamesShort: ['일','월','화','수','목','금','토'],
+				dayNamesMin: ['일','월','화','수','목','금','토'],
+				showMonthAfterYear: true,
+				changeMonth: true,
+				changeYear: true,
+				yearSuffix: '년'      
+			});
+			$("#boardEventedate").datepicker({
+				dateFormat: 'yy-mm-dd', //Input Display Format 변경
+				prevText: '이전 달',
+				nextText: '다음 달',
+				monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+				monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+				dayNames: ['일','월','화','수','목','금','토'],
+				dayNamesShort: ['일','월','화','수','목','금','토'],
+				dayNamesMin: ['일','월','화','수','목','금','토'],
+				showMonthAfterYear: true,
+				changeMonth: true,
+				changeYear: true,
+				yearSuffix: '년'      
+			});
+			$('#boardEventstime').timepicker({
+                step: 30,            //시간간격 : 5분
+				timeFormat: "H:i"    //시간:분 으로표시
+			});
+			$('#boardEventetime').timepicker({
+                step: 30,            //시간간격 : 5분
+				timeFormat: "H:i"    //시간:분 으로표시
+            });
+			
+			if(mode=="write") {
+				//초기값을 오늘 날짜로 설정
+				$('#datepicker').datepicker('setDate', 'today'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, -1M:한달후, -1Y:일년후)            
+				$('#datepicker2').datepicker('setDate', 'today'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, -1M:한달후, -1Y:일년후)    
+				$('#boardEventsdate').datepicker('setDate', 'today'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, -1M:한달후, -1Y:일년후)            
+				$('#boardEventedate').datepicker('setDate', 'today'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, -1M:한달후, -1Y:일년후)            
+				$('#boardEventstime').timepicker('setTime', new Date());
+				$('#boardEventetime').timepicker('setTime', new Date());
+			}
+			
+		});
+		</script>
+		
+		<script>
+			var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+				mapOption = {
+					center: new daum.maps.LatLng(37.537187, 127.005476), // 지도의 중심좌표
+					level: 5 // 지도의 확대 레벨
+				};
+		
+			//지도를 미리 생성
+			var map = new daum.maps.Map(mapContainer, mapOption);
+			//주소-좌표 변환 객체를 생성			
+			var geocoder = new kakao.maps.services.Geocoder();
+			
+			
+			//마커를 미리 생성
+			var marker = new daum.maps.Marker({
+				position: new daum.maps.LatLng(37.537187, 127.005476),
+				map: map
+			});
+
+			var xgps = document.getElementById("boardXgps").value;
+			var ygps = document.getElementById("boardYgps").value;
+			
+			if(xgps!=undefined && xgps !="") {
+				/*
+				//alert(xgps+", "+ygps);
+				// 해당 주소에 대한 좌표를 받아서
+				var coords = new daum.maps.LatLng(xgps, ygps);
+				// 지도를 보여준다.
+				mapContainer.style.display = "block";
+				map.relayout();
+				// 지도 중심을 변경한다.
+				map.setCenter(coords);
+				// 마커를 결과값으로 받은 위치로 옮긴다.				
+				marker.setPosition(coords);				
+				*/
+			}
+		
+		
+			function address_search() {
+				new daum.Postcode({
+					oncomplete: function(data) {
+						var addr = data.address; // 최종 주소 변수						
+		
+						// 주소 정보를 해당 필드에 넣는다.
+						document.getElementById("boardAddress").value = addr;						
+						// 주소로 상세 정보를 검색
+						geocoder.addressSearch(addr, function(results, status) {
+														
+							// 정상적으로 검색이 완료됐으면
+							if (status === kakao.maps.services.Status.OK) {
+		
+								var result = results[0]; //첫번째 결과의 값을 활용								
+								document.getElementById("boardXgps").value = result.y;
+								document.getElementById("boardYgps").value = result.x;
+								
+							}
+						});
+					}
+				}).open();
+			}
+		</script>
