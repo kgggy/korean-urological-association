@@ -5,7 +5,8 @@ const conn = { // mysql 접속 설정
     port: '3306',
     user: 'resoft',
     password: 'Qwert1234!',
-    database: 'carbon'
+    database: 'carbon',
+    multipleStatements: true
 };
 
 // const connt = async () => {

@@ -102,11 +102,10 @@ router.get('/one/:writId', async (req, res) => {
         // const writId = req.params.writId;
         const param = req.params.writId;
         const sql1 = "update post set writHit= writHit + 1 where writId = ?";
-        const sql2 = "select p.*\
-                       from community c\
-                       join post p\
-                         on c.boardId = p.boardId\
-                      where p.writId = ?";
+        const sql2 = "select p.*, f.*\
+                        from post p\
+                   left join file f on f.writId = p.writId\
+                       where p.writId = ?";
         let notice;
         connection.query(sql1, param, (err, row) => {
             if (err) {
@@ -152,7 +151,7 @@ router.post('/', upload.array('file'), async (req, res, next) => {
                     if (err) {
                         throw err;
                     } else {
-                      return;
+                        return;
                     }
                 });
 
@@ -169,7 +168,7 @@ router.post('/', upload.array('file'), async (req, res, next) => {
 //파일 다운로드 눌렀을 때 작동
 // router.get('/download/uploads/images/:name', function (req, res) {
 //     var filename = req.params.name;
-    
+
 //     var file = __dirname + '/../uploads/images/' + filename
 //     console.log(__dirname)
 //     console.log(req.path)
@@ -198,25 +197,41 @@ router.get('/download/:writId/:fileNo', async (req, res) => {
         res.status(401).send(error.message);
     }
 });
-    
 
-//글 수정
-router.patch('/:writId', async (req, res) => {
+
+//게시글 수정
+router.post('/:writId', upload.array('file'), async (req, res) => {
+    const paths = req.files.map(data => data.path);
+    const orgName = req.files.map(data => data.originalname);
     try {
-        const param = [req.body.writTitle, req.body.writContent, req.params.writId];
-        const sql = "update post set writTitle = ?, writContent = ?, writUpdDate = sysdate() where writId = ?";
-        connection.query(sql, param, (err, row) => {
+        const sql1 = "update post set writTitle = ?, writContent = ?, writUpdDate = sysdate() where writId = ?;";
+        const sql2 = "delete from file where writId = ?;"
+        connection.query(sql1 + sql2, [req.body.writTitle, req.body.writContent, req.params.writId, req.params.writId], (err, row) => {
             if (err) {
                 console.error(err);
                 res.json({
                     msg: "query error"
                 });
             }
-            res.json({
-                msg: "board update success"
-            })
+            for (let i = 0; i < paths.length; i++) {
+                const sql3 = "insert into file(writId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
+                const param3 = [req.params.writId, paths[i], i, orgName[i]];
+                connection.query(sql3, param3, (err) => {
+                    if (err) {
+                        throw err;
+                    } else {
+                        return;
+                    }
+                });
+
+            };
+            return;
+
         });
-    } catch(error) {
+        return res.json({
+            msg: "success"
+        });
+    } catch (error) {
         res.send(error.message);
     }
 });
