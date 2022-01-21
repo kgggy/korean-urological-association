@@ -9,6 +9,13 @@ var url = require('url');
 var connection = mysql.createConnection(connt);
 connection.connect();
 
+//사용자가 작성한 글 전체 조회
+// router.get('/all', async (req, res) => {
+//     try {
+//         const sql = ""
+//     }
+// })
+
 //사용자의 탄소실천 글 전체 조회
 router.get('/certi', async (req, res) => {
     try {
