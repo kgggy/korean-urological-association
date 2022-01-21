@@ -10,27 +10,29 @@ var connection = mysql.createConnection(connt);
 connection.connect();
 
 //사용자 전체조회
-router.get('/', async (req, res) => {
-    try {
-      const sql = "select * from user";   
-      let user;
-      models.user.findAll().then(console.log);
-      connection.query(sql, function (err, results, fields) {
-        if (err) {
-          console.log(err);
-        }
-        user = results;
-        res.status(200).json(user);
-        // console.log(user);
+router.get('/memberList', async (req, res) => {
+  try {
+    const sql = "select * from user";
+    models.user.findAll().then(console.log);
+    connection.query(sql, function (err, results, fields) {
+      if (err) {
+        console.log(err);
+      }
+      res.render('/memberList', {
+        'result': results
       });
-      console.log(user)
-  
-    } catch (error) {
-  
-      res.status(401).send(error.message);
-    }
-  
-  });
+      // console.log(user);
+    });
+    console.log(user)
+
+  } catch (error) {
+    res.status(401).send(error.message);
+  }
+});
+// router.get('/', (req, res) => {
+//   var data = { name: 'john', age: 20 };
+//   res.render('/ejs/memberList', { data: data });
+// })
 
 //사용자 상세조회
 

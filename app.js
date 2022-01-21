@@ -39,14 +39,15 @@ app.set('views', path.join(__dirname, '/views/ejs'));
 
 
 // admin html
-const ejs = "/views/ejs/"
-const admin = "/admin/web/"
+const ejs = "/views/ejs"
+const admin = "/admin"
 
-// app.get(admin, (req, res) => { res.sendFile(__dirname + "/views/index.html"); })
+app.get(admin, (req, res) => { res.sendFile(__dirname + "/views/index.html"); })
 // app.post(admin, (req, res) => { res.sendFile(__dirname + "/views/index.html"); })
 // app.get(admin + "orgm_list", (req, res) => { res.render(__dirname + ejs + "orgm_viewForm.ejs"); }) // 랜더링 필요하기 때문에 sendfile 대신 render 써줘야함
-// app.post(admin + "orgm_list", (req, res) => { res.render(__dirname + ejs + "orgm_viewForm.ejs"); })
-app.get(admin, (req, res) => { res.render(__dirname + ejs + "index.ejs"); });
+app.get(admin + "/memberList", (req, res) => { res.render(__dirname + ejs + "/memberList.ejs"); })
+app.post(admin + "/memberList", (req, res) => { res.render(__dirname + ejs + "/memberList.ejs"); })
+// app.get(admin, (req, res) => { res.render(__dirname + ejs + "index.ejs"); });
 // app.get("/admin/orgm_list", (req, res) => { res.sendFile(__dirname + admin + "orgmember_mngt/orgm_listForm.html"); })
 //router.get('/admin/web', (req, res, next) => { res.render(__dirname + admin + "index.ejs");})
 
