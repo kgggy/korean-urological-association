@@ -193,27 +193,6 @@ router.delete('/:certiContentId', async (req, res) => {
     }
 });
 
-//글 수정
-router.patch('/:writId', async (req, res) => {
-    try {
-        const param = [req.body.writTitle, req.body.writContent, req.params.writId];
-        const sql = "update post set writTitle = ?, writContent = ?, writUpdDate = sysdate() where writId = ?";
-        connection.query(sql, param, (err, row) => {
-            if (err) {
-                console.error(err);
-                response.json({
-                    msg: "query error"
-                });
-            }
-            res.json({
-                msg: "board update success"
-            })
-        });
-    } catch(error) {
-        res.send(error.message);
-    }
-});
-
 //파일 다운로드
 router.get('/download/:certiContentId/:fileNo', async (req, res) => {
     try {
