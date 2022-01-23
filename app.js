@@ -4,12 +4,14 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const expressLayouts = require('express-ejs-layouts');
+const ejs = require('ejs');
 //require("dotenv").config();
+
+const app = express(); //express 패키지 호출, app변수 객체 생성. => app객체에 기능 하나씩 연결.
 
 const routes = require('./routes');
 const router = require('./routes/api/login');
-
-const app = express(); //express 패키지 호출, app변수 객체 생성. => app객체에 기능 하나씩 연결.
+const adminRoutes = require('./routes/admin_api');
 
 // view engine setup
 // app.set('views', path.join(__dirname, 'views'));
@@ -27,32 +29,28 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(expressLayouts);
 
 
-// 화면 engine을 ejs로 설정 pug, ejs (x)
+// 화면 engine을 ejs로 설
 app.set('layout', 'layout');
 app.set("layout extractScripts", true);
 app.set('view engine', 'ejs');
-app.engine('ejs', require('ejs').__express);
+// app.engine('ejs', require('ejs').__express);
 // app.engine('html', require('ejs').renderFile);
 // app.set('views', __dirname + '/views/ejs');   //view 경로 설정
 app.set('views', path.join(__dirname, '/views/ejs'));
 
 
-
-// admin html
-const ejs = "/views/ejs"
-const admin = "/admin"
-
-app.get(admin, (req, res) => { res.sendFile(__dirname + "/views/index.html"); })
+// app.get(admin, (req, res) => { res.sendFile(__dirname + "/views/index.html"); })
 // app.post(admin, (req, res) => { res.sendFile(__dirname + "/views/index.html"); })
 // app.get(admin + "orgm_list", (req, res) => { res.render(__dirname + ejs + "orgm_viewForm.ejs"); }) // 랜더링 필요하기 때문에 sendfile 대신 render 써줘야함
-app.get(admin + "/memberList", (req, res) => { res.render(__dirname + ejs + "/memberList.ejs"); })
-app.post(admin + "/memberList", (req, res) => { res.render(__dirname + ejs + "/memberList.ejs"); })
+// app.get(admin + "/memberList", (req, res) => { res.render(__dirname + ejs + "/memberList.ejs"); })
+// app.post(admin + "/memberList", (req, res) => { res.render(__dirname + ejs + "/memberList.ejs"); })
 // app.get(admin, (req, res) => { res.render(__dirname + ejs + "index.ejs"); });
 // app.get("/admin/orgm_list", (req, res) => { res.sendFile(__dirname + admin + "orgmember_mngt/orgm_listForm.html"); })
 //router.get('/admin/web', (req, res, next) => { res.render(__dirname + admin + "index.ejs");})
 
 
 app.use('/', routes);
+app.use('/admin',adminRoutes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -10,20 +10,20 @@ var connection = mysql.createConnection(connt);
 connection.connect();
 
 //사용자 전체조회
-router.get('/memberList', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
+
     const sql = "select * from user";
-    models.user.findAll().then(console.log);
     connection.query(sql, function (err, results, fields) {
       if (err) {
         console.log(err);
       }
-      res.render('/memberList', {
-        'result': results
+      
+      res.render(req.app.get('views') +'/memberList', {
+        'results' : results
       });
       // console.log(user);
     });
-    console.log(user)
 
   } catch (error) {
     res.status(401).send(error.message);
