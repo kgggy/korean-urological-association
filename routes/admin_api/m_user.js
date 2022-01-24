@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
       res.render(route, {
         'results' : results
       });
-      // console.log(user);
+      console.log(results);
     });
 
   } catch (error) {
@@ -32,7 +32,7 @@ router.get('/', async (req, res) => {
 });
 
 //사용자 상세조회
-router.get('/', async (req, res) => {
+router.get('/selectOne', async (req, res) => {
   try {
     const param = req.query.uid;
     const sql = "select * from user where uid = ?";
@@ -45,7 +45,7 @@ router.get('/', async (req, res) => {
       res.render(route, {
         'result' : result
       });
-      // console.log(user);
+      console.log(result);
     });
 
   } catch (error) {
@@ -62,6 +62,7 @@ router.get('/', async (req, res) => {
 // })
 
 //사용자 삭제
+
 
 //사용자 권한 변경
 

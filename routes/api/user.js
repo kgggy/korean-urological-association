@@ -163,5 +163,24 @@ router.delete('/:uid', (req, res) => {
   });
 });
 
+//다른회원정보 상세조회
+router.get('/all/:uid', async (req, res) => {
+  try {
+    const param = req.params.uid;
+    let user;
+    connection.query('select userNick, userImg from user where uid = ?', param, (err, results, fields) => {
+      if (err) {
+        console.log(err);
+      }
+      user = results;
+      res.status(200).json(user);
+    });
+    console.log(user)
+  } catch (error) {
+    res.status(401).send(error.message);
+  }
+});
+
+
 
 module.exports = router;
