@@ -70,10 +70,6 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(1),
       allowNull: false,
       defaultValue: "0"
-    },
-    usercol: {
-      type: DataTypes.STRING(45),
-      allowNull: true
     }
   }, {
     sequelize,
