@@ -24,7 +24,7 @@
 					<% for(var i = 0; i < results.length; i++){ %>
 						<tr>
 							<td><input type="checkbox" name="ROW_CHK" class="ROW_CHK" IDX="<%=results[i].uid %>" /></td>
-                            <td class="hand" onclick="MM_openBrWindow('orgm_view', '', 'width=640, height=700, scrollbars=1', '<%=results[i].uid%>', '')"><%=results[i].uid%></td>
+                            <td class="hand" onclick="window.open('orgm_viewForm','window_name','width=430,height=500,location=no,status=no,scrollbars=yes');"><%=results[i].uid%></td>
 							<td>
 								<%if(results[i].userEmail !=null && results[i].userEmail!='null' && results[i].userEmail!=''){%>
 									<%=results[i].userEmail%>

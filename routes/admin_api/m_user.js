@@ -40,10 +40,11 @@ router.get('/selectOne', async (req, res) => {
       if (err) {
         console.log(err);
       }
-      let route = req.app.get('views') +'/m_user';
+      let route = req.app.get('views') +'/orgm_viewForm';
       console.log(route);
       res.render(route, {
-        'result' : result
+        'result' : result,
+        layout: false
       });
       console.log(result);
     });
