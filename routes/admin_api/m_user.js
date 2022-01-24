@@ -18,8 +18,9 @@ router.get('/', async (req, res) => {
       if (err) {
         console.log(err);
       }
-      
-      res.render(req.app.get('views') +'/memberList', {
+      let route = req.app.get('views') +'/m_user';
+      console.log(route);
+      res.render(route, {
         'results' : results
       });
       // console.log(user);
@@ -29,12 +30,29 @@ router.get('/', async (req, res) => {
     res.status(401).send(error.message);
   }
 });
-// router.get('/', (req, res) => {
-//   var data = { name: 'john', age: 20 };
-//   res.render('/ejs/memberList', { data: data });
-// })
 
 //사용자 상세조회
+router.get('/', async (req, res) => {
+  try {
+    const param = req.query.uid;
+    const sql = "select * from user where uid = ?";
+    connection.query(sql, param, function (err, result, fields) {
+      if (err) {
+        console.log(err);
+      }
+      let route = req.app.get('views') +'/m_user';
+      console.log(route);
+      res.render(route, {
+        'result' : result
+      });
+      // console.log(user);
+    });
+
+  } catch (error) {
+    res.status(401).send(error.message);
+  }
+});
+
 
 //사용자 정보 수정
 // router.patch('/' async (req, res) => {

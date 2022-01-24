@@ -10,7 +10,6 @@ const ejs = require('ejs');
 const app = express(); //express 패키지 호출, app변수 객체 생성. => app객체에 기능 하나씩 연결.
 
 const routes = require('./routes');
-const router = require('./routes/api/login');
 const adminRoutes = require('./routes/admin_api');
 
 // view engine setup
@@ -29,7 +28,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(expressLayouts);
 
 
-// 화면 engine을 ejs로 설
+// 화면 engine을 ejs로 설정
 app.set('layout', 'layout');
 app.set("layout extractScripts", true);
 app.set('view engine', 'ejs');
