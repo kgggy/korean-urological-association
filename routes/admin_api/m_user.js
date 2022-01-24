@@ -43,7 +43,7 @@ router.get('/selectOne', async (req, res) => {
       let route = req.app.get('views') +'/orgm_viewForm';
       console.log(route);
       res.render(route, {
-        'result' : result,
+        'result': result,
         layout: false
       });
       console.log(result);
@@ -123,7 +123,7 @@ router.get('/userDelete', (req, res) => {
     if (err) {
       console.log(err)
     }
-    return res.redirect('/admin/m_user');
+    return res.redirect("/");
   });
 });
 

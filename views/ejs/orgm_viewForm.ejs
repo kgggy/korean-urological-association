@@ -1,21 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/css/default.css"/>
+		<link rel="stylesheet" type="text/css" href="/stylesheets/css/basic.css"/>
+		<link rel="stylesheet" type="text/css" href="/stylesheets/css/layout.css"/>
+		<!--<link href="/js/jquery/css/jquery-ui-1.8.2.custom.css" rel="stylesheet" type="text/css"/>-->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css" />	
+		<script type="text/javascript" src="/stylesheets/jquery/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="/stylesheets/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+		<script type="text/javascript" src="/stylesheets/jquery/jquery.validate.js"></script>
+		<script type="text/javascript" src="/stylesheets/jquery/jquery.form.js"></script>
+        <script src="/stylesheets/js/common.js"></script>
+</head>
+
 <script type="text/javascript">
 	$(document).ready(function(){
 	});
 </script>
-	<h2><span class="float_l">회원관리</span><img onclick="window.close();" src="../../../images/admin/btn_close.gif" alt="" class="float_r hand" /></h2>
- 	<div class="content"> 
+<body style="background: #fff;">
+		<div class="popup">
+		<h2><span class="float_l">회원관리</span><img onclick="window.close();" src="../../images/btn_close.gif" alt="" class="float_r hand" /></h2>
 		<table class="mb_10">
 			<tr>
-				<!-- <% if(db_data.length > 0 && db_data[0].orgmem_img != null && db_data[0].orgmem_img != '') {%>
-					<th><img src="../../../file/member/<%=db_data[0].orgmem_img %>" alt="사진" width="117px"/></th>
+				<% if(result.length > 0 && result[0].userImg != null && result[0].userImg != '') {%>
+					<th><img src="<%= result[0].userImg %>" alt="사진" width="117px"/></th>
 				<% }else{ %>
-					<th><img src="../../../../images/nomal_img.jpg" alt="" width="117px"/></th>
-				<% } %> -->
+					<th><img src="../../images/normal_img.jpg" alt="" width="117px"/></th>
+				<% } %>
 				
 				<td colspan="4">
 					<dl>
 						<dt>
-							<!-- <strong><%=db_data[0].orgmem_name %></strong>  -->
+							
 						</dt>
 						<dd>
 						</dd>
@@ -24,6 +44,7 @@
 			</tr>
 		</table>
 
+ 	<div class="content">
 		<table> 
 			<tr>
 				<th>일련번호</th>
@@ -126,11 +147,13 @@
 		</table>
 
 		<p class="btn">
-			<!-- <% if(db_data[0].org_grant == modivision || modivision == '0000') { %> -->
-			<!-- <button class="btn_big_blue hand" onclick="location.href='orgm_modify?mode=modify&number=<%=db_data[0].orgmem_no %>'">수정</button> -->
-			<!-- <%} else{%> -->
-				<button class="btn_big_blue hand">수정</button>				
-			<!-- <%}%> -->
+			<form action="userDelete" type="get">
+				<input type="hidden" name="uid" value="<%=result[0].uid%>">
+				<button type="submit">수정</button>
+				<button type="submit">삭제</button>
+				<button>등록</button>
+			</form>	
 			<button class="btn_big_black hand" onclick="window.close();">취소</button>
 		</p>
+	</div>
 	</div>
