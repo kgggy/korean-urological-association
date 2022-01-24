@@ -36,9 +36,10 @@
                                 <%}%>
 							</td>
                             <td>
-                                <form action="userDelete">
-                                    <button type="submit" value="<%=results[i].uid%>">삭제</button>
-                                    <button name="">삭제</button>
+                                <form action="m_user/userDelete" type="get">
+                                    <input type="hidden" name="uid" value="<%=results[i].uid%>">
+                                    <button type="submit">수정</button>
+                                    <button type="submit">삭제</button>
                                     <button>등록</button>
                                 </form>
                             </td>
