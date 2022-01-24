@@ -1,6 +1,54 @@
 
-<div class="container">
-    <% for(var i = 0; i < results.length; i++) {%>
-        <h1>my name is <%= results[i].userEmail %></h1>
-    <% } %>
-</div>
+
+	<div class="board_list">
+		<table>
+			<colgroup>
+				<col width="10%" />
+				<col width="20%" />
+				<col width="30%" />
+				<col width="20%" />
+				<col width="20%" />
+			</colgroup>
+
+			<thead>
+				<tr>
+					<th><input type="checkbox" name="ROW_CHK_ALL" id="ROW_CHK_ALL" /></th>
+					<th>번호</th>
+					<th>이메일</th>
+					<th>닉네임</th>
+                    <th>비고</th>
+				</tr>
+			</thead>
+        <tbody>
+				<% if(results.length > 0) { %>
+					<% for(var i = 0; i < results.length; i++){ %>
+						<tr>
+							<td><input type="checkbox" name="ROW_CHK" class="ROW_CHK" IDX="<%=results[i].uid %>" /></td>
+                            <td class="hand" onclick="MM_openBrWindow('orgm_view', '', 'width=640, height=700, scrollbars=1', '<%=results[i].uid%>', '')"><%=results[i].uid%></td>
+							<td>
+								<%if(results[i].userEmail !=null && results[i].userEmail!='null' && results[i].userEmail!=''){%>
+									<%=results[i].userEmail%>
+								<%}%>
+							</td>
+							<td>
+                                <%if(results[i].userNick !=null && results[i].userEmail!='null' && results[i].userEmail!=''){%>
+								    <%= results[i].userNick %>
+                                <%}%>
+							</td>
+                            <td>
+                                <form action="userDelete">
+                                    <button type="submit" value="<%=results[i].uid%>">삭제</button>
+                                    <button name="">삭제</button>
+                                    <button>등록</button>
+                                </form>
+                            </td>
+						</tr>
+					<% } %>
+				<% } else {%>
+					<tr>
+						<td colspan="10">등록된 회원이 없습니다.</td>
+					</tr>
+				<% } %>
+			</tbody>
+		</table>
+	</div>
