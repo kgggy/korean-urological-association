@@ -141,7 +141,7 @@ router.post('/', upload.array('file'), async function (req, res) {
 
     const paths = req.files.map(data => data.path);
     const orgName = req.files.map(data => data.originalname);
-    //console.log(paths);
+    console.log(paths);
     try {
         const contentId = uuid();
         const param1 = [contentId, req.query.certiTitleId, req.query.uid];
@@ -164,9 +164,7 @@ router.post('/', upload.array('file'), async function (req, res) {
 
             };
         });
-        return res.json({
-            msg: "success"
-        });
+        return res.json(paths);
     } catch (error) {
         res.send(error.message);
     }
