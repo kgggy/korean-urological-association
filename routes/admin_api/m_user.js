@@ -114,15 +114,15 @@ router.patch('/:uid', (req, res) => {
 });
 
 //사용자 삭제
-router.get('/userDelete/:uid', (req, res) => {
-  const param = req.params.uid;
+router.get('/userDelete', (req, res) => {
+  const param = req.query.uid;
   // console.log(param);
   const sql = "delete from user where uid = ?";
   connection.query(sql, param, (err, row) => {
     if (err) {
       console.log(err)
     }
-    res.redirect('/m_user');
+    return res.redirect('/admin/m_user');
   });
 });
 
