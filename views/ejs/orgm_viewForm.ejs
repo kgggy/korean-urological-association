@@ -147,7 +147,7 @@
 		</table>
 
 		<p class="btn">
-			<form action="userDelete" type="get">
+			<form action="userDelete" type="get" onsubmit="alert('정말 삭제하시겠습니까?')";>
 				<input type="hidden" name="uid" value="<%=result[0].uid%>">
 				<button type="submit">수정</button>
 				<button type="submit">삭제</button>
