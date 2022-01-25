@@ -1,9 +1,11 @@
 var express = require('express');
 var router = express.Router();
 const mysql = require('mysql');
+const fs = require('fs');
 
 const connt = require("../../config/db")
 var url = require('url');
+const { type } = require('os');
 
 // DB 커넥션 생성
 var connection = mysql.createConnection(connt);
@@ -52,6 +54,17 @@ router.get('/selectOne', async (req, res) => {
   } catch (error) {
     res.status(401).send(error.message);
   }
+});
+
+//사용자 등록 페이지 이동
+router.get('/writeForm', async (req, res) => {
+  fs.readFile('views/ejs/orgm_writeForm.ejs', (err, data) => {
+    if(err) {
+      console.log(err);
+    } else {
+      res.end(data);
+    }
+  });
 });
 
 //사용자 등록
