@@ -9,7 +9,6 @@
     }
 </script>
 
-
 <div class="board_list">
     <table>
         <colgroup>
@@ -40,14 +39,16 @@
                     <%if(results[i].userEmail !=null && results[i].userEmail!='null' && results[i].userEmail!=''){%>
                     <%=results[i].userEmail%>
                     <%}%>
-							</td>
-							<td>
-                                <%if(results[i].userNick !=null && results[i].userEmail!='null' && results[i].userEmail!=''){%>
+				</td>
+				<td>
+                    <%if(results[i].userNick !=null && results[i].userEmail!='null' && results[i].userEmail!=''){%>
                     <%= results[i].userNick %>
                     <%}%>
+
 							</td>
                 <td>
                   <button onclick="selectOne('/admin/m_user/selectOne', '', 'width=640, height=700, scrollbars=1', '<%=results[i].uid%>', '')">보기</button>
+
                 </td>
             </tr>
             <% } %>

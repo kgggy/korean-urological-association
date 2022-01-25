@@ -19,7 +19,7 @@ connection.connect();
 //사용자의 탄소실천 글 전체 조회
 router.get('/certi', async (req, res) => {
     try {
-        const sql = "select f.fileRoute\
+        const sql = "select f.fileRoute, c.certiContentId\
                        from certiContent c\
                   left join file f on f.certiContentId = c.certiContentId\
                   left join certification t on t.certiTitleId = c.certiTitleId\
@@ -44,10 +44,10 @@ router.get('/certi', async (req, res) => {
 //사용자의 레시피 글 전체 조회
 router.get('/recipe', async (req, res) => {
     try {
-        const sql = "select f.fileRoute\
+        const sql = "select f.fileRoute, p.writId\
                        from post p\
                   left join file f on f.writId = p.writId\
-                      where p.uid = 1 and p.boardId = ? and f.fileNo = 0\
+                      where p.uid = ? and p.boardId = ? and f.fileNo = 0\
                    order by p.writDate desc";
         const param = [req.query.uid, req.query.boardId];
         let certi;
