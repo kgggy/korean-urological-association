@@ -34,8 +34,7 @@
             <% for(var i = 0; i < results.length; i++){ %>
             <tr>
                 <td><input type="checkbox" name="ROW_CHK" class="ROW_CHK" IDX="<%=results[i].uid %>" /></td>
-                <td class="hand"
-                    onclick="selectOne('/admin/m_user/selectOne', '', 'width=640, height=700, scrollbars=1', '<%=results[i].uid%>', '')">
+                <td>
                     <%=results[i].uid%></td>
                 <td>
                     <%if(results[i].userEmail !=null && results[i].userEmail!='null' && results[i].userEmail!=''){%>
@@ -48,7 +47,7 @@
                     <%}%>
 							</td>
                 <td>
-                  <button>보기</button>
+                  <button onclick="selectOne('/admin/m_user/selectOne', '', 'width=640, height=700, scrollbars=1', '<%=results[i].uid%>', '')">보기</button>
                 </td>
             </tr>
             <% } %>
