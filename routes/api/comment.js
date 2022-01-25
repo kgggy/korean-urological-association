@@ -10,7 +10,7 @@ var connection = mysql.createConnection(connt);
 connection.connect();
 
 //탄소실천, 챌린지 게시글 별 댓글 전체조회
-router.get('/:certiContentId', async (req, res) => {
+router.get('/certi/:certiContentId', async (req, res) => {
     try {
         const param = [req.params.certiContentId];
         const sql = "select * from comment where certiContentId = ?";
@@ -30,9 +30,9 @@ router.get('/:certiContentId', async (req, res) => {
 });
 
 //레시피 게시글 별 댓글 전체조회
-router.get('/:writId', async (req, res) => {
+router.get('/writ/:writId', async (req, res) => {
     try {
-        const param = [req.params.certiContentId];
+        const param = [req.params.writId];
         const sql = "select * from comment where writId = ?";
         let comment;
         connection.query(sql, param, (err, results) => {
@@ -50,7 +50,7 @@ router.get('/:writId', async (req, res) => {
 });
 
 //탄소실천, 챌린지 게시글의 댓글 달기
-router.post('/', async (req, res) => {
+router.post('/certi', async (req, res) => {
 	    try {
         const param = [req.query.certiContentId, req.query.uid, req.body.cmtContent];
         const sql = "insert into comment(certiContentId, uid, cmtContent) values(?, ?, ?)";
@@ -71,7 +71,7 @@ router.post('/', async (req, res) => {
 });
 
 //레시피 게시글의 댓글 달기
-router.post('/', async (req, res) => {
+router.post('/writ', async (req, res) => {
     try {
     const param = [req.query.writId, req.query.uid, req.body.cmtContent];
     const sql = "insert into comment(writId, uid, cmtContent) values(?, ?, ?)";

@@ -57,7 +57,7 @@ router.get('/selectOne', async (req, res) => {
 //사용자 등록
 router.post('/', async (req, res) => {
   const { userEmail, userNick } = req.body;
-  let route = req.app.get('views') +'/m_user';
+  let route = req.app.get('views') +'/m_userOne';
   const sameEmailUser = await models.user.findOne({ where: { userEmail } });
   if (sameEmailUser !== null) {
     return res.render(route, {
