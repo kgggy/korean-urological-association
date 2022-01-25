@@ -55,9 +55,10 @@ router.get('/selectOne', async (req, res) => {
 });
 
 //사용자 등록
-router.post('/', async (req, res) => {
+router.post('/create', async (req, res) => {
   const { userEmail, userNick } = req.body;
-  let route = req.app.get('views') +'/m_userOne';
+  let route = req.app.get('views') + '/orgm_writeForm';
+  console.log(route);
   const sameEmailUser = await models.user.findOne({ where: { userEmail } });
   if (sameEmailUser !== null) {
     return res.render(route, {
@@ -68,7 +69,7 @@ router.post('/', async (req, res) => {
 
   const sameNickNameUser = await models.user.findOne({ where: { userNick } });
   if (sameNickNameUser !== null) {
-    return res.json({
+    return res.render(route, {
       registerSuccess: false,
       message: "이미 존재하는 닉네임입니다.",
     });
@@ -99,7 +100,10 @@ router.post('/', async (req, res) => {
     userEmail,
     userNick
   })
-  res.json({ msg: "success" });
+  res.render(route, {
+    'result': result,
+    layout: false
+  });
 });
 
 //사용자 정보 수정
