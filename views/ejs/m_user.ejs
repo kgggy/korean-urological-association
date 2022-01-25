@@ -1,3 +1,13 @@
+<script>
+    function selectOne(theURL, winName, features, uid, mode) {
+        theURL += '?uid=' + uid;
+        window.open(theURL, winName, features);
+    }
+
+    function createOne(theURL, winName, features, mode) {
+        window.open(theURL, winName, features);
+    }
+</script>
 
 <div class="board_list">
     <table>
@@ -35,14 +45,6 @@
                     <%if(results[i].userNick !=null && results[i].userEmail!='null' && results[i].userEmail!=''){%>
                     <%= results[i].userNick %>
                     <%}%>
-				</td>
-                <td>
-                <form action="m_user/userDelete" type="get">
-                    <input type="hidden" name="uid" value="<%=results[i].uid%>">
-                    <button type="submit">수정</button>
-                    <button type="submit">삭제</button>
-                    <button>등록</button>
-                </form>
                 </td>
             </tr>
             <% } %>
@@ -53,4 +55,5 @@
             <% } %>
         </tbody>
     </table>
+    <button onclick="createOne('/admin/m_user/create', '', 'width=640, height=700, scrollbars=1', '')">등록</button>
 </div>
