@@ -20,8 +20,7 @@ router.get('/', async (req, res) => {
       if (err) {
         console.log(err);
       }
-      let route = req.app.get('views') +'/m_user';
-      console.log(route);
+      let route = req.app.get('views') +'/m_user/m_user';
       res.render(route, {
         'results' : results
       });
@@ -42,7 +41,7 @@ router.get('/selectOne', async (req, res) => {
       if (err) {
         console.log(err);
       }
-      let route = req.app.get('views') +'/orgm_viewForm';
+      let route = req.app.get('views') +'/m_user/orgm_viewForm';
       res.render(route, {
         'result': result,
         layout: false
@@ -64,7 +63,7 @@ router.get('/userUdtForm', async (req, res) => {
       if (err) {
         console.log(err);
       }
-      let route = req.app.get('views') +'/orgm_udtForm';
+      let route = req.app.get('views') +'/m_user/orgm_udtForm';
       console.log(route);
       res.render(route, {
         'result': result,

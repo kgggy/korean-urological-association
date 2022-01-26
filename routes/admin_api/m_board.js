@@ -11,18 +11,18 @@ var connection = mysql.createConnection(connt);
 connection.connect();
 
 //레시피
-router.get('/recipe', async (req, res) => {
-    fs.readFile('views/admin/board/board_list.html', (err, data) => {
-        if (err) {
-            console.log(err);
-        } else {
-            res.writeHead(200, {
-                'Content-Type': 'text/html;charset=utf-8'
-            });
-            res.end(data);
-        }
-    });
-});
+// router.get('/recipe', async (req, res) => {
+//     fs.readFile('views/admin/board/board_list.html', (err, data) => {
+//         if (err) {
+//             console.log(err);
+//         } else {
+//             res.writeHead(200, {
+//                 'Content-Type': 'text/html;charset=utf-8'
+//             });
+//             res.end(data);
+//         }
+//     });
+// });
 
 //커뮤니티 종류
 router.get('/', async (req, res) => {
@@ -62,7 +62,7 @@ router.get('/all', async (req, res) => {
                     msg: "query error"
                 });
             }
-            let route = req.app.get('views') + '/recipe';
+            let route = req.app.get('views') + '/m_board/recipe';
             console.log(route);
             res.render(route, {
                 'results': results
@@ -90,7 +90,7 @@ router.get('/selectOne', async (req, res) => {
                     msg: "select query error"
                 });
             }
-            let route = req.app.get('views') + '/brd_viewForm';
+            let route = req.app.get('views') + '/m_board/brd_viewForm';
             res.render(route, {
                 'result': result,
                 layout: false
@@ -133,7 +133,7 @@ router.get('/brdUdtForm', async (req, res) => {
             if (err) {
                 console.log(err);
             }
-            let route = req.app.get('views') + '/brd_udtForm';
+            let route = req.app.get('views') + '/m_board/brd_udtForm';
             console.log(route);
             res.render(route, {
                 'result': result,
@@ -151,7 +151,6 @@ router.get('/brdUdtForm', async (req, res) => {
 router.post('/brdUpdate', async (req, res) => {
     try {
         const param = [req.body.writTitle, req.body.writContent, req.body.writId];
-        console.log("=============" + param);
         const sql1 = "update post set writTitle = ?, writContent = ?, writUpdDate = sysdate() where writId = ?;";
         connection.query(sql1, param, (err, row) => {
             if (err) {
@@ -166,6 +165,41 @@ router.post('/brdUpdate', async (req, res) => {
         res.send(error.message);
     }
 });
+
+//게시글 작성 및 파일첨부
+// router.post('/', upload.array('file'), async (req, res, next) => {
+//     const paths = req.files.map(data => data.path);
+//     const orgName = req.files.map(data => data.originalname);
+
+//     try {
+//         const boardWritId = uuid();
+//         const param1 = [boardWritId, req.body.boardId, req.body.uid, req.body.writTitle, req.body.writContent];
+//         const sql1 = "insert into post(writId, boardId, uid, writTitle, writContent) values(?, ?, ?, ?, ?)";
+//         connection.query(sql1, param1, (err, row) => {
+//             if (err) {
+//                 throw err;
+//             }
+//             for (let i = 0; i < paths.length; i++) {
+//                 const param2 = [boardWritId, paths[i], i, orgName[i]];
+//                 // console.log(param2);
+//                 const sql2 = "insert into file(writId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
+//                 connection.query(sql2, param2, (err) => {
+//                     if (err) {
+//                         throw err;
+//                     } else {
+//                         return;
+//                     }
+//                 });
+
+//             };
+//         });
+//         return res.json({
+//             msg: "success"
+//         });
+//     } catch (error) {
+//         res.send(error.message);
+//     }
+// });
 
 
 module.exports = router;
