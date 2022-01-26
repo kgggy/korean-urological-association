@@ -43,6 +43,28 @@ router.get('/selectOne', async (req, res) => {
         console.log(err);
       }
       let route = req.app.get('views') +'/orgm_viewForm';
+      res.render(route, {
+        'result': result,
+        layout: false
+      });
+      console.log(result);
+    });
+
+  } catch (error) {
+    res.status(401).send(error.message);
+  }
+});
+
+//사용자 정보 수정 페이지 이동
+router.get('/userUdtForm', async (req, res) => {
+  try {
+    const param = req.query.uid;
+    const sql = "select * from user where uid = ?";
+    connection.query(sql, param, function (err, result, fields) {
+      if (err) {
+        console.log(err);
+      }
+      let route = req.app.get('views') +'/orgm_udtForm';
       console.log(route);
       res.render(route, {
         'result': result,
@@ -56,78 +78,23 @@ router.get('/selectOne', async (req, res) => {
   }
 });
 
-//사용자 등록 페이지 이동
-router.get('/writeForm', async (req, res) => {
-  fs.readFile('views/ejs/orgm_writeForm.ejs', (err, data) => {
-    if(err) {
-      console.log(err);
-    } else {
-      res.end(data);
-    }
-  });
-});
-
-//사용자 등록
-router.post('/create', async (req, res) => {
-  const { userEmail, userNick } = req.body;
-  let route = req.app.get('views') + '/orgm_writeForm';
-  console.log(route);
-  const sameEmailUser = await models.user.findOne({ where: { userEmail } });
-  if (sameEmailUser !== null) {
-    return res.render(route, {
-      registerSuccess: false,
-      message: "이미 존재하는 이메일입니다",
-    });
-  }
-
-  const sameNickNameUser = await models.user.findOne({ where: { userNick } });
-  if (sameNickNameUser !== null) {
-    return res.render(route, {
-      registerSuccess: false,
-      message: "이미 존재하는 닉네임입니다.",
-    });
-  }
-
-  const createSalt = () =>
-    new Promise((resolve, reject) => {
-      crypto.randomBytes(64, (err, buf) => {
-        if (err) reject(err);
-        resolve(buf.toString('base64'));
-      });
-    });
-
-  const createHashedPassword = (plainPassword) =>
-    new Promise(async (resolve, reject) => {
-      const salt = await createSalt();
-      crypto.pbkdf2(plainPassword, salt, 9999, 64, 'sha512', (err, key) => {
-        if (err) reject(err);
-        resolve({ userPwd: key.toString('base64'), salt });
-      });
-    });
-  
-  const { userPwd, salt } = await createHashedPassword(req.body.userPwd);
-  
-  await models.user.create({
-    userPwd,
-    salt,
-    userEmail,
-    userNick
-  })
-  res.render(route, {
-    'result': result,
-    layout: false
-  });
-});
-
 //사용자 정보 수정
-router.patch('/:uid', (req, res) => {
-  const param = [req.body.userNick, req.body.userPwd, req.body.userSchool, req.body.userAdres1, req.body.userAdres2, req.body.userImg, req.params.uid];
-  console.log(param);
-  const sql = "update user set userNick = ?, userPwd = ?, userSchool = ?, userAdres1 = ?, userAdres2 = ?, userImg = ? where uid = ?";
+router.post('/userUpdate', (req, res) => {
+  const param = [req.body.userNick, req.body.userEmail, req.body.userAge,
+                 req.body.userAdres1, req.body.userAdres2, req.body.userSchool, 
+                 req.body.userPoint, req.body.userScore, req.body.userStatus,
+                 req.body.userAgree, req.body.userAuth, req.body.uid];
+  // const uid = req.body.uid;
+  // console.log("=========" + param);
+  // console.log("=========" + uid);
+  const sql = "update user set userNick = ?, userEmail = ?, userAge = ?, userAdres1 = ?, userAdres2 = ?,\
+                               userSchool = ?, userPoint = ?, userScore = ?, userStatus = ?, userAgree = ?, userAuth = ?\
+                               where uid = ?";
   connection.query(sql, param, (err, row) => {
     if (err) {
       console.error(err);
     }
+    res.redirect('selectOne?uid=' + req.body.uid);
   });
 });
 
@@ -140,7 +107,7 @@ router.get('/userDelete', (req, res) => {
     if (err) {
       console.log(err)
     }
-    return res.redirect("/");
+    res.send("<script>opener.parent.location.reload(); window.close();</script>");
   });
 });
 

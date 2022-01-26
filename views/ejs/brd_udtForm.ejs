@@ -1,0 +1,65 @@
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/css/default.css" />
+    <link rel="stylesheet" type="text/css" href="/stylesheets/css/basic.css" />
+    <link rel="stylesheet" type="text/css" href="/stylesheets/css/layout.css" />
+    <!--<link href="/js/jquery/css/jquery-ui-1.8.2.custom.css" rel="stylesheet" type="text/css"/>-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css" />
+    <script type="text/javascript" src="/stylesheets/jquery/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/stylesheets/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+    <script type="text/javascript" src="/stylesheets/jquery/jquery.validate.js"></script>
+    <script type="text/javascript" src="/stylesheets/jquery/jquery.form.js"></script>
+    <script src="/stylesheets/js/common.js"></script>
+</head>
+<div class="popup">
+    <h2><span class="float_l">공지사항</span></h2>
+    <div class="content">
+        <form action="brdUpdate" id="boardwrite" method="post">
+            <table>
+                <colgroup>
+                    <col width="18%" />
+                    <col width="32%" />
+                    <col width="18%" />
+                    <col width="32%" />
+                </colgroup>
+                <tr>
+                    <th>제목</th>
+                    <td colspan="3"><input type="text" id="writTitle" name="writTitle" value="<%=result[0].writTitle %>"
+                            style="ime-mode:active;" /></td>
+                </tr>
+                <!-- <% if(result.length == 0) {%>
+                <tr>
+                    <th>PUSH알림</th>
+                    <td colspan="3">
+                        <input type="checkbox" name="brdPushYn" value="Y" />
+                        <input type="hidden" name="brdPushYn_result" />
+                    </td>
+                </tr>
+                <% }%> -->
+                <tr>
+                    <th>우선순위</th>
+                    <td><input type="text" id="brdTitle" name="brdTitle" value=""
+                            style="ime-mode:active;" /></td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="align_c"><textarea style="height:150px;" id="writContent"
+                            name="writContent"><%=result[0].writContent %></textarea></td>
+                </tr>
+                <tr>
+                    <th>첨부파일</th>
+                    
+                </tr>
+            </table>
+            <p class="btn">
+                <input type="hidden" name = "writId" value="<%=result[0].writId%>">
+                <button type="submit" class="btn_big_blue hand">수정</button>
+                <button type="button" class="btn_big_black hand" id="btn_bak" onclick="window.close();">취소</button>
+            </p>
+        </form>
+    </div>
+</div>

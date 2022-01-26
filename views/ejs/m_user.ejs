@@ -4,9 +4,9 @@
         window.open(theURL, winName, features);
     }
 
-    function createOne() {
-        window.open("/admin/m_user/writeForm", "", "_blank");
-    }
+    // function createOne() {
+    //     window.open("/admin/m_user/writeForm", "", "_blank");
+    // }
 </script>
 
 <div class="board_list">
@@ -47,7 +47,7 @@
 
 							</td>
                 <td>
-                  <button onclick="selectOne('/admin/m_user/selectOne', '', 'width=640, height=700, scrollbars=1', '<%=results[i].uid%>', '')">보기</button>
+                  <button onclick="selectOne('/admin/m_user/selectOne', '', 'width=640, height=700, scrollbars=1', '<%=results[i].uid%>', '')">상세보기</button>
 
                 </td>
             </tr>
@@ -59,5 +59,5 @@
             <% } %>
         </tbody>
     </table>
-    <button onclick="createOne()">등록</button>
+    <!-- <button onclick="createOne()">등록</button> -->
 </div>

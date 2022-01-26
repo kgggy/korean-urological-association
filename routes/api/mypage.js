@@ -10,11 +10,28 @@ var connection = mysql.createConnection(connt);
 connection.connect();
 
 //사용자가 작성한 글 전체 조회
-// router.get('/all', async (req, res) => {
-//     try {
-//         const sql = ""
-//     }
-// })
+router.get('/all', async (req, res) => {
+    try {
+        const sql = "select fileRoute, c.certiContentId, p.writId from file f\
+                  left join post p on p.writId = f.writId\
+                  left join certiContent c on c.certiContentId = f.certiContentId\
+                      where c.uid = ?\
+                   order by c.certiContentDate desc, p.writDate desc";
+        const param = [req.query.uid];
+        let all;
+        connection.query(sql, param, (err, resutls) => {
+            if (err) {
+                res.json({
+                    msg: "query error"
+                });
+            }
+            all = resutls;
+            res.status(200).json(all);
+        });
+    } catch (error) {
+        res.status(401).send(error.message);
+    }
+});
 
 //사용자의 탄소실천 글 전체 조회
 router.get('/certi', async (req, res) => {
