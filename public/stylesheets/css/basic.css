@@ -12,7 +12,7 @@
 .board_search select {vertical-align:middle;}
 
 /*게시판*/
-.board_list table {width:100%; border-top:2px solid #3053ee;}
+.board_list table {width:100%; border-top:2px solid rgb(51 164 59);}
 .board_list thead th, .board_list tbody td {padding:7px; border-bottom:1px solid #ccc;}
 .board_list thead th {background:#f1f0f0;}
 .board_list tbody td {background:#fbf9f9; text-align:center;}

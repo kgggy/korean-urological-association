@@ -1,8 +1,8 @@
 @charset "utf-8";
 
 html {height:100%;}
-body {margin:0; padding:0; height:100%; background:#f0f0f0;}
-div {margin:0; padding:0; color:#555; font-size:1em; font-family:'돋움',dotum,Tahoma,Geneva, sans-serif; line-height:130%; overflow:hidden; font-size:12px;}
+body {margin:0; padding:0; height:100%; background:#f7f7f7;}
+div {margin:0; padding:0; color:#555; font-size:1em; font-family:'돋움',dotum,Tahoma,Geneva, sans-serif; line-height:130%; font-size:12px;}
 
 input, textarea, select {margin:0; padding:0;}
 form {display:block; border:none;}
