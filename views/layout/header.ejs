@@ -1,68 +1,31 @@
-
-		<script type="text/javascript">
-			$(document).ready(function(){
-				$('#lnb ul li').eq(menu).addClass('on');
-
-				// if($('#Gall').hasClass('on')){
-				// 	$('#TopSubMenuGa').show();
-				// }else{
-				// 	$('#TopSubMenuGa').hide();
-				// }
-				
-				if($('#Notice').hasClass('on')){
-					$('#TopSubMenuNotice').show();
-				}else{
-					$('#TopSubMenuNotice').hide();
-				}
-			});
-			
-			function MM_openBrWindow(theURL,winName,features,number,mode) {
-				if(number != '')
-					theURL += '?mode=' + mode + '&number=' + number;
-				else
-					theURL += '?mode=' + mode;
-				window.open(theURL,winName,features);
-			}
-		</script>
-	</head>
-	
-	<body>
-		<!--상단-->
-		<div id="head">
+<link rel="stylesheet" type="text/css" href="/stylesheets/scssTocss/nav.css"/>
+		<div id="head" style="overflow: hidden;">
 			<p>
-				<span class="float_l"><a href="/admin/m_user" style="color: #fff;">ECOCE</a></span>
+				<span class="float_l"><a href="/admin/m_user">ECOCE</a></span>
 				<span class="float_r">관리자님 환영합니다.
 				<button class="btn_small_red hand" onclick="window.location.href='/admin/web/logout'">로그아웃</button>
 				<!-- <button class="btn_small_blue hand" onclick="winOpen();">모바일전자수첩</button> -->
 				</span>
 			</p>
 		</div>
-	
-		<div id="lnb">
-			<ul style="display: flex;">
-				<li style="width:184px; display: list-item;"><a href="/admin/m_user">회원관리</a></li>
-				<li id="Notice" style="width:184px; display: list-item;"><a href="/admin/m_board/all?boardId=3">게시판관리</a></li>				
-				<li style="width:184px; display: list-item;"><a href="/admin/web/board_list?category=congrats">게시글관리</a></li>
-				<!--<li style="width:184px; display: list-item;"><a href="/admin/web/board_list?category=event">행사참석관리</a></li>-->
-				<!--<li style="width:184px; display: list-item;"><a href="/admin/web/calendar">연간일정관리</a></li>-->
-				<li id="Gall" style="width:184px; display: list-item;"><a href="/admin/web/hongbo_board_list?category=sub_others">이벤트관리</a></li>								
-				<li style="width:184px; display: list-item;"><a href="/admin/web/event_board_list">참여자관리</a></li>			
-				<li style="width:184px; display: list-item;"><a href="/admin/web/admin_list">노출여부</a></li>
-				<!-- <li style="width:184px; display: list-item;"><a href="/admin/web/code_list">코드관리</a></li>								 -->
-			</ul>
-			
-			<ul id="TopSubMenuNotice" style="display:none;">
-				<li><a href="/admin/m_board/recipe">공지사항</a></li>
-				<li><a href="/admin/web/board_list?category=free">홍보게시판</a></li>
-				<li><a href="/admin/web/board_list?category=event">융합뉴스</a></li>
-				<li><a href="/admin/web/board_list?category=gallery">갤러리</a></li>
-			</ul>
 
-			<ul id="TopSubMenuGa" style="display:none;">
-				<li><a href="/admin/web/hongbo_board_list?category=sub_others">골프대회</a></li>
-				<li><a href="/admin/web/hongbo_board_list?category=sub_directors">월례회</a></li>
-				<li><a href="/admin/web/hongbo_board_list?category=sub_mou">국내외여행</a></li>
-				<li><a href="/admin/web/hongbo_board_list?category=sub_meeting">봉사활동</a></li>
-			</ul>
-			
+
+		<div id="project-wrapper">
+			<div id="project-container">
+				<nav>
+				<p>About</p>
+				<p id="services" class="services">Services <i class="fa fa-caret-down" aria-hidden="true"></i></p>
+				<div id="s-d" class="dropdown">
+					<p>Branding</p>
+					<p>User Experience</p>
+					<p>Web Development</p>
+					<p>User Research</p>
+					<p>Support</p>
+				</div>
+				<p>Pricing</p>
+				<p>Learn More</p>
+				<p>Contact</p>
+				</nav>
+			</div>
+			</div>
 		</div>
