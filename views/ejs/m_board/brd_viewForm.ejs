@@ -51,8 +51,13 @@
 			</tr>
 			<tr>
 				<th>첨부파일</th>
-
+				<td>
+				<% for(var i = 0; i < result.length; i++) {%>
+					<%=result[i].fileOrgName%><br>
+					<% } %>
+			</td>
 			</tr>
+			
 		</table>
 
 		<form name="udtForm" role="form">

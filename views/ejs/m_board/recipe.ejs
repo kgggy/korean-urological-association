@@ -3,7 +3,7 @@
     <input type="hidden" id="filename" name="filename" value="" />
     <input type="hidden" id="board_no" name="board_no" value="" />
     <div class="board_search">
-        <h3 class="float_l" id="category_title">공지사항관리</h3>
+        <h3 class="float_l" id="category_title">레시피 관리</h3>
     </div>
     <div class="board_list">
         <table>
@@ -57,12 +57,19 @@
 	</form>
 	<div class="mt_20">
 		<p class="float_r">
+            <!-- 나중에 boardId랑 uid(admin) 고쳐줘야함!!!!!!!!!!!!!!!!!!!!-->
+            <button onclick="enroll('/admin/m_board/writForm', '', 'width=640, height=700, scrollbars=1', '', '')">등록</button>
 		</p>
 	</div>
 
 	<script>
         function selectOne(theURL, winName, features, writId, mode) {
             theURL += '?writId=' + writId;
+            window.open(theURL, winName, features);
+        }
+
+        function enroll(theURL, winName, features, mode) {
+            theURL += '?boardId=3&?uid=81';
             window.open(theURL, winName, features);
         }
     </script>

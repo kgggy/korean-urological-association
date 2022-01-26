@@ -74,11 +74,11 @@ router.get('/', async (req, res) => {
 router.get('/:boardId', async (req, res) => {
     try {
         const param = req.params.boardId;
-        const sql = "select p.*\
-                       from community c\
-                       join post p \
+        const sql = "select p.*, f.fileRoute, f.fileNo from post p\
+                  left join community c\
                          on c.boardId = p.boardId \
-                      where p.boardId = ?";
+                  left join file f on f.writId = p.writId\
+                      where p.boardId = ? and (fileNo = 0 or fileNo is null)";
         let notices;
         connection.query(sql, param, (err, results) => {
             if (err) {

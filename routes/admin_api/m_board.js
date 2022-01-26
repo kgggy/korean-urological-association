@@ -3,26 +3,53 @@ var router = express.Router();
 const mysql = require('mysql');
 const fs = require('fs');
 
+const multer = require("multer");
+const path = require('path');
+
+
 const connt = require("../../config/db")
 var url = require('url');
+
+const {
+    v4: uuidv4
+} = require('uuid');
+
+const uuid = () => {
+    const tokens = uuidv4().split('-');
+    return tokens[2] + tokens[1] + tokens[0] + tokens[3] + tokens[4]
+}
 
 // DB 커넥션 생성
 var connection = mysql.createConnection(connt);
 connection.connect();
 
-//레시피
-// router.get('/recipe', async (req, res) => {
-//     fs.readFile('views/admin/board/board_list.html', (err, data) => {
-//         if (err) {
-//             console.log(err);
-//         } else {
-//             res.writeHead(200, {
-//                 'Content-Type': 'text/html;charset=utf-8'
-//             });
-//             res.end(data);
-//         }
-//     });
-// });
+//파일업로드 모듈
+var upload = multer({ //multer안에 storage정보  
+    storage: multer.diskStorage({
+        destination: (req, file, callback) => {
+            //파일이 이미지 파일이면
+            if (file.mimetype == "image/jpeg" || file.mimetype == "image/jpg" || file.mimetype == "image/png" || file.mimetype == "application/octet-stream") {
+                // console.log("이미지 파일입니다.");
+                callback(null, 'uploads/boardImgs');
+                //텍스트 파일이면
+            } else if (file.mimetype == "application/pdf" || file.mimetype == "application/txt") {
+                // console.log("텍스트 파일입니다.");
+                callback(null, 'uploads/boardTexts');
+            }
+        },
+        //파일이름 설정
+        filename: (req, file, done) => {
+            const ext = path.extname(file.originalname);
+            done(null, path.basename(file.originalname, ext) + Date.now() + ext);
+        },
+    }),
+    //파일 개수, 파일사이즈 제한
+    limits: {
+        files: 5,
+        fileSize: 1024 * 1024 * 1024 //1기가
+    },
+
+});
 
 //커뮤니티 종류
 router.get('/', async (req, res) => {
@@ -48,13 +75,14 @@ router.get('/', async (req, res) => {
 router.get('/all', async (req, res) => {
     try {
         const param = req.query.boardId;
-        const sql = "select p.*, u.userNick, date_format(writDate, '%Y-%m-%d') as writDatefmt, date_format(writUpdDate, '%Y-%m-%d') as writUpdDatefmt\
+        const sql = "select p.*, u.userNick, u.uid, date_format(writDate, '%Y-%m-%d') as writDatefmt, date_format(writUpdDate, '%Y-%m-%d') as writUpdDatefmt\
                        from post p\
                   left join community c\
                          on c.boardId = p.boardId\
                   left join user u\
                          on u.uid = p.uid\
-                      where p.boardId = ?";
+                      where p.boardId = ?\
+                      order by p.writDate desc";
         connection.query(sql, param, (err, results) => {
             if (err) {
                 console.log(err);
@@ -70,7 +98,7 @@ router.get('/all', async (req, res) => {
             console.log(results);
         });
     } catch (error) {
-        res.status(401).send(error.message);
+        res.status(500).send(error.message);
     }
 });
 
@@ -78,7 +106,7 @@ router.get('/all', async (req, res) => {
 router.get('/selectOne', async (req, res) => {
     try {
         const param = req.query.writId;
-        const sql = "select p.*, f.fileRoute, u.userNick, date_format(writDate, '%Y-%m-%d') as writDatefmt, date_format(writUpdDate, '%Y-%m-%d') as writUpdDatefmt\
+        const sql = "select p.*, f.fileRoute, f.fileOrgName, u.userNick, date_format(writDate, '%Y-%m-%d') as writDatefmt, date_format(writUpdDate, '%Y-%m-%d') as writUpdDatefmt\
                         from post p\
                    left join file f on f.writId = p.writId\
                    left join user u on u.uid = p.uid\
@@ -95,6 +123,7 @@ router.get('/selectOne', async (req, res) => {
                 'result': result,
                 layout: false
             });
+            console.log(result[0].fileOrgName);
         });
     } catch (error) {
         res.status(401).send(error.message);
@@ -118,6 +147,17 @@ router.get('/brdDelete', async (req, res) => {
     } catch (error) {
         res.send(error.message);
     }
+});
+
+//게시글 등록 폼 이동
+router.get('/writForm', async (req, res) => {
+    fs.readFile('views/ejs/m_board/brd_writForm.ejs', (err, data) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.end(data);
+        }
+    });
 });
 
 //게시글 수정 폼 이동
@@ -167,39 +207,36 @@ router.post('/brdUpdate', async (req, res) => {
 });
 
 //게시글 작성 및 파일첨부
-// router.post('/', upload.array('file'), async (req, res, next) => {
-//     const paths = req.files.map(data => data.path);
-//     const orgName = req.files.map(data => data.originalname);
+router.post('/boardwrite', upload.array('file'), async (req, res, next) => {
+    const paths = req.files.map(data => data.path);
+    const orgName = req.files.map(data => data.originalname);
+    try {
+        const boardWritId = uuid();
+        const param1 = [boardWritId, req.body.boardId, req.body.uid, req.body.writTitle, req.body.writContent];
+        const sql1 = "insert into post(writId, boardId, uid, writTitle, writContent) values(?, ?, ?, ?, ?)";
+        connection.query(sql1, param1, (err, row) => {
+            if (err) {
+                throw err;
+            }
+            for (let i = 0; i < paths.length; i++) {
+                const param2 = [boardWritId, paths[i], i, orgName[i]];
+                // console.log(param2);
+                const sql2 = "insert into file(writId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
+                connection.query(sql2, param2, (err) => {
+                    if (err) {
+                        throw err;
+                    } else {
+                        return;
+                    }
+                });
 
-//     try {
-//         const boardWritId = uuid();
-//         const param1 = [boardWritId, req.body.boardId, req.body.uid, req.body.writTitle, req.body.writContent];
-//         const sql1 = "insert into post(writId, boardId, uid, writTitle, writContent) values(?, ?, ?, ?, ?)";
-//         connection.query(sql1, param1, (err, row) => {
-//             if (err) {
-//                 throw err;
-//             }
-//             for (let i = 0; i < paths.length; i++) {
-//                 const param2 = [boardWritId, paths[i], i, orgName[i]];
-//                 // console.log(param2);
-//                 const sql2 = "insert into file(writId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
-//                 connection.query(sql2, param2, (err) => {
-//                     if (err) {
-//                         throw err;
-//                     } else {
-//                         return;
-//                     }
-//                 });
-
-//             };
-//         });
-//         return res.json({
-//             msg: "success"
-//         });
-//     } catch (error) {
-//         res.send(error.message);
-//     }
-// });
+            };
+        });
+        res.send("<script>opener.parent.location.reload(); window.close();</script>");
+    } catch (error) {
+        res.send(error.message);
+    }
+});
 
 
 module.exports = router;

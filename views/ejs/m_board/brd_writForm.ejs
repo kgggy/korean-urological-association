@@ -1,0 +1,123 @@
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/css/default.css" />
+    <link rel="stylesheet" type="text/css" href="/stylesheets/css/basic.css" />
+    <link rel="stylesheet" type="text/css" href="/stylesheets/css/layout.css" />
+    <!--<link href="/js/jquery/css/jquery-ui-1.8.2.custom.css" rel="stylesheet" type="text/css"/>-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css" />
+    <script type="text/javascript" src="/stylesheets/jquery/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/stylesheets/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+    <script type="text/javascript" src="/stylesheets/jquery/jquery.validate.js"></script>
+    <script type="text/javascript" src="/stylesheets/jquery/jquery.form.js"></script>
+    <script src="/stylesheets/js/common.js"></script>
+</head>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btn").click(function () {
+            var writTitle = $("#writTitle").val();
+            var writContent = $("#writContent").val();
+
+            if (writTitle == "") {
+                alert("제목을 입력하세요.");
+                $("#writTitle").focus();
+                return false;
+            }
+
+            if (writContent == "") {
+                alert("내용을 입력하세요.");
+                $("#writContent").focus();
+                return false;
+            }
+
+            if (confirm("등록하시겠습니까?") == true) {
+                $("#boardwrite").attr("action", "boardwrite");
+                $("#boardwrite").submit();
+            } else {
+                return;
+            }
+        });
+
+        //쿼리스트링값 가져와서 넘기기
+        function getUrlParams() {
+            var params = {};
+            window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (str, key, value) {
+                params[key] = value;
+            });
+            return params;
+        }
+        var param = getUrlParams();
+        var uid = document.getElementById("uid");
+        uid.value = param.uid;
+        var boardId = document.getElementById("boardId");
+        boardId.value = param.boardId;
+
+    });
+
+    function file_del(no, name) {
+        if (confirm("실제 파일이 삭제됩니다 \n정말 삭제하시겠습니까?")) {
+            $('#file_no').val(no);
+            $('#file_name').val(name);
+            $("#boardwrite").attr("action", "board_file_del");
+            $("#boardwrite").submit();
+        }
+    }
+</script>
+<div class="popup">
+    <h2><span class="float_l">글 등록</h2>
+    <div class="content">
+        <form action="" id="boardwrite" method="post" enctype="multipart/form-data" autocomplete="off">
+            <!-- <input type="hidden" id="boardId" name="boardId" value="">
+            <input type="hidden" id="uid" name="uid" value="81"> -->
+            <table>
+                <colgroup>
+                    <col width="18%" />
+                    <col width="32%" />
+                    <col width="18%" />
+                    <col width="32%" />
+                </colgroup>
+                <tr>
+                    <th>제목</th>
+                    <td colspan="3"><input type="text" id="writTitle" name="writTitle" value=""
+                            style="ime-mode:active;" /></td>
+                </tr>
+                <!-- <% if(data.length == 0) {%>
+                <tr>
+                    <th>PUSH알림</th>
+                    <td colspan="3">
+                        <input type="checkbox" name="brdPushYn" value="Y" />
+                        <input type="hidden" name="brdPushYn_result" />
+                    </td>
+                </tr>
+                <% }%> -->
+                <tr>
+                    <th>우선순위</th>
+                    <td colspan="3"><input type="text" id="writRank" name="writRank" value="" style="width:50px;" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="align_c"><textarea style="height:150px;" id="writContent"
+                            name="writContent"></textarea></td>
+                </tr>
+                <tr>
+                    <th>첨부파일</th>
+                    <td name="file_name" colspan="3">
+                        <li><input type="file" id="file" name="file" /></li>
+                        <li><input type="file" id="file" name="file" /></li>
+                        <li><input type="file" id="file" name="file" /></li>
+                        <li><input type="file" id="file" name="file" /></li>
+                        <li><input type="file" id="file" name="file" /></li>
+                    </td>
+                </tr>
+            </table>
+            <input type="hidden" id="uid" name="uid" value="">
+            <input type="hidden" id="boardId" name="boardId" value="">
+            <p class="btn">
+                <button type="button" class="btn_big_blue hand" id="btn">등록</button>
+                <button type="button" class="btn_big_black hand" id="btn_bak" onclick="window.close();">취소</button>
+            </p>
+        </form>
+    </div>
+</div>
