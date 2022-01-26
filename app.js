@@ -29,7 +29,7 @@ app.use(expressLayouts);
 
 
 // 화면 engine을 ejs로 설정
-app.set('layout', 'layout');
+app.set('layout', '../layout/layout');
 app.set("layout extractScripts", true);
 app.set('view engine', 'ejs');
 // app.engine('ejs', require('ejs').__express);
