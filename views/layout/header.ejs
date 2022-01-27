@@ -1,19 +1,22 @@
-<link rel="stylesheet" type="text/css" href="/stylesheets/scssTocss/nav.css"/>
-		<div id="head" style="overflow: hidden;">
-			<p>
-				<span class="float_l"><a href="/admin/m_user">ECOCE</a></span>
-				<span class="float_r">관리자님 환영합니다.
-				<button class="btn_small_red hand" onclick="window.location.href='/admin/web/logout'">로그아웃</button>
-				<!-- <button class="btn_small_blue hand" onclick="winOpen();">모바일전자수첩</button> -->
-				</span>
-			</p>
-		</div>
+<link rel="stylesheet" type="text/css" href="/stylesheets/scssTocss/nav.css" />
+<div id="head" style="overflow: hidden;">
+	<p>
+		<span class="float_l"><a href="/admin/m_user">ECOCE</a></span>
+		<span class="float_r">관리자님 환영합니다.
+			<button class="btn_small_red hand" onclick="window.location.href='/admin/web/logout'">로그아웃</button>
+			<!-- <button class="btn_small_blue hand" onclick="winOpen();">모바일전자수첩</button> -->
+		</span>
+	</p>
+</div>
 
 
-		<div id="project-wrapper">
-			<div id="project-container">
-				<nav>
+<div id="project-wrapper">
+	<div id="project-container">
+		<nav>
+			<div class="dropdown-wrap">
 				<p><a href="/admin/m_user">회원관리</a></p>
+			</div>
+			<div class="dropdown-wrap">
 				<p id="services" class="services">게시판관리<i class="fa fa-caret-down" aria-hidden="true"></i></p>
 				<div id="s-d" class="dropdown">
 					<p><a href="">공지사항</a></p>
@@ -21,22 +24,29 @@
 					<p><a href="/admin/m_board/all?boardId=3">레시피</a></p>
 					<p>자료실</p>
 				</div>
+			</div>
+			<div class="dropdown-wrap">
 				<p id="services" class="services">탄소실천관리<i class="fa fa-caret-down" aria-hidden="true"></i></p>
 				<div id="s-d" class="dropdown">
 					<p><a href="">탄소실천관리</a></p>
 					<p>탄소실천글관리</p>
 				</div>
+			</div>
+			<div class="dropdown-wrap">
 				<p id="services" class="services">챌린지관리<i class="fa fa-caret-down" aria-hidden="true"></i></p>
 				<div id="s-d" class="dropdown">
 					<p><a href="">챌린지관리</a></p>
 					<p>챌린지글관리</p>
 				</div>
+			</div>
+			<div class="dropdown-wrap">
 				<p id="services" class="services">노출여부<i class="fa fa-caret-down" aria-hidden="true"></i></p>
 				<div id="s-d" class="dropdown">
 					<p><a href="">배너관리</a></p>
 					<p>게시판종류</p>
 				</div>
-				</nav>
 			</div>
-			</div>
-		</div>
+		</nav>
+	</div>
+</div>
+</div>
