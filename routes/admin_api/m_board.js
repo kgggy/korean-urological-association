@@ -51,6 +51,13 @@ var upload = multer({ //multer안에 storage정보
 
 });
 
+//파일 다운로드
+router.get('/download', (req, res) => {
+    const fileName = '';
+    filepath = __dirname + '../..//uploads/'
+    console.log(filepath);
+})
+
 //커뮤니티 종류
 router.get('/', async (req, res) => {
     try {
@@ -237,6 +244,8 @@ router.post('/boardwrite', upload.array('file'), async (req, res, next) => {
         res.send(error.message);
     }
 });
+
+
 
 
 module.exports = router;

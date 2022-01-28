@@ -19,7 +19,41 @@
 </head>
 
 <script type="text/javascript">
-	$(document).ready(function () {});
+	function file_del(route) {
+		if (confirm("실제 파일이 삭제됩니다 \n정말 삭제하시겠습니까?")) {
+			$("#boardUpdate").attr("action", "imgDelete");
+			$("#boardUpdate").attr("method", "get");
+			$("#boardUpdate").submit();
+		}
+	}
+
+	function userUpdate() {
+		if (confirm("수정하시겠습니까?")) {
+			$("#boardUpdate").attr("action", "userUpdate");
+			$("#boardUpdate").attr("method", "post");
+			$("#boardUpdate").submit();
+		}
+	}
+
+	//check box
+	if ($('#userStatusValue').val() == '0') {
+		$('#userStatus1').prop("checked", true);
+	} else if ($('#userStatusValue').val() == '1') {
+		$('#userStatus2').prop("checked", true);
+	};
+
+
+	if ($('#userAgreeValue').val() == '0') {
+		$('#userAgree1').prop("checked", true);
+	} else if ($('#userAgreeValue').val() == '1') {
+		$('#userAgree2').prop("checked", true);
+	};
+
+	if ($('#userAuthValue').val() == '0') {
+		$('#userAuth1').prop("checked", true);
+	} else if ($('#userAuthValue').val() == '1') {
+		$('#userAuth2').prop("checked", true);
+	};
 </script>
 
 <style>
@@ -30,39 +64,40 @@
 
 <body style="background: #fff;">
 	<div class="popup">
-		<h2><span class="float_l">회원관리</span><img onclick="window.close();" src="../../images/btn_close.gif" alt=""
-				class="float_r hand" /></h2>
-		<table class="mb_10">
-			<tr>
-				<th><img src="../../uploads/normal_img.jpg" alt="" width="117px" /></th>
-				<td colspan="4">
-					<dl>
-						<dt>
-
-						</dt>
-						<dd>
-						</dd>
-					</dl>
-				</td>
-			</tr>
-		</table>
-		<form action="userUpdate" method="post">
+		<h2><span class="float_l">회원수정</h2>
+		<form action="" id="boardUpdate" method="" enctype="multipart/form-data">
 			<div class="content">
 				<table>
 					<tr>
+						<th>프로필사진</th>
+						<% if(result.length > 0 && result[0].userImg != null && result[0].userImg != '') {%>
+						<td>
+							<li><img src="../../../<%= result[0].userImg %>" alt="사진" width="117px" />
+								<button onclick="javascript:file_del();">삭제</button>
+							</li>
+							<input type="hidden" id="userImg" name="userImg" value="<%=result[0].userImg%>">
+						</td>
+						<% }else{ %>
+						<td name="file_name" colspan="3">
+							<li><input type="file" id="file" name="file" /></li>
+						</td>
+						<% } %>
+
+					</tr>
+					<tr>
 						<th>일련번호</th>
 						<td>
-							<input id="uid" name="uid" value="<%=result[0].uid%>"readonly>
+							<input id="uid" name="uid" value="<%=result[0].uid%>" readonly>
 						</td>
 					</tr>
 					<tr>
-						<th>닉네임</th>
+						<th class="necessary">닉네임</th>
 						<td>
 							<input id="userNick" name="userNick" value="<%=result[0].userNick%>">
 						</td>
 					</tr>
 					<tr>
-						<th>이메일</th>
+						<th class="necessary">이메일</th>
 						<td>
 							<input id="userEmail" name="userEmail" value="<%=result[0].userEmail%>">
 						</td>
@@ -106,24 +141,40 @@
 					<tr>
 						<th>상태</th>
 						<td>
-							<input id="userStatus" name="userStatus" value="<%=result[0].userStatus%>">
+							<!-- <option value="" selected disabled hidden>선택</option> -->
+							<label><input type="radio" id="userStatus1" name="userStatus" value="0">일반회원</label>
+							<label><input type="radio" id="userStatus2" name="userStatus" value="1">탈퇴회원</label>
+							<% if(result.length > 0) {%>
+							<input type="hidden" id="userStatusValue" value="<%=result[0].userStatus%>">
+							<% } %>
 						</td>
+
 					</tr>
 					<tr>
 						<th>개인정보 동의여부</th>
 						<td>
-							<input id="userAgree" name="userAgree" value="<%=result[0].userAgree%>">
+							<label><input type="radio" id="userAgree1" name="userAgree" value="0">동의</label>
+							<label><input type="radio" id="userAgree2" name="userAgree" value="1">비동의</label>
+							<% if(result.length > 0) {%>
+							<input type="hidden" id="userAgreeValue" value="<%=result[0].userAgree%>">
+							<% } %>
 						</td>
+
 					</tr>
 					<tr>
 						<th>권한</th>
 						<td>
-							<input id="userAuth" name="userAuth" value="<%=result[0].userAuth%>">
+							<label><input type="radio" id="userAuth1" name="userAuth" value="0">일반회원</label>
+							<label><input type="radio" id="userAuth2" name="userAuth" value="1">기업</label>
+							<% if(result.length > 0) {%>
+							<input type="hidden" id="userAuthValue" value="<%=result[0].userAuth%>">
+							<% } %>
 						</td>
+
 					</tr>
 				</table>
 				<p class="btn">
-					<button type="submit">수정</button>
+					<button type="submit" onclick="userUpdate()">수정</button>
 					<button onclick="window.close();">취소</button>
 				</p>
 			</div>

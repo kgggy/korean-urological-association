@@ -1,10 +1,3 @@
-// const {
-//   response
-// } = require('express');
-// const {
-//   DEC8_BIN
-// } = require('mysql/lib/protocol/constants/charsets');
-// const res = require('express/lib/response');
 var express = require('express');
 var router = express.Router();
 const mysql = require('mysql');
@@ -12,9 +5,38 @@ const connt = require("../../config/db")
 var models = require("../../models");
 const crypto = require('crypto');
 
+const multer = require("multer");
+const path = require('path');
+
+
 // DB 커넥션 생성
 var connection = mysql.createConnection(connt); 
 connection.connect();
+
+//파일업로드 모듈
+var upload = multer({ //multer안에 storage정보  
+  storage: multer.diskStorage({
+      destination: (req, file, callback) => {
+          //파일이 이미지 파일이면
+          if (file.mimetype == "image/jpeg" || file.mimetype == "image/jpg" || file.mimetype == "image/png" || file.mimetype == "application/octet-stream") {
+              // console.log("이미지 파일입니다.");
+              callback(null, 'uploads/userProfile');
+              //텍스트 파일이면
+          } 
+      },
+      //파일이름 설정
+      filename: (req, file, done) => {
+          const ext = path.extname(file.originalname);
+          done(null, path.basename(file.originalname, ext) + Date.now() + ext);
+      },
+  }),
+  //파일 개수, 파일사이즈 제한
+  limits: {
+      files: 5,
+      fileSize: 1024 * 1024 * 1024 //1기가
+  },
+
+});
 
 // // 회원가입
 router.post('/', async (req, res) => {
@@ -83,14 +105,18 @@ router.get('/:uid', async (req, res) => {
 });
 
 // 회원정보수정
-router.patch('/:uid', (req, res) => {
-  const param = [req.body.userNick, req.body.userPwd, req.body.userSchool, req.body.userAdres1, req.body.userAdres2, req.body.userImg, req.params.uid];
+router.patch('/:uid',  upload.single('file'), async (req, res) => {
+  const path = req.file.path;
+  const param = [req.body.userNick, req.body.userSchool, req.body.userAdres1, req.body.userAdres2, path, req.params.uid];
   console.log(param);
-  const sql = "update user set userNick = ?, userPwd = ?, userSchool = ?, userAdres1 = ?, userAdres2 = ?, userImg = ? where uid = ?";
+  const sql = "update user set userNick = ?, userSchool = ?, userAdres1 = ?, userAdres2 = ?, userImg = ? where uid = ?";
   connection.query(sql, param, (err, row) => {
     if (err) {
       console.error(err);
     }
+    return res.json({
+      msg: "success"
+  });
   });
 });
 

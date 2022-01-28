@@ -78,7 +78,8 @@ router.get('/:boardId', async (req, res) => {
                   left join community c\
                          on c.boardId = p.boardId \
                   left join file f on f.writId = p.writId\
-                      where p.boardId = ? and (fileNo = 0 or fileNo is null)";
+                      where p.boardId = ? and (fileNo = 0 or fileNo is null)\
+                      order by writDate desc";
         let notices;
         connection.query(sql, param, (err, results) => {
             if (err) {
