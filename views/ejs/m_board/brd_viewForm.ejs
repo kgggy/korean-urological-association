@@ -15,10 +15,13 @@
 	<script src="/stylesheets/js/common.js"></script>
 </head>
 <div class="popup">
-	<h2><span class="float_l">레시피</span><img onclick="window.close();" src="../../../images/admin/btn_close.gif" alt=""
-			class="float_r hand" /></h2>
+	<h2><span class="float_l">레시피</span></h2>
 	<div class="content">
 		<table class="mb_10">
+			<tr>
+				<th>글번호</th>
+				<td><%=result[0].writId%></td>
+			</tr>
 			<tr>
 				<th>제목</th>
 				<td><%=result[0].writTitle%></td>
@@ -52,17 +55,24 @@
 			<tr>
 				<th>첨부파일</th>
 				<td>
-				<% for(var i = 0; i < result.length; i++) {%>
-					<%=result[i].fileOrgName%><br>
+					<% for(var i = 0; i < result.length; i++) {%>
+					<img src="../../../<%= result[i].fileRoute %>" alt="사진" width="200px" /></li>
 					<% } %>
-			</td>
+				</td>
+				<tr>
+					<th></th>
+					<td><% for(var i = 0; i < result.length; i++) {%>
+						<li><a href="../../../<%= result[i].fileRoute %>" download><%=result[i].fileOrgName%></a></li>
+						<% } %></td>
+				</tr>
 			</tr>
-			
+
 		</table>
 
 		<form name="udtForm" role="form">
 			<p class="btn">
 				<input type="hidden" id="writId" name="writId" value="<%=result[0].writId%>">
+				<input type="hidden" id="fileRoute" name="fileRoute" value="<%=result[0].fileRoute%>">
 				<button class="btn_big_blue hand" type="button" id="update_btn">수정</button>
 				<button class="btn_big_blue hand" type="button" id="delete_btn">삭제</button>
 				<button class="btn_big_black hand" onclick="window.close();">취소</button>
@@ -72,14 +82,14 @@
 </div>
 
 <script>
+	var formObj = $("form[name='udtForm']");
 	$(document).ready(function () {
-		var formObj = $("form[name='udtForm']");
 		// 수정 폼 연결
 		$("#update_btn").on("click", function () {
 			formObj.attr("action", "brdUdtForm");
 			formObj.attr("method", "get");
 			formObj.submit();
-		})
+		});
 		// 삭제
 		$("#delete_btn").on("click", function () {
 			formObj.attr("action", "brdDelete");
@@ -90,6 +100,7 @@
 			} else {
 				return;
 			}
-		})
+		});
+		//다운로드
 	})
 </script>

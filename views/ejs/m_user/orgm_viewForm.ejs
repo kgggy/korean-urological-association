@@ -18,36 +18,21 @@
 	<script src="/stylesheets/js/common.js"></script>
 </head>
 
-<script type="text/javascript">
-	$(document).ready(function () {});
-</script>
-
 <body style="background: #fff;">
 	<div class="popup">
 		<h2><span class="float_l">회원관리</span><img onclick="window.close();" src="../../images/btn_close.gif" alt=""
 				class="float_r hand" /></h2>
-		<table class="mb_10">
-			<tr>
-				<% if(result.length > 0 && result[0].userImg != null && result[0].userImg != '') {%>
-				<th><img src="<%= result[0].userImg %>" alt="사진" width="117px" /></th>
-				<% }else{ %>
-				<th><img src="../../uploads/normal_img.jpg" alt="" width="117px" /></th>
-				<% } %>
-
-				<td colspan="4">
-					<dl>
-						<dt>
-
-						</dt>
-						<dd>
-						</dd>
-					</dl>
-				</td>
-			</tr>
-		</table>
 
 		<div class="content">
 			<table>
+				<tr>
+					<th>프로필사진</th>
+					<% if(result.length > 0 && result[0].userImg != null && result[0].userImg != '') {%>
+					<td><img src="../../../<%= result[0].userImg %>" alt="사진" width="117px" /></td>
+					<% }else{ %>
+					<td><img src="../../uploads/normal_img.jpg" alt="" width="117px" /></td>
+					<% } %>
+				</tr>
 				<tr>
 					<th>일련번호</th>
 					<td>
@@ -58,7 +43,7 @@
 			</tr>
 			
 			<tr>
-				<th>닉네임</th>
+				<th class="necessary">닉네임</th>
 				<td>
 					<%if(result[0].userNick !=null && result[0].userNick!='null' && result[0].userNick!=''){%>
 						<%=result[0].userNick %>
@@ -67,7 +52,7 @@
 			</tr>
 			
 			<tr>
-				<th>이메일</th>
+				<th class="necessary">이메일</th>
 				<td>
 					<%if(result[0].userEmail !=null && result[0].userEmail!='null' && result[0].userEmail!=''){%>
 						<%=result[0].userEmail %>
@@ -131,40 +116,51 @@
 			><tr>
 				<th>상태</th>
 				<td>
-					<%if(result[0].userStatus !=null && result[0].userStatus!='null' && result[0].userStatus!=''){%>
-						<%=result[0].userStatus %>
-						<%}%>
-				</td>
-			</tr>
-			
-			<tr>
-				<th>개인정보 동의여부</th>
-				<td>
-					<%if(result[0].userAgree !=null && result[0].userAgree!='null' && result[0].userAgree!=''){%>
-						<%=result[0].userAgree %>
-						<%}%>
-				</td>
-			</tr>
-						
-			<tr>
-				<th>권한</th>
-				<td>
-					<%if(result[0].userAuth !=null && result[0].userAuth!='null' && result[0].userAuth!='' && result[0].userAuth!='undefined'){%>
-						<%=result[0].userAuth %>
-						<%}%>
-				</td>
-			</tr>
+					<label><input type="radio" id="userStatus1" name="userStatus" disabled>일반회원</label>
+					<label><input type="radio" id="userStatus2" name="userStatus" disabled>탈퇴회원</label>
+					<% if(result.length > 0) {%>
+						<input type="hidden" id="userStatusValue" value="<%=result[0].userStatus%>">
+						<% } %>
+					</td>
 
-		</table>
+				</tr>
 
-		<p class="btn">
-			<form name="udtForm" role="form">
-				<input type="hidden" name="uid" value="<%=result[0].uid%>">
-				<button type="button" id="update_btn">수정</button>
-				<button type="button" id="delete_btn">삭제</button>
-			</form>
-			<button class="btn_big_black hand" onclick="window.close();">취소</button>
-		</p>
+				<tr>
+					<th>개인정보 동의여부</th>
+					<td>
+						<%if(result[0].userAgree !=null && result[0].userAgree!='null' && result[0].userAgree!=''){%>
+						<% if (result[0].userAgree == '0'){%>
+						동의
+						<% } else if (result[0].userAgree == '1') {%>
+						비동의
+						<%}%>   
+					   <%}%>
+					</td>
+
+				</tr>
+
+				<tr>
+					<th>권한</th>
+					<td>
+						<label><input type="radio" id="userAuth1" name="userAuth" disabled>일반회원</label>
+						<label><input type="radio" id="userAuth2" name="userAuth" disabled>기업</label>
+						<% if(result.length > 0) {%>
+						<input type="hidden" id="userAuthValue" value="<%=result[0].userAuth%>">
+						<% } %>
+					</td>
+
+				</tr>
+
+			</table>
+
+			<p class="btn">
+				<form name="udtForm" role="form">
+					<input type="hidden" name="uid" value="<%=result[0].uid%>">
+					<button type="button" id="update_btn">수정</button>
+					<!-- <button type="button" id="delete_btn">삭제</button> -->
+				</form>
+				<button class="btn_big_black hand" onclick="window.close();">취소</button>
+			</p>
 		</div>
 	</div>
 
@@ -179,15 +175,28 @@
 			})
 
 			// 삭제
-			$("#delete_btn").on("click", function () {
-				formObj.attr("action", "userDelete");
-				formObj.attr("method", "get");
-				if (confirm("삭제하시겠습니까?") == true) {
-					alert("삭제되었습니다.");
-					formObj.submit();
-				} else {
-					return;
-				}
-			})
+			// $("#delete_btn").on("click", function () {
+			// 	formObj.attr("action", "userDelete");
+			// 	formObj.attr("method", "get");
+			// 	if (confirm("삭제하시겠습니까?") == true) {
+			// 		alert("삭제되었습니다.");
+			// 		formObj.submit();
+			// 	} else {
+			// 		return;
+			// 	}
+			// })
 		})
+
+		//check box
+		if ($('#userAuthValue').val() == '0') {
+			$('#userAuth1').prop("checked", true);
+		} else if ($('#userAuthValue').val() == '1') {
+			$('#userAuth2').prop("checked", true);
+		};
+
+		if ($('#userStatusValue').val() == '0') {
+			$('#userStatus1').prop("checked", true);
+		} else if ($('#userStatusValue').val() == '1') {
+			$('#userStatus2').prop("checked", true);
+		};
 	</script>

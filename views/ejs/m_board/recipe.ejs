@@ -1,7 +1,4 @@
 <form id="boardForm" name="boardForm" method="post" action="" onsubmit="return false;" autocomplete="off">
-    <input type="hidden" id="number" name="number" value="" />
-    <input type="hidden" id="filename" name="filename" value="" />
-    <input type="hidden" id="board_no" name="board_no" value="" />
     <div class="board_search">
         <h3 class="float_l" id="category_title">레시피 관리</h3>
     </div>
@@ -9,18 +6,18 @@
         <table>
             <colgroup>
                 <col width="7%" />
-                <col />
+                <col width="8%" />
+                <col width="15%" />
                 <col width="8%" />
                 <col width="10%" />
-                <col width="8%" />
                 <col width="11%" />
-                <col width="20%" />
+                <col width="15%" />
             </colgroup>
             <thead>
                 <tr>
-                    <th>글번호</th>
-                    <th>제목</th>
+                    <th></th>
                     <th>작성자</th>
+                    <th>제목</th>
                     <th>조회수</th>
                     <th>등록일</th>
                     <th>수정일</th>
@@ -32,9 +29,10 @@
 					for(var i = 0; i < results.length; i++){
 					%>
                 <tr>
-                    <td><%=results[i].writId%></td>
-                    <td><%=results[i].writTitle%></td>
+                    <input type="hidden" id="writId" name="writId" value="<%=results[i].writId%>" />
+                    <td>체크박스자리</td>
                     <td><%=results[i].userNick%></td>
+                    <td><%=results[i].writTitle%></td>
                     <td><%=results[i].writHit %></td>
                     <td><%=results[i].writDatefmt%></td>
                     <td><%=results[i].writUpdDatefmt%></td>

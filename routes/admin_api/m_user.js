@@ -3,13 +3,44 @@ var router = express.Router();
 const mysql = require('mysql');
 const fs = require('fs');
 
+const multer = require("multer");
+const path = require('path');
+
 const connt = require("../../config/db")
 var url = require('url');
-const { type } = require('os');
+const {
+  type
+} = require('os');
+const conn = require('../../config/db');
 
 // DB 커넥션 생성
 var connection = mysql.createConnection(connt);
 connection.connect();
+
+
+//파일업로드 모듈
+var upload = multer({ //multer안에 storage정보  
+  storage: multer.diskStorage({
+    destination: (req, file, callback) => {
+      //파일이 이미지 파일이면
+      if (file.mimetype == "image/jpeg" || file.mimetype == "image/jpg" || file.mimetype == "image/png" || file.mimetype == "application/octet-stream") {
+        // console.log("이미지 파일입니다.");
+        callback(null, 'uploads/userProfile');
+      }
+    },
+    //파일이름 설정
+    filename: (req, file, done) => {
+      const ext = path.extname(file.originalname);
+      done(null, path.basename(file.originalname, ext) + Date.now() + ext);
+    },
+  }),
+  //파일 개수, 파일사이즈 제한
+  limits: {
+    files: 5,
+    fileSize: 1024 * 1024 * 1024 //1기가
+  },
+
+});
 
 //사용자 전체조회
 router.get('/', async (req, res) => {
@@ -20,9 +51,9 @@ router.get('/', async (req, res) => {
       if (err) {
         console.log(err);
       }
-      let route = req.app.get('views') +'/m_user/m_user';
+      let route = req.app.get('views') + '/m_user/m_user';
       res.render(route, {
-        'results' : results
+        'results': results
       });
       console.log(results);
     });
@@ -41,7 +72,7 @@ router.get('/selectOne', async (req, res) => {
       if (err) {
         console.log(err);
       }
-      let route = req.app.get('views') +'/m_user/orgm_viewForm';
+      let route = req.app.get('views') + '/m_user/orgm_viewForm';
       res.render(route, {
         'result': result,
         layout: false
@@ -63,7 +94,7 @@ router.get('/userUdtForm', async (req, res) => {
       if (err) {
         console.log(err);
       }
-      let route = req.app.get('views') +'/m_user/orgm_udtForm';
+      let route = req.app.get('views') + '/m_user/orgm_udtForm';
       console.log(route);
       res.render(route, {
         'result': result,
@@ -78,15 +109,24 @@ router.get('/userUdtForm', async (req, res) => {
 });
 
 //사용자 정보 수정
-router.post('/userUpdate', (req, res) => {
-  const param = [req.body.userNick, req.body.userEmail, req.body.userAge,
-                 req.body.userAdres1, req.body.userAdres2, req.body.userSchool, 
-                 req.body.userPoint, req.body.userScore, req.body.userStatus,
-                 req.body.userAgree, req.body.userAuth, req.body.uid];
-  // const uid = req.body.uid;
-  // console.log("=========" + param);
-  // console.log("=========" + uid);
-  const sql = "update user set userNick = ?, userEmail = ?, userAge = ?, userAdres1 = ?, userAdres2 = ?,\
+router.post('/userUpdate', upload.single('file'), async (req, res) => {
+  var path = "";
+  var param = "";
+  if (req.file != null) {
+    path = req.file.path;
+    param = [req.body.userNick, req.body.userEmail, req.body.userAge,
+      req.body.userAdres1, req.body.userAdres2, path, req.body.userSchool,
+      req.body.userPoint, req.body.userScore, req.body.userStatus,
+      req.body.userAgree, req.body.userAuth, req.body.uid
+    ];
+  } else {
+    param = [req.body.userNick, req.body.userEmail, req.body.userAge,
+      req.body.userAdres1, req.body.userAdres2, req.body.userImg, req.body.userSchool,
+      req.body.userPoint, req.body.userScore, req.body.userStatus,
+      req.body.userAgree, req.body.userAuth, req.body.uid
+    ];
+  }
+  const sql = "update user set userNick = ?, userEmail = ?, userAge = ?, userAdres1 = ?, userAdres2 = ?, userImg = ?, \
                                userSchool = ?, userPoint = ?, userScore = ?, userStatus = ?, userAgree = ?, userAuth = ?\
                                where uid = ?";
   connection.query(sql, param, (err, row) => {
@@ -110,6 +150,29 @@ router.get('/userDelete', (req, res) => {
   });
 });
 
-//사용자 권한 변경
+//프로필 삭제
+router.get('/imgDelete', async (req, res) => {
+  const param = req.query.userImg;
+  console.log(req.query.uid + "----------------------");
+  try {
+    const sql = "update user set userImg = null where uid = ?";
+    connection.query(sql, req.query.uid, (err, row) => {
+      if (err) {
+        console.log(err)
+      }
+      fs.unlinkSync(param, (err) => {
+        if(err) {
+          console.log(err);
+        }
+        return;
+      });
+    })
+  } catch (error) {
+    if(error.code == "ENOENT") {
+      console.log("프로필 삭제 에러 발생");
+    }
+  }
+  res.redirect('userUdtForm?uid=' + req.query.uid);
+});
 
 module.exports = router;
