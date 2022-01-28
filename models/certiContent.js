@@ -31,9 +31,10 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
       comment: "인증글작성일자"
     },
-    certiContentRank: {
-      type: DataTypes.INTEGER,
-      allowNull: true
+    certiImg: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+      comment: "실천 이미지"
     }
   }, {
     sequelize,

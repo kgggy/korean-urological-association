@@ -28,11 +28,6 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true,
       comment: "지급포인트"
     },
-    certiAuth: {
-      type: DataTypes.STRING(2),
-      allowNull: true,
-      comment: "지역, 나이 등등 챌린지 참여할 수 있는 권한 구분 칼럼"
-    },
     certiDiff: {
       type: DataTypes.STRING(2),
       allowNull: true,
@@ -42,9 +37,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(100),
       allowNull: true
     },
-    certificationcol: {
-      type: DataTypes.STRING(45),
-      allowNull: true
+    certiAuth: {
+      type: DataTypes.STRING(3),
+      allowNull: true,
+      comment: "지역, 나이, 학교 등 권한이 필요한 챌린지 구분"
     }
   }, {
     sequelize,
