@@ -51,6 +51,10 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       defaultValue: 0,
       comment: "게시글 조회수"
+    },
+    writRank: {
+      type: DataTypes.INTEGER,
+      allowNull: true
     }
   }, {
     sequelize,

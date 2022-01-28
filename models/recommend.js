@@ -45,13 +45,6 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
       {
-        name: "uid",
-        using: "BTREE",
-        fields: [
-          { name: "uid" },
-        ]
-      },
-      {
         name: "writId",
         using: "BTREE",
         fields: [
@@ -63,6 +56,13 @@ module.exports = function(sequelize, DataTypes) {
         using: "BTREE",
         fields: [
           { name: "certiContentId" },
+        ]
+      },
+      {
+        name: "recommend_ibfk_1",
+        using: "BTREE",
+        fields: [
+          { name: "uid" },
         ]
       },
     ]

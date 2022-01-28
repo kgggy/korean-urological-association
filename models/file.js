@@ -30,7 +30,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     fileOrgName: {
-      type: DataTypes.STRING(45),
+      type: DataTypes.STRING(255),
       allowNull: true
     }
   }, {

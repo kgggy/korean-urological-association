@@ -30,6 +30,10 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
       comment: "인증글작성일자"
+    },
+    certiContentRank: {
+      type: DataTypes.INTEGER,
+      allowNull: true
     }
   }, {
     sequelize,
@@ -52,7 +56,7 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
       {
-        name: "uid",
+        name: "certiContent_ibfk_2",
         using: "BTREE",
         fields: [
           { name: "uid" },

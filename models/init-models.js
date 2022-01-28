@@ -1,6 +1,7 @@
 var DataTypes = require("sequelize").DataTypes;
 var _admin = require("./admin");
 var _answer = require("./answer");
+var _banner = require("./banner");
 var _calOption = require("./calOption");
 var _calculator = require("./calculator");
 var _certiContent = require("./certiContent");
@@ -17,6 +18,7 @@ var _user = require("./user");
 function initModels(sequelize) {
   var admin = _admin(sequelize, DataTypes);
   var answer = _answer(sequelize, DataTypes);
+  var banner = _banner(sequelize, DataTypes);
   var calOption = _calOption(sequelize, DataTypes);
   var calculator = _calculator(sequelize, DataTypes);
   var certiContent = _certiContent(sequelize, DataTypes);
@@ -66,6 +68,7 @@ function initModels(sequelize) {
   return {
     admin,
     answer,
+    banner,
     calOption,
     calculator,
     certiContent,

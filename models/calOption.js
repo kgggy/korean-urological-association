@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
-module.exports = function (sequelize, DataTypes) {
-  var calOption = sequelize.define('calOption', {
+module.exports = function(sequelize, DataTypes) {
+  return sequelize.define('calOption', {
     optId: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -55,11 +55,4 @@ module.exports = function (sequelize, DataTypes) {
       },
     ]
   });
-  calOption.associate = function (models) {
-    calOption.belongsTo(models.answer, {
-      foreignKey: "optId"
-    });
-
-  };
-  return calOption;
 };

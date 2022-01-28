@@ -17,7 +17,8 @@ module.exports = function(sequelize, DataTypes) {
     },
     userAge: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: true,
+      defaultValue: 0
     },
     userAdres1: {
       type: DataTypes.STRING(50),
@@ -38,7 +39,8 @@ module.exports = function(sequelize, DataTypes) {
     },
     userScore: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: true,
+      defaultValue: 0
     },
     userStatus: {
       type: DataTypes.STRING(5),
@@ -70,6 +72,11 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(1),
       allowNull: false,
       defaultValue: "0"
+    },
+    userRegDate: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
     }
   }, {
     sequelize,

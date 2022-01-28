@@ -9,7 +9,7 @@ module.exports = function(sequelize, DataTypes) {
       comment: "댓글번호"
     },
     writId: {
-      type: DataTypes.STRING(35),
+      type: DataTypes.STRING(45),
       allowNull: true,
       comment: "글번호",
       references: {
@@ -65,24 +65,24 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
       {
-        name: "uid",
+        name: "comment_ibfk_3",
         using: "BTREE",
         fields: [
-          { name: "uid" },
+          { name: "certiContentId" },
         ]
       },
       {
-        name: "writId",
+        name: "comment_ibfk_4",
         using: "BTREE",
         fields: [
           { name: "writId" },
         ]
       },
       {
-        name: "comment_ibfk_3",
+        name: "comment_ibfk_2",
         using: "BTREE",
         fields: [
-          { name: "certiContentId" },
+          { name: "uid" },
         ]
       },
     ]

@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
-module.exports = function (sequelize, DataTypes) {
-  var calculator = sequelize.define('calculator', {
+module.exports = function(sequelize, DataTypes) {
+  return sequelize.define('calculator', {
     calcId: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -28,11 +28,4 @@ module.exports = function (sequelize, DataTypes) {
       },
     ]
   });
-  calculator.associate = function (models) {
-    calculator.belongsTo(models.question, {
-      foreignKey: "calcId"
-    });
-
-  };
-  return calculator;
 };
