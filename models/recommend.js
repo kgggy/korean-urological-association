@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('recommend', {
+module.exports = function (sequelize, DataTypes) {
+  var recommend = sequelize.define('recommend', {
     rcmdId: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -24,7 +24,7 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
     certiContentId: {
-      type: DataTypes.STRING(35),
+    type: DataTypes.STRING(35),
       allowNull: true,
       references: {
         model: 'certiContent',
@@ -35,36 +35,41 @@ module.exports = function(sequelize, DataTypes) {
     sequelize,
     tableName: 'recommend',
     timestamps: false,
-    indexes: [
-      {
+    indexes: [{
         name: "PRIMARY",
         unique: true,
         using: "BTREE",
-        fields: [
-          { name: "rcmdId" },
-        ]
+        fields: [{
+          name: "rcmdId"
+        }, ]
       },
       {
         name: "writId",
         using: "BTREE",
-        fields: [
-          { name: "writId" },
-        ]
+        fields: [{
+          name: "writId"
+        }, ]
       },
       {
         name: "recommend_ibfk_3",
         using: "BTREE",
-        fields: [
-          { name: "certiContentId" },
-        ]
+        fields: [{
+          name: "certiContentId"
+        }, ]
       },
       {
         name: "recommend_ibfk_1",
         using: "BTREE",
-        fields: [
-          { name: "uid" },
-        ]
+        fields: [{
+          name: "uid"
+        }, ]
       },
     ]
   });
+  recommend.associate = function (models) {
+    recommend.belongsTo(models.user, {
+      foreignKey: "uid"
+    })
+  };
+  return recommend;
 };

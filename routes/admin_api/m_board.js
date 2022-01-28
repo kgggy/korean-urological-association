@@ -98,11 +98,11 @@ router.get('/all', async (req, res) => {
                 });
             }
             let route = req.app.get('views') + '/m_board/recipe';
-            console.log(route);
+            // console.log(route);
             res.render(route, {
                 'results': results
             });
-            console.log(results);
+            // console.log(results);
         });
     } catch (error) {
         res.status(500).send(error.message);

@@ -18,44 +18,6 @@
 	<script src="/stylesheets/js/common.js"></script>
 </head>
 
-<script type="text/javascript">
-	function file_del(route) {
-		if (confirm("실제 파일이 삭제됩니다 \n정말 삭제하시겠습니까?")) {
-			$("#boardUpdate").attr("action", "imgDelete");
-			$("#boardUpdate").attr("method", "get");
-			$("#boardUpdate").submit();
-		}
-	}
-
-	function userUpdate() {
-		if (confirm("수정하시겠습니까?")) {
-			$("#boardUpdate").attr("action", "userUpdate");
-			$("#boardUpdate").attr("method", "post");
-			$("#boardUpdate").submit();
-		}
-	}
-
-	//check box
-	if ($('#userStatusValue').val() == '0') {
-		$('#userStatus1').prop("checked", true);
-	} else if ($('#userStatusValue').val() == '1') {
-		$('#userStatus2').prop("checked", true);
-	};
-
-
-	if ($('#userAgreeValue').val() == '0') {
-		$('#userAgree1').prop("checked", true);
-	} else if ($('#userAgreeValue').val() == '1') {
-		$('#userAgree2').prop("checked", true);
-	};
-
-	if ($('#userAuthValue').val() == '0') {
-		$('#userAuth1').prop("checked", true);
-	} else if ($('#userAuthValue').val() == '1') {
-		$('#userAuth2').prop("checked", true);
-	};
-</script>
-
 <style>
 	input {
 		border: 1px solid grey
@@ -180,3 +142,41 @@
 			</div>
 		</form>
 	</div>
+
+	<script type="text/javascript">
+		function file_del(route) {
+			if (confirm("실제 파일이 삭제됩니다 \n정말 삭제하시겠습니까?")) {
+				$("#boardUpdate").attr("action", "imgDelete");
+				$("#boardUpdate").attr("method", "get");
+				$("#boardUpdate").submit();
+			}
+		}
+	
+		function userUpdate() {
+			if (confirm("수정하시겠습니까?")) {
+				$("#boardUpdate").attr("action", "userUpdate");
+				$("#boardUpdate").attr("method", "post");
+				$("#boardUpdate").submit();
+			}
+		}
+	
+		//check box
+		if ($('#userStatusValue').val() == '0') {
+			$('#userStatus1').prop("checked", true);
+		} else if ($('#userStatusValue').val() == '1') {
+			$('#userStatus2').prop("checked", true);
+		};
+	
+	
+		if ($('#userAgreeValue').val() == '0') {
+			$('#userAgree1').prop("checked", true);
+		} else if ($('#userAgreeValue').val() == '1') {
+			$('#userAgree2').prop("checked", true);
+		};
+	
+		if ($('#userAuthValue').val() == '0') {
+			$('#userAuth1').prop("checked", true);
+		} else if ($('#userAuthValue').val() == '1') {
+			$('#userAuth2').prop("checked", true);
+		};
+	</script>
