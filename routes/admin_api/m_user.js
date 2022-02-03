@@ -12,7 +12,10 @@ const {
   type
 } = require('os');
 const conn = require('../../config/db');
-
+const { REPL_MODE_SLOPPY } = require('repl');
+const models = require('../../models');
+const sequelize = require('sequelize');
+const Op = sequelize.Op;
 // DB 커넥션 생성
 var connection = mysql.createConnection(connt);
 connection.connect();
@@ -153,7 +156,6 @@ router.get('/userDelete', (req, res) => {
 //프로필 삭제
 router.get('/imgDelete', async (req, res) => {
   const param = req.query.userImg;
-  console.log(req.query.uid + "----------------------");
   try {
     const sql = "update user set userImg = null where uid = ?";
     connection.query(sql, req.query.uid, (err, row) => {
@@ -173,6 +175,49 @@ router.get('/imgDelete', async (req, res) => {
     }
   }
   res.redirect('userUdtForm?uid=' + req.query.uid);
+});
+
+// 검색
+router.get('/search', async (req, res) => {
+  if (req.query.searchType == 'userEmail') {
+    models.user.findAll({
+      where: {
+        userEmail: {
+          [Op.like]: "%" + req.query.searchText + "%"
+        },
+      },
+      order: [['uid', 'ASC']],
+      raw: true,
+    }).then(results => {
+      console.log(results);
+      let route = req.app.get('views') + '/m_user/m_user';
+      res.render(route, {
+        'results': results,
+      });
+    }).catch(err => {
+      console.log(err);
+      return res.status(404).json({ message: 'error' });
+    })
+  } else {
+    models.user.findAll({
+      where: {
+        userNick: {
+          [Op.like]: "%" + req.query.searchText + "%"
+        },
+      },
+      order: [['uid', 'ASC']],
+      raw: true,
+    }).then(results => {
+      console.log(results);
+      let route = req.app.get('views') + '/m_user/m_user';
+      res.render(route, {
+        'results': results
+      });
+    }).catch(err => {
+      console.log(err);
+      return res.status(404).json({ message: 'error' });
+    })
+  }
 });
 
 module.exports = router;

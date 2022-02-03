@@ -11,15 +11,15 @@
 </script>
 
 <div class="board_list">
-    <form action="search" id="search" name="search" type="get" role="form">
+    <form action="/admin/m_user/search" method="get">
         <select name="searchType">
-            <option value="">선택</option>
             <option value="userEmail" >이메일</option>
             <option value="userNick">닉네임</option>
         </select>
-            <input type="text" name="searchText" >
+            <input type="text" name="searchText">
             <button type="submit" id="searchAction">검색</button>
     </form>
+
     <table>
         <colgroup>
             <col width="10%" />
@@ -38,8 +38,10 @@
                 <th>비고</th>
             </tr>
         </thead>
-        <tbody>
-            <% if(results.length > 0) { %>
+        
+
+        <% if(results.length > 0) { %>
+         <tbody>
             <% for(var i = 0; i < results.length; i++){ %>
             <tr>
                 <td><input type="checkbox" id="chk" name="chk" IDX="<%=results[i].uid %>" value="<%=results[i].uid %>" /></td>
@@ -55,7 +57,7 @@
                     <%= results[i].userNick %>
                     <%}%>
 
-							</td>
+				</td>
                 <td>
                   <button onclick="selectOne('/admin/m_user/selectOne', '', 'width=640, height=700, scrollbars=1', '<%=results[i].uid%>',
                     '')">상세보기</button>
@@ -67,8 +69,17 @@
             <tr>
                 <td colspan="10">등록된 회원이 없습니다.</td>
             </tr>
-            <% } %>
         </tbody>
+        <% } %>
+
+        
+
+        
+        
+
+        
+        
+        
     </table>
     <p class="btn">
         <form name="udtForm" role="form">
@@ -92,12 +103,6 @@
                 return;
             }
         })
-    });
-
-    $('#searchAction').click(function(){
-        var frm = document.search;
-        frm.action = '/admin/m_user';
-        frm.submit();
     });
 
     // var arr = new Array();
