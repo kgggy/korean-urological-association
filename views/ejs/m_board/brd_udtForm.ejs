@@ -1,5 +1,3 @@
-
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -19,14 +17,9 @@
 <div class="popup">
     <h2><span class="float_l">공지사항</span></h2>
     <div class="content">
-        <form action="brdUpdate" id="boardwrite" method="post">
+        <form action="" name="brdUpdate" method="">
             <table>
-                <colgroup>
-                    <col width="18%" />
-                    <col width="32%" />
-                    <col width="18%" />
-                    <col width="32%" />
-                </colgroup>
+
                 <tr>
                     <th>제목</th>
                     <td colspan="3"><input type="text" id="writTitle" name="writTitle" value="<%=result[0].writTitle %>"
@@ -43,7 +36,7 @@
                 <% }%> -->
                 <tr>
                     <th>우선순위</th>
-                    <td><input type="text" id="brdTitle" name="brdTitle" value=""
+                    <td><input type="text" id="writRank" name="writRank" value="<%=result[0].writRank %>"
                             style="ime-mode:active;" /></td>
                 </tr>
                 <tr>
@@ -52,14 +45,45 @@
                 </tr>
                 <tr>
                     <th>첨부파일</th>
-                    
+                    <td colspan="3"><% for(var i = 0; i < result.length; i++) {%>
+                        <li><%=result[i].fileOrgName%></a>&nbsp;
+                            <% if(result[i].fileRoute != null) { %>
+                            <button id="fileDelete">삭제</button></li>
+                            <% } else {%>
+                            <% } %>
+                            <input type="hidden" name="fileNo" value="<%=result[i].fileNo%>">
+                            <input type="hidden" name="fileRoute" value="<%=result[i].fileRoute%>">
+                        <% } %></td>
                 </tr>
             </table>
             <p class="btn">
-                <input type="hidden" name = "writId" value="<%=result[0].writId%>">
+                <input type="hidden" name="writId" value="<%=result[0].writId%>">
                 <button type="submit" class="btn_big_blue hand">수정</button>
                 <button type="button" class="btn_big_black hand" id="btn_bak" onclick="history.go(-1)">취소</button>
             </p>
         </form>
     </div>
 </div>
+
+<script>
+    var formObj = $("form[name='brdUpdate']");
+    $(document).ready(function () {
+        // 수정 폼 연결
+        $("#update_btn").on("click", function () {
+            formObj.attr("action", "brdUdtForm");
+            formObj.attr("method", "get");
+            formObj.submit();
+        });
+        //첨부파일 삭제
+        $("#fileDelete").on("click", function () {
+            if (confirm("실제 파일이 삭제됩니다. 정말 삭제하시겠습니까?") == true) {
+                formObj.attr("action", "fileDelete");
+                formObj.attr("method", "get");
+                alert("삭제되었습니다.");
+                formObj.submit();
+            } else {
+                return;
+            }
+        });
+    })
+</script>

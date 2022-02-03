@@ -69,7 +69,6 @@
 					<td><% for(var i = 0; i < result.length; i++) {%>
 						<li><a href="../../../<%= result[i].fileRoute %>" download><%=result[i].fileOrgName%></a>&nbsp;
 							<% if(result[0].fileRoute != null) { %>
-							<button id="fileDelete">삭제</button></li>
 						<% } else {%>
 						<% } %>
 						<input type="hidden" name="fileNo" value="<%=result[0].fileNo%>">
@@ -111,19 +110,5 @@
 				return;
 			}
 		});
-		//첨부파일 삭제
-		$("#fileDelete").on("click", function () {
-			if (confirm("삭제하시겠습니까?") == true) {
-				alert("삭제되었습니다.");
-				$("form[name='fileDelete']").submit();
-			} else {
-				return;
-			}
-		});
-
-		const tag = result[0].writContent;
-		tag = tag.replace("\"", "");
-		console.log(result[0].writContent);
-		console.log(tag);
 	})
 </script>

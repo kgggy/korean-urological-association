@@ -89,7 +89,7 @@ router.get('/all', async (req, res) => {
                   left join user u\
                          on u.uid = p.uid\
                       where p.boardId = ?\
-                      order by p.writRank is null asc, p.writRank, p.writDate desc";
+                      order by p.writRank is null asc, nullif(p.writRank, '') is null asc, p.writRank, p.writDate desc";
         connection.query(sql, param, (err, results) => {
             if (err) {
                 console.log(err);
@@ -140,7 +140,7 @@ router.get('/selectOne', async (req, res) => {
 router.get('/brdDelete', async (req, res) => {
     try {
         const param = req.query.writId;
-        const imgRoute = req.query.fileRoute;
+        const fileRoute = req.query.fileRoute;
         const sql = "delete from post where writId = ?";
         connection.query(sql, param, (err, row) => {
             if (err) {
@@ -149,12 +149,14 @@ router.get('/brdDelete', async (req, res) => {
                     msg: "query error"
                 });
             }
-            fs.unlinkSync(imgRoute, (err) => {
-                if (err) {
-                    console.log(err);
-                }
-                return;
-            });
+            if(fileRoute != '') {
+                fs.unlinkSync(fileRoute, (err) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                    return;
+                });
+            }
             res.send("<script>opener.parent.location.reload(); window.close();</script>");
         });
     } catch (error) {
@@ -177,7 +179,7 @@ router.get('/writForm', async (req, res) => {
 router.get('/brdUdtForm', async (req, res) => {
     try {
         const param = req.query.writId;
-        const sql = "select p.*, f.fileRoute, u.userNick, date_format(writDate, '%Y-%m-%d') as writDatefmt, date_format(writUpdDate, '%Y-%m-%d') as writUpdDatefmt\
+        const sql = "select p.*, f.fileRoute, f.fileOrgName, f.fileNo, u.userNick, date_format(writDate, '%Y-%m-%d') as writDatefmt, date_format(writUpdDate, '%Y-%m-%d') as writUpdDatefmt\
                        from post p\
                   left join file f on f.writId = p.writId\
                   left join user u on u.uid = p.uid\
@@ -203,14 +205,12 @@ router.get('/brdUdtForm', async (req, res) => {
 //게시글 수정
 router.post('/brdUpdate', async (req, res) => {
     try {
-        const param = [req.body.writTitle, req.body.writContent, req.body.writId];
-        const sql1 = "update post set writTitle = ?, writContent = ?, writUpdDate = sysdate() where writId = ?;";
+        const param = [req.body.writTitle, req.body.writContent, req.body.writRank, req.body.writId];
+        const sql1 = "update post set writTitle = ?, writContent = ?, writUpdDate = sysdate(), writRank = ? where writId = ?";
         connection.query(sql1, param, (err, row) => {
             if (err) {
                 console.error(err);
-                res.json({
-                    msg: "query error"
-                });
+                res.send('<h1>쿼리 오류입니다...</h1>');
             }
             res.redirect('selectOne?writId=' + req.body.writId);
         });
@@ -254,16 +254,16 @@ router.post('/boardwrite', upload.array('file'), async (req, res, next) => {
 
 //첨부파일 삭제
 router.get('/fileDelete', async (req, res) => {
-    req.query.fileNo = parseInt(req.query.fileNo);
     const param = [req.query.writId, req.query.fileNo];
     const fileRoute = req.query.fileRoute;
+    console.log(fileRoute + "-------" + param);
     try {
       const sql = "delete from file where writId = ? and fileNo = ?";
       connection.query(sql, param, (err, row) => {
         if (err) {
           console.log(err)
         }
-        fs.unlinkSync(fileRoute, (err) => {
+        fs.unlinkSync(fileRoute.toString(), (err) => {
           if(err) {
             console.log(err);
           }
