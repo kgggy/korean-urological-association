@@ -45,21 +45,23 @@
                 </tr>
                 <tr>
                     <th>첨부파일</th>
-                    <td colspan="3"><% for(var i = 0; i < result.length; i++) {%>
-                        <li><%=result[i].fileOrgName%></a>&nbsp;
+                    <td colspan="3">
+                        <% for(var i = 0; i < result.length; i++) {%>
                             <% if(result[i].fileRoute != null) { %>
-                            <button id="fileDelete">삭제</button></li>
-                            <% } else {%>
-                            <% } %>
-                            <input type="hidden" name="fileNo" value="<%=result[i].fileNo%>">
-                            <input type="hidden" name="fileRoute" value="<%=result[i].fileRoute%>">
+                            <li><%=result[i].fileOrgName%>&nbsp;
+                                <button id="fileDelete">삭제</button>
+                            </li>
+                                <% } else {%>
+                                <% } %>
+                            <input type="hidden" name="fileNo" value="<%=result[1].fileNo%>">
+                            <input type="hidden" name="fileRoute" value="<%=result[1].fileRoute%>">
                         <% } %></td>
                 </tr>
             </table>
             <p class="btn">
                 <input type="hidden" name="writId" value="<%=result[0].writId%>">
-                <button type="submit" class="btn_big_blue hand">수정</button>
-                <button type="button" class="btn_big_black hand" id="btn_bak" onclick="history.go(-1)">취소</button>
+                <button type="submit" class="btn_big_blue hand" id="update_btn">수정</button>
+                <button type="button" class="btn_big_black hand" id="btn_bak" onclick="history.back()">취소</button>
             </p>
         </form>
     </div>
@@ -70,8 +72,8 @@
     $(document).ready(function () {
         // 수정 폼 연결
         $("#update_btn").on("click", function () {
-            formObj.attr("action", "brdUdtForm");
-            formObj.attr("method", "get");
+            formObj.attr("action", "brdUpdate");
+            formObj.attr("method", "post");
             formObj.submit();
         });
         //첨부파일 삭제

@@ -275,7 +275,7 @@ router.get('/fileDelete', async (req, res) => {
         console.log("프로필 삭제 에러 발생");
       }
     }
-    res.redirect('selectOne?writId=' + req.query.writId);
+    res.redirect('brdUdtForm?writId=' + req.query.writId);
   });
 
 
