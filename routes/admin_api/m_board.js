@@ -89,7 +89,7 @@ router.get('/all', async (req, res) => {
                   left join user u\
                          on u.uid = p.uid\
                       where p.boardId = ?\
-                      order by p.writDate desc";
+                      order by p.writRank is null asc, p.writRank, p.writDate desc";
         connection.query(sql, param, (err, results) => {
             if (err) {
                 console.log(err);
@@ -113,7 +113,7 @@ router.get('/all', async (req, res) => {
 router.get('/selectOne', async (req, res) => {
     try {
         const param = req.query.writId;
-        const sql = "select p.*, f.fileRoute, f.fileOrgName, u.userNick, date_format(writDate, '%Y-%m-%d') as writDatefmt, date_format(writUpdDate, '%Y-%m-%d') as writUpdDatefmt\
+        const sql = "select p.*, f.fileRoute, f.fileOrgName, f.fileNo, u.userNick, date_format(writDate, '%Y-%m-%d') as writDatefmt, date_format(writUpdDate, '%Y-%m-%d') as writUpdDatefmt\
                         from post p\
                    left join file f on f.writId = p.writId\
                    left join user u on u.uid = p.uid\
@@ -130,7 +130,6 @@ router.get('/selectOne', async (req, res) => {
                 'result': result,
                 layout: false
             });
-            console.log(result[0].fileOrgName);
         });
     } catch (error) {
         res.status(401).send(error.message);
@@ -141,6 +140,7 @@ router.get('/selectOne', async (req, res) => {
 router.get('/brdDelete', async (req, res) => {
     try {
         const param = req.query.writId;
+        const imgRoute = req.query.fileRoute;
         const sql = "delete from post where writId = ?";
         connection.query(sql, param, (err, row) => {
             if (err) {
@@ -149,6 +149,12 @@ router.get('/brdDelete', async (req, res) => {
                     msg: "query error"
                 });
             }
+            fs.unlinkSync(imgRoute, (err) => {
+                if (err) {
+                    console.log(err);
+                }
+                return;
+            });
             res.send("<script>opener.parent.location.reload(); window.close();</script>");
         });
     } catch (error) {
@@ -219,8 +225,9 @@ router.post('/boardwrite', upload.array('file'), async (req, res, next) => {
     const orgName = req.files.map(data => data.originalname);
     try {
         const boardWritId = uuid();
-        const param1 = [boardWritId, req.body.boardId, req.body.uid, req.body.writTitle, req.body.writContent];
-        const sql1 = "insert into post(writId, boardId, uid, writTitle, writContent) values(?, ?, ?, ?, ?)";
+        // req.body.writRank = parseInt(req.body.writRank);
+        const param1 = [boardWritId, req.body.boardId, req.body.uid, req.body.writTitle, req.body.writContent, req.body.writRank];
+        const sql1 = "insert into post(writId, boardId, uid, writTitle, writContent, writRank) values(?, ?, ?, ?, ?, if(writRank,?,null))";
         connection.query(sql1, param1, (err, row) => {
             if (err) {
                 throw err;
@@ -245,7 +252,31 @@ router.post('/boardwrite', upload.array('file'), async (req, res, next) => {
     }
 });
 
-
+//첨부파일 삭제
+router.get('/fileDelete', async (req, res) => {
+    req.query.fileNo = parseInt(req.query.fileNo);
+    const param = [req.query.writId, req.query.fileNo];
+    const fileRoute = req.query.fileRoute;
+    try {
+      const sql = "delete from file where writId = ? and fileNo = ?";
+      connection.query(sql, param, (err, row) => {
+        if (err) {
+          console.log(err)
+        }
+        fs.unlinkSync(fileRoute, (err) => {
+          if(err) {
+            console.log(err);
+          }
+          return;
+        });
+      })
+    } catch (error) {
+      if(error.code == "ENOENT") {
+        console.log("프로필 삭제 에러 발생");
+      }
+    }
+    res.redirect('selectOne?writId=' + req.query.writId);
+  });
 
 
 module.exports = router;

@@ -32,7 +32,7 @@
 			</tr>
 			<tr>
 				<th>우선순위</th>
-				<td></td>
+				<td><%=result[0].writRank%></td>
 			</tr>
 			<tr>
 				<th>작성자</th>
@@ -50,23 +50,33 @@
 			</tr>
 			<tr>
 				<th>내용</th>
-				<td><%=result[0].writContent%></td>
+				<td><%=result[0].writContent%><p>ㄴㄴㄴ<strong>ㄴㅇㄹㄷㄴㄷ</strong></p></td>
 			</tr>
-			<tr>
-				<th>첨부파일</th>
-				<td>
-					<% for(var i = 0; i < result.length; i++) {%>
-					<img src="../../../<%= result[i].fileRoute %>" alt="사진" width="200px" /></li>
-					<% } %>
-				</td>
+			<form action="fileDelete" method="get" name="fileDelete">
+				<input type="hidden" name="writId" value="<%=result[0].writId%>">
+				<tr>
+					<th>첨부파일</th>
+					<td>
+						<% for(var i = 0; i < result.length; i++) {%>
+							<% if(result[0].fileRoute != null) { %>
+								<img src=" ../../../<%= result[i].fileRoute %>" alt="사진" width="200px" /></li>
+							<% } %>
+						<% } %>
+					</td>
+				</tr>
 				<tr>
 					<th></th>
 					<td><% for(var i = 0; i < result.length; i++) {%>
-						<li><a href="../../../<%= result[i].fileRoute %>" download><%=result[i].fileOrgName%></a></li>
+						<li><a href="../../../<%= result[i].fileRoute %>" download><%=result[i].fileOrgName%></a>&nbsp;
+							<% if(result[0].fileRoute != null) { %>
+							<button id="fileDelete">삭제</button></li>
+						<% } else {%>
+						<% } %>
+						<input type="hidden" name="fileNo" value="<%=result[0].fileNo%>">
+						<input type="hidden" name="fileRoute" value="<%=result[0].fileRoute%>">
 						<% } %></td>
 				</tr>
-			</tr>
-
+			</form>
 		</table>
 
 		<form name="udtForm" role="form">
@@ -101,6 +111,19 @@
 				return;
 			}
 		});
-		//다운로드
+		//첨부파일 삭제
+		$("#fileDelete").on("click", function () {
+			if (confirm("삭제하시겠습니까?") == true) {
+				alert("삭제되었습니다.");
+				$("form[name='fileDelete']").submit();
+			} else {
+				return;
+			}
+		});
+
+		const tag = result[0].writContent;
+		tag = tag.replace("\"", "");
+		console.log(result[0].writContent);
+		console.log(tag);
 	})
 </script>

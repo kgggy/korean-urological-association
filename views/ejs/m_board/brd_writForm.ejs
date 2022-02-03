@@ -17,12 +17,21 @@
     <script src="https://cdn.ckeditor.com/ckeditor5/29.1.0/classic/ckeditor.js"></script>
 </head>
 
+<style>
+    .ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
+        border-color: var(--ck-color-base-border);
+        height: 40%;
+    }
+
+    .ck.ck-editor__editable:not(.ck-editor__nested-editable).ck-focused{
+        height: 40%;
+    }
+</style>
+
 <div class="popup">
     <h2><span class="float_l">글 등록</h2>
     <div class="content">
         <form action="" id="boardwrite" method="post" enctype="multipart/form-data" autocomplete="off">
-            <!-- <input type="hidden" id="boardId" name="boardId" value="">
-            <input type="hidden" id="uid" name="uid" value="81"> -->
             <table>
                 <colgroup>
                     <col width="18%" />
@@ -60,7 +69,7 @@
                     </td>
                 </tr>
             </table>
-                <textarea name="editor" class="editor" id="editor"></textarea>
+            <textarea name="editor" class="editor" id="editor"></textarea>
             <input type="hidden" id="uid" name="uid" value="">
             <input type="hidden" id="boardId" name="boardId" value="">
             <input type="hidden" id="writContent" name="writContent" value="">
@@ -92,6 +101,8 @@
             var writTitle = $("#writTitle").val();
             // var content = $("#content").val();
             // $('input[name=inputNm]').attr('value',goContent);
+            var content = editor.getData();
+            console.log(content);
 
             if (writTitle == "") {
                 alert("제목을 입력하세요.");
@@ -99,17 +110,17 @@
                 return false;
             }
 
-            if (editor == null) {
+            if (content == null) {
                 alert("내용을 입력하세요.");
                 $("#editor").focus();
                 return false;
             }
 
             if (confirm("등록하시겠습니까?") == true) {
-                // $("#boardwrite").attr("action", "boardwrite");
-                // $("#boardwrite").submit();
-                var content = CKEDITOR.instances.editor.getData();
-                console.log(content);
+                $('input[name=writContent]').attr('value',content);
+                $("#boardwrite").attr("action", "boardwrite");
+                $("#boardwrite").submit();
+                alert("등록되었습니다.");
             } else {
                 return;
             }
