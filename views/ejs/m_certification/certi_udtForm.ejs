@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<link rel="stylesheet" type="text/css" href="/stylesheets/css/default.css" />
+	<link rel="stylesheet" type="text/css" href="/stylesheets/css/basic.css" />
+	<link rel="stylesheet" type="text/css" href="/stylesheets/css/layout.css" />
+	<!--<link href="/js/jquery/css/jquery-ui-1.8.2.custom.css" rel="stylesheet" type="text/css"/>-->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css" />
+	<script type="text/javascript" src="/stylesheets/jquery/jquery-1.7.1.min.js"></script>
+	<script type="text/javascript" src="/stylesheets/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+	<script type="text/javascript" src="/stylesheets/jquery/jquery.validate.js"></script>
+	<script type="text/javascript" src="/stylesheets/jquery/jquery.form.js"></script>
+	<script src="/stylesheets/js/common.js"></script>
+</head>
+
+<style>
+	input {
+		border: 1px solid grey
+	}
+</style>
+
+<body style="background: #fff;">
+	<div class="popup">
+		<h2><span class="float_l">탄소실천 종류 수정</h2>
+		<div class="content">
+			<form action="" id="certiUpdate" method="" enctype="multipart/form-data">
+				<table>
+					<colgroup>
+						<col width="20%" />
+						<col width="80%" />
+					</colgroup>
+					<tr>
+						<th>이미지</th>
+						<% if(result.length > 0 && result[0].certiImage != null && result[0].certiImage != '') {%>
+						<td>
+							<li><img src="../../../<%=result[0].certiImage%>" alt="사진" width="117px" />
+								<button onclick="javascript:file_del();">삭제</button>
+							</li>
+							<input type="hidden" id="certiImage" name="certiImage" value="<%=result[0].certiImage%>">
+						</td>
+						<% }else{ %>
+						<td name="file_name" colspan="3">
+							<li><input type="file" id="file" name="file" /></li>
+						</td>
+						<% } %>
+
+					</tr>
+					<tr>
+						<th>종류명</th>
+						<td>
+							<input type="text" id="certiTitle" name="certiTitle" value="<%=result[0].certiTitle%>">
+						</td>
+					</tr>
+					<tr>
+						<th>설명글</th>
+						<td>
+							<textarea id="content"
+								style="height: 145px; width: 479px;"><%=result[0].certiDetail%></textarea>
+						</td>
+					</tr>
+					<tr>
+						<th>포인트</th>
+						<td>
+							<input type="text" id="certiPoint" name="certiPoint" value="<%=result[0].certiPoint%>">
+						</td>
+					</tr>
+					<% if(result[0].certiDivision == 0) {%>
+					<tr>
+						<th>단계</th>
+						<td>
+							<input type="text" id="certiDiff" name="certiDiff" value="<%=result[0].certiDiff%>">
+						</td>
+					</tr>
+					<% }else{ %>
+					<tr>
+						<th>권한</th>
+						<td>
+							<input type="text" id="certiAuth" name="certiAuth" value="<%=result[0].certiAuth%>">
+						</td>
+					</tr>
+					<% } %>
+					<tr>
+						<th>노출여부</th>
+						<td>
+							<label><input type="radio" id="certiShow1" name="certiShow" value="0" checked>노출</label>&nbsp;&nbsp;
+							<label><input type="radio" id="certiShow2" name="certiShow" value="1">비노출</label>
+							<% if(result.length > 0) {%>
+								<input type="hidden" id="certiShowhValue" value="<%=result[0].certiShow%>">
+								<% } %>
+						</td>
+					</tr>
+				</table>
+				<input type="hidden" name="certiTitleId" value="<%=result[0].certiTitleId%>">
+				<input type="hidden" id="certiDetail" name="certiDetail" value="">
+			</form>
+			<p class="btn">
+				<button onclick="certiUpdate()">수정</button>
+				<button onclick="window.close();">취소</button>
+			</p>
+		</div>
+	</div>
+
+	<script>
+		function file_del(route) {
+			if (confirm("실제 파일이 삭제됩니다 \n정말 삭제하시겠습니까?") == true) {
+				$("#certiUpdate").attr("action", "imgDelete");
+				$("#certiUpdate").attr("method", "get");
+				$("#certiUpdate").submit();
+			} else {
+				return;
+			}
+		};
+
+		function certiUpdate() {
+			if (confirm("수정하시겠습니까?") == true) {
+				const content = $("#content").val();
+				// console.log(content);
+				$("#certiDetail").attr("value", content);
+				$("#certiUpdate").attr("action", "certiUpdate");
+				$("#certiUpdate").attr("method", "post");
+				$("#certiUpdate").submit();
+				alert("수정이 완료되었습니다.");
+			} else {
+				return;
+			}
+		};
+
+		if ($('#certiShowhValue').val() == '0') {
+			$('#certiShow1').prop("checked", true);
+		} else if ($('#certiShowhValue').val() == '1') {
+			$('#certiShow2').prop("checked", true);
+		};
+	</script>

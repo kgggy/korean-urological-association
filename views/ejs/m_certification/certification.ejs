@@ -1,23 +1,30 @@
-<form id="boardForm" name="boardForm" method="post" action="" onsubmit="return false;" autocomplete="off">
+<form id="certiForm" name="certiForm" method="" action="">
     <div class="board_search">
-        <h3 class="float_l" id="category_title">탄소실천 글 관리</h3>
+        <h3 class="float_l" id="category_title">탄소실천 종류 관리</h3>
     </div>
     <div class="board_list">
         <table>
             <colgroup>
-                <col width="7%" />
-                <col width="8%" />
+                <col width="5%" />
+                <col width="13%" />
                 <col width="15%" />
-                <col width="8%" />
+                <col width="25%" />
                 <col width="10%" />
-                <col width="15%" />
+                <col width="10%" />
             </colgroup>
             <thead>
                 <tr>
                     <th></th>
-                    <th>작성자</th>
-                    <th>좋아요 수</th>
-                    <th>등록일</th>
+                    <th>이미지</th>
+                    <th>종류</th>
+                    <th>설명글</th>
+                    <th>포인트</th>
+                    <% if(results[0].certiDivision == 0) {%>
+                    <th>단계</th>
+                    <% }else{ %>
+                    <th>권한</th>
+                    <% } %>
+                    <th>노출여부</th>
                     <th>비고</th>
                 </tr>
             </thead>
@@ -26,46 +33,83 @@
 					for(var i = 0; i < results.length; i++){
 					%>
                 <tr>
-                    <input type="hidden" id="writId" name="writId" value="<%=results[i].writId%>" />
                     <td>체크박스자리</td>
-                    <td><%=results[i].userNick%></td>
+                    <% if(results.length > 0 && results[i].certiImage != null && results[i].certiImage != '') {%>
+                    <td><img src="../../../<%= results[i].certiImage %>" alt="사진"
+                            style="padding:20px !important; width:60px" /></td>
+                    <% }else{ %>
+                    <td><img src="../../../public/images/certification/sprout.png" alt=""
+                            style="padding:20px !important; width:60px" /></td>
+                    <% } %>
                     <td><%=results[i].certiTitle%></td>
-                    <td><%=results[i].writHit %></td>
-                    <td><%=results[i].writDatefmt%></td>
-                    <td><%=results[i].writUpdDatefmt%></td>
+                    <td><%=results[i].certiDetail %></td>
+                    <td><%=results[i].certiPoint%> 점</td>
+                    <% if(results[i].certiDivision == 0) {%>
+                    <td><%=results[i].certiDiff%> 단계</td>
+                    <% }else{ %>
+                    <td><%=results[i].certiAuth%></td>
+                    <% } %>
+                    <% if(results[i].certiShow == 0) {%>
+                    <td>O</td>
+                    <% }else{ %>
+                    <td>X</td>
+                    <% } %>
                     <td>
-                        <button
-                            onclick="selectOne('/admin/m_board/selectOne', '', 'width=640, height=700, scrollbars=1', '<%=results[i].writId%>', '')">상세보기</button>
+                        <input type="button"
+                            onclick="certiUpdate('/admin/m_certification/certiUdtForm', '', 'width=640, height=700, scrollbars=1', '<%=results[i].certiTitleId%>', '')"
+                            value="수정 " />
+                        <button type="button" id="delete_btn">삭제</button>
+                        <input type="hidden" id="certiTitleId" value="<%=results[i].certiTitleId%>" />
+                        <input type="hidden" id="certiDivision" value="<%=results[i].certiDivision%>" />
                     </td>
                 </tr>
                 <% } %>
                 <%if(results.length == 0){%>
                 <tr>
-                    <td colspan="7">
+                    <td colspan="8">
                         등록된 목록이 없습니다.
                     </td>
                 </tr>
                 <%}%>
-				</tbody>
-			</table>
-		</div>
-	</form>
-	<div class="mt_20">
-		<p class="float_r">
-            <!-- 나중에 boardId랑 uid(admin) 관리자걸로 고쳐줘야함!!!!!!!!!!!!!!!!!!!!-->
-            <button onclick="enroll('/admin/m_board/writForm', '', 'width=640, height=700, scrollbars=1', '', '')">등록</button>
-		</p>
-	</div>
+            </tbody>
+        </table>
+    </div>
+</form>
+        <div class="mt_20">
+            <p class="float_r">
+                <!-- 나중에 boardId랑 uid(admin) 관리자걸로 고쳐줘야함!!!!!!!!!!!!!!!!!!!!-->
+                <input type="button" onclick="enroll('/admin/m_certification/certiWritForm', '', 'width=640, height=700, scrollbars=1', '<%=results[0].certiDivision%>',
+                '')" value="등록" />
+                </p>
+    </div>
 
-	<script>
-        function selectOne(theURL, winName, features, writId, mode) {
-            theURL += '?writId=' + writId;
+    <script>
+        // 삭제
+        $(document).ready(function () {
+            const formObj = $("form[name='certiForm']");
+            $("button").on("click", function () {
+                const certiId = $(this).next().val();
+                const division = $(this).next().next().val();
+                // console.log(division);
+                formObj.attr("action", "certiDelete?certiTitleId=" + certiId + "&certiDivision=" +
+                    division);
+                formObj.attr("method", "post");
+                if (confirm("삭제하시겠습니까?") == true) {
+                    formObj.submit();
+                    alert("삭제되었습니다.");
+                } else {
+                    return;
+                }
+            })
+        });
+
+        function certiUpdate(theURL, winName, features, certiTitleId, mode) {
+            theURL += '?certiTitleId=' + certiTitleId;
             window.open(theURL, winName, features);
         }
 
-        function enroll(theURL, winName, features, mode) {
-            theURL += '?boardId=3&?uid=81';
+        function enroll(theURL, winName, features, certiDivision, mode) {
+            theURL += '?certiDivision=' + certiDivision;
             window.open(theURL, winName, features);
         }
     </script>
-    

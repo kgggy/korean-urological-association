@@ -50,7 +50,7 @@
 			</tr>
 			<tr>
 				<th>내용</th>
-				<td><%=result[0].writContent%><p>ㄴㄴㄴ<strong>ㄴㅇㄹㄷㄴㄷ</strong></p></td>
+				<td><%-result[0].writContent%></td>
 			</tr>
 				<input type="hidden" name="writId" value="<%=result[0].writId%>">
 				<tr>
@@ -79,10 +79,9 @@
 		<form name="udtForm" role="form">
 			<p class="btn">
 				<input type="hidden" id="writId" name="writId" value="<%=result[0].writId%>">
-				<input type="hidden" id="fileRoute" name="fileRoute" value="<%=result[0].fileRoute%>">
 				<button class="btn_big_blue hand" type="button" id="update_btn">수정</button>
 				<button class="btn_big_blue hand" type="button" id="delete_btn">삭제</button>
-				<button class="btn_big_black hand" onclick="window.close();">취소</button>
+				<button class="btn_big_black hand" onclick="opener.parent.location.reload();self.close();">취소</button>
 			</p>
 		</form>
 	</div>

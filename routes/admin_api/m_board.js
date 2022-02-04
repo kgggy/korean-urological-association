@@ -205,8 +205,8 @@ router.get('/brdUdtForm', async (req, res) => {
 //게시글 수정
 router.post('/brdUpdate', async (req, res) => {
     try {
-        const param = [req.body.writTitle, req.body.writContent, req.body.writRank, req.body.writId];
-        const sql1 = "update post set writTitle = ?, writContent = ?, writUpdDate = sysdate(), writRank = ? where writId = ?";
+        const param = [req.body.writTitle, req.body.writContent, req.body.writRank, req.body.writRank, req.body.writId];
+        const sql1 = "update post set writTitle = ?, writContent = ?, writUpdDate = sysdate(), writRank = if(trim(?)='', null, ?) where writId = ?";
         connection.query(sql1, param, (err, row) => {
             if (err) {
                 console.error(err);
@@ -256,7 +256,7 @@ router.post('/boardwrite', upload.array('file'), async (req, res, next) => {
 router.get('/fileDelete', async (req, res) => {
     const param = [req.query.writId, req.query.fileNo];
     const fileRoute = req.query.fileRoute;
-    console.log(fileRoute + "-------" + param);
+    // console.log(fileRoute + "-------" + param);
     try {
       const sql = "delete from file where writId = ? and fileNo = ?";
       connection.query(sql, param, (err, row) => {
