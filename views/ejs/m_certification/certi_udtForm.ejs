@@ -105,7 +105,7 @@
 				<input type="hidden" id="certiDetail" name="certiDetail" value="">
 			</form>
 			<p class="btn">
-				<button onclick="certiUpdate()">수정</button>
+				<button onclick="certiUpdate()">수정</button> <%= JSON.stringify(records) %>
 				<button onclick="window.close();">취소</button>
 			</p>
 		</div>
@@ -141,13 +141,4 @@
 		} else if ($('#certiShowhValue').val() == '1') {
 			$('#certiShow2').prop("checked", true);
 		};
-
-		$.ajax({
-			url: 'openApi/location.csv',
-			dataType: 'text',
-		}).done(succecssFunction);
-
-		function succecssFunction(data) {
-			alert("성공!!");
-		}
 	</script>

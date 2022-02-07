@@ -1,6 +1,7 @@
 const multer = require("multer");
 const path = require('path');
 const fs = require('fs');
+const { parse } = require("csv-parse");
 
 var express = require('express');
 var router = express.Router();
@@ -212,11 +213,16 @@ router.get('/certiUdtForm', async (req, res) => {
                 console.log(err);
             }
             let route = req.app.get('views') + '/m_certification/certi_udtForm';
+            const csv = fs.readFileSync(path.resolve(__dirname, "../../views/openApi/location.csv")); //  현재 디렉토리가 아닌 소스 파일의 위치와 관련된 경로를 확인할 수 있음.
+            console.log(csv.toString());
+            //parse 메서드 -> 2차원배열화
+            const records = csv.toString();
+            console.log(records);
             res.render(route, {
                 'result': result,
-                layout: false
+                layout: false,
+                'records' : records
             });
-            console.log(result);
         });
     } catch (error) {
         res.status(401).send(error.message);
