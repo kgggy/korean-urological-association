@@ -6,10 +6,10 @@
         <table>
             <colgroup>
                 <col width="5%" />
-                <col width="13%" />
-                <col width="15%" />
-                <col width="25%" />
+                <col width="20%" />
                 <col width="10%" />
+                <col width="15%" />
+                <col width="15%" />
                 <col width="10%" />
             </colgroup>
             <thead>
@@ -21,7 +21,6 @@
                     <th>끝날짜</th>
                     <th>노출여부</th>
                     <th>순서</th>
-                    <th>노출여부</th>
                     <th>비고</th>
                 </tr>
             </thead>
@@ -38,15 +37,19 @@
                     <td><img src="../../../public/images/certification/sprout.png" alt=""
                             style="padding:20px !important; width:60px" /></td>
                     <% } %>
-                    <td><%=results[i].bannerDiv%></td>
-                    <td><%=results[i].startDate %></td>
-                    <td><%=results[i].endDate%></td>
-                    <td><%=results[i].showYN%></td>
-                    <% if(results[i].showNo == 0) {%>
+                    <% if(results[i].bannerDiv == 0) {%>
+                    <td>팝업 배너</td>
+                    <% }else if (results[i].bannerDiv == 1){ %>
+                    <td>슬라이드 배너</td>
+                    <% } %>
+                    <td><%=results[i].startDatefmt %></td>
+                    <td><%=results[i].endDatefmt%></td>
+                    <% if(results[i].showYN == 0) {%>
                     <td>O</td>
                     <% }else{ %>
                     <td>X</td>
                     <% } %>
+                    <td><%=results[i].showNo%></td>
                     <td>
                         <input type="button"
                             onclick="certiUpdate('/admin/m_certification/certiUdtForm', '', 'width=640, height=700, scrollbars=1', '', '')"

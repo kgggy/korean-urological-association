@@ -39,7 +39,8 @@ connection.connect();
 //배너 전체조회
 router.get('/banner', async (req, res) => {
     try {
-        const sql = "select * from banner";
+        const sql = "select *, date_format(startDate, '%Y-%m-%d') as startDatefmt, date_format(endDate, '%Y-%m-%d') as endDatefmt\
+                       from banner";
         connection.query(sql, (err, results) => {
             if (err) {
                 console.log(err);
