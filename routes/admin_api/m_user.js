@@ -45,6 +45,65 @@ var upload = multer({ //multer안에 storage정보
 
 });
 
+//로그인 페이지
+router.get('/login', async (req, res) => {
+  console.log("==============================");
+  let route = req.app.get('views') + '/index';
+  res.render(route, {
+    layout: false
+  });
+})
+
+  //로그인
+  router.post('/', async (req, res) => {
+
+    const { userPwd, userEmail } = req.body;
+
+  
+    const emailChk = await models.user.findOne({ where: { userEmail } });
+  
+    if (emailChk == null) {
+      return res.json({
+        emailChk: false,
+        message: "이메일을 다시 확인해주세요.",
+      });
+    }
+  
+    const makePasswordHashed = (userEmail, plainPassword) =>
+      new Promise(async (resolve, reject) => {
+        // salt를 가져오는 부분은 각자의 DB에 따라 수정
+        const salt = await models.user
+          .findOne({
+            attributes: ['salt'],
+            raw: true,
+            where: {
+              userEmail,
+            },
+          }).then((result) => result.salt);
+        console.log(salt);
+  
+        crypto.pbkdf2(plainPassword, salt, 9999, 64, 'sha512', (err, key) => {
+          if (err) reject(err);
+          resolve(key.toString('base64'));
+        });
+      });
+  
+    const password = await makePasswordHashed(userEmail, userPwd);
+    const dbPwd = await models.user.findOne({ where: { userEmail } });
+    console.log(dbPwd);
+    if (password == dbPwd.userPwd) {  // dbPwd: ['userPwd'] 해도 됨
+      res.json(
+        dbPwd
+      );
+  
+    } else {
+      res.json({
+        pwdChk: false,
+        message: "비밀번호를 확인해주세요.",
+      });
+    }
+  });
+
 //사용자 전체조회
 router.get('/', async (req, res) => {
   try {

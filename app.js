@@ -38,7 +38,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '/views/ejs'));
 
 
-// app.get(admin, (req, res) => { res.sendFile(__dirname + "/views/index.html"); })
+app.get('/', (req, res) => { res.sendFile(__dirname + "/views/index.html"); })
 // app.post(admin, (req, res) => { res.sendFile(__dirname + "/views/index.html"); })
 // app.get(admin + "orgm_list", (req, res) => { res.render(__dirname + ejs + "orgm_viewForm.ejs"); }) // 랜더링 필요하기 때문에 sendfile 대신 render 써줘야함
 // app.get(admin + "/memberList", (req, res) => { res.render(__dirname + ejs + "/memberList.ejs"); })
