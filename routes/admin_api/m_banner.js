@@ -36,6 +36,27 @@ var upload = multer({ //multer안에 storage정보
 var connection = mysql.createConnection(connt);
 connection.connect();
 
+//배너 전체조회
+router.get('/banner', async (req, res) => {
+    try {
+        const sql = "select * from banner";
+        connection.query(sql, (err, results) => {
+            if (err) {
+                console.log(err);
+                res.json({
+                    msg: "query error"
+                });
+            }
+            let route = req.app.get('views') + '/m_banner/banner';
+            res.render(route, {
+                'results': results
+            });
+        });
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
 //배너 등록
 router.post('/', upload.single('file'), async function (req, res) {
     console.log(decodeURI(req.file.originalname));

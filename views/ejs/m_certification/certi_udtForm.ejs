@@ -61,7 +61,7 @@
 						<th>설명글</th>
 						<td>
 							<textarea id="content"
-								style="height: 145px; width: 479px;"><%=result[0].certiDetail%></textarea>
+								style="height: 145px; width: 479px;"></textarea>
 						</td>
 					</tr>
 					<tr>
@@ -103,9 +103,10 @@
 				</table>
 				<input type="hidden" name="certiTitleId" value="<%=result[0].certiTitleId%>">
 				<input type="hidden" id="certiDetail" name="certiDetail" value="">
+				<input type="hidden" id="records" name="records" value="<%= records %>">
 			</form>
 			<p class="btn">
-				<button onclick="certiUpdate()">수정</button> <%= JSON.stringify(records) %>
+				<button onclick="certiUpdate()">수정</button> 
 				<button onclick="window.close();">취소</button>
 			</p>
 		</div>
@@ -141,4 +142,9 @@
 		} else if ($('#certiShowhValue').val() == '1') {
 			$('#certiShow2').prop("checked", true);
 		};
+
+		const records = $("#records").val();
+		const arr = JSOM.parse("[" + records + "]");
+		const json = arr;
+		$("#content").val("aaa");
 	</script>

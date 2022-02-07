@@ -1,0 +1,106 @@
+<form id="certiForm" name="certiForm" method="" action="">
+    <div class="board_search">
+        <h3 class="float_l" id="category_title">배너 관리</h3>
+    </div>
+    <div class="board_list">
+        <table>
+            <colgroup>
+                <col width="5%" />
+                <col width="13%" />
+                <col width="15%" />
+                <col width="25%" />
+                <col width="10%" />
+                <col width="10%" />
+            </colgroup>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>이미지</th>
+                    <th>위치</th>
+                    <th>시작날짜</th>
+                    <th>끝날짜</th>
+                    <th>노출여부</th>
+                    <th>순서</th>
+                    <th>노출여부</th>
+                    <th>비고</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% 
+					for(var i = 0; i < results.length; i++){
+					%>
+                <tr>
+                    <td>체크박스</td>
+                    <% if(results.length > 0 && results[i].bannerRoute != null && results[i].bannerRoute != '') {%>
+                    <td><img src="../../../<%= results[i].bannerRoute %>" alt="사진"
+                            style="padding:20px !important; width:60px" /></td>
+                    <% }else{ %>
+                    <td><img src="../../../public/images/certification/sprout.png" alt=""
+                            style="padding:20px !important; width:60px" /></td>
+                    <% } %>
+                    <td><%=results[i].bannerDiv%></td>
+                    <td><%=results[i].startDate %></td>
+                    <td><%=results[i].endDate%></td>
+                    <td><%=results[i].showYN%></td>
+                    <% if(results[i].showNo == 0) {%>
+                    <td>O</td>
+                    <% }else{ %>
+                    <td>X</td>
+                    <% } %>
+                    <td>
+                        <input type="button"
+                            onclick="certiUpdate('/admin/m_certification/certiUdtForm', '', 'width=640, height=700, scrollbars=1', '', '')"
+                            value="수정 " />
+                        <button type="button" id="delete_btn">삭제</button>
+                    </td>
+                </tr>
+                <% } %>
+                <%if(results.length == 0){%>
+                <tr>
+                    <td colspan="9">
+                        등록된 목록이 없습니다.
+                    </td>
+                </tr>
+                <%}%>
+            </tbody>
+        </table>
+    </div>
+</form>
+        <div class="mt_20">
+            <p class="float_r">
+                <!-- 나중에 boardId랑 uid(admin) 관리자걸로 고쳐줘야함!!!!!!!!!!!!!!!!!!!!-->
+                <input type="button" onclick="enroll('/admin/m_certification/certiWritForm', '', 'width=640, height=700, scrollbars=1', '',
+                '')" value="등록" />
+                </p>
+    </div>
+
+    <script>
+        // 삭제
+        $(document).ready(function () {
+            const formObj = $("form[name='certiForm']");
+            $("button").on("click", function () {
+                const certiId = $(this).next().val();
+                const division = $(this).next().next().val();
+                // console.log(division);
+                formObj.attr("action", "certiDelete?certiTitleId=" + certiId + "&certiDivision=" +
+                    division);
+                formObj.attr("method", "post");
+                if (confirm("삭제하시겠습니까?") == true) {
+                    formObj.submit();
+                    alert("삭제되었습니다.");
+                } else {
+                    return;
+                }
+            })
+        });
+
+        function certiUpdate(theURL, winName, features, certiTitleId, mode) {
+            theURL += '?certiTitleId=' + certiTitleId;
+            window.open(theURL, winName, features);
+        }
+
+        function enroll(theURL, winName, features, certiDivision, mode) {
+            theURL += '?certiDivision=' + certiDivision;
+            window.open(theURL, winName, features);
+        }
+    </script>

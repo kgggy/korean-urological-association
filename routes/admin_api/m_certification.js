@@ -214,10 +214,10 @@ router.get('/certiUdtForm', async (req, res) => {
             }
             let route = req.app.get('views') + '/m_certification/certi_udtForm';
             const csv = fs.readFileSync(path.resolve(__dirname, "../../views/openApi/location.csv")); //  현재 디렉토리가 아닌 소스 파일의 위치와 관련된 경로를 확인할 수 있음.
-            console.log(csv.toString());
+            // console.log(csv.toString());
             //parse 메서드 -> 2차원배열화
             const records = csv.toString();
-            console.log(records);
+            // console.log(records);
             res.render(route, {
                 'result': result,
                 layout: false,
@@ -254,5 +254,28 @@ router.post('/certiUpdate', upload.single('file'), async (req, res) => {
 });
 
 //탄소실천 글 전체보기
+router.get('/certiContentAll', async (req, res) => {
+    // try {
+    //     const param = req.query.certiDivision;
+    //     const sql = "select * from certiContent where certiDivision = ?";
+    //     connection.query(sql, param, (err, results) => {
+    //         if (err) {
+    //             console.log(err);
+    //             response.json({
+    //                 msg: "query error"
+    //             });
+    //         }
+    //         let route = req.app.get('views') + '/m_certification/certification';
+    //         res.render(route, {
+    //             'results': results
+    //         });
+    //     });
+    // } catch (error) {
+    //     res.status(401).send(error.message);
+    // }
+
+    let route = req.app.get('views') + '/m_certification/certiContent';
+    res.render(route);
+})
 
 module.exports = router;
