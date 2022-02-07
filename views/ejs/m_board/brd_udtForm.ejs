@@ -30,8 +30,13 @@
     <h2><span class="float_l">공지사항</span></h2>
     <div class="content">
         <form action="" name="brdUpdate" method="">
+<<<<<<< HEAD
             <input type="hidden" name="fileNo" value="">
             <input type="hidden" name="fileRoute" value="">
+=======
+            <input type="hidden" name='fileNo' value=""/>
+            <input type='hidden' name="fileRoute" value=""/>
+>>>>>>> 3fbc8c77b841ce2da9bd00a5997cb3438a514c50
             <table>
 
                 <tr>
@@ -65,8 +70,12 @@
                         <% if(result[0].fileRoute != null) { %>
                         <% for(var i = 0; i < result.length; i++) {%>
                         <li><%=result[i].fileOrgName%>&nbsp;
+<<<<<<< HEAD
                             <button name="fileDelete" data-fileNo="<%=result[i].fileNo%>"
                                 data-fileRoute="<%=result[i].fileRoute%>">삭제</button>
+=======
+                            <button name="fileDelete" data-fileNo='<%=result[i].fileNo%>' data-fileRoute='<%=result[i].fileRoute%>'>삭제</button>
+>>>>>>> 3fbc8c77b841ce2da9bd00a5997cb3438a514c50
                         </li>
                         <% } %>
                         <% } else {%>
