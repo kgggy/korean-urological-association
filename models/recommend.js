@@ -24,7 +24,7 @@ module.exports = function (sequelize, DataTypes) {
       }
     },
     certiContentId: {
-    type: DataTypes.STRING(35),
+      type: DataTypes.STRING(35),
       allowNull: true,
       references: {
         model: 'certiContent',
@@ -36,34 +36,34 @@ module.exports = function (sequelize, DataTypes) {
     tableName: 'recommend',
     timestamps: false,
     indexes: [{
-        name: "PRIMARY",
-        unique: true,
-        using: "BTREE",
-        fields: [{
-          name: "rcmdId"
-        }, ]
-      },
-      {
-        name: "writId",
-        using: "BTREE",
-        fields: [{
-          name: "writId"
-        }, ]
-      },
-      {
-        name: "recommend_ibfk_3",
-        using: "BTREE",
-        fields: [{
-          name: "certiContentId"
-        }, ]
-      },
-      {
-        name: "recommend_ibfk_1",
-        using: "BTREE",
-        fields: [{
-          name: "uid"
-        }, ]
-      },
+      name: "PRIMARY",
+      unique: true,
+      using: "BTREE",
+      fields: [{
+        name: "rcmdId"
+      },]
+    },
+    {
+      name: "writId",
+      using: "BTREE",
+      fields: [{
+        name: "writId"
+      },]
+    },
+    {
+      name: "recommend_ibfk_3",
+      using: "BTREE",
+      fields: [{
+        name: "certiContentId"
+      },]
+    },
+    {
+      name: "recommend_ibfk_1",
+      using: "BTREE",
+      fields: [{
+        name: "uid"
+      },]
+    },
     ]
   });
   recommend.associate = function (models) {

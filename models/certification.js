@@ -41,6 +41,11 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(3),
       allowNull: true,
       comment: "지역, 나이, 학교 등 권한이 필요한 챌린지 구분"
+    },
+    certiShow: {
+      type: DataTypes.STRING(1),
+      allowNull: false,
+      defaultValue: "0"
     }
   }, {
     sequelize,

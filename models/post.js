@@ -25,15 +25,15 @@ module.exports = function(sequelize, DataTypes) {
         key: 'uid'
       }
     },
+    writContent: {
+      type: DataTypes.STRING(5000),
+      allowNull: false,
+      comment: "게시글 내용"
+    },
     writTitle: {
       type: DataTypes.STRING(100),
       allowNull: false,
       comment: "게시글 제목"
-    },
-    writContent: {
-      type: DataTypes.STRING(3000),
-      allowNull: false,
-      comment: "게시글 내용"
     },
     writUpdDate: {
       type: DataTypes.DATE,
@@ -53,8 +53,9 @@ module.exports = function(sequelize, DataTypes) {
       comment: "게시글 조회수"
     },
     writRank: {
-      type: DataTypes.INTEGER,
-      allowNull: true
+      type: DataTypes.STRING(2),
+      allowNull: true,
+      unique: "writRank_UNIQUE"
     }
   }, {
     sequelize,
@@ -67,6 +68,14 @@ module.exports = function(sequelize, DataTypes) {
         using: "BTREE",
         fields: [
           { name: "writId" },
+        ]
+      },
+      {
+        name: "writRank_UNIQUE",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "writRank" },
         ]
       },
       {

@@ -121,3 +121,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#45484d', end
 .login dt {display:block; float:left; width:30%; height:25px; padding-top:5px; font-weight:bold;}
 .login dd input {width:100%; height:30px; margin:0; padding:2px 0 2px 5px; line-height:150%; background:#f8f8f8; border:1px solid #bbb;}
 .btn_blue_login {width:95%; padding:15px 20px 15px 20px !important; padding:14px 11px 0 11px !important; font-size:15px; color: #fef4e9; border-radius:10px; font-weight:bold;}
+
+
+
+/* ecoce */
+.certiContentAll-wrap .certiContentAll{display: flex; flex-wrap: wrap;}
+.certiContentAll-wrap .certiContentAll .certiContentEach{width: calc(100% / 4 - 4%); margin: 0 2%; text-align: center;}
+.certiContentAll-wrap .certiContentAll .certiContentEach img{display: block; width: 100%;}

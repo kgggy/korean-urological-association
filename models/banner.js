@@ -10,7 +10,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     bannerRoute: {
       type: DataTypes.STRING(45),
-      allowNull: false,
+      allowNull: true,
       comment: "배너이미지경로"
     },
     startDate: {
@@ -33,6 +33,12 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: false,
       comment: "노출순서"
+    },
+    bannerDiv: {
+      type: DataTypes.STRING(1),
+      allowNull: false,
+      defaultValue: "0",
+      comment: "배너 위치(팝업창, 메인 슬라이드배너)"
     }
   }, {
     sequelize,

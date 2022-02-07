@@ -50,17 +50,17 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
       {
-        name: "certiTitleId",
-        using: "BTREE",
-        fields: [
-          { name: "certiTitleId" },
-        ]
-      },
-      {
         name: "certiContent_ibfk_2",
         using: "BTREE",
         fields: [
           { name: "uid" },
+        ]
+      },
+      {
+        name: "certiContent_ibfk_1",
+        using: "BTREE",
+        fields: [
+          { name: "certiTitleId" },
         ]
       },
     ]
