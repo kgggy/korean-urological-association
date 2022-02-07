@@ -22,7 +22,7 @@
         height: 40%;
     }
 
-    .ck.ck-editor__editable:not(.ck-editor__nested-editable).ck-focused{
+    .ck.ck-editor__editable:not(.ck-editor__nested-editable).ck-focused {
         height: 40%;
     }
 </style>
@@ -30,6 +30,8 @@
     <h2><span class="float_l">공지사항</span></h2>
     <div class="content">
         <form action="" name="brdUpdate" method="">
+            <input type="hidden" name="fileNo" value="">
+            <input type="hidden" name="fileRoute" value="">
             <table>
 
                 <tr>
@@ -53,7 +55,8 @@
                 </tr>
                 <tr>
                     <td colspan="4" class="align_c">
-                        <textarea style="height:150px;" name="editor" class="editor" id="editor"><%-result[0].writContent %></textarea>
+                        <textarea style="height:150px;" name="editor" class="editor"
+                            id="editor"><%-result[0].writContent %></textarea>
                     </td>
                 </tr>
                 <tr>
@@ -62,9 +65,8 @@
                         <% if(result[0].fileRoute != null) { %>
                         <% for(var i = 0; i < result.length; i++) {%>
                         <li><%=result[i].fileOrgName%>&nbsp;
-                            <button id="fileDelete">삭제</button>
-                            <input type="hidden" name="fileNo" value="<%=result[i].fileNo%>">
-                            <input type="hidden" name="fileRoute" value="<%=result[i].fileRoute%>">
+                            <button name="fileDelete" data-fileNo="<%=result[i].fileNo%>"
+                                data-fileRoute="<%=result[i].fileRoute%>">삭제</button>
                         </li>
                         <% } %>
                         <% } else {%>
@@ -95,9 +97,9 @@
                 console.error(error);
             });
 
+        var formObj = $("form[name='brdUpdate']");
         //게시글 수정
         $("#update_btn").click(function () {
-            var formObj = $("form[name='brdUpdate']");
             var writTitle = $("#writTitle").val();
             // var content = $("#content").val();
             // $('input[name=inputNm]').attr('value',goContent);
@@ -117,7 +119,7 @@
             }
 
             if (confirm("수정하시겠습니까?") == true) {
-                $('input[name=writContent]').attr('value',content);
+                $('input[name=writContent]').attr('value', content);
                 formObj.attr("action", "brdUpdate");
                 formObj.attr("method", "post");
                 formObj.submit();
@@ -128,7 +130,9 @@
         });
 
         //첨부파일 삭제
-        $("#fileDelete").on("click", function () {
+        $("[name=fileDelete]").on("click", function () {
+            $('input[name=fileNo').val($(this).attr('data-fileNo'));
+            $('input[name=fileRoute').val($(this).attr('data-fileRoute'));
             if (confirm("실제 파일이 삭제됩니다. 정말 삭제하시겠습니까?") == true) {
                 formObj.attr("action", "fileDelete");
                 formObj.attr("method", "get");
