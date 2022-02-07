@@ -49,11 +49,13 @@ module.exports = function(sequelize, DataTypes) {
     },
     userToken: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: true,
+      comment: "소셜로그인 회원가입 토큰"
     },
     userNick: {
       type: DataTypes.STRING(45),
-      allowNull: false
+      allowNull: false,
+      unique: "userNick_UNIQUE"
     },
     userEmail: {
       type: DataTypes.STRING(45),
@@ -77,6 +79,11 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    userSocialDiv: {
+      type: DataTypes.STRING(45),
+      allowNull: true,
+      comment: "소셜로그인 구분(네이버, 카카오, 애플, 구글)"
     }
   }, {
     sequelize,
@@ -89,6 +96,14 @@ module.exports = function(sequelize, DataTypes) {
         using: "BTREE",
         fields: [
           { name: "uid" },
+        ]
+      },
+      {
+        name: "userNick_UNIQUE",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "userNick" },
         ]
       },
     ]
