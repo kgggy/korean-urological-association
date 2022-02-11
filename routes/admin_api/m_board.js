@@ -32,7 +32,7 @@ var upload = multer({ //multer안에 storage정보
                 // console.log("이미지 파일입니다.");
                 callback(null, 'uploads/boardImgs');
                 //텍스트 파일이면
-            } else if (file.mimetype == "application/pdf" || file.mimetype == "application/txt") {
+            } else {
                 // console.log("텍스트 파일입니다.");
                 callback(null, 'uploads/boardTexts');
             }
@@ -82,7 +82,7 @@ router.get('/', async (req, res) => {
 router.get('/all', async (req, res) => {
     try {
         const param = req.query.boardId;
-        const sql = "select p.*, u.userNick, u.uid, date_format(writDate, '%Y-%m-%d') as writDatefmt, date_format(writUpdDate, '%Y-%m-%d') as writUpdDatefmt\
+        const sql = "select p.*, c.*, u.userNick, u.uid, date_format(writDate, '%Y-%m-%d') as writDatefmt, date_format(writUpdDate, '%Y-%m-%d') as writUpdDatefmt\
                        from post p\
                   left join community c\
                          on c.boardId = p.boardId\
@@ -97,12 +97,15 @@ router.get('/all', async (req, res) => {
                     msg: "query error"
                 });
             }
-            let route = req.app.get('views') + '/m_board/recipe';
+            let route = req.app.get('views') + '/m_board/board';
             // console.log(route);
             res.render(route, {
                 'results': results
             });
-            // console.log(results);
+            if(results.length == 0) {
+                console.log("===============");
+            }
+             console.log(results);
         });
     } catch (error) {
         res.status(500).send(error.message);
@@ -223,6 +226,8 @@ router.post('/brdUpdate', async (req, res) => {
 router.post('/boardwrite', upload.array('file'), async (req, res, next) => {
     const paths = req.files.map(data => data.path);
     const orgName = req.files.map(data => data.originalname);
+    console.log(req.body);
+    console.log(req.files);
     try {
         const boardWritId = uuid();
         // req.body.writRank = parseInt(req.body.writRank);
@@ -239,11 +244,8 @@ router.post('/boardwrite', upload.array('file'), async (req, res, next) => {
                 connection.query(sql2, param2, (err) => {
                     if (err) {
                         throw err;
-                    } else {
-                        return;
-                    }
+                    } 
                 });
-
             };
         });
         res.send("<script>opener.parent.location.reload(); window.close();</script>");

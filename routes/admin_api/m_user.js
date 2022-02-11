@@ -108,7 +108,7 @@ router.get('/login', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
 
-    const sql = "select * from user";
+    const sql = "select * from user where userAuth = 0";
     connection.query(sql, function (err, results, fields) {
       if (err) {
         console.log(err);

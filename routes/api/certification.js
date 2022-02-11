@@ -68,7 +68,7 @@ router.get('/:certiDivision', async (req, res) => {
     }
 });
 
-//탄소실천, 챌린지 주제별 전체 썸네일 조회
+//탄소실천, 챌린지 글 주제별 전체 썸네일 조회
 router.get('/certiContents/:certiTitleId', async (req, res) => {
     try {
         const param = req.params.certiTitleId;

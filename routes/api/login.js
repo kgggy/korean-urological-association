@@ -42,10 +42,13 @@ router.post('/tokenCheck', async (request, response, next) => {
     response.json(token);
   });
 });
-  
-  //로그인
+
+//로그인
 router.post('/', async (req, res) => {
-  const { userPwd, userEmail } = req.body;
+  const {
+    userPwd,
+    userEmail
+  } = req.body;
 
   // if(userEmail == null) {
   //   return res.json({
@@ -54,7 +57,11 @@ router.post('/', async (req, res) => {
   // });
   // } 
 
-  const emailChk = await models.user.findOne({ where: { userEmail } });
+  const emailChk = await models.user.findOne({
+    where: {
+      userEmail
+    }
+  });
 
   if (emailChk == null) {
     return res.json({
@@ -83,9 +90,13 @@ router.post('/', async (req, res) => {
     });
 
   const password = await makePasswordHashed(userEmail, userPwd);
-  const dbPwd = await models.user.findOne({ where: { userEmail } });
+  const dbPwd = await models.user.findOne({
+    where: {
+      userEmail
+    }
+  });
   console.log(dbPwd);
-  if (password == dbPwd.userPwd) {  // dbPwd: ['userPwd'] 해도 됨
+  if (password == dbPwd.userPwd) { // dbPwd: ['userPwd'] 해도 됨
     res.json(
       dbPwd
     );
@@ -97,6 +108,86 @@ router.post('/', async (req, res) => {
     });
   }
 });
+
+//관리자 로그인
+router.post('/admin', async (req, res) => {
+  const {
+    userPwd,
+    userNick
+  } = req.body;
+
+  // if(userEmail == null) {
+  //   return res.json({
+  //   isEmailEmpty : true,
+  //   message: "이메일을 입력해주세요.",
+  // });
+  // } 
+
+  const nickChk = await models.user.findOne({
+    where: {
+      userNick
+    }
+  });
+
+  if (nickChk == null) {
+    return res.json({
+      nickChk: false,
+      message: "아이디를 다시 확인해주세요.",
+    });
+  }
+
+  const pwdChk = await models.user.findOne({
+    where: {
+      userPwd
+    }
+  });
+
+  if (pwdChk == null) {
+    return res.json({
+      pwdChk: false,
+      message: "패스워드를 다시 확인해주세요.",
+    });
+  }
+
+  if (nickChk != null && pwdChk != null) {
+    res.redirect('/admin/m_user');
+  }
+
+  // const makePasswordHashed = (userEmail, plainPassword) =>
+  //   new Promise(async (resolve, reject) => {
+  //     // salt를 가져오는 부분은 각자의 DB에 따라 수정
+  //     const salt = await models.user
+  //       .findOne({
+  //         attributes: ['salt'],
+  //         raw: true,
+  //         where: {
+  //           userEmail,
+  //         },
+  //       }).then((result) => result.salt);
+  //     console.log(salt);
+
+  //     crypto.pbkdf2(plainPassword, salt, 9999, 64, 'sha512', (err, key) => {
+  //       if (err) reject(err);
+  //       resolve(key.toString('base64'));
+  //     });
+  //   });
+
+  // const password = await makePasswordHashed(userEmail, userPwd);
+  // const dbPwd = await models.user.findOne({ where: { userEmail } });
+  // console.log(dbPwd);
+  // if (password == dbPwd.userPwd) {  // dbPwd: ['userPwd'] 해도 됨
+  //   res.json(
+  //     dbPwd
+  //   );
+
+  // } else {
+  //   res.json({
+  //     pwdChk: false,
+  //     message: "비밀번호를 확인해주세요.",
+  //   });
+  // }
+});
+
 
 //token값 저장
 router.patch('/:uid', async (request, response, next) => {
@@ -114,6 +205,29 @@ router.patch('/:uid', async (request, response, next) => {
     msg: "success"
   });
   response.end()
+});
+
+//사용자 로그인
+router.get('/:userEmail', async (req, res) => {
+  try {
+    const param = req.params.userEmail;
+    const sql = "select uid from user where userEmail = ?";
+    connection.query(sql, param, function (err, results, fields) {
+      if (err) {
+        console.log(err);
+      }
+      console.log(results);
+      if(results.length > 0) {
+        res.send(results);
+      } else {
+        res.send("false");
+      }
+      return;
+    });
+
+  } catch (error) {
+    res.status(401).send(error.message);
+  }
 });
 
 

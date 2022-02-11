@@ -1,6 +1,10 @@
 <form id="boardForm" name="boardForm" method="post" action="" onsubmit="return false;" autocomplete="off">
     <div class="board_search">
-        <h3 class="float_l" id="category_title">레시피 관리</h3>
+        <%if(results.length == 0){%>
+        <h3 class="float_l" id="category_title"></h3>
+        <%} else {%>
+        <h3 class="float_l" id="category_title"><%=results[0].boardName%></h3>
+        <% } %>
     </div>
     <div class="board_list">
         <table>
@@ -45,13 +49,13 @@
                     </td>
                 </tr>
                 <% } %>
-                <%if(results.length == 0){%>
+                <% if(results.length == 0){ %>
                 <tr>
                     <td colspan="8">
                         등록된 목록이 없습니다.
                     </td>
                 </tr>
-                <%}%>
+                <% } %>
 				</tbody>
 			</table>
 		</div>
@@ -59,7 +63,9 @@
 	<div class="mt_20">
 		<p class="float_r">
             <!-- 나중에 boardId랑 uid(admin) 고쳐줘야함!!!!!!!!!!!!!!!!!!!!-->
-            <button onclick="enroll('/admin/m_board/writForm', '', 'width=640, height=700, scrollbars=1', '', '')">등록</button>
+            <% if(results.length > 0){ %>
+            <button onclick="enroll('/admin/m_board/writForm', '', 'width=640, height=700, scrollbars=1', '<%=results[0].boardId%>', '')">등록</button>
+            <% } %>
 		</p>
 	</div>
 
@@ -69,8 +75,8 @@
             window.open(theURL, winName, features);
         }
 
-        function enroll(theURL, winName, features, mode) {
-            theURL += '?boardId=3&?uid=81';
+        function enroll(theURL, winName, features, boardId, mode) {
+            theURL += '?boardId=' + boardId + '&?uid=81';
             window.open(theURL, winName, features);
         }
     </script>

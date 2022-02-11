@@ -1,4 +1,6 @@
-<form id="certiForm" name="certiForm" method="" action="">
+<form id="bannerForm" name="bannerForm" method="" action="">
+    <input type="hidden" name="bannerId" value="">
+    <input type="hidden" name="bannerRoute" value="">
     <div class="board_search">
         <h3 class="float_l" id="category_title">배너 관리</h3>
     </div>
@@ -52,9 +54,9 @@
                     <td><%=results[i].showNo%></td>
                     <td>
                         <input type="button"
-                            onclick="certiUpdate('/admin/m_certification/certiUdtForm', '', 'width=640, height=700, scrollbars=1', '', '')"
+                            onclick="bannerUpdate('/admin/m_banner/bannerUdtForm', '', 'width=640, height=700, scrollbars=1', '<%=results[i].bannerId%>', '')"
                             value="수정 " />
-                        <button type="button" id="delete_btn">삭제</button>
+                        <button type="button" id="delete_btn" data-bannerId="<%=results[i].bannerId%>" data-bannerRoute="<%=results[i].bannerRoute%>">삭제</button>
                     </td>
                 </tr>
                 <% } %>
@@ -72,7 +74,7 @@
         <div class="mt_20">
             <p class="float_r">
                 <!-- 나중에 boardId랑 uid(admin) 관리자걸로 고쳐줘야함!!!!!!!!!!!!!!!!!!!!-->
-                <input type="button" onclick="enroll('/admin/m_certification/certiWritForm', '', 'width=640, height=700, scrollbars=1', '',
+                <input type="button" onclick="enroll('/admin/m_banner/bannerWritForm', '', 'width=640, height=700, scrollbars=1', '',
                 '')" value="등록" />
                 </p>
     </div>
@@ -80,14 +82,12 @@
     <script>
         // 삭제
         $(document).ready(function () {
-            const formObj = $("form[name='certiForm']");
+            const formObj = $("form[name='bannerForm']");
             $("button").on("click", function () {
-                const certiId = $(this).next().val();
-                const division = $(this).next().next().val();
-                // console.log(division);
-                formObj.attr("action", "certiDelete?certiTitleId=" + certiId + "&certiDivision=" +
-                    division);
-                formObj.attr("method", "post");
+                $('input[name=bannerId').val($(this).attr('data-bannerId'));
+                $('input[name=bannerRoute').val($(this).attr('data-bannerRoute'));
+                formObj.attr("action", "bannerDelete");
+                formObj.attr("method", "get");
                 if (confirm("삭제하시겠습니까?") == true) {
                     formObj.submit();
                     alert("삭제되었습니다.");
@@ -97,13 +97,12 @@
             })
         });
 
-        function certiUpdate(theURL, winName, features, certiTitleId, mode) {
-            theURL += '?certiTitleId=' + certiTitleId;
+        function bannerUpdate(theURL, winName, features, bannerId, mode) {
+            theURL += '?bannerId=' + bannerId;
             window.open(theURL, winName, features);
         }
 
-        function enroll(theURL, winName, features, certiDivision, mode) {
-            theURL += '?certiDivision=' + certiDivision;
+        function enroll(theURL, winName, features, mode) {
             window.open(theURL, winName, features);
         }
     </script>

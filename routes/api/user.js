@@ -38,7 +38,7 @@ var upload = multer({ //multer안에 storage정보
 
 });
 
-// // 회원가입
+// 회원가입
 router.post('/', async (req, res) => {
   const { userEmail, userNick, userSocialDiv } = req.body;
 
@@ -86,6 +86,8 @@ router.post('/', async (req, res) => {
   })
   res.json({ msg: "success" });
 });
+
+
 
 // 회원 상세보기
 router.get('/:uid', async (req, res) => {

@@ -70,6 +70,32 @@ router.get('/certiAll', async (req, res) => {
     }
 });
 
+//탄소실천, 챌린지 글 주제별 전체 썸네일 조회
+router.get('/certiContentAll', async (req, res) => {
+    try {
+        const param = req.params.certiTitleId;
+        const sql = "select f.fileRoute, c.certiContentId\
+                       from file f \
+                       join certiContent c\
+                         on f.certiContentId = c.certiContentId\
+                      where c.certiTitleId = ? and f.fileNo = 0";
+        connection.query(sql, param, (err, results) => {
+            if (err) {
+                console.log(err);
+                response.json({
+                    msg: "query error"
+                });
+            }
+            let route = req.app.get('views') + '/m_certification/certification';
+            res.render(route, {
+                'results': results
+            });
+        });
+    } catch (error) {
+        res.status(401).send(error.message);
+    }
+});
+
 //탄소실천, 챌린지 게시글(사진) 업로드
 router.post('/', upload.single('file'), async function (req, res) {
     const paths = req.files.map(data => data.path);
@@ -252,30 +278,5 @@ router.post('/certiUpdate', upload.single('file'), async (req, res) => {
         res.send("<script>opener.parent.location.reload(); window.close();</script>");
     });
 });
-
-//탄소실천 글 전체보기
-router.get('/certiContentAll', async (req, res) => {
-    // try {
-    //     const param = req.query.certiDivision;
-    //     const sql = "select * from certiContent where certiDivision = ?";
-    //     connection.query(sql, param, (err, results) => {
-    //         if (err) {
-    //             console.log(err);
-    //             response.json({
-    //                 msg: "query error"
-    //             });
-    //         }
-    //         let route = req.app.get('views') + '/m_certification/certification';
-    //         res.render(route, {
-    //             'results': results
-    //         });
-    //     });
-    // } catch (error) {
-    //     res.status(401).send(error.message);
-    // }
-
-    let route = req.app.get('views') + '/m_certification/certiContent';
-    res.render(route);
-})
 
 module.exports = router;

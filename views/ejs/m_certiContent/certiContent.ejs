@@ -1,0 +1,58 @@
+<%if(results.length == 0){%>
+<h3 class="float_l" id="category_title"></h3>
+<%} else if(results[0].certiDivision == '0') {%>
+<h3 class="float_l" id="category_title">탄소실천 글 목록</h3>
+<% } else {%>
+<h3 class="float_l" id="category_title">챌린지 글 목록</h3>
+<% } %>
+<div class="certiContentAll-wrap">
+    <ul class="certiContentAll">
+        <% for(var i = 0; i < results.length; i++){ %>
+        <li class="certiContentEach">
+            <% if(results.length > 0 && results[i].fileRoute != null && results[i].fileRoute != ''){ %>
+            <img src="../../../<%= results[i].fileRoute %>" style="padding:10px !important;" alt="">
+            <% } else {%>
+            <img src="../../../public/images/certification/sprout.png" style="padding:10px !important;" alt="">
+            <% } %>
+            <button type="button" onclick="selectOne('/admin/m_certiContent/one', '', 'width=640, height=700, scrollbars=1', '<%= results[i].certiContentId %>', '<%= results[i].certiDivision %>',
+                '')">상세보기</button>
+            <button type="button" onclick="comment('/admin/m_certiContent/certiComment', '', 'width=640, height=700, scrollbars=1', '<%= results[i].certiContentId %>',
+                '')">댓글</button>
+        </li>
+        <% } %>
+        <% if(results.length == 0){ %>
+        <p>조회된 글이 없습니다.</p>
+        <% }%>
+    </ul>
+</div>
+<div class="mt_20">
+    <p class="float_r">
+        <!-- 나중에 boardId랑 uid(admin) 관리자걸로 고쳐줘야함!!!!!!!!!!!!!!!!!!!!-->
+        <% if(results.length > 0){ %>
+        <input type="button" onclick="enroll('/admin/m_certiContent/certiCont_WritForm', '', 'width=640, height=700, scrollbars=1', '<%=results[0].certiDivision%>',
+        '')" value="등록" />
+        <% }%>
+    </p>
+</div>
+
+<script>
+    //상세보기
+    function selectOne(theURL, winName, features, certiContentId, certiDivision, mode) {
+        theURL += '?certiContentId=' + certiContentId + '&certiDivision=' + certiDivision;
+        window.open(theURL, winName, features);
+    }
+
+    //탄소실천, 챌린지 글 등록
+    function enroll(theURL, winName, features, uid, mode) {
+        theURL += '?certiContentId=' + certiContentId;
+        window.open(theURL, winName, features);
+    }
+
+    //댓글
+    function comment(theURL, winName, features, certiContentId, mode) {
+        theURL += '?certiContentId=' + certiContentId;
+        window.open(theURL, winName, features);
+    }
+
+    console.log()
+</script>

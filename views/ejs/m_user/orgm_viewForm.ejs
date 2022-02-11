@@ -25,12 +25,13 @@
 		<div class="content">
 			<table>
 				<tr>
-					<th>프로필사진</th>
+					<th width="35%">프로필사진</th>
 					<% if(result.length > 0 && result[0].userImg != null && result[0].userImg != '') {%>
 					<td><img src="../../../<%= result[0].userImg %>" alt="사진" width="117px" /></td>
 					<% }else{ %>
 					<td><img src="../../uploads/normal_img.jpg" alt="" width="117px" /></td>
 					<% } %>
+					<th width="20%"><label><input type="radio">노출</label>
 				</tr>
 				<tr>
 					<th>일련번호</th>
@@ -39,6 +40,7 @@
 						<%=result[0].uid%>
 						<%}%>
 				</td>
+				<th><label><input type="radio">노출</label>
 			</tr>
 			
 			<tr>
@@ -48,6 +50,7 @@
 						<%=result[0].userNick %>
 						<%}%>
 				</td>
+				<th><label><input type="radio">노출</label>
 			</tr>
 			
 			<tr>
@@ -57,6 +60,7 @@
 						<%=result[0].userEmail %>
 						<%}%>
 				</td>
+				<th><label><input type="radio">노출</label>
 			</tr>
 			
 			<tr>
@@ -66,6 +70,7 @@
 						<%=result[0].userAge %>
 						<%}%>
 				</td>
+				<th><label><input type="radio">노출</label>
 			</tr>
 			
 			<tr>
@@ -75,6 +80,7 @@
 						<%=result[0].userAdres1%>
 						<%}%>
 				</td>
+				<th><label><input type="radio">노출</label>
 			</tr>
 
 			<tr>
@@ -84,6 +90,7 @@
 						<%=result[0].userAdres2 %>
 						<%}%>
 				</td>
+				<th><label><input type="radio">노출</label>
 			</tr>
 			
 			<tr>
@@ -93,6 +100,7 @@
 						<%=result[0].userSchool %>
 						<%}%>
 				</td>
+				<th><label><input type="radio">노출</label>
 			</tr>
 			
 			<tr>
@@ -102,8 +110,8 @@
 						<%=result[0].userPoint %>
 						<%}%>
 				</td>
+				<th><label><input type="radio">노출</label>
 			</tr>
-			
 			<tr>
 				<th>계산점수</th>
 				<td>
@@ -111,8 +119,27 @@
 						<%=result[0].userScore %>
 						<%}%>
 				</td>
-			</tr
-			><tr>
+				<th><label><input type="radio">노출</label>
+			</tr>
+			<tr>
+				<th>나무등급</th>
+				<td>
+					<%if(result[0].userPoint !=null && result[0].userPoint!='null' && result[0].userPoint!=''){%>
+						<%=result[0].userPoint %>
+						<%}%>
+				</td>
+				<th><label><input type="radio">노출</label>
+			</tr>
+			<tr>
+				<th>작성한 게시글 수</th>
+				<td>
+					<%if(result[0].userPoint !=null && result[0].userPoint!='null' && result[0].userPoint!=''){%>
+						<%=result[0].userPoint %>
+						<%}%>
+				</td>
+				<th><label><input type="radio">노출</label>
+			</tr>
+			<tr>
 				<th>상태</th>
 				<td>
 					<label><input type="radio" id="userStatus1" name="userStatus" disabled>일반회원</label>
@@ -121,6 +148,7 @@
 						<input type="hidden" id="userStatusValue" value="<%=result[0].userStatus%>">
 						<% } %>
 					</td>
+					<th><label><input type="radio">노출</label>
 
 				</tr>
 
@@ -135,7 +163,7 @@
 						<%}%>   
 					   <%}%>
 					</td>
-
+					<th><label><input type="radio">노출</label>
 				</tr>
 
 				<tr>
@@ -147,7 +175,7 @@
 						<input type="hidden" id="userAuthValue" value="<%=result[0].userAuth%>">
 						<% } %>
 					</td>
-
+					<th><label><input type="radio">노출</label>
 				</tr>
 
 			</table>

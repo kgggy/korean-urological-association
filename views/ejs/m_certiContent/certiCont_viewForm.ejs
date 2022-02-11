@@ -1,0 +1,90 @@
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<link rel="stylesheet" type="text/css" href="/stylesheets/css/default.css" />
+	<link rel="stylesheet" type="text/css" href="/stylesheets/css/basic.css" />
+	<link rel="stylesheet" type="text/css" href="/stylesheets/css/layout.css" />
+	<!--<link href="/js/jquery/css/jquery-ui-1.8.2.custom.css" rel="stylesheet" type="text/css"/>-->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css" />
+	<script type="text/javascript" src="/stylesheets/jquery/jquery-1.7.1.min.js"></script>
+	<script type="text/javascript" src="/stylesheets/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+	<script type="text/javascript" src="/stylesheets/jquery/jquery.validate.js"></script>
+	<script type="text/javascript" src="/stylesheets/jquery/jquery.form.js"></script>
+	<script src="/stylesheets/js/common.js"></script>
+</head>
+<div class="popup">
+	<h2><span class="float_l">탄소실천 글 상세보기</span></h2>
+	<div class="content">
+		<table class="mb_10">
+			<tr>
+				<th>글번호</th>
+				<td><%=result[0].certiContentId%></td>
+			</tr>
+			<tr>
+				<th>좋아요 수</th>
+				<td><%=result[0].rcount%></td>
+			</tr>
+			<tr>
+				<th>작성자</th>
+				<td><%=result[0].userNick%></td>
+			</tr>
+			<tr>
+				<th>작성일</th>
+				<td><%=result[0].certiContentDatefmt%></td>
+			</tr>
+			<tr>
+				<th>사진</th>
+				<td><img src="../../../<%= result[0].fileRoute %>" alt="사진"
+					style="padding:20px !important; width:60px" /></td>
+			</tr>
+		</table>
+
+		<form name="udtForm">
+			<p class="btn">
+				<input type="hidden" id="certiContentId" name="certiContentId" value="<%=result[0].certiContentId%>">
+				<input type="hidden" id="fileRoute" name="fileRoute" value="<%= result[0].fileRoute %>">
+				<input type="hidden" id="certiDivision" name="certiDivision" value="">
+				<button class="btn_big_blue hand" type="button" id="update_btn">수정</button>
+				<button class="btn_big_blue hand" type="button" id="delete_btn">삭제</button>
+				<button class="btn_big_black hand" onclick="opener.parent.location.reload();self.close();">취소</button>
+			</p>
+		</form>
+	</div>
+</div>
+
+<script>
+	//쿼리스트링값 가져와서 넘기기
+	function getUrlParams() {
+            var params = {};
+            window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (str, key, value) {
+                params[key] = value;
+            });
+            return params;
+        }
+        var param = getUrlParams();
+        var certiDivision = document.getElementById("certiDivision");
+        certiDivision.value = param.certiDivision;
+
+	var formObj = $("form[name='udtForm']");
+	$(document).ready(function () {
+		// 수정 폼 연결
+		$("#update_btn").on("click", function () {
+			formObj.attr("action", "certiContUdtForm");
+			formObj.attr("method", "get");
+			formObj.submit();
+		});
+		// 삭제
+		$("#delete_btn").on("click", function () {
+			formObj.attr("action", "certiContDelete");
+			formObj.attr("method", "get");
+			if (confirm("게시글을 삭제하시겠습니까?") == true) {
+				alert("삭제되었습니다.");
+				formObj.submit();
+			} else {
+				return;
+			}
+		});
+	})
+</script>

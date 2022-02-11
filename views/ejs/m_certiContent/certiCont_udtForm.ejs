@@ -1,0 +1,54 @@
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<link rel="stylesheet" type="text/css" href="/stylesheets/css/default.css" />
+	<link rel="stylesheet" type="text/css" href="/stylesheets/css/basic.css" />
+	<link rel="stylesheet" type="text/css" href="/stylesheets/css/layout.css" />
+	<!--<link href="/js/jquery/css/jquery-ui-1.8.2.custom.css" rel="stylesheet" type="text/css"/>-->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css" />
+	<script type="text/javascript" src="/stylesheets/jquery/jquery-1.7.1.min.js"></script>
+	<script type="text/javascript" src="/stylesheets/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+	<script type="text/javascript" src="/stylesheets/jquery/jquery.validate.js"></script>
+	<script type="text/javascript" src="/stylesheets/jquery/jquery.form.js"></script>
+	<script src="/stylesheets/js/common.js"></script>
+</head>
+<div class="popup">
+	<h2><span class="float_l">탄소실천 글 수정</span></h2>
+	<div class="content">
+		<form name="udtForm" enctype="multipart/form-data">
+			<table class="mb_10">
+				<tr>
+					<th>사진</th>
+					<td><input type="file" id="file" name="file"></td>
+				</tr>
+			</table>
+
+			<p class="btn">
+				<input type="hidden" id="certiContentId" name="certiContentId" value="<%=result[0].certiContentId%>">
+				<input type="hidden" id="fileRoute" name="fileRoute" value="<%= result[0].fileRoute %>">
+				<button class="btn_big_blue hand" type="button" id="update_btn">수정</button>
+				<button class="btn_big_black hand" onclick="opener.parent.location.reload();self.close();">취소</button>
+			</p>
+		</form>
+	</div>
+</div>
+
+<script>
+
+	var formObj = $("form[name='udtForm']");
+	$(document).ready(function () {
+		// 수정
+		$("#update_btn").on("click", function () {
+			formObj.attr("action", "certiContUpdate");
+			formObj.attr("method", "post");
+			if (confirm("실제 파일이 삭제되고 변경됩니다. 게시글을 수정하시겠습니까?") == true) {
+				alert("수정이 왼료되었습니다.");
+				formObj.submit();
+			} else {
+				return;
+			}
+		});
+	});
+</script>
