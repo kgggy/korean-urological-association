@@ -41,117 +41,110 @@
 						<%}%>
 				</td>
 				<th><label><input type="radio">노출</label>
-			</tr>
-			
-			<tr>
-				<th class="necessary">닉네임</th>
-				<td>
-					<%if(result[0].userNick !=null && result[0].userNick!='null' && result[0].userNick!=''){%>
+				</tr>
+				<tr>
+					<th class="necessary">닉네임</th>
+					<td>
+						<%if(result[0].userNick !=null && result[0].userNick!='null' && result[0].userNick!=''){%>
 						<%=result[0].userNick %>
 						<%}%>
-				</td>
-				<th><label><input type="radio">노출</label>
-			</tr>
-			
-			<tr>
-				<th class="necessary">이메일</th>
-				<td>
-					<%if(result[0].userEmail !=null && result[0].userEmail!='null' && result[0].userEmail!=''){%>
-						<%=result[0].userEmail %>
-						<%}%>
-				</td>
-				<th><label><input type="radio">노출</label>
-			</tr>
-			
-			<tr>
-				<th>나이</th>
-				<td>
-					<%if(result[0].userAge !=null && result[0].userAge!='null' && result[0].userAge!=''){%>
-						<%=result[0].userAge %>
-						<%}%>
-				</td>
-				<th><label><input type="radio">노출</label>
-			</tr>
-			
-			<tr>
-				<th>주소1</th>
-				<td>
-					<%if(result[0].userAdres1 !=null && result[0].userAdres1 !='null' && result[0].userAdres1!=''){%>
-						<%=result[0].userAdres1%>
-						<%}%>
-				</td>
-				<th><label><input type="radio">노출</label>
-			</tr>
-
-			<tr>
-				<th>주소2</th>
-				<td>
-					<%if(result[0].userAdres2 !=null && result[0].userAdres2!='null' & result[0].userAdres2!=''){%>
-						<%=result[0].userAdres2 %>
-						<%}%>
-				</td>
-				<th><label><input type="radio">노출</label>
-			</tr>
-			
-			<tr>
-				<th>학교</th>
-				<td>
-					<%if(result[0].userSchool !=null && result[0].userSchool!='null' && result[0].userSchool!=''){%>
-						<%=result[0].userSchool %>
-						<%}%>
-				</td>
-				<th><label><input type="radio">노출</label>
-			</tr>
-			
-			<tr>
-				<th>포인트</th>
-				<td>
-					<%if(result[0].userPoint !=null && result[0].userPoint!='null' && result[0].userPoint!=''){%>
-						<%=result[0].userPoint %>
-						<%}%>
-				</td>
-				<th><label><input type="radio">노출</label>
-			</tr>
-			<tr>
-				<th>계산점수</th>
-				<td>
-					<%if(result[0].userScore !=null && result[0].userScore!='null' && result[0].userScore!=''){%>
-						<%=result[0].userScore %>
-						<%}%>
-				</td>
-				<th><label><input type="radio">노출</label>
-			</tr>
-			<tr>
-				<th>나무등급</th>
-				<td>
-					<%if(result[0].userPoint !=null && result[0].userPoint!='null' && result[0].userPoint!=''){%>
-						<%=result[0].userPoint %>
-						<%}%>
-				</td>
-				<th><label><input type="radio">노출</label>
-			</tr>
-			<tr>
-				<th>작성한 게시글 수</th>
-				<td>
-					<%if(result[0].userPoint !=null && result[0].userPoint!='null' && result[0].userPoint!=''){%>
-						<%=result[0].userPoint %>
-						<%}%>
-				</td>
-				<th><label><input type="radio">노출</label>
-			</tr>
-			<tr>
-				<th>상태</th>
-				<td>
-					<label><input type="radio" id="userStatus1" name="userStatus" disabled>일반회원</label>
-					<label><input type="radio" id="userStatus2" name="userStatus" disabled>탈퇴회원</label>
-					<% if(result.length > 0) {%>
-						<input type="hidden" id="userStatusValue" value="<%=result[0].userStatus%>">
-						<% } %>
 					</td>
 					<th><label><input type="radio">노출</label>
-
 				</tr>
-
+				<tr>
+					<th class="necessary">이메일</th>
+					<td>
+						<%if(result[0].userEmail !=null && result[0].userEmail!='null' && result[0].userEmail!=''){%>
+						<%=result[0].userEmail %>
+						<%}%>
+					</td>
+					<th><label><input type="radio">노출</label>
+				</tr>
+				<tr>
+					<th>나이</th>
+					<td>
+						<%if(result[0].userAge !=null && result[0].userAge!='null' && result[0].userAge!=''){%>
+						<%=result[0].userAge %>세
+						<%}%>
+					</td>
+					<th><label><input type="radio">노출</label>
+				</tr>
+				<tr>
+					<th>주소1</th>
+					<td>
+						<%if(result[0].userAdres1 !=null && result[0].userAdres1 !='null' && result[0].userAdres1!=''){%>
+						<%=result[0].userAdres1%>
+						<%}%>
+					</td>
+					<th><label><input type="radio">노출</label>
+				</tr>
+				<tr>
+					<th>주소2</th>
+					<td>
+						<%if(result[0].userAdres2 !=null && result[0].userAdres2!='null' & result[0].userAdres2!=''){%>
+						<%=result[0].userAdres2 %>
+						<%}%>
+					</td>
+					<th><label><input type="radio">노출</label>
+				</tr>
+				<tr>
+					<th>학교</th>
+					<td>
+						<%if(result[0].userSchool !=null && result[0].userSchool!='null' && result[0].userSchool!=''){%>
+						<%=result[0].userSchool %>
+						<%}%>
+					</td>
+					<th><label><input type="radio">노출</label>
+				</tr>
+				<tr>
+					<th>포인트</th>
+					<td>
+						<%if(result[0].userPoint !=null && result[0].userPoint!='null' && result[0].userPoint!=''){%>
+						<%=result[0].userPoint %>점
+						<%}%>
+					</td>
+					<th><label><input type="radio">노출</label>
+				</tr>
+				<tr>
+					<th>계산점수</th>
+					<td>
+						<%if(result[0].userScore !=null && result[0].userScore!='null' && result[0].userScore!=''){%>
+						<%=result[0].userScore %>점
+						<%}%>
+					</td>
+					<th><label><input type="radio">노출</label>
+				</tr>
+				<tr>
+					<th>나무등급</th>
+					<td>
+						<%if(result[0].treeGrade !=null && result[0].treeGrade!='null' && result[0].treeGrade!=''){%>
+						<%=result[0].treeGrade %>
+						<%}%>
+					</td>
+					<th><label><input type="radio">노출</label>
+				</tr>
+				<tr>
+					<th>작성한 게시글 수</th>
+					<td>
+						<%if(result[0].contentAll !=null && result[0].contentAll!='null' && result[0].contentAll!=''){%>
+						<%=result[0].contentAll %>개
+						<%}%>
+					</td>
+					<th><label><input type="radio">노출</label>
+				</tr>
+				<tr>
+					<th>상태</th>
+					<td>
+						<%if(result[0].userStatus !=null && result[0].userStatus!='null' && result[0].userStatus!=''){%>
+						<% if (result[0].userStatus == '0'){%>
+						일반회원
+						<% } else if (result[0].userStatus == '1') {%>
+						탈퇴회원
+						<%}%>   
+						<%}%>
+					</td>
+					<th><label><input type="radio">노출</label>
+				</tr>
 				<tr>
 					<th>개인정보 동의여부</th>
 					<td>
@@ -161,23 +154,23 @@
 						<% } else if (result[0].userAgree == '1') {%>
 						비동의
 						<%}%>   
-					   <%}%>
+						<%}%>
 					</td>
 					<th><label><input type="radio">노출</label>
 				</tr>
-
 				<tr>
 					<th>권한</th>
 					<td>
-						<label><input type="radio" id="userAuth1" name="userAuth" disabled>일반회원</label>
-						<label><input type="radio" id="userAuth2" name="userAuth" disabled>기업</label>
-						<% if(result.length > 0) {%>
-						<input type="hidden" id="userAuthValue" value="<%=result[0].userAuth%>">
-						<% } %>
+						<%if(result[0].userAuth !=null && result[0].userAuth!='null' && result[0].userAuth!=''){%>
+						<% if (result[0].userAuth == '0'){%>
+						일반회원
+						<% } else if (result[0].userAuth == '1') {%>
+						기업
+						<%}%>   
+						<%}%>
 					</td>
 					<th><label><input type="radio">노출</label>
 				</tr>
-
 			</table>
 
 			<p class="btn">

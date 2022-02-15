@@ -90,38 +90,42 @@
         </thead>
 
 
-        <% if(results.length > 0) { %>
         <tbody>
-            <% for(var i = 0; i < results.length; i++){ %>
+            <% if(results.length > 0) { %>
+            <% for(var i = (page * page_num) - page_num; i < (page * page_num); i++) { 
+                if(i > length){
+                    i++;
+                } else {
+            var data = results[i] %>
             <tr>
-                <td><input type="checkbox" id="chk" name="chk" IDX="<%=results[i].uid %>"
-                        value="<%=results[i].uid %>" /></td>
+                <td><input type="checkbox" id="chk" name="chk" IDX="<%=data.uid %>" value="<%=data.uid %>" /></td>
                 <td>
-                    <%=results[i].uid%></td>
+                    <%=data.uid%></td>
                 <td>
-                    <%if(results[i].userEmail !=null && results[i].userEmail!='null' && results[i].userEmail!=''){%>
-                    <%=results[i].userEmail%>
+                    <%if(data.userEmail !=null && data.userEmail!='null' && data.userEmail!=''){%>
+                    <%=data.userEmail%>
                     <%}%>
-				</td>
-				<td>
-                    <%if(results[i].userNick !=null && results[i].userEmail!='null' && results[i].userEmail!=''){%>
-                    <%= results[i].userNick %>
+            </td>
+            <td>
+                    <%if(data.userNick !=null && data.userEmail!='null' && data.userEmail!=''){%>
+                    <%= data.userNick %>
                     <%}%>
 
-				</td>
+            </td>
                 <td>
-                  <button onclick="selectOne('/admin/m_user/selectOne', '', 'width=640, height=700, scrollbars=1', '<%=results[i].uid%>',
+                  <button onclick="selectOne('/admin/m_user/selectOne', '', 'width=640, height=700, scrollbars=1', '<%=data.uid%>',
                     '')">상세보기</button>
 
                 </td>
             </tr>
             <% } %>
+            <% } %>
             <% } else {%>
             <tr>
                 <td colspan="10">등록된 회원이 없습니다.</td>
             </tr>
+            <% } %>
         </tbody>
-        <% } %>
     </table>
     <p class="btn">
         <form name="udtForm" role="form">
@@ -130,6 +134,25 @@
         </form>
     </p>
     <!-- <button onclick="createOne()">등록</button> -->
+</div>
+
+<div class="mt_20">
+    <div class="paging" id="page_navi">
+        <ul>
+            <li class="paging_on">
+                <% for(var i = 0; i < results.length / page_num; i++){  %>
+                <a href="/admin/m_user/page?page=<%= i + 1 %>"><%= i + 1 %></a>
+                <% } %>
+            </li>
+        </ul>
+    </div>
+    <p class="float_r">
+        <!-- 나중에 boardId랑 uid(admin) 고쳐줘야함!!!!!!!!!!!!!!!!!!!!-->
+        <% if(results.length > 0){ %>
+        <button
+            onclick="enroll('/admin/m_user/userInsertForm', '', 'width=640, height=700, scrollbars=1', '', '')">등록</button>
+        <% } %>
+    </p>
 </div>
 
 <script>
@@ -148,39 +171,10 @@
         })
     });
 
-    // var arr = new Array();
-    // const value = $("input[name=chk]:checked").val();
-    // array.push(value);
-    // console.log(value);
-
-
-    // var cnt = $("input[name=chk]:checked").length();
-    // var arr = new Array();
-    // $("input[name='chk']:checked").each(
-    //     arr.push($(this).val())
-    //     console.log(arr);
-    // );
-
-    // $("#chk").click(function () {
-    //     var arr = new Array();
-    //     $("#chk").each(function () {
-    //         if ($(this).is(":checked"))
-    //             arr += $(this).val();
-    //     });
-    //     console.log(arr);
-    // });
-    // var arr = "";
-    // $('input:checkbox[name="chk"]:checked').each(function (index, item) {
-    // 	var IDX = $(this).attr("IDX")
-    // 	if (index > 0) {
-    // 		arr += ', ' + IDX;
-    // 	} else {
-    // 		arr += IDX;
-    // 	}
-    //     console.log(arr);
-    // });
-
-
+    //등록폼 열기
+    function enroll(theURL, winName, features, boardId, mode) {
+        window.open(theURL, winName, features);
+    }
 
     // 선택
     $("#chkAll").click(function () {
@@ -197,9 +191,4 @@
         else
             $("#chkAll").prop("checked", true);
     });
-
-
-    // $("#btn").click(function(){
-    // 		location.href="/admin/web/orgm_write";
-    // 	});
 </script>

@@ -1,98 +1,99 @@
 <script type="text/javascript">
-	$(document).ready(function() {
+	$(document).ready(function () {
 		/*page_navi*/
 		var page_navi = tag_place("<%=page_navi%>");
 		$('#page_navi').html(page_navi);
 		/*page_navi*/
 
 
-		$('#searchAction').click(function(){
+		$('#searchAction').click(function () {
 			var frm = document.writehtm;
 			$('#nowPage').val(1);
 			frm.action = '/admin/web/orgm_list_popup';
 			frm.submit();
 		});
-		$("#search_text").keydown(function(e){
-			if(e.keyCode == 13) $('#searchAction').click();
+		$("#search_text").keydown(function (e) {
+			if (e.keyCode == 13) $('#searchAction').click();
 		});
-		
-		$(".org_click").click(function(){
+
+		$(".org_click").click(function () {
 			var orgmem_no = $(this).attr("orgmem_no");
 			var orgmem_name = $(this).attr("orgmem_name");
-			
+
 			$(opener.document).find("#orgmem_no").val(orgmem_no);
 			$(opener.document).find("#orgmem_name").val(orgmem_name);
-			
+
 			window.close();
 		});
 	});
-	
-	function goPage(p_num){
+
+	function goPage(p_num) {
 		var frm = document.writehtm;
 		frm.action = '/admin/web/orgm_list_popup';
 		frm.nowPage.value = p_num;
 		frm.submit();
 	}
-	 
 </script>
-	<h2>
-		<span class="float_l">회원검색</span>
-		<img src="../../../images/admin/btn_close.gif" alt="" class="float_r hand" onclick="self.close();"/>
-	</h2>
+<h2>
+	<span class="float_l">회원검색</span>
+	<img src="../../../images/admin/btn_close.gif" alt="" class="float_r hand" onclick="self.close();" />
+</h2>
 
-	<form action="/admin/web/orgm_list" id="writehtm" name="writehtm" method="post" onsubmit="return false;" autocomplete="off">
-		<input type="hidden" name="nowPage" value="<%=nowPage%>" id="nowPage"/>
-		<input type="hidden" name="brd_no" id="brd_no" value=""/>
-		
-	
-		<div class="board_search">
-			<p class="float_r">
-				<select name="search_type">
-					<option value=""> - 선택 - </option>
-					<option value="orgmem_name" <%if(search_type=="orgmem_name"){%> selected="selected" <%}%>>대표자</option>
+<form action="/admin/web/orgm_list" id="writehtm" name="writehtm" method="post" onsubmit="return false;"
+	autocomplete="off">
+	<input type="hidden" name="nowPage" value="<%=nowPage%>" id="nowPage" />
+	<input type="hidden" name="brd_no" id="brd_no" value="" />
+
+
+	<div class="board_search">
+		<p class="float_r">
+			<select name="search_type">
+				<option value=""> - 선택 - </option>
+				<option value="orgmem_name" <%if(search_type=="orgmem_name"){%> selected="selected" <%}%>>대표자</option>
 					<option value="orgmem_phone" <%if(search_type=="orgmem_phone"){%> selected="selected" <%}%>>휴대폰</option>
 					<option value="orgmem_company_name" <%if(search_type=="orgmem_company_name"){%> selected="selected" <%}%>>상호</option>
 				</select>				
-				 : <input type="text" name="search_text" id="search_text" value="<%=search_text%>" style="ime-mode:active;"/>
-				<input type="button" value="검색"  class="btn_small_black" id="searchAction" />
-			</p>
-		</div>
-	
-		<div class="board_list">
-			<table>
-				<colgroup>
-					<col width="10%" />
-					<col width="12%" />
-					<col width="15%" />
-					<col width="15%" />
-					<col />
-				</colgroup>
-	
-				<thead>
-					<tr>
-						<th>회원번호</th>
-						<th>등록번호</th>
-						<th>상호</th>
-						<th>대표자</th>
-						<th>핸드폰</th>
-					</tr>
-				</thead>
-	
-				
-				<tbody>
+				 : <input type="text" name="search_text" id="search_text" value="<%=search_text%>" style="ime-mode:active;" />
+				<input type="button" value="검색" class="btn_small_black" id="searchAction" />
+		</p>
+	</div>
+
+	<div class="board_list">
+		<table>
+			<colgroup>
+				<col width="10%" />
+				<col width="12%" />
+				<col width="15%" />
+				<col width="15%" />
+				<col />
+			</colgroup>
+
+			<thead>
+				<tr>
+					<th>회원번호</th>
+					<th>등록번호</th>
+					<th>상호</th>
+					<th>대표자</th>
+					<th>핸드폰</th>
+				</tr>
+			</thead>
+
+
+			<tbody>
 				<% if(db_data.length > 0) {
 					for(var i = 0; i < db_data.length; i++){ %>
-					<tr class="hand org_click" orgmem_no="<%=db_data[i].orgmem_no %>" orgmem_name="<%=db_data[i].orgmem_name %>">
-						<td><%=db_data[i].orgmem_no %></td>
-						<td><%=db_data[i].orgmem_reg_no %></td>
-						<td> 
-							<%=db_data[i].orgmem_company_name %>
-						</td>
-						<td><%=db_data[i].orgmem_name %></td>
-						<td>
-							<%if(db_data[i].orgmem_phone1 !=null && db_data[i].orgmem_phone1 !=''){%>
-								<%=db_data[i].orgmem_phone1 %>-<%=db_data[i].orgmem_phone2 %>-<%=db_data[i].orgmem_phone3 %>
-							<%}%>
+				<tr class="hand org_click" orgmem_no="<%=db_data[i].orgmem_no %>"
+					orgmem_name="<%=db_data[i].orgmem_name %>">
+					<td><%=db_data[i].orgmem_no %></td>
+					<td><%=db_data[i].orgmem_reg_no %></td>
+					<td>
+						<%=db_data[i].orgmem_company_name %>
+					</td>
+					<td><%=db_data[i].orgmem_name %></td>
+					<td>
+						<%if(db_data[i].orgmem_phone1 !=null && db_data[i].orgmem_phone1 !=''){%>
+						<%=db_data[i].orgmem_phone1 %>-<%=db_data[i].orgmem_phone2 %>-<%=db_data[i].orgmem_phone3 %>
+						<%}%>
 						</td>
 					</tr>
 					<% } 
@@ -101,13 +102,18 @@
 					<td colspan="5">등록된 회원이 없습니다.</td>
 				</tr>
 				<% } %>
-				</tbody>
-			</table>
-		</div>
-	</form>
-	<!-- 페이징 -->
-	<div class="mt_20">
-		<div class="paging" id="page_navi">
-		</div>
+			</tbody>
+		</table>
 	</div>
-	<!-- //페이징 -->
+</form>
+<!-- 페이징 -->
+<div class="mt_20">
+	<div class="paging" id="page_navi">
+		<ul>
+			<li class="paging_on">
+				<a href="#" onclick=""></a>
+			</li>
+		</ul>
+	</div>
+</div>
+<!-- //페이징 -->

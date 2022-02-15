@@ -14,17 +14,18 @@
     <script type="text/javascript" src="/stylesheets/jquery/jquery.form.js"></script>
     <script src="/stylesheets/js/common.js"></script>
     <!-- ckeditor -->
-    <script src="https://cdn.ckeditor.com/ckeditor5/29.1.0/classic/ckeditor.js"></script>
+    <!-- <script src="https://cdn.ckeditor.com/ckeditor5/29.1.0/classic/ckeditor.js"></script> -->
+    <script src="../../../public/build/ckeditor.js"></script>
 </head>
 
 <style>
     .ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
         border-color: var(--ck-color-base-border);
-        height: 40%;
+        height: 50%;
     }
 
-    .ck.ck-editor__editable:not(.ck-editor__nested-editable).ck-focused{
-        height: 40%;
+    .ck.ck-editor__editable:not(.ck-editor__nested-editable).ck-focused {
+        height: 50%;
     }
 </style>
 
@@ -86,7 +87,8 @@
         //ckeditor
         ClassicEditor
             .create(document.querySelector('#editor'), {
-                language: 'ko'
+                language: 'ko',
+                shouldNotGroupWhenFull: true
             })
             .then(newEditor => {
                 editor = newEditor;
@@ -98,32 +100,34 @@
 
 
         $("#btn").click(function () {
-            var writTitle = $("#writTitle").val();
-            // var content = $("#content").val();
-            // $('input[name=inputNm]').attr('value',goContent);
-            var content = editor.getData();
-            console.log(content);
+            const aa = Array.from(editor.ui.componentFactory.names());
+            console.log(aa);
+            // var writTitle = $("#writTitle").val();
+            // // var content = $("#content").val();
+            // // $('input[name=inputNm]').attr('value',goContent);
+            // var content = editor.getData();
+            // console.log(content);
 
-            if (writTitle == "") {
-                alert("제목을 입력하세요.");
-                $("#writTitle").focus();
-                return false;
-            }
+            // if (writTitle == "") {
+            //     alert("제목을 입력하세요.");
+            //     $("#writTitle").focus();
+            //     return false;
+            // }
 
-            if (content == null) {
-                alert("내용을 입력하세요.");
-                $("#editor").focus();
-                return false;
-            }
+            // if (content == null) {
+            //     alert("내용을 입력하세요.");
+            //     $("#editor").focus();
+            //     return false;
+            // }
 
-            if (confirm("등록하시겠습니까?") == true) {
-                $('input[name=writContent]').attr('value',content);
-                $("#boardwrite").attr("action", "boardwrite");
-                $("#boardwrite").submit();
-                alert("등록되었습니다.");
-            } else {
-                return;
-            }
+            // if (confirm("등록하시겠습니까?") == true) {
+            //     $('input[name=writContent]').attr('value', content);
+            //     $("#boardwrite").attr("action", "boardwrite");
+            //     $("#boardwrite").submit();
+            //     alert("등록되었습니다.");
+            // } else {
+            //     return;
+            // }
         });
 
         //쿼리스트링값 가져와서 넘기기

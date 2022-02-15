@@ -19,7 +19,7 @@
 .popup h2{clear:both; margin-bottom:10px; padding:7px 10px; background:#3b64af;color:#fff; font-size:14px; overflow:hidden;}
 .popup .content .btn {margin-top:20px; padding:20px; border-top:1px dotted #9c9c9c; text-align:center;}
 .popup .content table {width:100%;}
-.popup .content th, .popup .content td {padding:4px; border:1px solid #c6c6c6;}
+.popup .content th, .popup .content td {padding:10px; border:1px solid #c6c6c6;}
 .popup .content .necessary::before {content: "*"; color: red};
 .popup .content th{width:117px; background:#eee;}
 .popup .content td input[type~="text"], .popup .content td input[type~="text"], .popup .content td textarea{width:95%;}

@@ -8,11 +8,14 @@ const path = require('path');
 
 const connt = require("../../config/db")
 var url = require('url');
+const crypto = require('crypto');
 const {
   type
 } = require('os');
 const conn = require('../../config/db');
-const { REPL_MODE_SLOPPY } = require('repl');
+const {
+  REPL_MODE_SLOPPY
+} = require('repl');
 const models = require('../../models');
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
@@ -54,61 +57,71 @@ router.get('/login', async (req, res) => {
   });
 })
 
-  //로그인
-  router.post('/', async (req, res) => {
+//로그인
+router.post('/', async (req, res) => {
 
-    const { userPwd, userEmail } = req.body;
+  const {
+    userPwd,
+    userEmail
+  } = req.body;
 
-  
-    const emailChk = await models.user.findOne({ where: { userEmail } });
-  
-    if (emailChk == null) {
-      return res.json({
-        emailChk: false,
-        message: "이메일을 다시 확인해주세요.",
-      });
-    }
-  
-    const makePasswordHashed = (userEmail, plainPassword) =>
-      new Promise(async (resolve, reject) => {
-        // salt를 가져오는 부분은 각자의 DB에 따라 수정
-        const salt = await models.user
-          .findOne({
-            attributes: ['salt'],
-            raw: true,
-            where: {
-              userEmail,
-            },
-          }).then((result) => result.salt);
-        console.log(salt);
-  
-        crypto.pbkdf2(plainPassword, salt, 9999, 64, 'sha512', (err, key) => {
-          if (err) reject(err);
-          resolve(key.toString('base64'));
-        });
-      });
-  
-    const password = await makePasswordHashed(userEmail, userPwd);
-    const dbPwd = await models.user.findOne({ where: { userEmail } });
-    console.log(dbPwd);
-    if (password == dbPwd.userPwd) {  // dbPwd: ['userPwd'] 해도 됨
-      res.json(
-        dbPwd
-      );
-  
-    } else {
-      res.json({
-        pwdChk: false,
-        message: "비밀번호를 확인해주세요.",
-      });
+
+  const emailChk = await models.user.findOne({
+    where: {
+      userEmail
     }
   });
+
+  if (emailChk == null) {
+    return res.json({
+      emailChk: false,
+      message: "이메일을 다시 확인해주세요.",
+    });
+  }
+
+  const makePasswordHashed = (userEmail, plainPassword) =>
+    new Promise(async (resolve, reject) => {
+      // salt를 가져오는 부분은 각자의 DB에 따라 수정
+      const salt = await models.user
+        .findOne({
+          attributes: ['salt'],
+          raw: true,
+          where: {
+            userEmail,
+          },
+        }).then((result) => result.salt);
+      console.log(salt);
+
+      crypto.pbkdf2(plainPassword, salt, 9999, 64, 'sha512', (err, key) => {
+        if (err) reject(err);
+        resolve(key.toString('base64'));
+      });
+    });
+
+  const password = await makePasswordHashed(userEmail, userPwd);
+  const dbPwd = await models.user.findOne({
+    where: {
+      userEmail
+    }
+  });
+  console.log(dbPwd);
+  if (password == dbPwd.userPwd) { // dbPwd: ['userPwd'] 해도 됨
+    res.json(
+      dbPwd
+    );
+
+  } else {
+    res.json({
+      pwdChk: false,
+      message: "비밀번호를 확인해주세요.",
+    });
+  }
+});
 
 //사용자 전체조회
 router.get('/', async (req, res) => {
   try {
-
-    const sql = "select * from user where userAuth = 0";
+    const sql = "select * from user where userAuth = 0 or userAuth = 1";
     connection.query(sql, function (err, results, fields) {
       if (err) {
         console.log(err);
@@ -117,9 +130,45 @@ router.get('/', async (req, res) => {
       res.render(route, {
         'results': results
       });
-      console.log(results);
     });
 
+  } catch (error) {
+    res.status(401).send(error.message);
+  }
+});
+
+//페이징
+router.get('/page', async (req, res) => {
+  // let pageNum = req.query.page; // 요청 페이지 넘버
+  // let offset = 0; //몇번째부터 조회할건지
+
+  // if (pageNum > 1) {
+  //   offset = 10 * (pageNum - 1);
+  // }
+
+  // models.user.findAll({
+  //   // pagination
+  //   offset: offset,
+  //   limit: 7 //조회할 개수
+  // })
+  try {
+    var page = req.query.page;
+    const sql = "select * from user where userAuth = 0";
+    connection.query(sql, function (err, results, fields) {
+      if (err) {
+        console.log(err);
+      }
+      let route = req.app.get('views') + '/m_user/m_user';
+      res.render(route, {
+        results: results,
+        page: page, //현재 페이지
+        length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
+        page_num: 10, //한 페이지에 보여줄 개수
+        pass: true
+      });
+      // console.log(results);
+      console.log(results.length-1 + "================");
+    });
   } catch (error) {
     res.status(401).send(error.message);
   }
@@ -128,8 +177,11 @@ router.get('/', async (req, res) => {
 //사용자 상세조회
 router.get('/selectOne', async (req, res) => {
   try {
-    const param = req.query.uid;
-    const sql = "select * from user where uid = ?";
+    const param = [req.query.uid, req.query.uid, req.query.uid];
+    const sql = "select *, ((select count(*) from certiContent where uid = ?) +\
+                           (select count(*) from post where uid = ?)) as contentAll, abs(u.userScore - t.treeScore) as score\
+                   from user u join tree t on 1=1 where uid = ?\
+                   order by score limit 1";
     connection.query(sql, param, function (err, result, fields) {
       if (err) {
         console.log(err);
@@ -139,12 +191,121 @@ router.get('/selectOne', async (req, res) => {
         'result': result,
         layout: false
       });
-      console.log(result);
     });
 
   } catch (error) {
     res.status(401).send(error.message);
   }
+});
+
+//사용자 등록 페이지 이동
+router.get('/userInsertForm', (req, res) => {
+  fs.readFile('views/ejs/m_user/orgm_writForm.ejs', (err, data) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.end(data);
+    }
+  });
+});
+
+//사용자 등록
+router.post('/userInsert', upload.single('file'), async (req, res) => {
+  const {
+    file,
+    userNick,
+    userEmail,
+    userAge,
+    userAdres1,
+    userAdres2,
+    userSchool,
+    userPoint,
+    userScore,
+    userStatus,
+    userAgree,
+    userAuth
+  } = req.body;
+
+  const sameEmailUser = await models.user.findOne({
+    where: {
+      userEmail
+    }
+  });
+  if (sameEmailUser !== null) {
+    return res.send('<script>alert("이미 존재하는 이메일입니다."); history.go(-1);</script>');
+  }
+
+  const sameNickNameUser = await models.user.findOne({
+    where: {
+      userNick
+    }
+  });
+  if (sameNickNameUser !== null) {
+    return res.send('<script>alert("이미 존재하는 닉네임입니다."); history.go(-1);</script>');
+  }
+
+  const createSalt = () =>
+    new Promise((resolve, reject) => {
+      crypto.randomBytes(64, (err, buf) => {
+        if (err) reject(err);
+        resolve(buf.toString('base64'));
+      });
+    });
+
+  const createHashedPassword = (plainPassword) =>
+    new Promise(async (resolve, reject) => {
+      const salt = await createSalt();
+      crypto.pbkdf2(plainPassword, salt, 9999, 64, 'sha512', (err, key) => {
+        if (err) reject(err);
+        resolve({
+          userPwd: key.toString('base64'),
+          salt
+        });
+      });
+    });
+
+  const {
+    userPwd,
+    salt
+  } = await createHashedPassword(req.body.userPwd);
+
+  if (req.file != null) {
+    const userImg = req.file.path;
+    await models.user.create({
+      userPwd,
+      salt,
+      userImg,
+      userNick,
+      userEmail,
+      userAge,
+      userAdres1,
+      userAdres2,
+      userSchool,
+      userPoint,
+      userScore,
+      userStatus,
+      userAgree,
+      userAuth
+    });
+  } else {
+    await models.user.create({
+      userPwd,
+      salt,
+      userNick,
+      userEmail,
+      userAge,
+      userAdres1,
+      userAdres2,
+      userSchool,
+      userPoint,
+      userScore,
+      userStatus,
+      userAgree,
+      userAuth
+    });
+  }
+
+  res.send('<script>alert("회원 등록이 완료되었습니다."); opener.parent.location.reload(); window.close();</script>');
 });
 
 //사용자 정보 수정 페이지 이동
@@ -222,14 +383,14 @@ router.get('/imgDelete', async (req, res) => {
         console.log(err)
       }
       fs.unlinkSync(param, (err) => {
-        if(err) {
+        if (err) {
           console.log(err);
         }
         return;
       });
     })
   } catch (error) {
-    if(error.code == "ENOENT") {
+    if (error.code == "ENOENT") {
       console.log("프로필 삭제 에러 발생");
     }
   }
@@ -245,7 +406,9 @@ router.get('/search', async (req, res) => {
           [Op.like]: "%" + req.query.searchText + "%"
         },
       },
-      order: [['uid', 'ASC']],
+      order: [
+        ['uid', 'ASC']
+      ],
       raw: true,
     }).then(results => {
       console.log(results);
@@ -255,7 +418,9 @@ router.get('/search', async (req, res) => {
       });
     }).catch(err => {
       console.log(err);
-      return res.status(404).json({ message: 'error' });
+      return res.status(404).json({
+        message: 'error'
+      });
     })
   } else {
     models.user.findAll({
@@ -264,7 +429,9 @@ router.get('/search', async (req, res) => {
           [Op.like]: "%" + req.query.searchText + "%"
         },
       },
-      order: [['uid', 'ASC']],
+      order: [
+        ['uid', 'ASC']
+      ],
       raw: true,
     }).then(results => {
       console.log(results);
@@ -274,7 +441,9 @@ router.get('/search', async (req, res) => {
       });
     }).catch(err => {
       console.log(err);
-      return res.status(404).json({ message: 'error' });
+      return res.status(404).json({
+        message: 'error'
+      });
     })
   }
 });

@@ -150,7 +150,7 @@ router.post('/admin', async (req, res) => {
   }
 
   if (nickChk != null && pwdChk != null) {
-    res.redirect('/admin/m_user');
+    res.redirect('/admin/m_user/page?page=1');
   }
 
   // const makePasswordHashed = (userEmail, plainPassword) =>
