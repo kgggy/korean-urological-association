@@ -310,7 +310,7 @@ router.get('/search', async (req, res) => {
                 page_num: 10,
                 pass: true
             });
-            
+
         }).catch(err => {
             console.log(err);
             return res.status(404).json({
@@ -319,21 +319,21 @@ router.get('/search', async (req, res) => {
         })
     } else {
         models.post.findAll({
+            // date_format: {
+            //     writDate, '%Y-%m-%d') as writDatefmt,
+            // include: {
+            //     model: models.user,
+            // },
             where: {
-                include: [{
-                    model: models.user,
-                    }],
-
-                userNick: {
+                '$user.userNick$': {
                     [Op.like]: "%" + req.query.searchText + "%"
                 },
             },
             order: [
-                ['uid', 'ASC']
+                ['writDate', 'ASC']
             ],
             raw: true,
         }).then(results => {
-            console.log(searchType);
             let route = req.app.get('views') + '/m_board/board';
             res.render(route, {
                 searchText: searchText,
@@ -344,6 +344,7 @@ router.get('/search', async (req, res) => {
                 page_num: 10,
                 pass: true
             });
+            console.log(results);
         }).catch(err => {
             console.log(err);
             return res.status(404).json({

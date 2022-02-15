@@ -57,12 +57,12 @@
                 <tr>
                     <input type="hidden" id="writId" name="writId" value="<%=results[i].writId%>" />
                     <td><input type="checkbox" id="chk" name="chk" value="<%=results[i].writId %>" /></td>
-                    <td><%=results[i].userNick%></td>
+                    <td><%-results[i].userNick%></td>
                     <td><%=results[i].writRank%></td>
                     <td><%=results[i].writTitle%></td>
                     <td><%=results[i].writHit %></td>
-                    <td><%=results[i].writDatefmt%></td>
-                    <td><%=results[i].writUpdDatefmt%></td>
+                    <td><%=results[i].writDate%></td>
+                    <td><%=results[i].writUpdDate%></td>
                     <td>
                         <button
                             onclick="selectOne('/admin/m_board/selectOne', '', 'width=640, height=700, scrollbars=1', '<%=results[i].writId%>', '')">상세보기</button>
