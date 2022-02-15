@@ -62,11 +62,20 @@
 
 <div class="board_list">
     <form action="/admin/m_user/search" method="get">
+        <input type="hidden" name="page" value="1">
         <select name="searchType">
-            <option value="userEmail">이메일</option>
+            <% if(searchType != null) { %>
+            <option value="userEmail" <%if(searchType=="userEmail"){%> selected="selected" <%}%>>이메일</option>
+            <option value="userNick" <%if(searchType=="userNick"){%> selected="selected" <%}%>>닉네임</option>
+            <% } else {%> <option value="userEmail">이메일</option>
             <option value="userNick">닉네임</option>
+            <% } %>
         </select>
-        <input type="text" name="searchText">
+        <% if(searchText != null) { %>
+        <input type="text" name="searchText" value="<%=searchText%>" />
+        <% } else {%>
+        <input type="text" name="searchText" />
+        <% } %>
         <button type="submit" id="searchAction">검색</button>
     </form>
 
@@ -95,27 +104,21 @@
             <% for(var i = (page * page_num) - page_num; i < (page * page_num); i++) { 
                 if(i > length){
                     i++;
-                } else {
-            var data = results[i] %>
+                 } else { %>
             <tr>
-                <td><input type="checkbox" id="chk" name="chk" IDX="<%=data.uid %>" value="<%=data.uid %>" /></td>
+                <td><input type="checkbox" id="chk" name="chk" value="<%=results[i].uid %>" /></td>
                 <td>
-                    <%=data.uid%></td>
+                    <%=results[i].uid%>
+                </td>
                 <td>
-                    <%if(data.userEmail !=null && data.userEmail!='null' && data.userEmail!=''){%>
-                    <%=data.userEmail%>
-                    <%}%>
-            </td>
-            <td>
-                    <%if(data.userNick !=null && data.userEmail!='null' && data.userEmail!=''){%>
-                    <%= data.userNick %>
-                    <%}%>
-
-            </td>
+                    <%=results[i].userEmail%>
+                </td>
                 <td>
-                  <button onclick="selectOne('/admin/m_user/selectOne', '', 'width=640, height=700, scrollbars=1', '<%=data.uid%>',
+                    <%= results[i].userNick %>
+                </td>
+                <td>
+                    <button onclick="selectOne('/admin/m_user/selectOne', '', 'width=640, height=700, scrollbars=1', '<%=results[i].uid%>',
                     '')">상세보기</button>
-
                 </td>
             </tr>
             <% } %>

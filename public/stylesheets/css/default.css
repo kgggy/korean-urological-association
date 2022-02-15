@@ -29,7 +29,7 @@ img {border:none; margin:0; padding:0;}
 fieldset {margin:0; padding:0; border:0;}
 table {margin:0;  border-collapse:collapse; table-layout:fixed;}
 td{word-break:break-all;}
-th{word-break:break-all;}
+th{word-break:break-all; width: 20%;}
 
 ul,li,ol,dl,dd,dt {margin:0; padding:0; list-style:none; overflow:hidden;}
 hr {padding:0; margin:0;}

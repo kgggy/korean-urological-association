@@ -172,7 +172,7 @@ router.get('/download/:certiContentId/:fileNo', async (req, res) => {
 });
 
 //탄소실천 이미지 삭제
-router.get('/imgDelete', async (req, res) => {
+router.post('/certiImgDelete', async (req, res) => {
     const param = req.query.certiImage;
     try {
         const sql = "update certification set certiImage = null where certiTitleId = ?";

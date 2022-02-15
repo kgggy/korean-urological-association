@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('user', {
+module.exports = function (sequelize, DataTypes) {
+  var user = sequelize.define('user', {
     uid: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -108,4 +108,11 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
+  user.associate = function (models) {
+    user.belongsTo(models.post, {
+      foreignKey: "uid"
+    })
+  };
+  return user;
 };
+

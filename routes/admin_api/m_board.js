@@ -10,6 +10,10 @@ const path = require('path');
 const connt = require("../../config/db")
 var url = require('url');
 
+const models = require('../../models');
+const sequelize = require('sequelize');
+const Op = sequelize.Op;
+
 const {
     v4: uuidv4
 } = require('uuid');
@@ -81,6 +85,7 @@ router.get('/', async (req, res) => {
 //카테고리별 글 전체조회
 router.get('/all', async (req, res) => {
     try {
+        var page = req.query.page;
         const param = req.query.boardId;
         const sql = "select p.*, c.*, u.userNick, u.uid, date_format(writDate, '%Y-%m-%d') as writDatefmt, date_format(writUpdDate, '%Y-%m-%d') as writUpdDatefmt\
                        from post p\
@@ -93,19 +98,16 @@ router.get('/all', async (req, res) => {
         connection.query(sql, param, (err, results) => {
             if (err) {
                 console.log(err);
-                res.json({
-                    msg: "query error"
-                });
             }
             let route = req.app.get('views') + '/m_board/board';
-            // console.log(route);
             res.render(route, {
-                'results': results
+                results: results,
+                page: page,
+                length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
+                page_num: 10, //한 페이지에 보여줄 개수
+                pass: true
             });
-            if(results.length == 0) {
-                console.log("===============");
-            }
-             console.log(results);
+            console.log(page)
         });
     } catch (error) {
         res.status(500).send(error.message);
@@ -152,7 +154,7 @@ router.get('/brdDelete', async (req, res) => {
                     msg: "query error"
                 });
             }
-            if(fileRoute != '') {
+            if (fileRoute != '') {
                 fs.unlinkSync(fileRoute, (err) => {
                     if (err) {
                         console.log(err);
@@ -244,7 +246,7 @@ router.post('/boardwrite', upload.array('file'), async (req, res, next) => {
                 connection.query(sql2, param2, (err) => {
                     if (err) {
                         throw err;
-                    } 
+                    }
                 });
             };
         });
@@ -260,25 +262,98 @@ router.get('/fileDelete', async (req, res) => {
     const fileRoute = req.query.fileRoute;
     // console.log(fileRoute + "-------" + param);
     try {
-      const sql = "delete from file where writId = ? and fileNo = ?";
-      connection.query(sql, param, (err, row) => {
-        if (err) {
-          console.log(err)
-        }
-        fs.unlinkSync(fileRoute.toString(), (err) => {
-          if(err) {
-            console.log(err);
-          }
-          return;
-        });
-      })
+        const sql = "delete from file where writId = ? and fileNo = ?";
+        connection.query(sql, param, (err, row) => {
+            if (err) {
+                console.log(err)
+            }
+            fs.unlinkSync(fileRoute.toString(), (err) => {
+                if (err) {
+                    console.log(err);
+                }
+                return;
+            });
+        })
     } catch (error) {
-      if(error.code == "ENOENT") {
-        console.log("프로필 삭제 에러 발생");
-      }
+        if (error.code == "ENOENT") {
+            console.log("프로필 삭제 에러 발생");
+        }
     }
     res.redirect('brdUdtForm?writId=' + req.query.writId);
-  });
+});
+
+// 검색
+router.get('/search', async (req, res) => {
+    var page = req.query.page;
+    var searchType = req.query.searchType;
+    var searchText = req.query.searchText;
+    if (req.query.searchType == 'writTitle') {
+        models.post.findAll({
+            where: {
+                writTitle: {
+                    [Op.like]: "%" + searchText + "%"
+                },
+            },
+            order: [
+                ['writDate', 'ASC']
+            ],
+            raw: true,
+        }).then(results => {
+            console.log(results);
+            let route = req.app.get('views') + '/m_board/board';
+            res.render(route, {
+                searchText: searchText,
+                searchType: searchType,
+                results: results,
+                page: page,
+                length: results.length - 1,
+                page_num: 10,
+                pass: true
+            });
+            
+        }).catch(err => {
+            console.log(err);
+            return res.status(404).json({
+                message: 'error'
+            });
+        })
+    } else {
+        models.post.findAll({
+            where: {
+                include: [{
+                    model: models.user,
+                    }],
+
+                userNick: {
+                    [Op.like]: "%" + req.query.searchText + "%"
+                },
+            },
+            order: [
+                ['uid', 'ASC']
+            ],
+            raw: true,
+        }).then(results => {
+            console.log(searchType);
+            let route = req.app.get('views') + '/m_board/board';
+            res.render(route, {
+                searchText: searchText,
+                searchType: searchType,
+                results: results,
+                page: page,
+                length: results.length - 1,
+                page_num: 10,
+                pass: true
+            });
+        }).catch(err => {
+            console.log(err);
+            return res.status(404).json({
+                message: 'error'
+            });
+        })
+    }
+
+});
+
 
 
 module.exports = router;

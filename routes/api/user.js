@@ -40,7 +40,7 @@ var upload = multer({ //multer안에 storage정보
 
 // 회원가입
 router.post('/', async (req, res) => {
-  const { userEmail, userNick, userSocialDiv } = req.body;
+  const { userEmail, userNick, userSocialDiv, userToken } = req.body;
 
   const sameEmailUser = await models.user.findOne({ where: { userEmail } });
   if (sameEmailUser !== null) {
@@ -82,11 +82,11 @@ router.post('/', async (req, res) => {
     salt,
     userEmail,
     userNick,
-    userSocialDiv
+    userSocialDiv,
+    userToken
   })
   res.json({ msg: "success" });
 });
-
 
 
 // 회원 상세보기

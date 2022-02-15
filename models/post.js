@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('post', {
+module.exports = function (sequelize, DataTypes) {
+  var post = sequelize.define('post', {
     writId: {
       type: DataTypes.STRING(35),
       allowNull: false,
@@ -93,5 +93,11 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
     ]
-  });
+  }); 
+  post.associate = function (models) {
+    post.belongsTo(models.user, {
+      foreignKey: "uid"
+    })
+  };
+  return post;
 };

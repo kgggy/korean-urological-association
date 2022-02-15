@@ -12,7 +12,6 @@ const crypto = require('crypto');
 const {
   type
 } = require('os');
-const conn = require('../../config/db');
 const {
   REPL_MODE_SLOPPY
 } = require('repl');
@@ -119,55 +118,24 @@ router.post('/', async (req, res) => {
 });
 
 //사용자 전체조회
-router.get('/', async (req, res) => {
-  try {
-    const sql = "select * from user where userAuth = 0 or userAuth = 1";
-    connection.query(sql, function (err, results, fields) {
-      if (err) {
-        console.log(err);
-      }
-      let route = req.app.get('views') + '/m_user/m_user';
-      res.render(route, {
-        'results': results
-      });
-    });
-
-  } catch (error) {
-    res.status(401).send(error.message);
-  }
-});
-
-//페이징
 router.get('/page', async (req, res) => {
-  // let pageNum = req.query.page; // 요청 페이지 넘버
-  // let offset = 0; //몇번째부터 조회할건지
-
-  // if (pageNum > 1) {
-  //   offset = 10 * (pageNum - 1);
-  // }
-
-  // models.user.findAll({
-  //   // pagination
-  //   offset: offset,
-  //   limit: 7 //조회할 개수
-  // })
   try {
     var page = req.query.page;
-    const sql = "select * from user where userAuth = 0";
+    const sql = "select * from user where userAuth = 0 or userAuth = 1"; //0은 회원, 1은 기업
     connection.query(sql, function (err, results, fields) {
       if (err) {
         console.log(err);
       }
       let route = req.app.get('views') + '/m_user/m_user';
       res.render(route, {
+        searchType: null,
+        searchText: null,
         results: results,
         page: page, //현재 페이지
         length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
         page_num: 10, //한 페이지에 보여줄 개수
         pass: true
       });
-      // console.log(results);
-      console.log(results.length-1 + "================");
     });
   } catch (error) {
     res.status(401).send(error.message);
@@ -399,6 +367,10 @@ router.get('/imgDelete', async (req, res) => {
 
 // 검색
 router.get('/search', async (req, res) => {
+  var page = req.query.page;
+  var searchType = req.query.searchType;
+  var searchText = req.query.searchText;
+  console.log(searchText)
   if (req.query.searchType == 'userEmail') {
     models.user.findAll({
       where: {
@@ -414,7 +386,13 @@ router.get('/search', async (req, res) => {
       console.log(results);
       let route = req.app.get('views') + '/m_user/m_user';
       res.render(route, {
-        'results': results,
+        searchText: searchText,
+        searchType: searchType,
+        results: results,
+        page: page, //현재 페이지
+        length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
+        page_num: 10, //한 페이지에 보여줄 개수
+        pass: true
       });
     }).catch(err => {
       console.log(err);
@@ -434,10 +412,16 @@ router.get('/search', async (req, res) => {
       ],
       raw: true,
     }).then(results => {
-      console.log(results);
+      console.log(searchType);
       let route = req.app.get('views') + '/m_user/m_user';
       res.render(route, {
-        'results': results
+        searchText: searchText,
+        searchType: searchType,
+        results: results,
+        page: page, //현재 페이지
+        length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
+        page_num: 10, //한 페이지에 보여줄 개수
+        pass: true
       });
     }).catch(err => {
       console.log(err);

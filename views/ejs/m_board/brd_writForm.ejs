@@ -87,8 +87,7 @@
         //ckeditor
         ClassicEditor
             .create(document.querySelector('#editor'), {
-                language: 'ko',
-                shouldNotGroupWhenFull: true
+                language: 'ko'
             })
             .then(newEditor => {
                 editor = newEditor;
@@ -100,34 +99,34 @@
 
 
         $("#btn").click(function () {
-            const aa = Array.from(editor.ui.componentFactory.names());
-            console.log(aa);
-            // var writTitle = $("#writTitle").val();
-            // // var content = $("#content").val();
-            // // $('input[name=inputNm]').attr('value',goContent);
-            // var content = editor.getData();
-            // console.log(content);
+            // const aa = Array.from(editor.ui.componentFactory.names());
+            // console.log(aa);
+            var writTitle = $("#writTitle").val();
+            // var content = $("#content").val();
+            // $('input[name=inputNm]').attr('value',goContent);
+            var content = editor.getData();
+            console.log(content);
 
-            // if (writTitle == "") {
-            //     alert("제목을 입력하세요.");
-            //     $("#writTitle").focus();
-            //     return false;
-            // }
+            if (writTitle == "") {
+                alert("제목을 입력하세요.");
+                $("#writTitle").focus();
+                return false;
+            }
 
-            // if (content == null) {
-            //     alert("내용을 입력하세요.");
-            //     $("#editor").focus();
-            //     return false;
-            // }
+            if (content == null) {
+                alert("내용을 입력하세요.");
+                $("#editor").focus();
+                return false;
+            }
 
-            // if (confirm("등록하시겠습니까?") == true) {
-            //     $('input[name=writContent]').attr('value', content);
-            //     $("#boardwrite").attr("action", "boardwrite");
-            //     $("#boardwrite").submit();
-            //     alert("등록되었습니다.");
-            // } else {
-            //     return;
-            // }
+            if (confirm("등록하시겠습니까?") == true) {
+                $('input[name=writContent]').attr('value', content);
+                $("#boardwrite").attr("action", "boardwrite");
+                $("#boardwrite").submit();
+                alert("등록되었습니다.");
+            } else {
+                return;
+            }
         });
 
         //쿼리스트링값 가져와서 넘기기

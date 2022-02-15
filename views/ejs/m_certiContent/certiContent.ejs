@@ -1,23 +1,41 @@
+<style>
+    .image-box {
+        height: 220px;
+        overflow: hidden;
+        margin: 0 auto;
+    }
+
+    .image-thumbnail {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+</style>
+
 <%if(results.length == 0){%>
 <h3 class="float_l" id="category_title"></h3>
 <%} else if(results[0].certiDivision == '0') {%>
-<h3 class="float_l" id="category_title">탄소실천 글 목록</h3>
+<h3 class="" id="category_title">탄소실천 글 목록</h3>
 <% } else {%>
-<h3 class="float_l" id="category_title">챌린지 글 목록</h3>
+<h3 class="" id="category_title">챌린지 글 목록</h3>
 <% } %>
 <div class="certiContentAll-wrap">
     <ul class="certiContentAll">
         <% for(var i = 0; i < results.length; i++){ %>
         <li class="certiContentEach">
             <% if(results.length > 0 && results[i].fileRoute != null && results[i].fileRoute != ''){ %>
-            <img src="../../../<%= results[i].fileRoute %>" style="padding:10px !important;" alt="">
-            <% } else {%>
-            <img src="../../../public/images/certification/sprout.png" style="padding:10px !important;" alt="">
-            <% } %>
-            <button type="button" onclick="selectOne('/admin/m_certiContent/one', '', 'width=640, height=700, scrollbars=1', '<%= results[i].certiContentId %>', '<%= results[i].certiDivision %>',
+            <div class="image-box"><img class="image-thumbnail" src="../../../<%= results[i].fileRoute %>"
+                    style="width:100%; padding:15px !important;" alt="">
+            </div><% } else {%>
+            <div class="image-box"><img class="image-thumbnail" src="../../../public/images/certification/sprout.png"
+                    style="padding:15px !important;" alt="">
+            </div> <% } %>
+            <div class="detailBtn" style="margin-top: 15px;">
+                <button type="button" onclick="selectOne('/admin/m_certiContent/one', '', 'width=640, height=700, scrollbars=1', '<%= results[i].certiContentId %>', '<%= results[i].certiDivision %>',
                 '')">상세보기</button>
-            <button type="button" onclick="comment('/admin/m_certiContent/certiComment', '', 'width=640, height=700, scrollbars=1', '<%= results[i].certiContentId %>',
+                <button type="button" onclick="comment('/admin/m_certiContent/certiComment', '', 'width=640, height=700, scrollbars=1', '<%= results[i].certiContentId %>',
                 '')">댓글</button>
+            </div>
         </li>
         <% } %>
         <% if(results.length == 0){ %>

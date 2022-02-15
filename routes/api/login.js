@@ -22,25 +22,29 @@ connection.connect();
 
 // 토큰 확인 
 router.post('/tokenCheck', async (request, response, next) => {
-  const param = [request.body.userToken]
-
-  let token;
-  connection.query('select * from user where userToken = ?', param, (err, result, row) => {
-    if (err) {
-      console.log(err);
-      response.json({
-        msg: "querry error"
-      });
-    }
-    if (Object.keys(result).length == 0) {
-      token = {
-        msg: "error"
-      };
-    } else {
-      token = result;
-    }
-    response.json(token);
-  });
+  try {
+    const param = [request.body.userToken, request.body.userSocialDiv];
+    let email;
+    connection.query('select userEmail, userPwd from user where userToken = ? and userSocialDiv = ?', param, (err, result, row) => {
+      if (err) {
+        console.log(err);
+        response.json({
+          msg: "querry error"
+        });
+      } 
+      if (Object.keys(result).length == 0) {
+        response.send("null입니다");
+      } 
+      
+      else {
+        email = result;
+      }
+      console.log(Object.keys(result).length);
+      response.json(email);
+    });
+  } catch (error) {
+    res.status(401).send(error.message);
+  }
 });
 
 //로그인
@@ -217,7 +221,7 @@ router.get('/:userEmail', async (req, res) => {
         console.log(err);
       }
       console.log(results);
-      if(results.length > 0) {
+      if (results.length > 0) {
         res.send(results);
       } else {
         res.send("false");
