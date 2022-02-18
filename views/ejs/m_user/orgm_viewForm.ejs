@@ -25,13 +25,12 @@
 		<div class="content">
 			<table>
 				<tr>
-					<th width="35%">프로필사진</th>
+					<th width="10%">프로필사진</th>
 					<% if(result.length > 0 && result[0].userImg != null && result[0].userImg != '') {%>
 					<td><img src="../../../<%= result[0].userImg %>" alt="사진" width="117px" /></td>
 					<% }else{ %>
 					<td><img src="../../uploads/normal_img.jpg" alt="" width="117px" /></td>
 					<% } %>
-					<th width="20%"><label><input type="radio">노출</label>
 				</tr>
 				<tr>
 					<th>일련번호</th>
@@ -39,8 +38,7 @@
 						<%if(result[0].uid !=null && result[0].uid!='null' && result[0].uid!=''){%>
 						<%=result[0].uid%>
 						<%}%>
-				</td>
-				<th><label><input type="radio">노출</label>
+				</td
 				</tr>
 				<tr>
 					<th class="necessary">닉네임</th>
@@ -49,7 +47,6 @@
 						<%=result[0].userNick %>
 						<%}%>
 					</td>
-					<th><label><input type="radio">노출</label>
 				</tr>
 				<tr>
 					<th class="necessary">이메일</th>
@@ -58,7 +55,6 @@
 						<%=result[0].userEmail %>
 						<%}%>
 					</td>
-					<th><label><input type="radio">노출</label>
 				</tr>
 				<tr>
 					<th>나이</th>
@@ -67,7 +63,6 @@
 						<%=result[0].userAge %>세
 						<%}%>
 					</td>
-					<th><label><input type="radio">노출</label>
 				</tr>
 				<tr>
 					<th>주소1</th>
@@ -76,7 +71,6 @@
 						<%=result[0].userAdres1%>
 						<%}%>
 					</td>
-					<th><label><input type="radio">노출</label>
 				</tr>
 				<tr>
 					<th>주소2</th>
@@ -85,7 +79,6 @@
 						<%=result[0].userAdres2 %>
 						<%}%>
 					</td>
-					<th><label><input type="radio">노출</label>
 				</tr>
 				<tr>
 					<th>학교</th>
@@ -94,7 +87,6 @@
 						<%=result[0].userSchool %>
 						<%}%>
 					</td>
-					<th><label><input type="radio">노출</label>
 				</tr>
 				<tr>
 					<th>포인트</th>
@@ -103,7 +95,6 @@
 						<%=result[0].userPoint %>점
 						<%}%>
 					</td>
-					<th><label><input type="radio">노출</label>
 				</tr>
 				<tr>
 					<th>계산점수</th>
@@ -112,7 +103,6 @@
 						<%=result[0].userScore %>점
 						<%}%>
 					</td>
-					<th><label><input type="radio">노출</label>
 				</tr>
 				<tr>
 					<th>나무등급</th>
@@ -121,7 +111,6 @@
 						<%=result[0].treeGrade %>
 						<%}%>
 					</td>
-					<th><label><input type="radio">노출</label>
 				</tr>
 				<tr>
 					<th>작성한 게시글 수</th>
@@ -130,7 +119,6 @@
 						<%=result[0].contentAll %>개
 						<%}%>
 					</td>
-					<th><label><input type="radio">노출</label>
 				</tr>
 				<tr>
 					<th>상태</th>
@@ -143,7 +131,6 @@
 						<%}%>   
 						<%}%>
 					</td>
-					<th><label><input type="radio">노출</label>
 				</tr>
 				<tr>
 					<th>개인정보 동의여부</th>
@@ -156,7 +143,6 @@
 						<%}%>   
 						<%}%>
 					</td>
-					<th><label><input type="radio">노출</label>
 				</tr>
 				<tr>
 					<th>권한</th>
@@ -169,7 +155,6 @@
 						<%}%>   
 						<%}%>
 					</td>
-					<th><label><input type="radio">노출</label>
 				</tr>
 			</table>
 

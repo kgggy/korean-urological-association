@@ -40,8 +40,8 @@ connection.connect();
 router.get('/banner', async (req, res) => {
     try {
         const sql = "select *, date_format(startDate, '%Y-%m-%d') as startDatefmt, date_format(endDate, '%Y-%m-%d') as endDatefmt\
-                       from banner order by bannerId";
-        connection.query(sql, (err, results) => {
+                       from banner where bannerDiv = ? order by bannerId";
+        connection.query(sql, req.query.bannerDiv, (err, results) => {
             if (err) {
                 console.log(err);
                 res.json({
@@ -72,12 +72,13 @@ router.post('/bannerWrit', upload.single('file'), async function (req, res) {
     var param = "";
     if (req.file != null) {
         path = req.file.path;
-        param = [path, req.body.bannerDiv, req.body.startDate, req.body.startDate,
-            req.body.endDate, req.body.endDate, req.body.showYN, req.body.showNo
+        param = [path, req.body.startDate, req.body.startDate,
+            req.body.endDate, req.body.endDate, req.body.showYN, req.body.showNo, req.body.bannerDiv
         ];
     } else {
         param = [req.body.bannerRoute, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, req.body.showYN, req.body.showNo, req.body.bannerDiv];
     }
+    console.log(param);
     try {
         const sql = "insert into banner(bannerRoute, startDate, endDate, showYN, showNo, bannerDiv) values(?, if(? = '',null,?), if(? = '',null,?), ?, ?, ?)";
         connection.query(sql, param, (err) => {
@@ -162,21 +163,19 @@ router.get('/bannerImgDelete', async (req, res) => {
 //배너 삭제
 router.get('/bannerDelete', async (req, res) => {
     try {
+        const bannerDiv = req.query.bannerDiv;
         const param = req.query.bannerRoute;
         const sql = "delete from banner where bannerId = ?";
         connection.query(sql, req.query.bannerId, (err, row) => {
             if (err) {
-                console.log(err);
-                response.json({
-                    msg: "query error"
-                });
+                console.log("쿼리 에러입니다.");
             }
             fs.unlinkSync(param, (err) => {
                 if (err) {
                     console.log(err);
                 }
             });
-            res.redirect('banner');
+            res.redirect('banner?bannerDiv=' + bannerDiv);
         });
     } catch (error) {
         res.send(error.message);

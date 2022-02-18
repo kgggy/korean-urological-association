@@ -14,7 +14,7 @@ router.get('/all', async (req, res) => {
     try {
         const sql = "select fileRoute, c.certiContentId, p.writId, c.certiContentDate, p.writDate, f.fileNo from file f\
                   left join post p on p.writId = f.writId\
-                  left join certiContent c on c.certiContentId = f.certiContentId\
+                  right join certiContent c on c.certiContentId = f.certiContentId\
                       where (p.uid = ? or c.uid = ?) and (f.fileNo = 0 or f.fileNo is null)\
                       union\
                      select fileRoute, c.certiContentId, p.writId, c.certiContentDate, p.writDate, f.fileNo from file f\

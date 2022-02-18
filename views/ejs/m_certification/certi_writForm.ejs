@@ -93,6 +93,16 @@
 
 	<script>
 		function certiUpdate() {
+			var certiTitle = $("#certiTitle").val();
+			var certiDiff = $("#certiDiff").val();
+			if(certiTitle == "") {
+				alert("종류명을 입력하세요");
+				return false;
+			}
+			if(certiDiff == "") {
+				alert("단계를 입력하세요");
+				return false;
+			}
 			if (confirm("등록하시겠습니까?") == true) {
 				const content = $("#content").val();
 				// console.log(content);

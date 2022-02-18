@@ -143,6 +143,7 @@ router.post('/', upload.array('file'), async function (req, res) {
     const orgName = req.files.map(data => data.originalname);
     console.log(paths);
     try {
+        console.log("111111111111111111111");
         const contentId = uuid();
         const param1 = [contentId, req.query.certiTitleId, req.query.uid];
         const sql1 = "insert into certiContent(certiContentId, certiTitleId, uid) values(?, ?, ?)";
@@ -150,20 +151,21 @@ router.post('/', upload.array('file'), async function (req, res) {
             if (err) {
                 throw err;
             }
-            for (let i = 0; i < paths.length; i++) {
-                const param2 = [contentId, paths[i], i, orgName[i]];
-                // console.log(param2);
-                const sql2 = "insert into file(certiContentId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
-                connection.query(sql2, param2, (err) => {
-                    if (err) {
-                        throw err;
-                    } else {
-                      return;
-                    }
-                });
-
-            };
         });
+        console.log("============================");
+        for (let i = 0; i < paths.length; i++) {
+            const param2 = [contentId, paths[i], i, orgName[i]];
+            console.log(param2 + "============================");
+            const sql2 = "insert into file(certiContentId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
+            connection.query(sql2, param2, (err) => {
+                if (err) {
+                    console.log(err);
+                } else {
+                  return;
+                }
+            });
+
+        };
         return res.json(paths);
     } catch (error) {
         res.send(error.message);

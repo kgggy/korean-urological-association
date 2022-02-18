@@ -101,10 +101,12 @@ router.get('/all', async (req, res) => {
             }
             let route = req.app.get('views') + '/m_board/board';
             res.render(route, {
+                searchType: null,
+                searchText: null,
                 results: results,
                 page: page,
                 length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
-                page_num: 10, //한 페이지에 보여줄 개수
+                page_num: 15, //한 페이지에 보여줄 개수
                 pass: true
             });
             console.log(page)
@@ -289,13 +291,23 @@ router.get('/search', async (req, res) => {
     var searchText = req.query.searchText;
     if (req.query.searchType == 'writTitle') {
         models.post.findAll({
+            include: {
+                model: models.user,
+                attributes: ['userNick'],
+            },
             where: {
                 writTitle: {
                     [Op.like]: "%" + searchText + "%"
                 },
             },
+            attributes: [
+                'writRank', 'writTitle', 'writHit', 'user.userNick',
+                [sequelize.fn('date_format', sequelize.col('writDate'), '%Y-%m-%d'), 'writDatefmt'],
+                [sequelize.fn('date_format', sequelize.col('writUpdDate'), '%Y-%m-%d'), 'writUpdDatefmt']
+            ],
             order: [
                 ['writDate', 'ASC']
+                //order by p.writRank is null asc, nullif(p.writRank, '') is null asc, p.writRank, p.writDate desc
             ],
             raw: true,
         }).then(results => {
@@ -307,7 +319,7 @@ router.get('/search', async (req, res) => {
                 results: results,
                 page: page,
                 length: results.length - 1,
-                page_num: 10,
+                page_num: 15,
                 pass: true
             });
 
@@ -319,16 +331,20 @@ router.get('/search', async (req, res) => {
         })
     } else {
         models.post.findAll({
-            // date_format: {
-            //     writDate, '%Y-%m-%d') as writDatefmt,
-            // include: {
-            //     model: models.user,
-            // },
+            include: {
+                model: models.user,
+                attributes: ['userNick'],
+            },
             where: {
                 '$user.userNick$': {
                     [Op.like]: "%" + req.query.searchText + "%"
                 },
             },
+            attributes: [
+                'writRank', 'writTitle', 'writHit', 'user.userNick',
+                [sequelize.fn('date_format', sequelize.col('writDate'), '%Y-%m-%d'), 'writDatefmt'],
+                [sequelize.fn('date_format', sequelize.col('writUpdDate'), '%Y-%m-%d'), 'writUpdDatefmt']
+            ],
             order: [
                 ['writDate', 'ASC']
             ],

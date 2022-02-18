@@ -1,7 +1,9 @@
 const multer = require("multer");
 const path = require('path');
 const fs = require('fs');
-const { parse } = require("csv-parse");
+const {
+    parse
+} = require("csv-parse");
 
 var express = require('express');
 var router = express.Router();
@@ -51,6 +53,7 @@ var upload = multer({ //multer안에 storage정보
 //탄소실천, 챌린지 주제 전체 조회
 router.get('/certiAll', async (req, res) => {
     try {
+        var page = req.query.page;
         const param = req.query.certiDivision;
         const sql = "select * from certification where certiDivision = ?";
         connection.query(sql, param, (err, results) => {
@@ -62,7 +65,12 @@ router.get('/certiAll', async (req, res) => {
             }
             let route = req.app.get('views') + '/m_certification/certification';
             res.render(route, {
-                'results': results
+                searchType: null,
+                results: results,
+                page: page,
+                length: results.length - 1,
+                page_num: 6,
+                pass: true
             });
         });
     } catch (error) {
@@ -247,7 +255,7 @@ router.get('/certiUdtForm', async (req, res) => {
             res.render(route, {
                 'result': result,
                 layout: false,
-                'records' : records
+                'records': records
             });
         });
     } catch (error) {
@@ -277,6 +285,49 @@ router.post('/certiUpdate', upload.single('file'), async (req, res) => {
         }
         res.send("<script>opener.parent.location.reload(); window.close();</script>");
     });
+});
+
+//탄소 종류 단계별 검색
+router.get('/search', async (req, res) => {
+    const searchType = req.query.searchType;
+    const page = req.query.page;
+    try {
+        if (searchType == "0") {
+            const sql = "select * from certification where certiDiff = 1 or certiDiff = 2 or certiDiff = 3 or certiDiff = 4 or certiDiff = 5";
+            connection.query(sql, (err, results, row) => {
+                if (err) {
+                    console.error(err);
+                }
+                let route = req.app.get('views') + '/m_certification/certification';
+                res.render(route, {
+                    searchType: searchType,
+                    results: results,
+                    page: page, 
+                    length: results.length - 1, 
+                    page_num: 6, 
+                    pass: true
+                });
+            })
+        } else {
+            const sql = "select * from certification where certiDiff = ?";
+            connection.query(sql, searchType, (err, results, row) => {
+                if (err) {
+                    console.error(err);
+                }
+                let route = req.app.get('views') + '/m_certification/certification';
+                res.render(route, {
+                    searchType: searchType,
+                    results: results,
+                    page: page, 
+                    length: results.length - 1, 
+                    page_num: 6, 
+                    pass: true
+                });
+            })
+        }
+    } catch (error) {
+        res.status(401).send(error.message);
+    }
 });
 
 module.exports = router;

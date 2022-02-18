@@ -23,6 +23,10 @@
 				<td><%=result[0].certiContentId%></td>
 			</tr>
 			<tr>
+				<th>테마</th>
+				<td><%=result[0].certiTitle%></td>
+			</tr>
+			<tr>
 				<th>좋아요 수</th>
 				<td><%=result[0].rcount%></td>
 			</tr>
@@ -36,6 +40,7 @@
 			</tr>
 			<tr>
 				<th>사진</th>
+				
 				<td><img src="../../../<%= result[0].fileRoute %>" alt="사진"
 					style="padding:20px !important; width:60%;" /></td>
 			</tr>

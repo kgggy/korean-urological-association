@@ -53,12 +53,14 @@ var upload = multer({ //multer안에 storage정보
 //탄소실천, 챌린지 글 주제별 전체 썸네일 조회
 router.get('/certiContentAll', async (req, res) => {
     try {
+        var page = req.query.page;
         const param = req.query.certiDivision;
-        const sql = "select distinct f.fileRoute, c.certiContentId, c.certiTitleId, f.fileNo, e.certiDivision\
+        const sql = "select distinct f.fileRoute, c.certiContentId, c.certiTitleId, f.fileNo, e.certiDivision, c.certiContentDate\
                        from certiContent c\
                   left join file f on f.certiContentId = c.certiContentId\
                   left join certification e on e.certiTitleId = c.certiTitleId\
-                      where e.certiDivision = ? and f.fileNo = 0";
+                      where e.certiDivision = ? and f.fileNo = 0\
+                      order by c.certiContentDate desc";
         connection.query(sql, param, (err, results) => {
             if (err) {
                 console.log(err);
@@ -68,7 +70,13 @@ router.get('/certiContentAll', async (req, res) => {
             }
             let route = req.app.get('views') + '/m_certiContent/certiContent';
             res.render(route, {
-                'results': results
+                searchType: null,
+                searchText: null,
+                results: results,
+                page: page,
+                length: results.length - 1,
+                page_num: 12,
+                pass: true
             });
         });
     } catch (error) {
@@ -80,10 +88,11 @@ router.get('/certiContentAll', async (req, res) => {
 router.get('/one', async (req, res) => {
     try {
         const param = req.query.certiContentId;
-        const sql = "select f.fileRoute,\
+        const sql = "select f.fileRoute, e.certiTitle,\
                             (select count(*) from recommend where certiContentId = ?) as rcount,\
                              c.uid, c.certiContentId, date_format(c.certiContentDate, '%Y-%m-%d') as certiContentDatefmt, u.userNick, u.userImg\
                        from certiContent c\
+                  left join certification e  on c.certiTitleId = e.certiTitleId\
                   left join file f on c.certiContentId = f.certiContentId\
                   left join recommend r on r.certiContentId = c.certiContentId\
                   left join user u on c.uid = u.uid\
@@ -107,13 +116,13 @@ router.get('/one', async (req, res) => {
 });
 
 //탄소실천, 챌린지 게시글(사진) 업로드
-router.post('/', upload.array('file'), async function (req, res) {
+router.post('/certiContWrit', upload.array('file'), async function (req, res) {
     const paths = req.files.map(data => data.path);
     const orgName = req.files.map(data => data.originalname);
     console.log(paths);
     try {
         const contentId = uuid();
-        const param1 = [contentId, req.query.certiTitleId, req.query.uid];
+        const param1 = [contentId, req.body.certiTitleId, req.body.uid];
         const sql1 = "insert into certiContent(certiContentId, certiTitleId, uid) values(?, ?, ?)";
         connection.query(sql1, param1, (err) => {
             if (err) {
@@ -133,7 +142,7 @@ router.post('/', upload.array('file'), async function (req, res) {
 
             };
         });
-        return res.json(paths);
+        res.send("<script>opener.parent.location.reload(); window.close();</script>");
     } catch (error) {
         res.send(error.message);
     }
@@ -188,11 +197,11 @@ router.get('/download/:certiContentId/:fileNo', async (req, res) => {
 });
 
 //탄소실천 글 수정
-router.post('/certiContUpdate', upload.single('file'), async (req, res) => {
+router.post('/certiContUpdate', upload.array('file'), async (req, res) => {
     const param = [req.file.path, req.body.certiContentId];
     try {
         const sql = "update file set fileRoute = ? where certiContentId = ?";
-        connection.query(sql, param, (err, row) => {
+        connection.query(sql, param, (err) => {
             if (err) {
                 console.log(err)
             }
@@ -212,14 +221,54 @@ router.post('/certiContUpdate', upload.single('file'), async (req, res) => {
 });
 
 //탄소실천글 등록 페이지로 이동
-// router.get('/certiWritForm', async (req, res) => {
-//     const division = req.query.certiDivision;
-//     let route = req.app.get('views') + '/m_certification/certi_writForm';
-//     res.render(route, {
-//         'division': division,
-//         layout: false
-//     });
-// });
+router.get('/certiWritForm', async (req, res) => {
+    const division = req.query.certiDivision;
+    const sql = "select certiTitleId, certiTitle, certiDiff from certification where certiDivision = 0";
+    connection.query(sql, (err, titles) => {
+        if (err) {
+            console.log(err)
+        }
+        let route = req.app.get('views') + '/m_certiContent/certiCont_writForm';
+        res.render(route, {
+            division: division,
+            titles: titles,
+            layout: false
+        });
+    });
+});
+
+//탄소실천 글 등록
+router.post('/', upload.array('file'), async function (req, res) {
+    const paths = req.files.map(data => data.path);
+    const orgName = req.files.map(data => data.originalname);
+    console.log(req.body);
+    try {
+        const contentId = uuid();
+        const param1 = [contentId, req.body.certiTitleId, req.body.uid];
+        const sql1 = "insert into certiContent(certiContentId, certiTitleId, uid) values(?, ?, ?)";
+        connection.query(sql1, param1, (err) => {
+            if (err) {
+                throw err;
+            }
+            for (let i = 0; i < paths.length; i++) {
+                const param2 = [contentId, paths[i], i, orgName[i]];
+                console.log(param2);
+                const sql2 = "insert into file(certiContentId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
+                connection.query(sql2, param2, (err) => {
+                    if (err) {
+                        throw err;
+                    } else {
+                        return;
+                    }
+                });
+
+            };
+        });
+        res.send("<script>opener.parent.location.reload(); window.close();</script>");
+    } catch (error) {
+        res.send(error.message);
+    }
+});
 
 //탄소실천글 수정 페이지로 이동
 router.get('/certiContUdtForm', async (req, res) => {
@@ -268,6 +317,64 @@ router.get('/certiComment', async (req, res) => {
         })
     } catch (error) {
         res.send(error.message);
+    }
+});
+
+//탄소 실천 글 검색
+router.get('/search', async (req, res) => {
+    const searchType = req.query.searchType;
+    const searchText = req.query.searchText;
+    const page = req.query.page;
+    try {
+        if (searchType == "0") {
+            res.redirect('certiContentAll?certiDivision=' + req.query.certiDivision + "&page=1");
+        } else if (searchType == "certiTitleId") {
+            const sql = "select distinct f.fileRoute, c.certiContentId, c.certiTitleId, f.fileNo, e.certiDivision, c.certiContentDate\
+            from certiContent c\
+       left join file f on f.certiContentId = c.certiContentId\
+       left join certification e on e.certiTitleId = c.certiTitleId\
+           where e.certiDivision = ? and f.fileNo = 0\
+           order by c.certiContentDate desc";
+            connection.query(sql, searchType, (err, results, row) => {
+                if (err) {
+                    console.error(err);
+                }
+                let route = req.app.get('views') + '/m_certification/certification';
+                res.render(route, {
+                    searchType: searchType,
+                    searchText: searchText,
+                    results: results,
+                    page: page,
+                    length: results.length - 1,
+                    page_num: 12,
+                    pass: true
+                });
+            })
+        } else if (searchType == "userNick") {
+            const sql = "select distinct f.fileRoute, c.certiContentId, c.certiTitleId, f.fileNo, e.certiDivision, c.certiContentDate\
+            from certiContent c\
+       left join file f on f.certiContentId = c.certiContentId\
+       left join certification e on e.certiTitleId = c.certiTitleId\
+           where e.certiDivision = ? and f.fileNo = 0\
+           order by c.certiContentDate desc";
+            connection.query(sql, searchType, (err, results, row) => {
+                if (err) {
+                    console.error(err);
+                }
+                let route = req.app.get('views') + '/m_certification/certification';
+                res.render(route, {
+                    searchType: searchType,
+                    searchText: searchText,
+                    results: results,
+                    page: page,
+                    length: results.length - 1,
+                    page_num: 12,
+                    pass: true
+                });
+            })
+        }
+    } catch (error) {
+        res.status(401).send(error.message);
     }
 });
 

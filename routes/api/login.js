@@ -25,7 +25,7 @@ router.post('/tokenCheck', async (request, response, next) => {
   try {
     const param = [request.body.userToken, request.body.userSocialDiv];
     let email;
-    connection.query('select userEmail, userPwd from user where userToken = ? and userSocialDiv = ?', param, (err, result, row) => {
+    connection.query('select userEmail, userPwd, uid from user where userToken = ? and userSocialDiv = ?', param, (err, result, row) => {
       if (err) {
         console.log(err);
         response.json({
@@ -33,9 +33,8 @@ router.post('/tokenCheck', async (request, response, next) => {
         });
       } 
       if (Object.keys(result).length == 0) {
-        response.send("null입니다");
+        response.send("null");
       } 
-      
       else {
         email = result;
       }
@@ -47,19 +46,12 @@ router.post('/tokenCheck', async (request, response, next) => {
   }
 });
 
-//로그인
+//일반 로그인
 router.post('/', async (req, res) => {
   const {
     userPwd,
     userEmail
   } = req.body;
-
-  // if(userEmail == null) {
-  //   return res.json({
-  //   isEmailEmpty : true,
-  //   message: "이메일을 입력해주세요.",
-  // });
-  // } 
 
   const emailChk = await models.user.findOne({
     where: {
@@ -112,6 +104,28 @@ router.post('/', async (req, res) => {
     });
   }
 });
+
+//소셜 로그인(토큰, 닉네임)
+router.post('/social', async (req, res) => {
+  try {
+    const sql = "select * from user where userToken = ?";
+    connection.query(sql, req.body.userToken, function (err, results, fields) {
+      if (err) {
+        console.log(err);
+      }
+      console.log(results);
+      if (results.length > 0) {
+        res.send(results);
+      } else {
+        res.json([{msg : 'false'}]);
+      }
+      return;
+    });
+  } catch (error) {
+    res.status(401).send(error.message);
+  }
+});
+
 
 //관리자 로그인
 router.post('/admin', async (req, res) => {
@@ -209,29 +223,6 @@ router.patch('/:uid', async (request, response, next) => {
     msg: "success"
   });
   response.end()
-});
-
-//사용자 로그인
-router.get('/:userEmail', async (req, res) => {
-  try {
-    const param = req.params.userEmail;
-    const sql = "select uid from user where userEmail = ?";
-    connection.query(sql, param, function (err, results, fields) {
-      if (err) {
-        console.log(err);
-      }
-      console.log(results);
-      if (results.length > 0) {
-        res.send(results);
-      } else {
-        res.send("false");
-      }
-      return;
-    });
-
-  } catch (error) {
-    res.status(401).send(error.message);
-  }
 });
 
 

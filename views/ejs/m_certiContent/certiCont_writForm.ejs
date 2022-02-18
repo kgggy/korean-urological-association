@@ -15,10 +15,24 @@
 	<script src="/stylesheets/js/common.js"></script>
 </head>
 <div class="popup">
-	<h2><span class="float_l">탄소실천 글 수정</span></h2>
+	<h2><span class="float_l">탄소실천 글 등록</span></h2>
 	<div class="content">
-		<form name="udtForm" enctype="multipart/form-data">
+		<form name="writForm" enctype="multipart/form-data">
+			<!--uid value값 바꿔주기!!!!!!!-->
+			<input type="hidden" id="uid" name="uid" value="81">
+			<input type="hidden" id="certiTitleId" name="certiTitleId" value="">
 			<table class="mb_10">
+				<tr>
+					<th>탄소실천 종류 선택</th>
+					<td>
+						<select id="titleSelect" name="titleSelect" width="100px">
+							<% for(i = 0; i < titles.length; i++) { %>
+							<option value="title" data-certiTitleId="<%= titles[i].certiTitleId %>">
+								<%= titles[i].certiTitle %></option>
+							<% } %>
+						</select>
+					</td>
+				</tr>
 				<tr>
 					<th>사진</th>
 					<td><input type="file" id="file" name="file"></td>
@@ -26,9 +40,7 @@
 			</table>
 
 			<p class="btn">
-				<input type="hidden" id="certiContentId" name="certiContentId" value="<%=result[0].certiContentId%>">
-				<input type="hidden" id="fileRoute" name="fileRoute" value="<%= result[0].fileRoute %>">
-				<button class="btn_big_blue hand" type="button" id="update_btn">수정</button>
+				<button class="btn_big_blue hand" type="button" id="update_btn">등록</button>
 				<button class="btn_big_black hand" onclick="history.go(-1)">취소</button>
 			</p>
 		</form>
@@ -36,17 +48,17 @@
 </div>
 
 <script>
-
-	var formObj = $("form[name='udtForm']");
+	var formObj = $("form[name='writForm']");
 	$(document).ready(function () {
-		// 수정
+		// 등록
 		$("#update_btn").on("click", function () {
-			formObj.attr("action", "certiContUpdate");
+			$('input[name=certiTitleId]').val($('#titleSelect option:selected').attr('data-certiTitleId'));
+			formObj.attr("action", "certiContWrit");
 			formObj.attr("method", "post");
-			if (confirm("실제 파일이 삭제되고 변경됩니다. 게시글을 수정하시겠습니까?") == true) {
-				alert("수정이 왼료되었습니다.");
+			if (confirm("등록하시겠습니까?") == true) {
+				alert("등록이 왼료되었습니다.");
 				formObj.submit();
-			} 
+			}
 		});
 	});
 </script>

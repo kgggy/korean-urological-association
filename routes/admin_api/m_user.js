@@ -9,12 +9,13 @@ const path = require('path');
 const connt = require("../../config/db")
 var url = require('url');
 const crypto = require('crypto');
-const {
-  type
-} = require('os');
-const {
-  REPL_MODE_SLOPPY
-} = require('repl');
+// const {
+//   type
+// } = require('os');
+// const {
+//   REPL_MODE_SLOPPY
+// } = require('repl');
+//sequelize
 const models = require('../../models');
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
@@ -49,7 +50,6 @@ var upload = multer({ //multer안에 storage정보
 
 //로그인 페이지
 router.get('/login', async (req, res) => {
-  console.log("==============================");
   let route = req.app.get('views') + '/index';
   res.render(route, {
     layout: false
@@ -58,12 +58,10 @@ router.get('/login', async (req, res) => {
 
 //로그인
 router.post('/', async (req, res) => {
-
   const {
     userPwd,
     userEmail
   } = req.body;
-
 
   const emailChk = await models.user.findOne({
     where: {
@@ -133,7 +131,7 @@ router.get('/page', async (req, res) => {
         results: results,
         page: page, //현재 페이지
         length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
-        page_num: 10, //한 페이지에 보여줄 개수
+        page_num: 15, //한 페이지에 보여줄 개수
         pass: true
       });
     });
@@ -391,7 +389,7 @@ router.get('/search', async (req, res) => {
         results: results,
         page: page, //현재 페이지
         length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
-        page_num: 10, //한 페이지에 보여줄 개수
+        page_num: 15, //한 페이지에 보여줄 개수
         pass: true
       });
     }).catch(err => {
@@ -420,7 +418,7 @@ router.get('/search', async (req, res) => {
         results: results,
         page: page, //현재 페이지
         length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
-        page_num: 10, //한 페이지에 보여줄 개수
+        page_num: 15, //한 페이지에 보여줄 개수
         pass: true
       });
     }).catch(err => {

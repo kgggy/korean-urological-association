@@ -1,8 +1,10 @@
 <form id="bannerForm" name="bannerForm" method="" action="">
     <input type="hidden" name="bannerId" value="">
     <input type="hidden" name="bannerRoute" value="">
+    <input type="hidden" name="bannerDiv" value="<%=results[0].bannerDiv %>">
     <div class="board_search">
-        <h3 class="float_l" id="category_title">배너 관리</h3>
+        <h3 class="float_l" id="category_title">팝업 배너 관리</h3><br><br>
+        <h4 class="float_l" id="category_title">* 최대 9개까지 등록 가능합니다.</h4><br>
     </div>
     <div class="board_list">
         <table>
@@ -16,9 +18,8 @@
             </colgroup>
             <thead>
                 <tr>
-                    <th></th>
+                    <th>번호</th>
                     <th>이미지</th>
-                    <th>위치</th>
                     <th>시작날짜</th>
                     <th>끝날짜</th>
                     <th>노출여부</th>
@@ -31,18 +32,13 @@
 					for(var i = 0; i < results.length; i++){
 					%>
                 <tr>
-                    <td>체크박스</td>
+                    <td><%= i + 1 %></td>
                     <% if(results.length > 0 && results[i].bannerRoute != null && results[i].bannerRoute != '') {%>
                     <td><img src="../../../<%= results[i].bannerRoute %>" alt="사진"
                             style="padding:20px !important; width:60px" /></td>
                     <% }else{ %>
                     <td><img src="../../../public/images/certification/sprout.png" alt=""
                             style="padding:20px !important; width:60px" /></td>
-                    <% } %>
-                    <% if(results[i].bannerDiv == 0) {%>
-                    <td>팝업 배너</td>
-                    <% }else if (results[i].bannerDiv == 1){ %>
-                    <td>슬라이드 배너</td>
                     <% } %>
                     <td><%=results[i].startDatefmt %></td>
                     <td><%=results[i].endDatefmt%></td>
@@ -56,7 +52,8 @@
                         <input type="button"
                             onclick="bannerUpdate('/admin/m_banner/bannerUdtForm', '', 'width=640, height=700, scrollbars=1', '<%=results[i].bannerId%>', '')"
                             value="수정 " />
-                        <button type="button" id="delete_btn" data-bannerId="<%=results[i].bannerId%>" data-bannerRoute="<%=results[i].bannerRoute%>">삭제</button>
+                        <button type="button" id="delete_btn" data-bannerId="<%=results[i].bannerId%>"
+                            data-bannerRoute="<%=results[i].bannerRoute%>">삭제</button>
                     </td>
                 </tr>
                 <% } %>
@@ -71,11 +68,11 @@
         </table>
     </div>
 </form>
-        <div class="mt_20">
-            <p class="float_r">
-                <!-- 나중에 boardId랑 uid(admin) 관리자걸로 고쳐줘야함!!!!!!!!!!!!!!!!!!!!-->
-                <input type="button" onclick="enroll('/admin/m_banner/bannerWritForm', '', 'width=640, height=700, scrollbars=1', '',
-                '')" value="등록" />
+<div class="mt_20">
+    <p class="float_r">
+        <!-- 나중에 boardId랑 uid(admin) 관리자걸로 고쳐줘야함!!!!!!!!!!!!!!!!!!!!-->
+        <input id="enroll" type="button" onclick="enroll('/admin/m_banner/bannerWritForm', '', 'width=640, height=700, scrollbars=1', '',
+        '<%= results.length %>')" value="등록" />
                 </p>
     </div>
 
@@ -102,7 +99,12 @@
             window.open(theURL, winName, features);
         }
 
-        function enroll(theURL, winName, features, mode) {
-            window.open(theURL, winName, features);
+        function enroll(theURL, winName, features, mode, results) {
+            console.log(results);
+            if (results > 8) {
+                alert("배너는 최대 9개까지 등록 가능합니다.");
+            } else {
+                window.open(theURL, winName, features);
+            }
         }
     </script>

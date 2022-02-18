@@ -7,42 +7,52 @@ const crypto = require('crypto');
 
 const multer = require("multer");
 const path = require('path');
+const fs = require('fs');
 
 
 // DB 커넥션 생성
-var connection = mysql.createConnection(connt); 
+var connection = mysql.createConnection(connt);
 connection.connect();
 
 //파일업로드 모듈
 var upload = multer({ //multer안에 storage정보  
   storage: multer.diskStorage({
-      destination: (req, file, callback) => {
-          //파일이 이미지 파일이면
-          if (file.mimetype == "image/jpeg" || file.mimetype == "image/jpg" || file.mimetype == "image/png" || file.mimetype == "application/octet-stream") {
-              // console.log("이미지 파일입니다.");
-              callback(null, 'uploads/userProfile');
-              //텍스트 파일이면
-          } 
-      },
-      //파일이름 설정
-      filename: (req, file, done) => {
-          const ext = path.extname(file.originalname);
-          done(null, path.basename(file.originalname, ext) + Date.now() + ext);
-      },
+    destination: (req, file, callback) => {
+      //파일이 이미지 파일이면
+      if (file.mimetype == "image/jpeg" || file.mimetype == "image/jpg" || file.mimetype == "image/png" || file.mimetype == "application/octet-stream") {
+        // console.log("이미지 파일입니다.");
+        callback(null, 'uploads/userProfile');
+        //텍스트 파일이면
+      }
+    },
+    //파일이름 설정
+    filename: (req, file, done) => {
+      const ext = path.extname(file.originalname);
+      done(null, path.basename(file.originalname, ext) + Date.now() + ext);
+    },
   }),
   //파일 개수, 파일사이즈 제한
   limits: {
-      files: 5,
-      fileSize: 1024 * 1024 * 1024 //1기가
+    files: 5,
+    fileSize: 1024 * 1024 * 1024 //1기가
   },
 
 });
 
 // 회원가입
 router.post('/', async (req, res) => {
-  const { userEmail, userNick, userSocialDiv, userToken } = req.body;
+  const {
+    userEmail,
+    userNick,
+    userSocialDiv,
+    userToken
+  } = req.body;
 
-  const sameEmailUser = await models.user.findOne({ where: { userEmail } });
+  const sameEmailUser = await models.user.findOne({
+    where: {
+      userEmail
+    }
+  });
   if (sameEmailUser !== null) {
     return res.json({
       registerSuccess: false,
@@ -50,7 +60,11 @@ router.post('/', async (req, res) => {
     });
   }
 
-  const sameNickNameUser = await models.user.findOne({ where: { userNick } });
+  const sameNickNameUser = await models.user.findOne({
+    where: {
+      userNick
+    }
+  });
   if (sameNickNameUser !== null) {
     return res.json({
       registerSuccess: false,
@@ -71,12 +85,18 @@ router.post('/', async (req, res) => {
       const salt = await createSalt();
       crypto.pbkdf2(plainPassword, salt, 9999, 64, 'sha512', (err, key) => {
         if (err) reject(err);
-        resolve({ userPwd: key.toString('base64'), salt });
+        resolve({
+          userPwd: key.toString('base64'),
+          salt
+        });
       });
     });
-  
-  const { userPwd, salt } = await createHashedPassword(req.body.userPwd);
-  
+
+  const {
+    userPwd,
+    salt
+  } = await createHashedPassword(req.body.userPwd);
+
   await models.user.create({
     userPwd,
     salt,
@@ -85,7 +105,9 @@ router.post('/', async (req, res) => {
     userSocialDiv,
     userToken
   })
-  res.json({ msg: "success" });
+  res.json({
+    msg: "sign up success"
+  });
 });
 
 
@@ -108,18 +130,49 @@ router.get('/:uid', async (req, res) => {
 });
 
 // 회원정보수정
-router.patch('/:uid',  upload.single('file'), async (req, res) => {
-  const path = req.file.path;
-  const param = [req.body.userNick, req.body.userSchool, req.body.userAdres1, req.body.userAdres2, path, req.params.uid];
-  console.log(param);
-  const sql = "update user set userNick = ?, userSchool = ?, userAdres1 = ?, userAdres2 = ?, userImg = ? where uid = ?";
+router.patch('/:uid', upload.single('file'), async (req, res) => {
+  var param;
+  var pathe = "";
+  if (req.file != null) {
+    pathe = req.file.path;
+    param = [req.body.userNick, req.body.userAge, req.body.userSchool, req.body.userAdres1, req.body.userAdres2, pathe, req.params.uid];
+  } else {
+    param = [req.body.userNick, req.body.userAge, req.body.userSchool, req.body.userAdres1, req.body.userAdres2, req.body.userImg, req.params.uid];
+  }
+
+  // const {
+  //   uid
+  // } = req.params;
+  // const modelsss = await models.user.findAll({
+  //   where: {
+  //     uid
+  //   },
+  //   attributes: ['userImg'],
+  //   raw: true,
+  // });
+  // console.log(modelsss[0].userImg + "==================");
+  // if(modelsss !== null) {
+  //   console.log("파일삭제한다");
+  //   fs.stat(pathe, (err, stats) => {
+  //     if (err) {
+  //       console.log("파일이 존재하지 않습니다.");
+  //     }
+  //     fs.unlink (pathe, (err) => {
+  //       if (err) {
+  //         console.log("파일 삭제 에러 발생");
+  //       }
+  //     });
+  //   });
+  // };
+  
+  const sql = "update user set userNick = ?,  userAge = ?, userSchool = ?,userAdres1 = ?, userAdres2 = ?, userImg = ? where uid = ?";
   connection.query(sql, param, (err, row) => {
     if (err) {
       console.error(err);
     }
     return res.json({
       msg: "success"
-  });
+    });
   });
 });
 
@@ -149,9 +202,14 @@ router.post('/pwdUpdate/:uid', async (req, res) => {
   const password = await makePasswordHashed(userPwd);
   console.log(`password: ${password}`);
 
-  const dbPwd = await models.user.findOne({ attributes: ['userPwd'], where: { uid: uid } });
+  const dbPwd = await models.user.findOne({
+    attributes: ['userPwd'],
+    where: {
+      uid: uid
+    }
+  });
   console.log(`dbPwd: ${dbPwd.userPwd}`);
-  if (password == dbPwd.userPwd) {  // dbPwd: ['userPwd'] 해도 됨
+  if (password == dbPwd.userPwd) { // dbPwd: ['userPwd'] 해도 됨
     res.json({
       isSamePreviousPwd: true,
       msg: "기존 비밀번호와 다르게 입력해주세요."
@@ -161,7 +219,11 @@ router.post('/pwdUpdate/:uid', async (req, res) => {
   } else {
     models.user.update({
       userPwd: password
-    }, { where: { uid: uid } });
+    }, {
+      where: {
+        uid: uid
+      }
+    });
     res.json({
       pwdUpdate: true,
       msg: "패스워드 변경 완료"
@@ -178,7 +240,7 @@ router.post('/pwdUpdate/:uid', async (req, res) => {
 //   })
 // });
 
-  
+
 // 회원 삭제
 router.delete('/:uid', (req, res) => {
   const param = req.params.uid;
