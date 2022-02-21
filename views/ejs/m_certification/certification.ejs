@@ -1,3 +1,4 @@
+<% if(results.length > 0) { %>
 <div class="board_search">
     <%if(results[0].certiDivision == 0){%>
     <h3 class="float_l" id="category_title">탄소실천 종류 관리</h3>
@@ -5,39 +6,34 @@
     <h3 class="float_l" id="category_title">챌린지 종류 관리</h3>
     <% } %>
 </div>
-<div class="board_list">
+<form id="certiForm" name="certiForm" method="" action="">
     <div align="right">
-        <form name="searchForm" action="/admin/m_certification/search" method="get">
-            <input type="hidden" name="page" value="1">
-            <% if(searchType != null && results[0].certiDivision == 0) { %>
-            <select name="searchType">
-                <option value="0" selected="selected">--전체--</option>
-                <option value="1" <%if(searchType=="1"){%> selected="selected" <%}%>>1단계</option>
-                <option value="2" <%if(searchType=="2"){%> selected="selected" <%}%>>2단계</option>
-                <option value="3" <%if(searchType=="3"){%> selected="selected" <%}%>>3단계</option>
-                <option value="4" <%if(searchType=="4"){%> selected="selected" <%}%>>4단계</option>
-                <option value="5" <%if(searchType=="5"){%> selected="selected" <%}%>>5단계</option>
-            </select>
-            <input type="button" id="searchAction" value="검색" />
-            <% } else if(results[0].certiDivision == 0) {%> <select name="searchType">
-                <option value="0" selected="selected">--전체--</option>
-                <option value="1">1단계</option>
-                <option value="2">2단계</option>
-                <option value="3">3단계</option>
-                <option value="4">4단계</option>
-                <option value="5">5단계</option>
-            </select> <input type="button" id="searchAction" value="검색" />
-            <% } %>
-        </form>
+        <input type="hidden" name="page" value="1" />
+        <input type="hidden" name="certiDivision" value="<%= results[0].certiDivision %>" />
+        <select id="division" name="division">
+            <option value="" selected="selected">--분류--</option>
+            <% for(var i = 0; i < div.length ; i++){  %>
+            <option value="<%= div[i].certiSubDivision %>" <%if(division==div[i].certiSubDivision){%>
+                selected="selected" <%}%>><%= div[i].certiSubDivision %></option> <% } %> </select> <select
+                name="searchType">
+            <option value="" selected="selected">--단계--</option>
+            <option value="1" <%if(searchType=="1"){%> selected="selected" <%}%>>1단계</option>
+            <option value="2" <%if(searchType=="2"){%> selected="selected" <%}%>>2단계</option>
+            <option value="3" <%if(searchType=="3"){%> selected="selected" <%}%>>3단계</option>
+            <option value="4" <%if(searchType=="4"){%> selected="selected" <%}%>>4단계</option>
+            <option value="5" <%if(searchType=="5"){%> selected="selected" <%}%>>5단계</option>
+        </select>
+        <input type="button" id="searchAction" value="검색" />
     </div>
     <div class="board_list">
-        <form id="certiForm" name="certiForm" method="" action="">
-            <table>
+        <table>
                 <colgroup>
-                    <col width="5%" />
+                    <col width="3%" />
                     <col width="13%" />
                     <col width="15%" />
-                    <col width="25%" />
+                    <col width="30%" />
+                    <col width="10%" />
+                    <col width="10%" />
                     <col width="10%" />
                     <col width="10%" />
                 </colgroup>
@@ -49,19 +45,21 @@
                         <th>설명글</th>
                         <th>포인트</th>
                         <% if(results[0].certiDivision == 0) {%> <th>단계</th>
-                        <% }else{ %>
-                        <th>권한</th>
-                        <% } %>
-                        <th>노출여부</th>
-                        <th>비고</th>
-                    </tr>
+                <% }else{ %>
+                <th>권한</th>
+                <% } %>
+                <% if(results[0].certiDivision == 1) {%>
+                <th>기간</th>
+                <% } %>
+                <th>노출여부</th>
+                <th>비고</th>
+                </tr>
                 </thead>
                 <tbody>
-                    <% if(results.length > 0) { %>
                     <% for(var i = (page * page_num) - page_num; i < (page * page_num); i++) { 
-                            if(i > length){
-                                i++;
-                             } else { %>
+                    if(i > length){
+                        i++;
+                        } else { %>
                     <tr>
                         <td><%= i + 1 %></td>
                         <% if(results.length > 0 && results[i].certiImage != null && results[i].certiImage != '') {%>
@@ -74,11 +72,17 @@
                         <td><%=results[i].certiTitle%></td>
                         <td><%=results[i].certiDetail %></td>
                         <td><%=results[i].certiPoint%> 점</td>
+                        <!--단계-->
                         <% if(results[i].certiDivision == 0) {%>
                         <td><%=results[i].certiDiff%> 단계</td>
                         <% }else{ %>
                         <td><%=results[i].certiAuth%></td>
                         <% } %>
+                        <!--기간-->
+                        <% if(results[i].certiDivision == 1) {%>
+                        <td><%=results[i].certiStartDatefmt%> - <%=results[i].certiEndDatefmt%></td>
+                        <% } %>
+                        <!--노출여부-->
                         <% if(results[i].certiShow == 0) {%>
                         <td>O</td>
                         <% }else{ %>
@@ -95,66 +99,72 @@
                     </tr>
                     <% } %>
                     <% } %>
-                    <% } else { %>
-                    <tr>
-                        <td colspan="8">
-                            등록된 목록이 없습니다.
-                        </td>
-                    </tr>
-                    <% } %>
                 </tbody>
-            </table>
-        </form>
+                </table>
     </div>
-    <div class="mt_20">
-        <div class="paging" id="page_navi">
-            <ul>
-                <li class="paging_on">
-                    <% for(var i = 0; i < results.length / page_num; i++){  %>
-                    <a
-                        href="/admin/m_certification/certiAll?certiDivision=<%= results[0].certiDivision %>&page=<%= i + 1 %>"><%= i + 1 %></a>
-                    <% } %>
-                </li>
-            </ul>
-        </div>
-        <p class="float_r">
-            <!-- 나중에 boardId랑 uid(admin) 관리자걸로 고쳐줘야함!!!!!!!!!!!!!!!!!!!!-->
-            <input type="button" onclick="enroll('/admin/m_certification/certiWritForm', '', 'width=640, height=700, scrollbars=1', '<%=results[0].certiDivision%>',
+</form>
+<% if(results.length > 0){ %>
+<div class="mt_20">
+    <div class="paging" id="page_navi">
+        <ul>
+            <li class="paging_on">
+                <% for(var i = 0; i < results.length / page_num; i++){  %>
+                <a
+                    href="/admin/m_certification/certiAll?certiDivision=<%= results[0].certiDivision %>&page=<%= i + 1 %>"><%= i + 1 %></a>
+                <% } %>
+            </li>
+        </ul>
+    </div>
+    <p class="float_r">
+        <!-- 나중에 boardId랑 uid(admin) 관리자걸로 고쳐줘야함!!!!!!!!!!!!!!!!!!!!-->
+        <input type="button" onclick="enroll('/admin/m_certification/certiWritForm', '', 'width=640, height=700, scrollbars=1', '<%=results[0].certiDivision%>',
                         '')" value="등록" />
-        </p>
-    </div>
+    </p>
+</div>
+<% } %>
+<% } else { %>
+<table>
+    <tr>
+        <td colspan="8">
+            등록된 목록이 없습니다.
+        </td>
+    </tr>
 
-    <script>
-        // 삭제
-        $(document).ready(function () {
-            const formObj = $("form[name='certiForm']");
-            $("button").on("click", function () {
-                const certiId = $(this).next().val();
-                const division = $(this).next().next().val();
-                // console.log(division);
-                formObj.attr("action", "certiDelete?certiTitleId=" + certiId + "&certiDivision=" +
-                    division);
-                formObj.attr("method", "post");
-                if (confirm("삭제하시겠습니까?") == true) {
-                    formObj.submit();
-                    alert("삭제되었습니다.");
-                } else {
-                    return;
-                }
-            })
-        });
+</table>
+<% } %>
+<script>
+    // 삭제
+    $(document).ready(function () {
+        const formObj = $("form[name='certiForm']");
+        $("button").on("click", function () {
+            const certiId = $(this).next().val();
+            const division = $(this).next().next().val();
+            // console.log(division);
+            formObj.attr("action", "certiDelete?certiTitleId=" + certiId + "&certiDivision=" +
+                division);
+            formObj.attr("method", "post");
+            if (confirm("삭제하시겠습니까?") == true) {
+                formObj.submit();
+                alert("삭제되었습니다.");
+            } else {
+                return;
+            }
+        })
 
-        function certiUpdate(theURL, winName, features, certiTitleId, mode) {
-            theURL += '?certiTitleId=' + certiTitleId;
-            window.open(theURL, winName, features);
-        }
+        $("#searchAction").on("click", function () {
+            formObj.attr("action", "certiAll");
+            formObj.attr("method", "get");
+            formObj.submit();
+        })
+    });
 
-        function enroll(theURL, winName, features, certiDivision, mode) {
-            theURL += '?certiDivision=' + certiDivision;
-            window.open(theURL, winName, features);
-        }
+    function certiUpdate(theURL, winName, features, certiTitleId, mode) {
+        theURL += '?certiTitleId=' + certiTitleId;
+        window.open(theURL, winName, features);
+    }
 
-        $("input[id='searchAction']").click(function () {
-            $("form[name='searchForm']").submit();
-        });
-    </script>
+    function enroll(theURL, winName, features, certiDivision, mode) {
+        theURL += '?certiDivision=' + certiDivision;
+        window.open(theURL, winName, features);
+    }
+</script>

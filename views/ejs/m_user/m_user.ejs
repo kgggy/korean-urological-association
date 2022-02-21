@@ -61,54 +61,45 @@
 </script>
 
 <div class="board_list">
-    <form action="/admin/m_user/search" method="get">
+    <form action="/admin/m_user/page" method="get">
         <input type="hidden" name="page" value="1">
-        <!-- <select name="searchType">
-            <% if(searchType != null) { %>
-            <option value="userEmail" <%if(searchType=="userEmail"){%> selected="selected" <%}%>>이메일</option>
-            <option value="userNick" <%if(searchType=="userNick"){%> selected="selected" <%}%>>닉네임</option>
-            <% } else {%> <option value="userEmail">이메일</option>
-            <option value="userNick">닉네임</option>
-            <% } %>
-        </select> -->
         <select name="searchType">
-            <option value="userAuth">권한선택</option>
-            <option value="0">일반회원</option>
-            <option value="1">기업</option>
+            <option value="">권한선택</option>
+            <option value="0" <%if(searchType=="0"){%> selected="selected" <%}%>>일반회원</option>
+            <option value="1" <%if(searchType=="1"){%> selected="selected" <%}%>>기업</option>
         </select>
         <select name="searchType1">
-            <option value="userAgree">동의여부</option>
-            <option value="0">동의</option>
-            <option value="1">비동의</option>
+            <option value="">동의여부</option>
+            <option value="0" <%if(searchType1=="0"){%> selected="selected" <%}%>>동의</option>
+            <option value="1" <%if(searchType1=="1"){%> selected="selected" <%}%>>비동의</option>
         </select>
         <select name="searchType2">
-            <option value="userStatus">회원상태</option>
-            <option value="0">활동중</option>
-            <option value="1">탈퇴</option>
+            <option value="">회원상태</option>
+            <option value="0" <%if(searchType2=="0"){%> selected="selected" <%}%>>활동중</option>
+            <option value="1" <%if(searchType2=="1"){%> selected="selected" <%}%>>탈퇴</option>
         </select>
         <select name="searchType3">
-            <option value="userAge">나이대</option>
-            <option value="1">10대</option>
-            <option value="2">20대</option>
-            <option value="3">30대</option>
-            <option value="4">40대</option>
-            <option value="5">50대</option>
-            <option value="6">60대 이상</option>
+            <option value="">나이대</option>
+            <option value="20" <%if(searchType3=="20"){%> selected="selected" <%}%>>10대</option>
+            <option value="30" <%if(searchType3=="30"){%> selected="selected" <%}%>>20대</option>
+            <option value="40" <%if(searchType3=="40"){%> selected="selected" <%}%>>30대</option>
+            <option value="50" <%if(searchType3=="50"){%> selected="selected" <%}%>>40대</option>
+            <option value="60" <%if(searchType3=="60"){%> selected="selected" <%}%>>50대</option>
+            <option value="61" <%if(searchType3=="61"){%> selected="selected" <%}%>>60대 이상</option>
         </select>
         <select name="searchType4">
-            <option value="userTree">나무등급</option>
-            <option value="1">씨앗</option>
-            <option value="2">새싹</option>
-            <option value="3">아기나무</option>
-            <option value="4">꽃나무</option>
-            <option value="5">열매나무</option>
+            <option value="">나무등급</option>
+            <option value="씨앗" <%if(searchType4=="씨앗"){%> selected="selected" <%}%>>씨앗</option>
+            <option value="새싹" <%if(searchType4=="새싹"){%> selected="selected" <%}%>>새싹</option>
+            <option value="아기나무" <%if(searchType4=="아기나무"){%> selected="selected" <%}%>>아기나무</option>
+            <option value="꽃나무" <%if(searchType4=="꽃나무"){%> selected="selected" <%}%>>꽃나무</option>
+            <option value="열매나무" <%if(searchType4=="열매나무"){%> selected="selected" <%}%>>열매나무</option>
         </select>
-        <% if(searchText != null) { %>
-        <input type="text" name="searchText" value="<%=searchText%>" />
-        <% } else {%>
-        <input type="text" name="searchText" placeholder="이메일, 닉네임, 학교" />
-        <% } %>
-        <button type="submit" id="searchAction" style="margin-bottom: 10px;">검색</button>
+        <% if(searchText != '') { %> <input type="text" name="searchText" value="<%=searchText%>" />
+            <% } else {%>
+            <input type="text" name="searchText" placeholder="이메일, 닉네임, 학교" />
+            <% } %>
+            <button type="submit" id="searchAction" style="margin-bottom: 10px;">검색</button>
     </form>
 
     <table id="tableData">
@@ -155,7 +146,7 @@
             </tr>
             <% } %>
             <% } %>
-            <% } else {%>
+            <% } else { %>
             <tr>
                 <td colspan="10">등록된 회원이 없습니다.</td>
             </tr>

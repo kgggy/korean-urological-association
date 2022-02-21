@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
     try {
         const sql = "select *, date_format(startDate, '%Y-%m-%d') as startDatefmt, date_format(endDate, '%Y-%m-%d') as endDatefmt\
                        from banner\
-                       where (sysdate() between startDate and endDate) and showYN = 0\
+                       where ((startDate || endDate) is null or (sysdate() between startDate and endDate)) and showYN = 0\
                        order by showNo is null asc, nullif(showNo, '') is null asc"
         connection.query(sql, (err, result) => {
             if (err) {

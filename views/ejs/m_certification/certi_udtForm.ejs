@@ -30,6 +30,7 @@
 		<h2><span class="float_l">탄소실천 종류 수정</h2>
 		<div class="content">
 			<form action="" id="certiUpdate" method="" enctype="multipart/form-data">
+				<input type="hidden" id="certiSubDivision" name="certiSubDivision" value="">
 				<table>
 					<colgroup>
 						<col width="20%" />
@@ -50,6 +51,16 @@
 						</td>
 						<% } %>
 
+					</tr>
+					<tr>
+						<th>분류</th>
+						<td>
+							<select id="division" name="division">
+								<option value="" selected="selected">--분류--</option>
+								<option value="<%= result[0].certiSubDivision %>"><%= result[0].certiSubDivision %>
+								</option>
+							</select>
+						</td>
 					</tr>
 					<tr>
 						<th>종류명</th>
@@ -74,7 +85,7 @@
 					<tr>
 						<th>단계</th>
 						<td>
-							<input type="text" id="certiDiff" name="certiDiff" value="<%=result[0].certiDiff%>">
+							<input type="number" id="certiDiff" name="certiDiff" value="<%=result[0].certiDiff%>">
 						</td>
 					</tr>
 					<% }else{ %>
@@ -91,22 +102,39 @@
 					</tr>
 					<% } %>
 					<tr>
-						<th>노출여부</th>
+					<% if(result[0].certiDivision == 1) {%>
+					<tr>
+						<th>시작 날짜</th>
 						<td>
-							<label><input type="radio" id="certiShow1" name="certiShow" value="0" checked>노출</label>&nbsp;&nbsp;
-							<label><input type="radio" id="certiShow2" name="certiShow" value="1">비노출</label>
-							<% if(result.length > 0) {%>
-								<input type="hidden" id="certiShowhValue" value="<%=result[0].certiShow%>">
-								<% } %>
+							<input type="date" id="certiStartDate" name="certiStartDate"
+								value="<%=result[0].certiStartDate%>">
 						</td>
+					</tr>
+					<tr>
+						<th>종료 날짜</th>
+						<td>
+							<input type="date" id="certiEndDate" name="certiEndDate"
+								value="<%=result[0].certiEndDate%>">
+						</td>
+					</tr>
+					<% } %>
+					<th>노출여부</th>
+					<td>
+						<label><input type="radio" id="certiShow1" name="certiShow" value="0"
+								checked>노출</label>&nbsp;&nbsp;
+						<label><input type="radio" id="certiShow2" name="certiShow" value="1">비노출</label>
+						<% if(result.length > 0) {%>
+						<input type="hidden" id="certiShowhValue" value="<%=result[0].certiShow%>">
+						<% } %>
+					</td>
 					</tr>
 				</table>
 				<input type="hidden" name="certiTitleId" value="<%=result[0].certiTitleId%>">
 				<input type="hidden" id="certiDetail" name="certiDetail" value="">
-				<input type="hidden" id="records" name="records" value="<%= records %>">
+				<!-- <input type="hidden" id="records" name="records" value="<%= records %>"> -->
 			</form>
 			<p class="btn">
-				<button onclick="certiUpdate()">수정</button> 
+				<button onclick="certiUpdate()">수정</button>
 				<button onclick="window.close();">취소</button>
 			</p>
 		</div>
@@ -126,7 +154,7 @@
 		function certiUpdate() {
 			if (confirm("수정하시겠습니까?") == true) {
 				const content = $("#content").val();
-				// console.log(content);
+				$('input[name=certiSubDivision]').val($("#division option:selected").text());
 				$("#certiDetail").attr("value", content);
 				$("#certiUpdate").attr("action", "certiUpdate");
 				$("#certiUpdate").attr("method", "post");

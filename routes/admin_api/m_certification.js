@@ -54,8 +54,29 @@ var upload = multer({ //multer안에 storage정보
 router.get('/certiAll', async (req, res) => {
     try {
         var page = req.query.page;
-        const param = req.query.certiDivision;
-        const sql = "select * from certification where certiDivision = ?";
+        var param = req.query.certiDivision;
+        var division = req.query.division == undefined ? "" : req.query.division;
+        var searchType = req.query.searchType == undefined ? "" : req.query.searchType;
+        var sql = "select *, date_format(certiStartDate, '%Y-%m-%d') as certiStartDatefmt, date_format(certiEndDate, '%Y-%m-%d') as certiEndDatefm\
+                     from certification where certiDivision = ?";
+        var div = "";
+        if (division != '') {
+            sql += " and certiSubDivision = '" + division + "' \n";
+        }
+        if (searchType != '') {
+            sql += " and certiDiff = '" + searchType + "' \n";
+        }
+        // 분류 드롭다운 가져오기
+        const sql2 = "select count(*), certiSubDivision\
+                       from certification\
+                      where certiSubDivision !='' or not null group by certiSubDivision";
+        connection.query(sql2, (err, results1) => {
+            if (err) {
+                console.log(err)
+            }
+            div = results1;
+        })
+
         connection.query(sql, param, (err, results) => {
             if (err) {
                 console.log(err);
@@ -65,39 +86,16 @@ router.get('/certiAll', async (req, res) => {
             }
             let route = req.app.get('views') + '/m_certification/certification';
             res.render(route, {
-                searchType: null,
+                div: div,
+                division: division,
+                searchType: searchType,
                 results: results,
                 page: page,
                 length: results.length - 1,
                 page_num: 6,
                 pass: true
             });
-        });
-    } catch (error) {
-        res.status(401).send(error.message);
-    }
-});
-
-//탄소실천, 챌린지 글 주제별 전체 썸네일 조회
-router.get('/certiContentAll', async (req, res) => {
-    try {
-        const param = req.params.certiTitleId;
-        const sql = "select f.fileRoute, c.certiContentId\
-                       from file f \
-                       join certiContent c\
-                         on f.certiContentId = c.certiContentId\
-                      where c.certiTitleId = ? and f.fileNo = 0";
-        connection.query(sql, param, (err, results) => {
-            if (err) {
-                console.log(err);
-                response.json({
-                    msg: "query error"
-                });
-            }
-            let route = req.app.get('views') + '/m_certification/certification';
-            res.render(route, {
-                'results': results
-            });
+            console.log(results);
         });
     } catch (error) {
         res.status(401).send(error.message);
@@ -150,7 +148,7 @@ router.post('/certiDelete', async (req, res) => {
                     msg: "query error"
                 });
             }
-            res.redirect('certiAll?certiDivision=' + req.query.certiDivision);
+            res.redirect('certiAll?certiDivision=' + req.query.certiDivision + '&page=1');
         });
     } catch (error) {
         res.send(error.message);
@@ -206,11 +204,26 @@ router.post('/certiImgDelete', async (req, res) => {
 //탄소실천 등록 페이지로 이동
 router.get('/certiWritForm', async (req, res) => {
     const division = req.query.certiDivision;
-    let route = req.app.get('views') + '/m_certification/certi_writForm';
-    res.render(route, {
-        'division': division,
-        layout: false
-    });
+    try {
+        const sql = "select count(*), certiSubDivision\
+                       from certification\
+                      where certiSubDivision !='' or not null group by certiSubDivision";
+        connection.query(sql, (err, results, row) => {
+            if (err) {
+                console.log(err)
+            }
+            let route = req.app.get('views') + '/m_certification/certi_writForm';
+            res.render(route, {
+                'division': division,
+                results: results,
+                layout: false
+            });
+        })
+    } catch (error) {
+        if (error.code == "ENOENT") {
+            console.log("프로필 삭제 에러 발생");
+        }
+    }
 });
 
 //탄소실천 등록
@@ -220,12 +233,12 @@ router.post('/certiWrit', upload.single('file'), async (req, res) => {
         var param = "";
         if (req.file != null) {
             path = req.file.path;
-            param = [req.body.certiDivision, req.body.certiTitle, req.body.certiDetail, req.body.certiPoint, req.body.certiDiff, path];
+            param = [req.body.certiDivision, req.body.certiTitle, req.body.certiDetail, req.body.certiPoint, req.body.certiDiff, path, req.body.certiSubDivision, req.body.certiStartDate, req.body.certiEndDate];
         } else {
-            param = [req.body.certiDivision, req.body.certiTitle, req.body.certiDetail, req.body.certiPoint, req.body.certiDiff, req.body.certiImage];
+            param = [req.body.certiDivision, req.body.certiTitle, req.body.certiDetail, req.body.certiPoint, req.body.certiDiff, req.body.certiImage, req.body.certiSubDivision, req.body.certiStartDate, req.body.certiEndDate];
         }
-        const sql = "insert into certification(certiDivision, certiTitle, certiDetail, certiPoint, certiDiff, certiImage)\
-                          values (?, ?, ?, ?, ?, ?)";
+        const sql = "insert into certification(certiDivision, certiTitle, certiDetail, certiPoint, certiDiff, certiImage, certiSubDivision, certiStartDate, certiEndDate)\
+                          values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         connection.query(sql, param, function (err, result, fields) {
             if (err) {
                 console.log(err);
@@ -241,7 +254,9 @@ router.post('/certiWrit', upload.single('file'), async (req, res) => {
 router.get('/certiUdtForm', async (req, res) => {
     try {
         const param = req.query.certiTitleId;
-        const sql = "select * from certification where certiTitleId = ?";
+        const sql = "select *, date_format(certiStartDate, '%Y-%m-%d') as certiStartDatefmt, date_format(certiEndDate, '%Y-%m-%d') as certiEndDatefmt\
+                      from certification\
+                     where certiTitleId = ?";
         connection.query(sql, param, function (err, result, fields) {
             if (err) {
                 console.log(err);
@@ -267,17 +282,18 @@ router.get('/certiUdtForm', async (req, res) => {
 router.post('/certiUpdate', upload.single('file'), async (req, res) => {
     var path = "";
     var param = "";
+    console.log(req.body);
     if (req.file != null) {
         path = req.file.path;
         param = [req.body.certiTitle, req.body.certiDetail, req.body.certiPoint,
-            req.body.certiDiff, path, req.body.certiShow, req.body.certiTitleId
+            req.body.certiDiff, path, req.body.certiShow, req.body.certiStartDate, req.body.certiEndDate, req.body.certiTitleId
         ];
     } else {
         param = [req.body.certiTitle, req.body.certiDetail, req.body.certiPoint,
-            req.body.certiDiff, req.body.certiImage, req.body.certiShow, req.body.certiTitleId
+            req.body.certiDiff, req.body.certiImage, req.body.certiShow, req.body.certiStartDate, req.body.certiEndDate, req.body.certiTitleId
         ];
     }
-    const sql = "update certification set certiTitle = ?, certiDetail = ?, certiPoint = ?, certiDiff = ?, certiImage = ?, certiShow = ?\
+    const sql = "update certification set certiTitle = ?, certiDetail = ?, certiPoint = ?, certiDiff = ?, certiImage = ?, certiShow = ?, certiStartDate = ?, certiEndDate = ?\
                                  where certiTitleId = ?";
     connection.query(sql, param, (err, row) => {
         if (err) {
@@ -292,39 +308,23 @@ router.get('/search', async (req, res) => {
     const searchType = req.query.searchType;
     const page = req.query.page;
     try {
-        if (searchType == "0") {
-            const sql = "select * from certification where certiDiff = 1 or certiDiff = 2 or certiDiff = 3 or certiDiff = 4 or certiDiff = 5";
-            connection.query(sql, (err, results, row) => {
-                if (err) {
-                    console.error(err);
-                }
-                let route = req.app.get('views') + '/m_certification/certification';
-                res.render(route, {
-                    searchType: searchType,
-                    results: results,
-                    page: page, 
-                    length: results.length - 1, 
-                    page_num: 6, 
-                    pass: true
-                });
-            })
-        } else {
-            const sql = "select * from certification where certiDiff = ?";
-            connection.query(sql, searchType, (err, results, row) => {
-                if (err) {
-                    console.error(err);
-                }
-                let route = req.app.get('views') + '/m_certification/certification';
-                res.render(route, {
-                    searchType: searchType,
-                    results: results,
-                    page: page, 
-                    length: results.length - 1, 
-                    page_num: 6, 
-                    pass: true
-                });
-            })
-        }
+
+        const sql = "select * from certification where certiDiff = ?";
+        connection.query(sql, searchType, (err, results, row) => {
+            if (err) {
+                console.error(err);
+            }
+            let route = req.app.get('views') + '/m_certification/certification';
+            res.render(route, {
+                searchType: searchType,
+                results: results,
+                page: page,
+                length: results.length - 1,
+                page_num: 6,
+                pass: true
+            });
+        })
+
     } catch (error) {
         res.status(401).send(error.message);
     }

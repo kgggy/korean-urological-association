@@ -140,31 +140,22 @@ router.patch('/:uid', upload.single('file'), async (req, res) => {
     param = [req.body.userNick, req.body.userAge, req.body.userSchool, req.body.userAdres1, req.body.userAdres2, req.body.userImg, req.params.uid];
   }
 
-  // const {
-  //   uid
-  // } = req.params;
-  // const modelsss = await models.user.findAll({
-  //   where: {
-  //     uid
-  //   },
-  //   attributes: ['userImg'],
-  //   raw: true,
-  // });
-  // console.log(modelsss[0].userImg + "==================");
-  // if(modelsss !== null) {
-  //   console.log("파일삭제한다");
-  //   fs.stat(pathe, (err, stats) => {
-  //     if (err) {
-  //       console.log("파일이 존재하지 않습니다.");
-  //     }
-  //     fs.unlink (pathe, (err) => {
-  //       if (err) {
-  //         console.log("파일 삭제 에러 발생");
-  //       }
-  //     });
-  //   });
-  // };
-  
+  const {
+    userNick
+  } = req.body;
+
+  const sameNickNameUser = await models.user.findOne({
+    where: {
+      userNick
+    }
+  });
+  if (sameNickNameUser !== null) {
+    return res.json({
+      registerSuccess: false,
+      message: "이미 존재하는 닉네임입니다.",
+    });
+  }
+
   const sql = "update user set userNick = ?,  userAge = ?, userSchool = ?,userAdres1 = ?, userAdres2 = ?, userImg = ? where uid = ?";
   connection.query(sql, param, (err, row) => {
     if (err) {

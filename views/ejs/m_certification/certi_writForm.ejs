@@ -29,6 +29,7 @@
 		<h2><span class="float_l">탄소실천 종류 등록</h2>
 		<div class="content">
 			<form action="" id="certiUpdate" method="" enctype="multipart/form-data">
+				<input type="hidden" id="certiSubDivision" name="certiSubDivision" value="">
 				<table>
 					<colgroup>
 						<col width="20%" />
@@ -38,6 +39,17 @@
 						<th>이미지</th>
 						<td name="file_name" colspan="3">
 							<li><input type="file" id="file" name="file" /></li>
+						</td>
+					</tr>
+					<tr>
+						<th>분류</th>
+						<td>
+							<select id="division" name="division">
+								<option value="" selected="selected">--분류--</option>
+								<% for(var i = 0; i < results.length ; i++){  %>
+								<option value="<%= results[i].certiSubDivision %>"><%= results[i].certiSubDivision %></option>
+								<% } %>
+							</select>
 						</td>
 					</tr>
 					<tr>
@@ -74,9 +86,22 @@
 					</tr>
 					<% } %>
 					<tr>
+						<th>시작 날짜</th>
+						<td>
+							<input type="date" id="certiStartDate" name="certiStartDate" value="">
+						</td>
+					</tr>
+					<tr>
+						<th>종료 날짜</th>
+						<td>
+							<input type="date" id="certiEndDate" name="certiEndDate" value="">
+						</td>
+					</tr>
+					<tr>
 						<th>노출여부</th>
 						<td>
-							<label><input type="radio" id="certiShow1" name="certiShow" value="0" checked>노출</label>&nbsp;&nbsp;
+							<label><input type="radio" id="certiShow1" name="certiShow" value="0"
+									checked>노출</label>&nbsp;&nbsp;
 							<label><input type="radio" id="certiShow2" name="certiShow" value="1">비노출</label>
 						</td>
 					</tr>
@@ -95,17 +120,21 @@
 		function certiUpdate() {
 			var certiTitle = $("#certiTitle").val();
 			var certiDiff = $("#certiDiff").val();
-			if(certiTitle == "") {
+			if ($("#division option:selected").val() == "") {
+				alert("분류를 선택하세요");
+				return false;
+			}
+			if (certiTitle == "") {
 				alert("종류명을 입력하세요");
 				return false;
 			}
-			if(certiDiff == "") {
+			if (certiDiff == "") {
 				alert("단계를 입력하세요");
 				return false;
 			}
 			if (confirm("등록하시겠습니까?") == true) {
 				const content = $("#content").val();
-				// console.log(content);
+				$('input[name=certiSubDivision]').val($("#division option:selected").text());
 				$("#certiDetail").attr("value", content);
 				$("#certiUpdate").attr("action", "certiWrit");
 				$("#certiUpdate").attr("method", "post");

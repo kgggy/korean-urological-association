@@ -9,20 +9,12 @@ const path = require('path');
 const connt = require("../../config/db")
 var url = require('url');
 const crypto = require('crypto');
-// const {
-//   type
-// } = require('os');
-// const {
-//   REPL_MODE_SLOPPY
-// } = require('repl');
-//sequelize
 const models = require('../../models');
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
 // DB 커넥션 생성
 var connection = mysql.createConnection(connt);
 connection.connect();
-
 
 //파일업로드 모듈
 var upload = multer({ //multer안에 storage정보  
@@ -117,17 +109,50 @@ router.post('/', async (req, res) => {
 
 //사용자 전체조회
 router.get('/page', async (req, res) => {
+  var page = req.query.page;
+  var searchType = req.query.searchType == undefined ? "" : req.query.searchType;
+  var searchType1 = req.query.searchType1 == undefined ? "" : req.query.searchType1;
+  var searchType2 = req.query.searchType2 == undefined ? "" : req.query.searchType2;
+  var searchType3 = req.query.searchType3 == undefined ? "" : req.query.searchType3;
+  var searchType4 = req.query.searchType4 == undefined ? "" : req.query.searchType4;
+  var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
+
+  var sql = "select * from user where 1=1";
+
+  if (searchType != '') {
+    sql += " and userAuth = '" + searchType + "' \n";
+  }
+  if (searchType1 != '') {
+    sql += " and userAgree = '" + searchType1 + "' \n";
+  }
+  if (searchType2 != '') {
+    sql += " and userStatus = '" + searchType2 + "' \n";
+  }
+  if (searchType3 != '' && searchType3 == '61') {
+    sql += " and userAge >= 60 \n";
+  } else if (searchType3 != '' && searchType3 == '20') {
+    sql += " and  userAge <> 0 and userAge <= 20 \n";
+  } else if (searchType3 != '' && searchType3 == '30' || searchType3 == '40' || searchType3 == '50' || searchType3 == '60')
+    sql += " and userAge between " + searchType3 + "-10 and " + searchType3 + " \n";
+  if (searchType4 != '') {
+    sql += " and userTree = '" + searchType4 + "' \n";
+  }
+  if (searchText != '') {
+    sql += " and (userNick like '%" + searchText + "%' or userEmail like '%" + searchText + "%' or userSchool like '%" + searchText + "%') order by uid";
+  }
   try {
-    var page = req.query.page;
-    const sql = "select * from user where userAuth = 0 or userAuth = 1"; //0은 회원, 1은 기업
     connection.query(sql, function (err, results, fields) {
       if (err) {
         console.log(err);
       }
       let route = req.app.get('views') + '/m_user/m_user';
       res.render(route, {
-        searchType: null,
-        searchText: null,
+        searchType: searchType,
+        searchType1: searchType1,
+        searchType2: searchType2,
+        searchType3: searchType3,
+        searchType4: searchType4,
+        searchText: searchText,
         results: results,
         page: page, //현재 페이지
         length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
@@ -145,9 +170,8 @@ router.get('/selectOne', async (req, res) => {
   try {
     const param = [req.query.uid, req.query.uid, req.query.uid];
     const sql = "select *, ((select count(*) from certiContent where uid = ?) +\
-                           (select count(*) from post where uid = ?)) as contentAll, abs(u.userScore - t.treeScore) as score\
-                   from user u join tree t on 1=1 where uid = ?\
-                   order by score limit 1";
+                           (select count(*) from post where uid = ?)) as contentAll\
+                   from user where uid = ?";
     connection.query(sql, param, function (err, result, fields) {
       if (err) {
         console.log(err);
@@ -361,73 +385,6 @@ router.get('/imgDelete', async (req, res) => {
     }
   }
   res.redirect('userUdtForm?uid=' + req.query.uid);
-});
-
-// 검색
-router.get('/search', async (req, res) => {
-  var page = req.query.page;
-  var searchType = req.query.searchType;
-  var searchText = req.query.searchText;
-  console.log(searchText)
-  if (req.query.searchType == 'userEmail') {
-    models.user.findAll({
-      where: {
-        userEmail: {
-          [Op.like]: "%" + req.query.searchText + "%"
-        },
-      },
-      order: [
-        ['uid', 'ASC']
-      ],
-      raw: true,
-    }).then(results => {
-      console.log(results);
-      let route = req.app.get('views') + '/m_user/m_user';
-      res.render(route, {
-        searchText: searchText,
-        searchType: searchType,
-        results: results,
-        page: page, //현재 페이지
-        length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
-        page_num: 15, //한 페이지에 보여줄 개수
-        pass: true
-      });
-    }).catch(err => {
-      console.log(err);
-      return res.status(404).json({
-        message: 'error'
-      });
-    })
-  } else {
-    models.user.findAll({
-      where: {
-        userNick: {
-          [Op.like]: "%" + req.query.searchText + "%"
-        },
-      },
-      order: [
-        ['uid', 'ASC']
-      ],
-      raw: true,
-    }).then(results => {
-      console.log(searchType);
-      let route = req.app.get('views') + '/m_user/m_user';
-      res.render(route, {
-        searchText: searchText,
-        searchType: searchType,
-        results: results,
-        page: page, //현재 페이지
-        length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
-        page_num: 15, //한 페이지에 보여줄 개수
-        pass: true
-      });
-    }).catch(err => {
-      console.log(err);
-      return res.status(404).json({
-        message: 'error'
-      });
-    })
-  }
 });
 
 module.exports = router;

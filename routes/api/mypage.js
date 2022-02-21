@@ -112,5 +112,27 @@ router.get('/likes', async (req, res) => {
     }
 });
 
+//참여한 챌린지 목록 및 게시글 개수
+router.get('/challenge/:uid', async (req, res) => {
+    try {
+        const param = req.params.uid;
+        const sql = "select certiTitleId, count(*) as certiCount\
+                       from certiContent\
+                      where uid = ? group by certiTitleId";
+        let certiCount;
+        connection.query(sql, param, (err, resutls) => {
+            if (err) {
+                res.json({
+                    msg: "query error"
+                });
+            }
+            certiCount = resutls;
+            res.status(200).json(certiCount);
+        });
+    } catch (error) {
+        res.status(401).send(error.message);
+    }
+});
+
 
 module.exports = router;

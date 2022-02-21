@@ -72,7 +72,7 @@ router.get('/:certiDivision', async (req, res) => {
 router.get('/certiContents/:certiTitleId', async (req, res) => {
     try {
         const param = req.params.certiTitleId;
-        const sql = "select f.fileRoute, c.certiContentId\
+        const sql = "select f.fileRoute, c.certiContentId, c.certiContentDate\
                        from file f \
                        join certiContent c\
                          on f.certiContentId = c.certiContentId\
@@ -124,10 +124,6 @@ router.get('/one/:certiContentId', async (req, res) => {
 
 //탄소실천, 챌린지 게시글(사진) 업로드
 router.post('/', upload.array('file'), async function (req, res) {
-    // console.log(req.files);
-    // console.log(req.query);
-    // console.log(uuid());
-
     // req.files.map(data => {
     //     console.log("폼에 정의된 필드명 : ", data.fieldname);
     //     console.log("사용자가 업로드한 파일 명 : ", data.originalname);
@@ -138,12 +134,10 @@ router.post('/', upload.array('file'), async function (req, res) {
     //     console.log("업로드된 파일의 전체 경로 ", data.path);
     //     console.log("파일의 바이트(byte 사이즈)", data.size);
     // })
-
     const paths = req.files.map(data => data.path);
     const orgName = req.files.map(data => data.originalname);
     console.log(paths);
     try {
-        console.log("111111111111111111111");
         const contentId = uuid();
         const param1 = [contentId, req.query.certiTitleId, req.query.uid];
         const sql1 = "insert into certiContent(certiContentId, certiTitleId, uid) values(?, ?, ?)";
@@ -152,7 +146,6 @@ router.post('/', upload.array('file'), async function (req, res) {
                 throw err;
             }
         });
-        console.log("============================");
         for (let i = 0; i < paths.length; i++) {
             const param2 = [contentId, paths[i], i, orgName[i]];
             console.log(param2 + "============================");
