@@ -29,7 +29,7 @@
 <div class="popup">
     <h2><span class="float_l">공지사항</span></h2>
     <div class="content">
-        <form action="" name="brdUpdate" method="" >
+        <form action="" name="brdUpdate" method="">
             <input type="hidden" name="fileNo" value="">
             <input type="hidden" name="fileRoute" value="">
             <table>
@@ -67,6 +67,7 @@
                         <li><%=result[i].fileOrgName%>&nbsp;
                             <button name="fileDelete" data-fileNo="<%=result[i].fileNo%>"
                                 data-fileRoute="<%=result[i].fileRoute%>">삭제</button>
+                            <input type="hidden" name="fileNo1" value="<%=result[i].fileNo%>">
                         </li>
                         <% } %>
                         <% if(result.length < 5) { %>
