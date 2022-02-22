@@ -51,7 +51,12 @@ var upload = multer({ //multer안에 storage정보
 router.get('/:certiDivision', async (req, res) => {
     try {
         const param = req.params.certiDivision;
-        const sql = "select * from certification where certiDivision = ? and certiShow not in('1')";
+        const sql = "select * from certification\
+                      where certiDivision = ?\
+                        and certiShow not in('1')\
+                        and (((certiStartDate || certiEndDate) is null\
+                         or (sysdate() between certiStartDate and certiEndDate))\
+                         or ((certiEndDate is null or certiEndDate = 0) and certiStartDate < sysdate()));";
         let certifications;
         connection.query(sql, param, (err, results) => {
             if (err) {

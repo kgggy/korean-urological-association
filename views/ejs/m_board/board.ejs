@@ -39,7 +39,7 @@
             </colgroup>
             <thead>
                 <tr>
-                    <th></th>
+                    <th>번호</th>
                     <th>작성자</th>
                     <th>우선순위</th>
                     <th>제목</th>
@@ -57,7 +57,7 @@
                          } else { %>
                 <tr>
                     <input type="hidden" id="writId" name="writId" value="<%=results[i].writId%>" />
-                    <td><input type="checkbox" id="chk" name="chk" value="<%=results[i].writId %>" /></td>
+                    <td><%= i+1 %></td>
                     <td><%-results[i].userNick%></td>
                     <td><%=results[i].writRank%></td>
                     <td><%=results[i].writTitle%></td>

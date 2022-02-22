@@ -109,7 +109,6 @@ router.get('/all', async (req, res) => {
                 page_num: 15, //한 페이지에 보여줄 개수
                 pass: true
             });
-            console.log(page)
         });
     } catch (error) {
         res.status(500).send(error.message);
@@ -148,21 +147,22 @@ router.get('/brdDelete', async (req, res) => {
     try {
         const param = req.query.writId;
         const fileRoute = req.query.fileRoute;
+        console.log(fileRoute);
+        console.log(param);
         const sql = "delete from post where writId = ?";
         connection.query(sql, param, (err, row) => {
             if (err) {
                 console.log(err);
-                res.json({
-                    msg: "query error"
-                });
             }
             if (fileRoute != '') {
-                fs.unlinkSync(fileRoute, (err) => {
-                    if (err) {
-                        console.log(err);
-                    }
-                    return;
-                });
+                for (let i = 0; i < fileRoute.length; i++) {
+                    fs.unlinkSync(fileRoute[i], (err) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        return;
+                    });
+                }
             }
             res.send("<script>opener.parent.location.reload(); window.close();</script>");
         });
@@ -180,6 +180,38 @@ router.get('/writForm', async (req, res) => {
             res.end(data);
         }
     });
+});
+
+//게시글 작성 및 파일첨부
+router.post('/boardwrite', upload.array('file'), async (req, res, next) => {
+    const paths = req.files.map(data => data.path);
+    const orgName = req.files.map(data => data.originalname);
+    console.log(req.body);
+    console.log(req.files);
+    try {
+        const boardWritId = uuid();
+        // req.body.writRank = parseInt(req.body.writRank);
+        const param1 = [boardWritId, req.body.boardId, req.body.uid, req.body.writTitle, req.body.writContent, req.body.writRank, req.body.writRank];
+        const sql1 = "insert into post(writId, boardId, uid, writTitle, writContent, writRank) values(?, ?, ?, ?, ?, if(trim(?)='', null, ?))";
+        connection.query(sql1, param1, (err, row) => {
+            if (err) {
+                throw err;
+            }
+            for (let i = 0; i < paths.length; i++) {
+                const param2 = [boardWritId, paths[i], i, orgName[i]];
+                // console.log(param2);
+                const sql2 = "insert into file(writId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
+                connection.query(sql2, param2, (err) => {
+                    if (err) {
+                        throw err;
+                    }
+                });
+            };
+        });
+        res.send("<script>opener.parent.location.reload(); window.close();</script>");
+    } catch (error) {
+        res.send(error.message);
+    }
 });
 
 //게시글 수정 폼 이동
@@ -210,59 +242,40 @@ router.get('/brdUdtForm', async (req, res) => {
 });
 
 //게시글 수정
-router.post('/brdUpdate', async (req, res) => {
-    try {
-        const param = [req.body.writTitle, req.body.writContent, req.body.writRank, req.body.writRank, req.body.writId];
-        const sql1 = "update post set writTitle = ?, writContent = ?, writUpdDate = sysdate(), writRank = if(trim(?)='', null, ?) where writId = ?";
-        connection.query(sql1, param, (err, row) => {
-            if (err) {
-                console.error(err);
-                res.send('<h1>쿼리 오류입니다...</h1>');
-            }
-            res.redirect('selectOne?writId=' + req.body.writId);
-        });
-    } catch (error) {
-        res.send(error.message);
-    }
-});
-
-//게시글 작성 및 파일첨부
-router.post('/boardwrite', upload.array('file'), async (req, res, next) => {
-    const paths = req.files.map(data => data.path);
-    const orgName = req.files.map(data => data.originalname);
-    console.log(req.body);
+router.post('/brdUpdate', upload.array('file'), async (req, res) => {
     console.log(req.files);
-    try {
-        const boardWritId = uuid();
-        // req.body.writRank = parseInt(req.body.writRank);
-        const param1 = [boardWritId, req.body.boardId, req.body.uid, req.body.writTitle, req.body.writContent, req.body.writRank];
-        const sql1 = "insert into post(writId, boardId, uid, writTitle, writContent, writRank) values(?, ?, ?, ?, ?, if(writRank,?,null))";
-        connection.query(sql1, param1, (err, row) => {
-            if (err) {
-                throw err;
-            }
-            for (let i = 0; i < paths.length; i++) {
-                const param2 = [boardWritId, paths[i], i, orgName[i]];
-                // console.log(param2);
-                const sql2 = "insert into file(writId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
-                connection.query(sql2, param2, (err) => {
-                    if (err) {
-                        throw err;
-                    }
-                });
-            };
-        });
-        res.send("<script>opener.parent.location.reload(); window.close();</script>");
-    } catch (error) {
-        res.send(error.message);
-    }
+    // const paths = req.files.map(data => data.path);
+    // const orgName = req.files.map(data => data.originalname);
+    // console.log(paths);
+    // try {
+    //     const param = [req.body.writTitle, req.body.writContent, req.body.writRank, req.body.writRank, req.body.writId];
+    //     const sql1 = "update post set writTitle = ?, writContent = ?, writUpdDate = sysdate(), writRank = if(trim(?)='', null, ?) where writId = ?";
+    //     const sql2 = "insert into file(writId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
+    //     const sql3 = "delete from file where writId = ? and fileNo = ?";
+    //     connection.query(sql1, param, (err, row) => {
+    //         if (err) {
+    //             console.error(err);
+    //         }
+    //         for (let i = 0; i < paths.length; i++) {
+    //             const param2 = [paths[i], i, orgName[i], req.body.writId];
+    //             // console.log(param2);
+    //             connection.query(sql2, param2, (err) => {
+    //                 if (err) {
+    //                     throw err;
+    //                 }
+    //             });
+    //         };
+    //         res.redirect('selectOne?writId=' + req.body.writId);
+    //     });
+    // } catch (error) {
+    //     res.send(error.message);
+    // }
 });
 
 //첨부파일 삭제
 router.get('/fileDelete', async (req, res) => {
     const param = [req.query.writId, req.query.fileNo];
     const fileRoute = req.query.fileRoute;
-    // console.log(fileRoute + "-------" + param);
     try {
         const sql = "delete from file where writId = ? and fileNo = ?";
         connection.query(sql, param, (err, row) => {

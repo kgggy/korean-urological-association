@@ -104,7 +104,7 @@
 
     <table id="tableData">
         <colgroup>
-            <col width="10%" />
+            <col width="5%" />
             <col width="20%" />
             <col width="30%" />
             <col width="20%" />
@@ -140,7 +140,7 @@
                     <%= results[i].userNick %>
                 </td>
                 <td>
-                    <button onclick="selectOne('/admin/m_user/selectOne', '', 'width=640, height=700, scrollbars=1', '<%=results[i].uid%>',
+                    <button onclick="selectOne('/admin/m_user/selectOne', '', 'width=640, height=800, scrollbars=1', '<%=results[i].uid%>',
                     '')">상세보기</button>
                 </td>
             </tr>
@@ -155,6 +155,7 @@
     </table>
     <p class="btn">
         <form name="udtForm" role="form">
+            <input type="hidden" id="uid" name="uid" value="" />
             <button type="button" id="delete_btn">삭제</button>
             <input type="button" id="excelFileExport" value="엑셀 다운로드" />
         </form>
@@ -185,13 +186,23 @@
     $(document).ready(function () {
         const formObj = $("form[name='udtForm']");
         $("#delete_btn").on("click", function () {
+            var chkArr = [];
+            $("input[name=chk]:checked").each(function () {
+                chkArr.push($(this).val());
+            });
+            // console.log(chkArr);
+            $('#uid').val(chkArr);
+            if(chkArr == "") {
+                alert("삭제할 목록을 선택해주세요.") ;
+                return false;
+            }
             formObj.attr("action", "userDelete");
             formObj.attr("method", "get");
             if (confirm("삭제하시겠습니까?") == true) {
                 alert("삭제되었습니다.");
                 formObj.submit();
             } else {
-                return;
+                return false;
             }
         })
     });

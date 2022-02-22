@@ -21,7 +21,6 @@
 <body style="background: #fff;">
 	<div class="popup">
 		<h2><span class="float_l">회원관리</span>></h2>
-
 		<div class="content">
 			<table>
 				<tr>
@@ -38,7 +37,7 @@
 						<%if(result[0].uid !=null && result[0].uid!='null' && result[0].uid!=''){%>
 						<%=result[0].uid%>
 						<%}%>
-				</td
+					</td>
 				</tr>
 				<tr>
 					<th class="necessary">닉네임</th>
@@ -157,15 +156,16 @@
 					</td>
 				</tr>
 			</table>
-
-			<p class="btn">
-				<form name="udtForm" role="form">
-					<input type="hidden" name="uid" value="<%=result[0].uid%>">
-					<button type="button" id="update_btn">수정</button>
-					<!-- <button type="button" id="delete_btn">삭제</button> -->
-				</form>
-				<button class="btn_big_black hand" onclick="window.close();">취소</button>
-			</p>
+			<div align="center">
+				<p class="btn">
+					<form name="udtForm" role="form">
+						<input type="hidden" name="uid" value="<%=result[0].uid%>">
+						<button type="button" id="update_btn">수정</button>
+					</form>
+					<button class="btn_big_black hand"
+						onclick="opener.parent.location.reload();window.close();">취소</button>
+				</p>
+			</div>
 		</div>
 	</div>
 
@@ -178,18 +178,6 @@
 				formObj.attr("method", "get");
 				formObj.submit();
 			})
-
-			// 삭제
-			// $("#delete_btn").on("click", function () {
-			// 	formObj.attr("action", "userDelete");
-			// 	formObj.attr("method", "get");
-			// 	if (confirm("삭제하시겠습니까?") == true) {
-			// 		alert("삭제되었습니다.");
-			// 		formObj.submit();
-			// 	} else {
-			// 		return;
-			// 	}
-			// })
 		})
 
 		//check box

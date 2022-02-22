@@ -31,6 +31,8 @@
 		<div class="content">
 			<form action="" id="certiUpdate" method="" enctype="multipart/form-data">
 				<input type="hidden" id="certiSubDivision" name="certiSubDivision" value="">
+				<input type="hidden" id="certiTitleId" name="certiTitleId" value="<%=result[0].certiTitleId%>">
+				<input type="hidden" id="certiAuth" name="certiAuth" value="">
 				<table>
 					<colgroup>
 						<col width="20%" />
@@ -57,8 +59,10 @@
 						<td>
 							<select id="division" name="division">
 								<option value="" selected="selected">--분류--</option>
-								<option value="<%= result[0].certiSubDivision %>"><%= result[0].certiSubDivision %>
+								<% for(var i = 0; i < div.length ; i++){  %>
+								<option value="<%= div[i].certiSubDivision %>"><%= div[i].certiSubDivision %>
 								</option>
+								<% } %>
 							</select>
 						</td>
 					</tr>
@@ -92,29 +96,25 @@
 					<tr>
 						<th>권한</th>
 						<td>
-							<select>
+							<select id="chooseAuth">
 								<option value="학교">학교</option>
 								<option value="나이">나이</option>
 								<option value="지역">지역</option>
 							</select>
-							<!-- <input type="text" id="certiAuth" name="certiAuth" value="<%=result[0].certiAuth%>"> -->
 						</td>
 					</tr>
-					<% } %>
-					<tr>
-					<% if(result[0].certiDivision == 1) {%>
 					<tr>
 						<th>시작 날짜</th>
 						<td>
 							<input type="date" id="certiStartDate" name="certiStartDate"
-								value="<%=result[0].certiStartDate%>">
+								value="<%=result[0].certiStartDatefmt%>">
 						</td>
 					</tr>
 					<tr>
 						<th>종료 날짜</th>
 						<td>
 							<input type="date" id="certiEndDate" name="certiEndDate"
-								value="<%=result[0].certiEndDate%>">
+								value="<%=result[0].certiEndDatefmt%>">
 						</td>
 					</tr>
 					<% } %>
@@ -123,15 +123,11 @@
 						<label><input type="radio" id="certiShow1" name="certiShow" value="0"
 								checked>노출</label>&nbsp;&nbsp;
 						<label><input type="radio" id="certiShow2" name="certiShow" value="1">비노출</label>
-						<% if(result.length > 0) {%>
 						<input type="hidden" id="certiShowhValue" value="<%=result[0].certiShow%>">
-						<% } %>
 					</td>
 					</tr>
 				</table>
-				<input type="hidden" name="certiTitleId" value="<%=result[0].certiTitleId%>">
 				<input type="hidden" id="certiDetail" name="certiDetail" value="">
-				<!-- <input type="hidden" id="records" name="records" value="<%= records %>"> -->
 			</form>
 			<p class="btn">
 				<button onclick="certiUpdate()">수정</button>
@@ -144,7 +140,7 @@
 		function file_del() {
 			if (confirm("실제 파일이 삭제됩니다 \n정말 삭제하시겠습니까?") == true) {
 				$("#certiUpdate").attr("action", "certiImgDelete");
-				$("#certiUpdate").attr("method", "post");
+				$("#certiUpdate").attr("method", "get");
 				$("#certiUpdate").submit();
 			} else {
 				return;
@@ -152,9 +148,26 @@
 		};
 
 		function certiUpdate() {
+			if($("#division option:selected").val() == '') {
+				alert("분류를 선택해주세요.");
+				return false;
+			}
+			if($("input[name=certiTitle]").val() == '') {
+				alert("종류명을 입력해주세요.");
+				return false;
+			}
+			if($("input[name=certiDetail]").val() == '') {
+				alert("설명글을 입력해주세요.");
+				return false;
+			}
+			if($("input[name=certiDiff]").val() == '') {
+				alert("단계를 입력해주세요.");
+				return false;
+			}
 			if (confirm("수정하시겠습니까?") == true) {
 				const content = $("#content").val();
-				$('input[name=certiSubDivision]').val($("#division option:selected").text());
+				$('input[name=certiSubDivision]').val($("#division option:selected").val());
+				$('input[name=certiAuth]').val($("#chooseAuth option:selected").text());
 				$("#certiDetail").attr("value", content);
 				$("#certiUpdate").attr("action", "certiUpdate");
 				$("#certiUpdate").attr("method", "post");

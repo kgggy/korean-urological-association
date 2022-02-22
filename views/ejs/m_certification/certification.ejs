@@ -7,6 +7,7 @@
     <% } %>
 </div>
 <form id="certiForm" name="certiForm" method="" action="">
+    <% if(results[0].certiDivision == 0) { %>
     <div align="right">
         <input type="hidden" name="page" value="1" />
         <input type="hidden" name="certiDivision" value="<%= results[0].certiDivision %>" />
@@ -25,6 +26,7 @@
         </select>
         <input type="button" id="searchAction" value="검색" />
     </div>
+    <% } %>
     <div class="board_list">
         <table>
                 <colgroup>
@@ -72,7 +74,7 @@
                         <td><%=results[i].certiTitle%></td>
                         <td><%=results[i].certiDetail %></td>
                         <td><%=results[i].certiPoint%> 점</td>
-                        <!--단계-->
+                        <!--단계/권한-->
                         <% if(results[i].certiDivision == 0) {%>
                         <td><%=results[i].certiDiff%> 단계</td>
                         <% }else{ %>
@@ -80,7 +82,7 @@
                         <% } %>
                         <!--기간-->
                         <% if(results[i].certiDivision == 1) {%>
-                        <td><%=results[i].certiStartDatefmt%> - <%=results[i].certiEndDatefmt%></td>
+                        <td><%=results[i].certiStartDatefmt%> ~ <br><%=results[i].certiEndDatefmt%></td>
                         <% } %>
                         <!--노출여부-->
                         <% if(results[i].certiShow == 0) {%>
@@ -123,14 +125,21 @@
 </div>
 <% } %>
 <% } else { %>
-<table>
-    <tr>
-        <td colspan="8">
-            등록된 목록이 없습니다.
-        </td>
-    </tr>
+<div class="board_list">
+    <table>
+        <thead>
+            <th col></th>
+        </thead>
+        <tbody>
 
-</table>
+            <tr>
+                <td colspan="8">
+                    등록된 목록이 없습니다.
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 <% } %>
 <script>
     // 삭제

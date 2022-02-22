@@ -339,6 +339,7 @@ router.post('/userUpdate', upload.single('file'), async (req, res) => {
       req.body.userAgree, req.body.userAuth, req.body.uid
     ];
   }
+  console.log(typeof(param));
   const sql = "update user set userNick = ?, userEmail = ?, userAge = ?, userAdres1 = ?, userAdres2 = ?, userImg = ?, \
                                userSchool = ?, userPoint = ?, userScore = ?, userStatus = ?, userAgree = ?, userAuth = ?\
                                where uid = ?";
@@ -353,14 +354,23 @@ router.post('/userUpdate', upload.single('file'), async (req, res) => {
 //사용자 삭제
 router.get('/userDelete', (req, res) => {
   const param = req.query.uid;
-  // console.log(param);
-  const sql = "delete from user where uid = ?";
-  connection.query(sql, param, (err, row) => {
-    if (err) {
-      console.log(err)
-    }
-    res.send("<script>opener.parent.location.reload(); window.close();</script>");
-  });
+  // const route = req.query.userImg;
+  const str = param.split(',');
+  for(var i = 0; i < str.length; i++) {
+    const sql = "delete from user where uid = ?";
+    connection.query(sql, str[i], (err, row) => {
+      if (err) {
+        console.log(err)
+      }
+      // fs.unlinkSync(route, (err) => {
+      //   if (err) {
+      //     console.log(err);
+      //   }
+      //   return;
+      // });
+    });
+  }
+  res.redirect('page?page=1');
 });
 
 //프로필 삭제

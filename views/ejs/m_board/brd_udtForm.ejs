@@ -29,7 +29,7 @@
 <div class="popup">
     <h2><span class="float_l">공지사항</span></h2>
     <div class="content">
-        <form action="" name="brdUpdate" method="">
+        <form action="" name="brdUpdate" method="" >
             <input type="hidden" name="fileNo" value="">
             <input type="hidden" name="fileRoute" value="">
             <table>
@@ -69,8 +69,19 @@
                                 data-fileRoute="<%=result[i].fileRoute%>">삭제</button>
                         </li>
                         <% } %>
+                        <% if(result.length < 5) { %>
+                        <% for(var i = 0; i < 5-result.length; i++) {%>
+                        <li><input type="file" id="file" name="file" /></li>
+                        <% } %>
+                        <% } %>
                         <% } else {%>
-                        <% } %></td>
+                        <li><input type="file" id="file" name="file" /></li>
+                        <li><input type="file" id="file" name="file" /></li>
+                        <li><input type="file" id="file" name="file" /></li>
+                        <li><input type="file" id="file" name="file" /></li>
+                        <li><input type="file" id="file" name="file" /></li>
+                        <% } %>
+                    </td>
                 </tr>
             </table>
             <p class="btn">
@@ -121,6 +132,7 @@
             if (confirm("수정하시겠습니까?") == true) {
                 $('input[name=writContent]').attr('value', content);
                 formObj.attr("action", "brdUpdate");
+                formObj.attr("enctype", "multipart/form-data");
                 formObj.attr("method", "post");
                 formObj.submit();
                 alert("수정되었습니다.");

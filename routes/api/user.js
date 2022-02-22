@@ -2,7 +2,9 @@ var express = require('express');
 var router = express.Router();
 const mysql = require('mysql');
 const connt = require("../../config/db")
-var models = require("../../models");
+const models = require('../../models');
+const sequelize = require('sequelize');
+const Op = sequelize.Op;
 const crypto = require('crypto');
 
 const multer = require("multer");
@@ -45,7 +47,8 @@ router.post('/', async (req, res) => {
     userEmail,
     userNick,
     userSocialDiv,
-    userToken
+    userToken,
+    userAgree
   } = req.body;
 
   const sameEmailUser = await models.user.findOne({
@@ -103,7 +106,8 @@ router.post('/', async (req, res) => {
     userEmail,
     userNick,
     userSocialDiv,
-    userToken
+    userToken,
+    userAgree
   })
   res.json({
     msg: "sign up success"
@@ -130,31 +134,40 @@ router.get('/:uid', async (req, res) => {
 });
 
 // 회원정보수정
-router.patch('/:uid', upload.single('file'), async (req, res) => {
+router.patch('/', upload.single('file'), async (req, res) => {
   var param;
   var pathe = "";
-  if (req.file != null) {
-    pathe = req.file.path;
-    param = [req.body.userNick, req.body.userAge, req.body.userSchool, req.body.userAdres1, req.body.userAdres2, pathe, req.params.uid];
-  } else {
-    param = [req.body.userNick, req.body.userAge, req.body.userSchool, req.body.userAdres1, req.body.userAdres2, req.body.userImg, req.params.uid];
-  }
-
+  
   const {
-    userNick
+    userNick,
+    uid
   } = req.body;
+
+  console.log(uid);
 
   const sameNickNameUser = await models.user.findOne({
     where: {
-      userNick
+      userNick,
+      uid:{
+        [Op.notIn]: [uid],
+      },
     }
   });
+
   if (sameNickNameUser !== null) {
     return res.json({
       registerSuccess: false,
       message: "이미 존재하는 닉네임입니다.",
     });
   }
+
+  if (req.file != null) {
+    pathe = req.file.path;
+    param = [req.body.userNick, req.body.userAge, req.body.userSchool, req.body.userAdres1, req.body.userAdres2, pathe, req.body.uid];
+  } else {
+    param = [req.body.userNick, req.body.userAge, req.body.userSchool, req.body.userAdres1, req.body.userAdres2, req.body.userImg, req.body.uid];
+  }
+
 
   const sql = "update user set userNick = ?,  userAge = ?, userSchool = ?,userAdres1 = ?, userAdres2 = ?, userImg = ? where uid = ?";
   connection.query(sql, param, (err, row) => {

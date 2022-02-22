@@ -57,8 +57,8 @@ router.get('/certiAll', async (req, res) => {
         var param = req.query.certiDivision;
         var division = req.query.division == undefined ? "" : req.query.division;
         var searchType = req.query.searchType == undefined ? "" : req.query.searchType;
-        var sql = "select *, date_format(certiStartDate, '%Y-%m-%d') as certiStartDatefmt, date_format(certiEndDate, '%Y-%m-%d') as certiEndDatefm\
-                     from certification where certiDivision = ?";
+        var sql = "select *, date_format(certiStartDate, '%Y-%m-%d') as certiStartDatefmt, date_format(certiEndDate, '%Y-%m-%d') as certiEndDatefmt\
+                     from certification where certiDivision = ? and nullif(certiTitle,'') is not null";
         var div = "";
         if (division != '') {
             sql += " and certiSubDivision = '" + division + "' \n";
@@ -95,7 +95,7 @@ router.get('/certiAll', async (req, res) => {
                 page_num: 6,
                 pass: true
             });
-            console.log(results);
+            // console.log(results);
         });
     } catch (error) {
         res.status(401).send(error.message);
@@ -178,8 +178,9 @@ router.get('/download/:certiContentId/:fileNo', async (req, res) => {
 });
 
 //탄소실천 이미지 삭제
-router.post('/certiImgDelete', async (req, res) => {
+router.get('/certiImgDelete', async (req, res) => {
     const param = req.query.certiImage;
+    // console.log(typeof(param))
     try {
         const sql = "update certification set certiImage = null where certiTitleId = ?";
         connection.query(sql, req.query.certiTitleId, (err, row) => {
@@ -253,25 +254,33 @@ router.post('/certiWrit', upload.single('file'), async (req, res) => {
 //탄소실천 수정 페이지로 이동
 router.get('/certiUdtForm', async (req, res) => {
     try {
+        // 분류 드롭다운 가져오기
+        var div="";
+        const sql2 = "select count(*), certiSubDivision\
+                       from certification\
+                      where certiSubDivision !='' or not null group by certiSubDivision";
+        connection.query(sql2, (err, results1) => {
+            if (err) {
+                console.log(err)
+            }
+            div = results1;
+        });       
         const param = req.query.certiTitleId;
         const sql = "select *, date_format(certiStartDate, '%Y-%m-%d') as certiStartDatefmt, date_format(certiEndDate, '%Y-%m-%d') as certiEndDatefmt\
                       from certification\
                      where certiTitleId = ?";
+
         connection.query(sql, param, function (err, result, fields) {
             if (err) {
                 console.log(err);
             }
             let route = req.app.get('views') + '/m_certification/certi_udtForm';
-            const csv = fs.readFileSync(path.resolve(__dirname, "../../views/openApi/location.csv")); //  현재 디렉토리가 아닌 소스 파일의 위치와 관련된 경로를 확인할 수 있음.
-            // console.log(csv.toString());
-            //parse 메서드 -> 2차원배열화
-            const records = csv.toString();
-            // console.log(records);
             res.render(route, {
-                'result': result,
-                layout: false,
-                'records': records
+                result: result,
+                div:div,
+                layout: false
             });
+            console.log(div);
         });
     } catch (error) {
         res.status(401).send(error.message);
@@ -286,14 +295,14 @@ router.post('/certiUpdate', upload.single('file'), async (req, res) => {
     if (req.file != null) {
         path = req.file.path;
         param = [req.body.certiTitle, req.body.certiDetail, req.body.certiPoint,
-            req.body.certiDiff, path, req.body.certiShow, req.body.certiStartDate, req.body.certiEndDate, req.body.certiTitleId
+            req.body.certiDiff, path, req.body.certiShow, req.body.certiStartDate, req.body.certiEndDate, req.body.certiSubDivision, req.body.certiTitleId
         ];
     } else {
         param = [req.body.certiTitle, req.body.certiDetail, req.body.certiPoint,
-            req.body.certiDiff, req.body.certiImage, req.body.certiShow, req.body.certiStartDate, req.body.certiEndDate, req.body.certiTitleId
+            req.body.certiDiff, req.body.certiImage, req.body.certiShow, req.body.certiStartDate, req.body.certiEndDate, req.body.certiSubDivision, req.body.certiTitleId
         ];
     }
-    const sql = "update certification set certiTitle = ?, certiDetail = ?, certiPoint = ?, certiDiff = ?, certiImage = ?, certiShow = ?, certiStartDate = ?, certiEndDate = ?\
+    const sql = "update certification set certiTitle = ?, certiDetail = ?, certiPoint = ?, certiDiff = ?, certiImage = ?, certiShow = ?, certiStartDate = ?, certiEndDate = ?, certiSubDivision = ?\
                                  where certiTitleId = ?";
     connection.query(sql, param, (err, row) => {
         if (err) {
