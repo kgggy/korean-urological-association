@@ -73,30 +73,30 @@ router.get('/:certiDivision', async (req, res) => {
     }
 });
 
-//탄소실천, 챌린지 글 주제별 전체 썸네일 조회
-router.get('/certiContents/:certiTitleId', async (req, res) => {
-    try {
-        const param = req.params.certiTitleId;
-        const sql = "select f.fileRoute, c.certiContentId, c.certiContentDate\
-                       from file f \
-                       join certiContent c\
-                         on f.certiContentId = c.certiContentId\
-                      where c.certiTitleId = ? and f.fileNo = 0";
-        let certiContents;
-        connection.query(sql, param, (err, results) => {
-            if (err) {
-                console.log(err);
-                response.json({
-                    msg: "query error"
-                });
-            }
-            certiContents = results;
-            res.status(200).json(certiContents);
-        });
-    } catch (error) {
-        res.status(401).send(error.message);
-    }
-});
+//날짜순 전체 탄소실천글
+// router.get('/certiContents/:certiTitleId', async (req, res) => {
+//     try {
+//         const param = req.params.certiTitleId;
+//         const sql = "select f.fileRoute, c.certiContentId, c.certiContentDate\
+//                        from file f \
+//                        join certiContent c\
+//                          on f.certiContentId = c.certiContentId\
+//                       where c.certiTitleId = ? and f.fileNo = 1";
+//         let certiContents;
+//         connection.query(sql, param, (err, results) => {
+//             if (err) {
+//                 console.log(err);
+//                 response.json({
+//                     msg: "query error"
+//                 });
+//             }
+//             certiContents = results;
+//             res.status(200).json(certiContents);
+//         });
+//     } catch (error) {
+//         res.status(401).send(error.message);
+//     }
+// });
 
 //탄소실천, 챌린지 게시글 상세조회
 router.get('/one/:certiContentId', async (req, res) => {
@@ -152,7 +152,7 @@ router.post('/', upload.array('file'), async function (req, res) {
             }
         });
         for (let i = 0; i < paths.length; i++) {
-            const param2 = [contentId, paths[i], i, orgName[i]];
+            const param2 = [contentId, paths[i], i + 1, orgName[i]];
             console.log(param2 + "============================");
             const sql2 = "insert into file(certiContentId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
             connection.query(sql2, param2, (err) => {

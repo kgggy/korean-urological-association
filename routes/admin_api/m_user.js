@@ -117,6 +117,7 @@ router.get('/page', async (req, res) => {
   var searchType4 = req.query.searchType4 == undefined ? "" : req.query.searchType4;
   var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
 
+
   var sql = "select * from user where 1=1";
 
   if (searchType != '') {
@@ -141,7 +142,8 @@ router.get('/page', async (req, res) => {
     sql += " and (userNick like '%" + searchText + "%' or userEmail like '%" + searchText + "%' or userSchool like '%" + searchText + "%') order by uid";
   }
   try {
-    connection.query(sql, function (err, results, fields) {
+    connection.query(sql, function (err, results) {
+      var last = Math.ceil((results.length - 1) / 15);
       if (err) {
         console.log(err);
       }
@@ -157,7 +159,8 @@ router.get('/page', async (req, res) => {
         page: page, //현재 페이지
         length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
         page_num: 15, //한 페이지에 보여줄 개수
-        pass: true
+        pass: true,
+        last: last //마지막 장
       });
     });
   } catch (error) {
@@ -178,8 +181,7 @@ router.get('/selectOne', async (req, res) => {
       }
       let route = req.app.get('views') + '/m_user/orgm_viewForm';
       res.render(route, {
-        'result': result,
-        layout: false
+        'result': result
       });
     });
 
@@ -190,13 +192,8 @@ router.get('/selectOne', async (req, res) => {
 
 //사용자 등록 페이지 이동
 router.get('/userInsertForm', (req, res) => {
-  fs.readFile('views/ejs/m_user/orgm_writForm.ejs', (err, data) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.end(data);
-    }
-  });
+  let route = req.app.get('views') + '/m_user/orgm_writForm';
+  res.render(route);
 });
 
 //사용자 등록
@@ -295,14 +292,16 @@ router.post('/userInsert', upload.single('file'), async (req, res) => {
     });
   }
 
-  res.send('<script>alert("회원 등록이 완료되었습니다."); opener.parent.location.reload(); window.close();</script>');
+  res.send('<script>alert("회원 등록이 완료되었습니다."); location.href="/admin/m_user/page?page=1";</script>');
 });
 
 //사용자 정보 수정 페이지 이동
 router.get('/userUdtForm', async (req, res) => {
   try {
-    const param = req.query.uid;
-    const sql = "select * from user where uid = ?";
+    const param = [req.query.uid, req.query.uid, req.query.uid];
+    const sql = "select *, ((select count(*) from certiContent where uid = ?) +\
+                        (select count(*) from post where uid = ?)) as contentAll\
+                  from user where uid = ?";
     connection.query(sql, param, function (err, result, fields) {
       if (err) {
         console.log(err);
@@ -310,8 +309,7 @@ router.get('/userUdtForm', async (req, res) => {
       let route = req.app.get('views') + '/m_user/orgm_udtForm';
       console.log(route);
       res.render(route, {
-        'result': result,
-        layout: false
+        'result': result
       });
       console.log(result);
     });
@@ -339,7 +337,7 @@ router.post('/userUpdate', upload.single('file'), async (req, res) => {
       req.body.userAgree, req.body.userAuth, req.body.uid
     ];
   }
-  console.log(typeof(param));
+  console.log(typeof (param));
   const sql = "update user set userNick = ?, userEmail = ?, userAge = ?, userAdres1 = ?, userAdres2 = ?, userImg = ?, \
                                userSchool = ?, userPoint = ?, userScore = ?, userStatus = ?, userAgree = ?, userAuth = ?\
                                where uid = ?";
@@ -351,12 +349,12 @@ router.post('/userUpdate', upload.single('file'), async (req, res) => {
   });
 });
 
-//사용자 삭제
+//사용자 여러명 삭제
 router.get('/userDelete', (req, res) => {
   const param = req.query.uid;
   // const route = req.query.userImg;
   const str = param.split(',');
-  for(var i = 0; i < str.length; i++) {
+  for (var i = 0; i < str.length; i++) {
     const sql = "delete from user where uid = ?";
     connection.query(sql, str[i], (err, row) => {
       if (err) {
@@ -373,9 +371,31 @@ router.get('/userDelete', (req, res) => {
   res.redirect('page?page=1');
 });
 
+//사용자 한명 삭제
+router.get('/oneUserDelete', (req, res) => {
+  const param = req.query.uid;
+  const route = req.query.userImg;
+  const sql = "delete from user where uid = ?";
+  connection.query(sql, param, (err, row) => {
+    if (err) {
+      console.log(err)
+    }
+    if (route != '') {
+      fs.unlinkSync(route, (err) => {
+        if (err) {
+          console.log(err);
+        }
+        return;
+      })
+    }
+  });
+  res.send('<script>alert("삭제되었습니다."); location.href="/admin/m_user/page?page=1";</script>');
+});
+
 //프로필 삭제
 router.get('/imgDelete', async (req, res) => {
   const param = req.query.userImg;
+  console.log(param)
   try {
     const sql = "update user set userImg = null where uid = ?";
     connection.query(sql, req.query.uid, (err, row) => {

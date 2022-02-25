@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<link rel="stylesheet" type="text/css" href="/stylesheets/css/default.css" />
+	<link rel="stylesheet" type="text/css" href="/stylesheets/css/basic.css" />
+	<link rel="stylesheet" type="text/css" href="/stylesheets/css/layout.css" />
+	<!--<link href="/js/jquery/css/jquery-ui-1.8.2.custom.css" rel="stylesheet" type="text/css"/>-->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css" />
+	<script type="text/javascript" src="/stylesheets/jquery/jquery-1.7.1.min.js"></script>
+	<script type="text/javascript" src="/stylesheets/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+	<script type="text/javascript" src="/stylesheets/jquery/jquery.validate.js"></script>
+	<script type="text/javascript" src="/stylesheets/jquery/jquery.form.js"></script>
+	<script src="/stylesheets/js/common.js"></script>
+</head>
+
+<style>
+	input {
+		border: 1px solid grey
+	}
+</style>
+
+<body style="background: #fff;">
+	<div class="popup">
+		<h2><span class="float_l">회원수정</h2>
+		<form action="" id="boardUpdate" method="" enctype="multipart/form-data">
+			<div class="content">
+				<table>
+					<tr>
+						<th>프로필사진</th>
+						<% if(result.length > 0 && result[0].userImg != null && result[0].userImg != '') {%>
+						<td colspan="3">
+							<li><img src="../../../<%= result[0].userImg %>" alt="사진" width="117px" />
+								<button onclick="javascript:file_del();">삭제</button>
+							</li>
+							<input type="hidden" id="userImg" name="userImg" value="<%=result[0].userImg%>">
+						</td>
+						<% }else{ %>
+						<td name="file_name" colspan="3">
+							<li><input type="file" id="file" name="file" /></li>
+						</td>
+						<% } %>
+
+					</tr>
+					<tr>
+						<th>일련번호</th>
+						<td colspan="3">
+							<input type="text" type="text" id="uid" name="uid" value="<%=result[0].uid%>" readonly>
+						</td>
+					</tr>
+					<tr>
+						<th class="necessary">닉네임</th>
+						<td colspan="3">
+							<input type="text" id="userNick" name="userNick" value="<%=result[0].userNick%>">
+						</td>
+					</tr>
+					<tr>
+						<th class="necessary">이메일</th>
+						<td colspan="3">
+							<input type="text" id="userEmail" name="userEmail" value="<%=result[0].userEmail%>">
+						</td>
+					</tr>
+					<tr>
+						<th>나이</th>
+						<td colspan="3">
+							<input type="text" id="userAge" name="userAge" value="<%=result[0].userAge%>">
+						</td>
+					</tr>
+					<tr>
+						<th>주소1</th>
+						<td colspan="3">
+							<input type="text" id="userAdres1" name="userAdres1" value="<%=result[0].userAdres1%>">
+						</td>
+					</tr>
+					<tr>
+						<th>주소2</th>
+						<td colspan="3">
+							<input type="text" id="userAdres2" name="userAdres2" value="<%=result[0].userAdres2%>">
+						</td>
+					</tr>
+					<tr>
+						<th>학교</th>
+						<td colspan="3">
+							<input type="text" id="userSchool" name="userSchool" value="<%=result[0].userSchool%>">
+						</td>
+					</tr>
+					<tr>
+						<th>포인트</th>
+						<td colspan="3">
+							<input type="text" id="userPoint" name="userPoint" value="<%=result[0].userPoint%>">
+						</td>
+					</tr>
+					<tr>
+						<th>계산점수</th>
+						<td colspan="3">
+							<input type="text" id="userScore" name="userScore" value="<%=result[0].userScore%>">
+						</td>
+					</tr>
+					<tr>
+						<th>상태</th>
+						<td colspan="3">
+							<!-- <option value="" selected disabled hidden>선택</option> -->
+							<label><input type="radio" id="userStatus1" name="userStatus" value="0">일반회원</label>&nbsp;&nbsp;
+							<label><input type="radio" id="userStatus2" name="userStatus" value="1">탈퇴회원</label>
+							<% if(result.length > 0) {%>
+							<input type="hidden" id="userStatusValue" value="<%=result[0].userStatus%>">
+							<% } %>
+						</td>
+
+					</tr>
+					<tr>
+						<th>개인정보 동의여부</th>
+						<td colspan="3">
+							<label><input type="radio" id="userAgree1" name="userAgree" value="0">동의</label>&nbsp;&nbsp;
+							<label><input type="radio" id="userAgree2" name="userAgree" value="1">비동의</label>
+							<% if(result.length > 0) {%>
+							<input type="hidden" id="userAgreeValue" value="<%=result[0].userAgree%>">
+							<% } %>
+						</td>
+
+					</tr>
+					<tr>
+						<th>권한</th>
+						<td colspan="3">
+							<label><input type="radio" id="userAuth1" name="userAuth" value="0">일반회원</label>&nbsp;&nbsp;
+							<label><input type="radio" id="userAuth2" name="userAuth" value="1">기업</label>
+							<% if(result.length > 0) {%>
+							<input type="hidden" id="userAuthValue" value="<%=result[0].userAuth%>">
+							<% } %>
+						</td>
+
+					</tr>
+				</table>
+				<p class="btn">
+					<button type="submit" onclick="userUpdate()">수정</button>
+					<button onclick="window.close();">취소</button>
+				</p>
+			</div>
+		</form>
+	</div>
+
+	<script type="text/javascript">
+		function file_del(route) {
+			if (confirm("실제 파일이 삭제됩니다 \n정말 삭제하시겠습니까?")) {
+				$("#boardUpdate").attr("action", "imgDelete");
+				$("#boardUpdate").attr("method", "get");
+				$("#boardUpdate").submit();
+			}
+		}
+	
+		function userUpdate() {
+			if (confirm("수정하시겠습니까?")) {
+				$("#boardUpdate").attr("action", "userUpdate");
+				$("#boardUpdate").attr("method", "post");
+				$("#boardUpdate").submit();
+				alert("수정이 완료되었습니다.");
+			}
+		}
+	
+		//check box
+		if ($('#userStatusValue').val() == '0') {
+			$('#userStatus1').prop("checked", true);
+		} else if ($('#userStatusValue').val() == '1') {
+			$('#userStatus2').prop("checked", true);
+		};
+	
+	
+		if ($('#userAgreeValue').val() == '0') {
+			$('#userAgree1').prop("checked", true);
+		} else if ($('#userAgreeValue').val() == '1') {
+			$('#userAgree2').prop("checked", true);
+		};
+	
+		if ($('#userAuthValue').val() == '0') {
+			$('#userAuth1').prop("checked", true);
+		} else if ($('#userAuthValue').val() == '1') {
+			$('#userAuth2').prop("checked", true);
+		};
+	</script>

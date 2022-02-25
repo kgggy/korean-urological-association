@@ -15,12 +15,12 @@ router.get('/all', async (req, res) => {
         const sql = "select fileRoute, c.certiContentId, p.writId, c.certiContentDate, p.writDate, f.fileNo from file f\
                   left join post p on p.writId = f.writId\
                   right join certiContent c on c.certiContentId = f.certiContentId\
-                      where (p.uid = ? or c.uid = ?) and (f.fileNo = 0 or f.fileNo is null)\
+                      where (p.uid = ? or c.uid = ?) and (f.fileNo = 1 or f.fileNo is null)\
                       union\
                      select fileRoute, c.certiContentId, p.writId, c.certiContentDate, p.writDate, f.fileNo from file f\
                  right join post p on p.writId = f.writId\
                   left join certiContent c on c.certiContentId = f.certiContentId\
-                      where (p.uid = ? or c.uid = ?) and (f.fileNo = 0 or f.fileNo is null)\
+                      where (p.uid = ? or c.uid = ?) and (f.fileNo = 1 or f.fileNo is null)\
                    order by writDate desc, certiContentDate desc;";
         const param = [req.query.uid, req.query.uid, req.query.uid, req.query.uid];
         let all;
@@ -45,7 +45,7 @@ router.get('/certi', async (req, res) => {
                        from certiContent c\
                   left join file f on f.certiContentId = c.certiContentId\
                   left join certification t on t.certiTitleId = c.certiTitleId\
-                      where c.uid = ? and t.certiDivision = ? and (fileNo = 0 or fileNo is null)\
+                      where c.uid = ? and t.certiDivision = ? and (fileNo = 1 or fileNo is null)\
                    order by c.certiContentDate desc";
         const param = [req.query.uid, req.query.certiDivision];
         let certi;
@@ -69,7 +69,7 @@ router.get('/recipe', async (req, res) => {
         const sql = "select f.fileRoute, p.writId\
                        from post p\
                   left join file f on f.writId = p.writId\
-                      where p.uid = ? and p.boardId = ? and (fileNo = 0 or fileNo is null)\
+                      where p.uid = ? and p.boardId = ? and (fileNo = 1 or fileNo is null)\
                    order by p.writDate desc";
         const param = [req.query.uid, req.query.boardId];
         let certi;
@@ -95,7 +95,7 @@ router.get('/likes', async (req, res) => {
                   left join post p on p.writId = r.writId\
                   left join certiContent c on c.certiContentId = r.certiContentId\
                   left join file f on f.certiContentId = r.certiContentID or f.writId = r.writId\
-                      where r.uid = ? and (fileNo = 0 or fileNo is null)";
+                      where r.uid = ? and (fileNo = 1 or fileNo is null)";
         const param = [req.query.uid, req.query.boardId];
         let certi;
         connection.query(sql, param, (err, resutls) => {

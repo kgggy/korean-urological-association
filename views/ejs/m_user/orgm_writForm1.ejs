@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<link rel="stylesheet" type="text/css" href="/stylesheets/css/default.css" />
+	<link rel="stylesheet" type="text/css" href="/stylesheets/css/basic.css" />
+	<link rel="stylesheet" type="text/css" href="/stylesheets/css/layout.css" />
+	<!--<link href="/js/jquery/css/jquery-ui-1.8.2.custom.css" rel="stylesheet" type="text/css"/>-->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css" />
+	<script type="text/javascript" src="/stylesheets/jquery/jquery-1.7.1.min.js"></script>
+	<script type="text/javascript" src="/stylesheets/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+	<script type="text/javascript" src="/stylesheets/jquery/jquery.validate.js"></script>
+	<script type="text/javascript" src="/stylesheets/jquery/jquery.form.js"></script>
+	<script src="/stylesheets/js/common.js"></script>
+</head>
+
+<style>
+	input {
+		border: 1px solid grey
+	}
+
+	td {
+		column-span: all;
+	}
+</style>
+
+<body style="background: #fff;">
+	<div class="popup">
+		<h2><span class="float_l">회원수정</h2>
+		<form action="" id="userEnrollForm" method="post" enctype="multipart/form-data">
+			<div class="content">
+				<table>
+					<tr>
+						<th>프로필사진</th>
+						<td name="file_name" colspan="3">
+							<li><input type="file" id="file" name="file" /></li>
+						</td>
+					</tr>
+					<tr>
+						<th class="necessary">닉네임</th>
+						<td colspan="3">
+							<input id="userNick" name="userNick" value="">
+						</td>
+					</tr>
+					<tr>
+						<th class="necessary">이메일</th>
+						<td colspan="3">
+							<input id="userEmail" name="userEmail" value="">
+						</td>
+					</tr>
+					<tr>
+						<th class="necessary">패스워드</th>
+						<td colspan="3">
+							<input id="userPwd" name="userPwd" value="">
+						</td>
+					</tr>
+					<tr>
+						<th>나이</th>
+						<td colspan="3">
+							<input id="userAge" name="userAge" value="">
+						</td>
+					</tr>
+					<tr>
+						<th>주소1</th>
+						<td colspan="3">
+							<input id="userAdres1" name="userAdres1" value="">
+						</td>
+					</tr>
+					<tr>
+						<th>주소2</th>
+						<td colspan="3">
+							<input id="userAdres2" name="userAdres2" value="">
+						</td>
+					</tr>
+					<tr>
+						<th>학교</th>
+						<td colspan="3">
+							<input id="userSchool" name="userSchool" value="">
+						</td>
+					</tr>
+					<tr>
+						<th>포인트</th>
+						<td colspan="3">
+							<input id="userPoint" name="userPoint" value="">
+						</td>
+					</tr>
+					<tr>
+						<th>계산점수</th>
+						<td colspan="3">
+							<input id="userScore" name="userScore" value="">
+						</td>
+					</tr>
+					<tr>
+						<th>상태</th>
+						<td colspan="3">
+							<!-- <option value="" selected disabled hidden>선택</option> -->
+							<label><input type="radio" id="userStatus1" name="userStatus"
+									value="0">일반회원</label>&nbsp;&nbsp;
+							<label><input type="radio" id="userStatus2" name="userStatus" value="1">탈퇴회원</label>
+						</td>
+					</tr>
+					<tr>
+						<th>개인정보 동의여부</th>
+						<td colspan="3">
+							<label><input type="radio" id="userAgree1" name="userAgree" value="0">동의</label>&nbsp;&nbsp;
+							<label><input type="radio" id="userAgree2" name="userAgree" value="1">비동의</label>
+						</td>
+					</tr>
+					<tr>
+						<th>권한</th>
+						<td colspan="3">
+							<label><input type="radio" id="userAuth1" name="userAuth" value="0">일반회원</label>&nbsp;&nbsp;
+							<label><input type="radio" id="userAuth2" name="userAuth" value="1">기업</label>
+						</td>
+					</tr>
+				</table>
+				<p class="btn">
+					<button type="submit" id="btn" onclick="userUpdate()">등록</button>
+					<button onclick="window.close();">취소</button>
+				</p>
+			</div>
+		</form>
+	</div>
+
+	<script type="text/javascript">
+		function file_del(route) {
+			if (confirm("실제 파일이 삭제됩니다 \n정말 삭제하시겠습니까?")) {
+				$("#boardWrit").attr("action", "imgDelete");
+				$("#boardWrit").attr("method", "get");
+				$("#boardWrit").submit();
+			}
+		}
+
+		$("#btn").click(function () {
+			var userNick = $("#userNick").val();
+			var userEmail = $("#userEmail").val();
+			var userPwd = $("#userPwd").val();
+
+			if (userNick == '') {
+				alert("닉네임을 입력해주세요.");
+				$("#userNick").focus();
+				return false;
+			}
+
+			if (userEmail == '') {
+				alert("이메일을 입력해주세요.");
+				$("#userEmail").focus();
+				return false;
+			}
+
+			if (userPwd == '') {
+				alert("패스워드를 입력해주세요.");
+				$("#userPwd").focus();
+				return false;
+			}
+
+			if (confirm("등록하시겠습니까?") == true) {
+				$("#userEnrollForm").attr("action", "userInsert");
+				$("#userEnrollForm").submit();
+			} else {
+				return;
+			}
+		});
+	</script>

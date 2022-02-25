@@ -55,59 +55,50 @@ var upload = multer({ //multer안에 storage정보
 
 });
 
-//파일 다운로드
-router.get('/download', (req, res) => {
-    const fileName = '';
-    filepath = __dirname + '../..//uploads/'
-    console.log(filepath);
-})
-
-//커뮤니티 종류
-router.get('/', async (req, res) => {
-    try {
-        let community;
-        const sql = "select * from community";
-        connection.query(sql, (err, results) => {
-            if (err) {
-                console.log(err);
-                res.json({
-                    msg: "query error"
-                });
-            }
-            community = results;
-            res.status(200).json(community);
-        });
-    } catch (error) {
-        res.status(401).send(error.message);
-    }
-});
-
 //카테고리별 글 전체조회
 router.get('/all', async (req, res) => {
     try {
-        var page = req.query.page;
+        //카테고리 명 조회
         const param = req.query.boardId;
-        const sql = "select p.*, c.*, u.userNick, u.uid, date_format(writDate, '%Y-%m-%d') as writDatefmt, date_format(writUpdDate, '%Y-%m-%d') as writUpdDatefmt\
+        const sql1 = "select * from community where boardId = ?";
+        let community = "";
+        connection.query(sql1, param, (err, results) => {
+            if (err) {
+                console.log(err);
+            }
+            community = results;
+        });
+        //게시판별 글 전체조회
+        var page = req.query.page;
+        var searchType = req.query.searchType == undefined ? "" : req.query.searchType;
+        var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
+        var sql = "select p.*, c.*, u.userNick, u.uid, date_format(writDate, '%Y-%m-%d') as writDatefmt, date_format(writUpdDate, '%Y-%m-%d') as writUpdDatefmt\
                        from post p\
                   left join community c\
                          on c.boardId = p.boardId\
                   left join user u\
                          on u.uid = p.uid\
-                      where p.boardId = ?\
-                      order by p.writRank is null asc, nullif(p.writRank, '') is null asc, p.writRank, p.writDate desc";
+                      where p.boardId = ?";
+        if (searchType != '' && searchText != '') {
+            sql += " and " + searchType + " like '%" + searchText + "%'";
+        }
+        sql += " order by p.writRank is null asc, nullif(p.writRank, '') is null asc, p.writRank, p.writDate desc";
         connection.query(sql, param, (err, results) => {
+            var last = Math.ceil((results.length - 1) / 15);
             if (err) {
                 console.log(err);
             }
             let route = req.app.get('views') + '/m_board/board';
             res.render(route, {
-                searchType: null,
-                searchText: null,
+                community: community,
+                searchType: searchType,
+                searchText: searchText,
                 results: results,
                 page: page,
                 length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
                 page_num: 15, //한 페이지에 보여줄 개수
-                pass: true
+                pass: true,
+                last: last
             });
         });
     } catch (error) {
@@ -133,8 +124,7 @@ router.get('/selectOne', async (req, res) => {
             }
             let route = req.app.get('views') + '/m_board/brd_viewForm';
             res.render(route, {
-                'result': result,
-                layout: false
+                'result': result
             });
         });
     } catch (error) {
@@ -198,7 +188,7 @@ router.post('/boardwrite', upload.array('file'), async (req, res, next) => {
                 throw err;
             }
             for (let i = 0; i < paths.length; i++) {
-                const param2 = [boardWritId, paths[i], i, orgName[i]];
+                const param2 = [boardWritId, paths[i], i + 1, orgName[i]];
                 // console.log(param2);
                 const sql2 = "insert into file(writId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
                 connection.query(sql2, param2, (err) => {
@@ -230,8 +220,7 @@ router.get('/brdUdtForm', async (req, res) => {
             let route = req.app.get('views') + '/m_board/brd_udtForm';
             console.log(route);
             res.render(route, {
-                'result': result,
-                layout: false
+                'result': result
             });
             console.log(result);
         });
@@ -246,28 +235,31 @@ router.post('/brdUpdate', upload.array('file'), (req, res) => {
     const paths = req.files.map(data => data.path);
     const orgName = req.files.map(data => data.originalname);
     // console.log(paths);
-    console.log(req.body);
     try {
         const param = [req.body.writTitle, req.body.writContent, req.body.writRank, req.body.writRank, req.body.writId];
         const sql1 = "update post set writTitle = ?, writContent = ?, writUpdDate = sysdate(), writRank = if(trim(?)='', null, ?) where writId = ?";
-        const sql2 = "insert into file(writId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
-        const sql3 = "delete from file where writId = ? and fileNo = ?";
         connection.query(sql1, param, (err, row) => {
             if (err) {
                 console.error(err);
             }
-            var num = "";
-            for (let i = 0; req.body.fileNo1[i] !== i ; i++) {
-                num += 1
-            };
-
             for (let i = 0; i < paths.length; i++) {
-                const param2 = [req.body.writId, paths[i], num, orgName[i]];
+                const sql2 = "insert into file(writId, fileRoute, fileOrgName) values (?, ?, ?)";
+                const param2 = [req.body.writId, paths[i], orgName[i]];
                 // console.log(param2);
                 connection.query(sql2, param2, (err) => {
                     if (err) {
                         throw err;
                     }
+                    const sql3 = "SELECT @fileNo:=0;\
+                                      UPDATE file SET fileNo=@fileNo:=@fileNo+1 where writId = ?;";
+                    const param3 = [req.body.writId];
+                    connection.query(sql3, param3, (err) => {
+                        if (err) {
+                            throw err;
+                        }
+                        // console.log("fileNo update success");
+                    });
+
                 });
             };
             res.redirect('selectOne?writId=' + req.body.writId);
@@ -375,7 +367,7 @@ router.get('/search', async (req, res) => {
                 results: results,
                 page: page,
                 length: results.length - 1,
-                page_num: 10,
+                page_num: 15,
                 pass: true
             });
             console.log(results);

@@ -78,6 +78,7 @@ router.get('/certiAll', async (req, res) => {
         })
 
         connection.query(sql, param, (err, results) => {
+            var last = Math.ceil((results.length - 1) / 15);
             if (err) {
                 console.log(err);
                 response.json({
@@ -92,10 +93,33 @@ router.get('/certiAll', async (req, res) => {
                 results: results,
                 page: page,
                 length: results.length - 1,
-                page_num: 6,
-                pass: true
+                page_num: 10,
+                pass: true,
+                last: last
             });
             // console.log(results);
+        });
+    } catch (error) {
+        res.status(401).send(error.message);
+    }
+});
+
+//종류 상세조회
+router.get('/selectOne', async (req, res) => {
+    try {     
+        const param = req.query.certiTitleId;
+        const sql = "select *, date_format(certiStartDate, '%Y-%m-%d') as certiStartDatefmt, date_format(certiEndDate, '%Y-%m-%d') as certiEndDatefmt\
+                      from certification\
+                     where certiTitleId = ?";
+        connection.query(sql, param, function (err, result, fields) {
+            if (err) {
+                console.log(err);
+            }
+            let route = req.app.get('views') + '/m_certification/certi_viewForm';
+            res.render(route, {
+                result: result
+            });
+            console.log(result)
         });
     } catch (error) {
         res.status(401).send(error.message);
@@ -116,7 +140,7 @@ router.post('/', upload.single('file'), async function (req, res) {
                 throw err;
             }
             for (let i = 0; i < paths.length; i++) {
-                const param2 = [contentId, paths[i], i, orgName[i]];
+                const param2 = [contentId, paths[i], i + 1, orgName[i]];
                 // console.log(param2);
                 const sql2 = "insert into file(certiContentId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
                 connection.query(sql2, param2, (err) => {
@@ -136,7 +160,7 @@ router.post('/', upload.single('file'), async function (req, res) {
 });
 
 //탄소실천, 챌린지 종류 삭제
-router.post('/certiDelete', async (req, res) => {
+router.get('/certiDelete', async (req, res) => {
     try {
         const param = req.query.certiTitleId;
         console.log(param);
@@ -277,10 +301,8 @@ router.get('/certiUdtForm', async (req, res) => {
             let route = req.app.get('views') + '/m_certification/certi_udtForm';
             res.render(route, {
                 result: result,
-                div:div,
-                layout: false
+                div:div
             });
-            console.log(div);
         });
     } catch (error) {
         res.status(401).send(error.message);
@@ -308,7 +330,7 @@ router.post('/certiUpdate', upload.single('file'), async (req, res) => {
         if (err) {
             console.error(err);
         }
-        res.send("<script>opener.parent.location.reload(); window.close();</script>");
+        res.redirect('selectOne?certiTitleId=' + req.body.certiTitleId);
     });
 });
 

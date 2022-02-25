@@ -78,7 +78,7 @@ router.get('/:boardId', async (req, res) => {
                   left join community c\
                          on c.boardId = p.boardId \
                   left join file f on f.writId = p.writId\
-                      where p.boardId = ? and (fileNo = 0 or fileNo is null)\
+                      where p.boardId = ? and (fileNo = 1 or fileNo is null)\
                       order by p.writRank is null asc, nullif(p.writRank, '') is null asc, p.writRank, p.writDate desc";
         let notices;
         connection.query(sql, param, (err, results) => {
@@ -145,7 +145,7 @@ router.post('/', upload.array('file'), async (req, res, next) => {
                 throw err;
             }
             for (let i = 0; i < paths.length; i++) {
-                const param2 = [boardWritId, paths[i], i, orgName[i]];
+                const param2 = [boardWritId, paths[i], i + 1, orgName[i]];
                 // console.log(param2);
                 const sql2 = "insert into file(writId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
                 connection.query(sql2, param2, (err) => {
@@ -201,41 +201,41 @@ router.get('/download/:writId/:fileNo', async (req, res) => {
 
 
 //게시글 수정
-router.post('/:writId', upload.array('file'), async (req, res) => {
-    const paths = req.files.map(data => data.path);
-    const orgName = req.files.map(data => data.originalname);
-    try {
-        const sql1 = "update post set writTitle = ?, writContent = ?, writUpdDate = sysdate() where writId = ?;";
-        const sql2 = "delete from file where writId = ?;"
-        connection.query(sql1 + sql2, [req.body.writTitle, req.body.writContent, req.params.writId, req.params.writId], (err, row) => {
-            if (err) {
-                console.error(err);
-                res.json({
-                    msg: "query error"
-                });
-            }
-            for (let i = 0; i < paths.length; i++) {
-                const sql3 = "insert into file(writId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
-                const param3 = [req.params.writId, paths[i], i, orgName[i]];
-                connection.query(sql3, param3, (err) => {
-                    if (err) {
-                        throw err;
-                    } else {
-                        return;
-                    }
-                });
+// router.post('/:writId', upload.array('file'), async (req, res) => {
+//     const paths = req.files.map(data => data.path);
+//     const orgName = req.files.map(data => data.originalname);
+//     try {
+//         const sql1 = "update post set writTitle = ?, writContent = ?, writUpdDate = sysdate() where writId = ?;";
+//         const sql2 = "delete from file where writId = ?;"
+//         connection.query(sql1 + sql2, [req.body.writTitle, req.body.writContent, req.params.writId, req.params.writId], (err, row) => {
+//             if (err) {
+//                 console.error(err);
+//                 res.json({
+//                     msg: "query error"
+//                 });
+//             }
+//             for (let i = 0; i < paths.length; i++) {
+//                 const sql3 = "insert into file(writId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
+//                 const param3 = [req.params.writId, paths[i], i + 1, orgName[i]];
+//                 connection.query(sql3, param3, (err) => {
+//                     if (err) {
+//                         throw err;
+//                     } else {
+//                         return;
+//                     }
+//                 });
 
-            };
-            return;
+//             };
+//             return;
 
-        });
-        return res.json({
-            msg: "success"
-        });
-    } catch (error) {
-        res.send(error.message);
-    }
-});
+//         });
+//         return res.json({
+//             msg: "success"
+//         });
+//     } catch (error) {
+//         res.send(error.message);
+//     }
+// });
 
 //게시글 삭제
 router.delete('/:writId', async (req, res) => {

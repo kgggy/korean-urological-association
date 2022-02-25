@@ -59,7 +59,7 @@ router.get('/certiContentAll', async (req, res) => {
                        from certiContent c\
                   left join file f on f.certiContentId = c.certiContentId\
                   left join certification e on e.certiTitleId = c.certiTitleId\
-                      where e.certiDivision = ? and f.fileNo = 0\
+                      where e.certiDivision = ? and f.fileNo = 1\
                       order by c.certiContentDate desc";
         connection.query(sql, param, (err, results) => {
             if (err) {
@@ -129,7 +129,7 @@ router.post('/certiContWrit', upload.array('file'), async function (req, res) {
                 throw err;
             }
             for (let i = 0; i < paths.length; i++) {
-                const param2 = [contentId, paths[i], i, orgName[i]];
+                const param2 = [contentId, paths[i], i + 1, orgName[i]];
                 // console.log(param2);
                 const sql2 = "insert into file(certiContentId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
                 connection.query(sql2, param2, (err) => {
@@ -251,7 +251,7 @@ router.post('/', upload.array('file'), async function (req, res) {
                 throw err;
             }
             for (let i = 0; i < paths.length; i++) {
-                const param2 = [contentId, paths[i], i, orgName[i]];
+                const param2 = [contentId, paths[i], i + 1, orgName[i]];
                 console.log(param2);
                 const sql2 = "insert into file(certiContentId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
                 connection.query(sql2, param2, (err) => {
@@ -333,7 +333,7 @@ router.get('/search', async (req, res) => {
             from certiContent c\
        left join file f on f.certiContentId = c.certiContentId\
        left join certification e on e.certiTitleId = c.certiTitleId\
-           where e.certiDivision = ? and f.fileNo = 0\
+           where e.certiDivision = ? and f.fileNo = 1\
            order by c.certiContentDate desc";
             connection.query(sql, searchType, (err, results, row) => {
                 if (err) {
@@ -355,7 +355,7 @@ router.get('/search', async (req, res) => {
             from certiContent c\
        left join file f on f.certiContentId = c.certiContentId\
        left join certification e on e.certiTitleId = c.certiTitleId\
-           where e.certiDivision = ? and f.fileNo = 0\
+           where e.certiDivision = ? and f.fileNo = 1\
            order by c.certiContentDate desc";
             connection.query(sql, searchType, (err, results, row) => {
                 if (err) {
