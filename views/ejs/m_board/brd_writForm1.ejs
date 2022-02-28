@@ -1,0 +1,155 @@
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/css/default.css" />
+    <link rel="stylesheet" type="text/css" href="/stylesheets/css/basic.css" />
+    <link rel="stylesheet" type="text/css" href="/stylesheets/css/layout.css" />
+    <!--<link href="/js/jquery/css/jquery-ui-1.8.2.custom.css" rel="stylesheet" type="text/css"/>-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css" />
+    <script type="text/javascript" src="/stylesheets/jquery/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/stylesheets/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+    <script type="text/javascript" src="/stylesheets/jquery/jquery.validate.js"></script>
+    <script type="text/javascript" src="/stylesheets/jquery/jquery.form.js"></script>
+    <script src="/stylesheets/js/common.js"></script>
+    <!-- ckeditor -->
+    <!-- <script src="https://cdn.ckeditor.com/ckeditor5/29.1.0/classic/ckeditor.js"></script> -->
+    <script src="../../../public/build/ckeditor.js"></script>
+</head>
+
+<style>
+    .ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
+        border-color: var(--ck-color-base-border);
+        height: 50%;
+    }
+
+    .ck.ck-editor__editable:not(.ck-editor__nested-editable).ck-focused {
+        height: 50%;
+    }
+</style>
+
+<div class="popup">
+    <h2><span class="float_l">글 등록</h2>
+    <div class="content">
+        <form action="" id="boardwrite" method="post" enctype="multipart/form-data" autocomplete="off">
+            <table>
+                <colgroup>
+                    <col width="18%" />
+                    <col width="32%" />
+                    <col width="18%" />
+                    <col width="32%" />
+                </colgroup>
+                <tr>
+                    <th>제목</th>
+                    <td colspan="3"><input type="text" id="writTitle" name="writTitle" value=""
+                            style="ime-mode:active;" /></td>
+                </tr>
+                <!-- <% if(data.length == 0) {%>
+                <tr>
+                    <th>PUSH알림</th>
+                    <td colspan="3">
+                        <input type="checkbox" name="brdPushYn" value="Y" />
+                        <input type="hidden" name="brdPushYn_result" />
+                    </td>
+                </tr>
+                <% }%> -->
+                <tr>
+                    <th>우선순위</th>
+                    <td colspan="3"><input type="number" id="writRank" name="writRank" value="" style="width:50px;" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>첨부파일</th>
+                    <td name="file_name" colspan="3">
+                        <li><input type="file" id="file" name="file" /></li>
+                        <li><input type="file" id="file" name="file" /></li>
+                        <li><input type="file" id="file" name="file" /></li>
+                        <li><input type="file" id="file" name="file" /></li>
+                        <li><input type="file" id="file" name="file" /></li>
+                    </td>
+                </tr>
+            </table>
+            <textarea name="editor" class="editor" id="editor"></textarea>
+            <input type="hidden" id="uid" name="uid" value="">
+            <input type="hidden" id="boardId" name="boardId" value="">
+            <input type="hidden" id="writContent" name="writContent" value="">
+            <p class="btn">
+                <button type="button" class="btn_big_blue hand" id="btn">등록</button>
+                <button type="button" class="btn_big_black hand" id="btn_bak" onclick="window.close();">취소</button>
+            </p>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //ckeditor
+        ClassicEditor
+            .create(document.querySelector('#editor'), {
+                language: 'ko'
+            })
+            .then(newEditor => {
+                editor = newEditor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+
+
+        $("#btn").click(function () {
+            // const aa = Array.from(editor.ui.componentFactory.names());
+            // console.log(aa);
+            var writTitle = $("#writTitle").val();
+            // var content = $("#content").val();
+            // $('input[name=inputNm]').attr('value',goContent);
+            var content = editor.getData();
+            console.log(content);
+
+            if (writTitle == "") {
+                alert("제목을 입력하세요.");
+                $("#writTitle").focus();
+                return false;
+            }
+
+            if (content == null) {
+                alert("내용을 입력하세요.");
+                $("#editor").focus();
+                return false;
+            }
+
+            if (confirm("등록하시겠습니까?") == true) {
+                $('input[name=writContent]').attr('value', content);
+                $("#boardwrite").attr("action", "boardwrite");
+                $("#boardwrite").submit();
+                alert("등록되었습니다.");
+            } else {
+                return;
+            }
+        });
+
+        //쿼리스트링값 가져와서 넘기기
+        function getUrlParams() {
+            var params = {};
+            window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (str, key, value) {
+                params[key] = value;
+            });
+            return params;
+        }
+        var param = getUrlParams();
+        var uid = document.getElementById("uid");
+        uid.value = param.uid;
+        var boardId = document.getElementById("boardId");
+        boardId.value = param.boardId;
+    });
+
+    function file_del(no, name) {
+        if (confirm("실제 파일이 삭제됩니다 \n정말 삭제하시겠습니까?")) {
+            $('#file_no').val(no);
+            $('#file_name').val(name);
+            $("#boardwrite").attr("action", "board_file_del");
+            $("#boardwrite").submit();
+        }
+    }
+</script>

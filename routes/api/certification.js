@@ -105,7 +105,7 @@ router.get('/one/:certiContentId', async (req, res) => {
         const sql = "select f.fileRoute,\
                             (select count(*) from recommend where certiContentId = ?) as rcount,\
                             (select count(*) from comment where certiContentId = ?) as mcount,\
-                             c.uid\
+                             c.uid, c.certiContentDate\
                        from certiContent c\
                   left join file f on c.certiContentId = f.certiContentId\
                   left join comment m on m.certiContentId = c.certiContentId\

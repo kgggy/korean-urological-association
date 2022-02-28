@@ -3,202 +3,157 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item">Home</li>
         <li class="breadcrumb-item">
-            <a style="font-weight: bold;">게시판관리</a>
-        </li>
-        <li class="breadcrumb-item active">언론보도</li>
+            <% if(param == 0) { %>
+            <a style="font-weight: bold;">탄소실천관리</a>
+            <% } else {%>
+            <a style="font-weight: bold;">챌린지관리</a>
+            <% } %>
+        <li class="breadcrumb-item active">종류관리</li>
     </ol>
-    <% if(results.length > 0) { %>
+
     <div class="container-fluid">
         <div class="animated fadeIn">
             <div class="row">
                 <div class="col-lg-6">
                     <div class="card">
                         <div class="card-header">
-                            <%if(results[0].certiDivision == 0){%>
+                            <% if(param == 0) { %>
                             <i class="fa fa-align-justify"></i> 탄소실천 종류 관리
                             <% } else {%>
                             <i class="fa fa-align-justify"></i> 챌린지 종류 관리
                             <% } %>
                         </div>
                         <div class="card-body">
-                            <% if(results[0].certiDivision == 0) { %>
-                            <div align="right">
-                                <form class="easydropdown" id="searchForm" name="searchForm" method="" action="">
-                                    <input type="hidden" name="page" value="1" />
-                                    <input type="hidden" name="certiDivision" value="<%= results[0].certiDivision %>" />
-                                    <select id="division" name="division" class="dropdown">
-                                        <option value="" selected="selected">--분류--</option>
-                                        <% for(var i = 0; i < div.length ; i++){  %>
-                                        <option value="<%= div[i].certiSubDivision %>"
-                                            <%if(division==div[i].certiSubDivision){%> selected="selected"
-                                            <%}%>><%= div[i].certiSubDivision %></option> <% } %> </select> <select
-                                            name="searchType" class="dropdown">
-                                        <option value="" selected="selected">--단계--</option>
-                                        <option value="1" <%if(searchType=="1"){%> selected="selected" <%}%>>1단계</option>
-                                        <option value="2" <%if(searchType=="2"){%> selected="selected" <%}%>>2단계</option>
-                                        <option value="3" <%if(searchType=="3"){%> selected="selected" <%}%>>3단계</option>
-                                        <option value="4" <%if(searchType=="4"){%> selected="selected" <%}%>>4단계</option>
-                                        <option value="5" <%if(searchType=="5"){%> selected="selected" <%}%>>5단계</option>
-                                    </select>
-                                    <input class="btn btn-block btn-outline-success" type="button" id="searchAction" value="검색" />
-                                </form></div>
-                                <% } %> <form id="certiForm" name="certiForm" method="" action="">
-                                            <div class="board_list">
-                                                <table class="table table-responsive-sm table-hover">
-                                                    <colgroup>
-                                                        <col width="5%" />
-                                                        <col width="5%" />
-                                                        <col width="20%" />
-                                                        <col width="30%" />
-                                                        <col width="10%" />
-                                                        <col width="10%" />
-                                                    </colgroup>
-                                                    <thead>
-                                                        <tr>
-                                                            <th colspan="2">번호</th>
-                                                            <!-- <th>이미지</th> -->
-                                                            <th>종류</th>
-                                                            <th colspan="2">설명글</th>
-                                                            <th>포인트</th>
-                                                            <% if(results[0].certiDivision == 0) {%> <th>단계</th>
-                                                            <% }else{ %>
-                                                            <th>권한</th>
-                                                            <% } %>
-                                                            <% if(results[0].certiDivision == 1) {%>
-                                                            <th>기간</th>
-                                                            <% } %>
-                                                            <th>노출여부</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <% for(var i = (page * page_num) - page_num; i < (page * page_num); i++) { 
+                            <% if(param == 0) { %>
+                            <form class="easydropdown" id="searchForm" name="searchForm" method="" action="">
+                                <input type="hidden" name="page" value="1" />
+                                <input type="hidden" name="certiDivision" value="<%= param %>" />
+                                <select id="division" name="division" class="dropdown">
+                                    <option value="" selected="selected">--분류--</option>
+                                    <% for(var i = 0; i < div.length ; i++){  %>
+                                    <option value="<%= div[i].certiSubDivision %>"
+                                        <%if(division==div[i].certiSubDivision){%> selected="selected"
+                                        <%}%>><%= div[i].certiSubDivision %></option> <% } %> </select> <select
+                                        name="searchType" class="dropdown">
+                                    <option value="" selected="selected">--단계--</option>
+                                    <option value="1" <%if(searchType=="1"){%> selected="selected" <%}%>>1단계</option>
+                                    <option value="2" <%if(searchType=="2"){%> selected="selected" <%}%>>2단계</option>
+                                    <option value="3" <%if(searchType=="3"){%> selected="selected" <%}%>>3단계</option>
+                                    <option value="4" <%if(searchType=="4"){%> selected="selected" <%}%>>4단계</option>
+                                    <option value="5" <%if(searchType=="5"){%> selected="selected" <%}%>>5단계</option>
+                                </select>
+                                <input class="btn btn-block btn-outline-success" type="button" id="searchAction" value="검색" />
+                            </form>
+                            <% } %> <form id="certiForm" name="certiForm" method="" action="">
+                            </form>
+                            <table class="table table-responsive-sm table-hover">
+
+                                <colgroup>
+                                    <col width="5%" />
+                                    <col width="5%" />
+                                    <col width="20%" />
+                                    <col width="30%" />
+                                    <col width="10%" />
+                                    <col width="10%" />
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th colspan="2">번호</th>
+                                        <!-- <th>이미지</th> -->
+                                        <th>종류</th>
+                                        <th colspan="2">설명글</th>
+                                        <th>포인트</th>
+                                        <% if(param == 0) {%> <th>단계</th>
+                                        <% }else{ %>
+                                        <th>권한</th>
+                                        <% } %>
+                                        <% if(param == 1) {%>
+                                        <th>기간</th>
+                                        <% } %>
+                                        <th>노출여부</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if(results.length > 0) { %>
+                                    <% for(var i = (page * page_num) - page_num; i < (page * page_num); i++) { 
                                                         if(i > length){
                                                         i++;
                                                         } else { %>
-                                                        <tr
-                                                            onclick="location.href='/admin/m_certification/selectOne?certiTitleId=<%=results[i].certiTitleId%>'">
-                                                            <td colspan="2"><%= i + 1 %></td>
-                                                            <!-- <% if(results.length > 0 && results[i].certiImage != null && results[i].certiImage != '') {%>
-                                                            <td><img src="../../../<%= results[i].certiImage %>"
-                                                                    alt="사진"
-                                                                    style="padding:20px !important; width:60px" /></td>
-                                                            <% }else{ %>
-                                                            <td><img src="../../../public/images/certification/sprout.png"
-                                                                    alt=""
-                                                                    style="padding:20px !important; width:60px" />
-                                                            </td>
-                                                            <% } %> -->
-                                                            <td><%=results[i].certiTitle%></td>
-                                                            <td colspan="2"><%=results[i].certiDetail %></td>
-                                                            <td><%=results[i].certiPoint%> 점</td>
-                                                            <!--단계/권한-->
-                                                            <% if(results[i].certiDivision == 0) {%>
-                                                            <td><%=results[i].certiDiff%> 단계</td>
-                                                            <% }else{ %>
-                                                            <td><%=results[i].certiAuth%></td>
-                                                            <% } %>
-                                                            <!--기간-->
-                                                            <% if(results[i].certiDivision == 1) {%>
-                                                            <td><%=results[i].certiStartDatefmt%> ~
-                                                                <br><%=results[i].certiEndDatefmt%></td>
-                                                            <% } %>
-                                                            <!--노출여부-->
-                                                            <% if(results[i].certiShow == 0) {%>
-                                                            <td>O</td>
-                                                            <% }else{ %>
-                                                            <td>X</td>
-                                                            <% } %>
-                                                            <!-- <td>
-                                                                <input type="button"
-                                                                    onclick="certiUpdate('/admin/m_certification/certiUdtForm', '', 'width=640, height=700, scrollbars=1', '<%=results[i].certiTitleId%>', '')"
-                                                                    value="수정 " />
-                                                                <button type="button" id="delete_btn">삭제</button>
-                                                                <input type="hidden" id="certiTitleId"
-                                                                    value="<%=results[i].certiTitleId%>" />
-                                                                <input type="hidden" id="certiDivision"
-                                                                    value="<%=results[i].certiDivision%>" />
-                                                            </td> -->
-                                                        </tr>
-                                                        <% } %>
-                                                        <% } %>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                </form>
-                                <% if(results.length > 0){ %>
-                                <div class="mt_20">
-                                    <p class="float_r">
-                                        <!-- 나중에 boardId랑 uid(admin) 관리자걸로 고쳐줘야함!!!!!!!!!!!!!!!!!!!!-->
-                                        <input id="enrollAction" class="btn btn-block btn-outline-success" type="button"
-                                            onclick="enroll('/admin/m_certification/certiWritForm', '', 'width=640, height=700, scrollbars=1', '<%=results[0].certiDivision%>',
-                                        '')" value="등록" />
-                                    </p>
-                                    <div class="paging" id="page_navi">
-                                        <ul class="pagination customPaging">
-                                            <li> <a href="/admin/m_certification/certiAll?certiDivision=<%= results[0].certiDivision %>&page=1"
-                                                    class="num">
-                                                    <<</a> </li> <li> <a <%if((page<last-1)||(page==1)){%><%} else {%>
-                                                            href="/admin/m_certification/certiAll?certiDivision=<%= results[0].certiDivision %>&page=<%= parseInt(page) - 1 %>"
-                                                            class="num" <% } %>>
-                                                            <</a> </li>
-                                                                <% for(var i = 0; i < results.length / page_num; i++){  %>
-                                                                <li class="paging_on">
-                                                                <a href="/admin/m_certification/certiAll?certiDivision=<%= results[0].certiDivision %>&page=<%= i + 1 %>"
-                                                                    <%if(page==i+1){%>class="selected"
-                                                                    <%}%> class="num"><%= i + 1 %></a> </li> <% } %>
-                                                                    <li> <a <%if(page>last-1){%><%} else {%>
-                                                                        href="/admin/m_certification/certiAll?certiDivision=<%= results[0].certiDivision %>&page=<%= parseInt(page) + 1 %>"
-                                                                        class="num" <% } %>>></a></li>
-                                            <li><a href="/admin/m_certification/certiAll?certiDivision=<%= results[0].certiDivision %>&page=<%= last %>"
-                                                    class="num">>></a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <% } %>
-                                <% } else { %>
-                                <div class="board_list">
-                                    <table class="table table-responsive-sm table-hover">
-                                        <thead>
-                                            <th col></th>
-                                        </thead>
-                                        <tbody>
-
-                                            <tr>
-                                                <td colspan="8">
-                                                    등록된 목록이 없습니다.
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                    <tr
+                                        onclick="location.href='/admin/m_certification/selectOne?certiTitleId=<%=results[i].certiTitleId%>'">
+                                        <td colspan="2"><%= i + 1 %></td>
+                                        <td><%=results[i].certiTitle%></td>
+                                        <td colspan="2"><%=results[i].certiDetail %></td>
+                                        <td><%=results[i].certiPoint%> 점</td>
+                                        <!--단계/권한-->
+                                        <% if(results[i].certiDivision == 0) {%>
+                                        <td><%=results[i].certiDiff%> 단계</td>
+                                        <% }else{ %>
+                                        <td><%=results[i].certiAuth%></td>
+                                        <% } %>
+                                        <!--기간-->
+                                        <% if(results[i].certiDivision == 1) {%>
+                                        <td><%=results[i].certiStartDatefmt%> ~
+                                            <br><%=results[i].certiEndDatefmt%></td>
+                                        <% } %>
+                                        <!--노출여부-->
+                                        <% if(results[i].certiShow == 0) {%>
+                                        <td>O</td>
+                                        <% }else{ %>
+                                        <td>X</td>
+                                        <% } %>
+                                    </tr>
+                                    <% } %>
+                                    <% } %>
+                                    <% } else { %>
+                                    <tr>
+                                        <td colspan="8">
+                                            등록된 목록이 없습니다.
+                                        </td>
+                                    </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                            <div class="mt_20">
+                                <p class="float_r">
+                                    <!-- 나중에 boardId랑 uid(admin) 관리자걸로 고쳐줘야함!!!!!!!!!!!!!!!!!!!!-->
+                                    <input id="enrollAction" class="btn btn-block btn-outline-success" type="button"
+                                        onclick="enroll('/admin/m_certification/certiWritForm', '', 'width=640, height=700, scrollbars=1', '<%=param%>',
+                                    '')" value="등록" />
+                                </p>
+                                <% if(results.length > 0) { %>
+                                <div class="paging" id="page_navi">
+                                    <ul class="pagination customPaging">
+                                        <li> <a href="/admin/m_certification/certiAll?certiDivision=<%= param %>&page=1"
+                                                class="num">
+                                                <<</a> </li> <li> <a <%if((page<last-1)||(page==1)){%><%} else {%>
+                                                        href="/admin/m_certification/certiAll?certiDivision=<%= param %>&page=<%= parseInt(page) - 1 %>"
+                                                        class="num" <% } %>>
+                                                        <</a> </li>
+                                                            <% for(var i = 0; i < results.length / page_num; i++){  %>
+                                                            <li class="paging_on">
+                                                            <a href="/admin/m_certification/certiAll?certiDivision=<%= param %>&page=<%= i + 1 %>"
+                                                                <%if(page==i+1){%>class="selected"
+                                                                <%}%> class="num"><%= i + 1 %></a> </li> <% } %> <li> <a
+                                                                    <%if(page>last-1){%><%} else {%>
+                                                                    href="/admin/m_certification/certiAll?certiDivision=<%= param %>&page=<%= parseInt(page) + 1 %>"
+                                                                    class="num" <% } %>>></a></li>
+                                        <li><a href="/admin/m_certification/certiAll?certiDivision=<%= param %>&page=<%= last %>"
+                                                class="num">>></a></li>
+                                    </ul>
                                 </div>
                                 <% } %>
                             </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 </main>
 <script>
     $(document).ready(function () {
-        const formObj = $("form[name='certiForm']");
-        // 삭제
-        $("button").on("click", function () {
-            const certiId = $(this).next().val();
-            const division = $(this).next().next().val();
-            // console.log(division);
-            formObj.attr("action", "certiDelete?certiTitleId=" + certiId +
-                "&certiDivision=" +
-                division);
-            formObj.attr("method", "post");
-            if (confirm("삭제하시겠습니까?") == true) {
-                formObj.submit();
-                alert("삭제되었습니다.");
-            } else {
-                return;
-            }
-        })
-
         //검색
         const searchForm = $("form[name='searchForm']");
         $("#searchAction").on("click", function () {
@@ -208,11 +163,7 @@
         })
     });
 
-    function certiUpdate(theURL, winName, features, certiTitleId, mode) {
-        theURL += '?certiTitleId=' + certiTitleId;
-        window.open(theURL, winName, features);
-    }
-
+    //등록
     function enroll(theURL, winName, features, certiDivision, mode) {
         theURL += '?certiDivision=' + certiDivision;
         window.open(theURL, winName, features);

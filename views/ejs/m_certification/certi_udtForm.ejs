@@ -53,13 +53,12 @@
                                 <div class="form-group row">
                                     <label class="col-md-2 col-form-label" for="text-input">분류</label>
                                     <div class="col-md-9">
-                                        <select class="dropdown" name="division" id="division">
+                                        <select id="division" name="division" class="dropdown">
                                             <option value="" selected="selected">--분류--</option>
                                             <% for(var i = 0; i < div.length ; i++){  %>
-                                            <option value="<%= div[i].certiSubDivision %>">
-                                                <%= div[i].certiSubDivision %></option>
-                                            <% } %>
-                                        </select>
+                                            <option value="<%= div[i].certiSubDivision %>"
+                                                <%if(result[0].certiSubDivision==div[i].certiSubDivision){%> selected="selected"
+                                                <%}%>><%= div[i].certiSubDivision %></option> <% } %> </select>
                                     </div>
                                 </div>
                                 <div class="form-group row">

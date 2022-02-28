@@ -84,7 +84,7 @@ router.get('/all', async (req, res) => {
         }
         sql += " order by p.writRank is null asc, nullif(p.writRank, '') is null asc, p.writRank, p.writDate desc";
         connection.query(sql, param, (err, results) => {
-            var last = Math.ceil((results.length - 1) / 15);
+            var last = Math.ceil((results.length) / 15);
             if (err) {
                 console.log(err);
             }
@@ -100,6 +100,7 @@ router.get('/all', async (req, res) => {
                 pass: true,
                 last: last
             });
+            // console
         });
     } catch (error) {
         res.status(500).send(error.message);
@@ -136,17 +137,20 @@ router.get('/selectOne', async (req, res) => {
 router.get('/brdDelete', async (req, res) => {
     try {
         const param = req.query.writId;
-        const fileRoute = req.query.fileRoute;
-        console.log(fileRoute);
-        console.log(param);
+        const boardId = req.query.boardId;
+        // console.log(param);
         const sql = "delete from post where writId = ?";
         connection.query(sql, param, (err, row) => {
             if (err) {
                 console.log(err);
             }
-            if (fileRoute != '') {
-                for (let i = 0; i < fileRoute.length; i++) {
-                    fs.unlinkSync(fileRoute[i], (err) => {
+            if (req.query.fileRoute != undefined) {
+                console.log(req.query.fileRoute);
+                if (Array.isArray(req.query.fileRoute) == false) {
+                    req.query.fileRoute = [req.query.fileRoute];
+                }
+                for (let i = 0; i < req.query.fileRoute.length; i++) {
+                    fs.unlinkSync(req.query.fileRoute[i], (err) => {
                         if (err) {
                             console.log(err);
                         }
@@ -154,7 +158,7 @@ router.get('/brdDelete', async (req, res) => {
                     });
                 }
             }
-            res.send("<script>opener.parent.location.reload(); window.close();</script>");
+            res.send('<script>alert("게시글이 삭제되었습니다."); location.href="/admin/m_board/all?boardId=' + boardId + '&page=1";</script>');
         });
     } catch (error) {
         res.send(error.message);
@@ -163,12 +167,12 @@ router.get('/brdDelete', async (req, res) => {
 
 //게시글 등록 폼 이동
 router.get('/writForm', async (req, res) => {
-    fs.readFile('views/ejs/m_board/brd_writForm.ejs', (err, data) => {
-        if (err) {
-            console.log(err);
-        } else {
-            res.end(data);
-        }
+    console.log(req.query.uid)
+    console.log(req.query.boardId)
+    let route = req.app.get('views') + '/m_board/brd_writForm.ejs';
+    res.render(route, {
+        uid: req.query.uid,
+        boardId: req.query.boardId
     });
 });
 
@@ -198,7 +202,7 @@ router.post('/boardwrite', upload.array('file'), async (req, res, next) => {
                 });
             };
         });
-        res.send("<script>opener.parent.location.reload(); window.close();</script>");
+        res.send('<script>alert("게시글이 등록되었습니다."); location.href="/admin/m_board/all?boardId=' + req.body.boardId + '&page=1";</script>');
     } catch (error) {
         res.send(error.message);
     }
@@ -293,94 +297,5 @@ router.get('/fileDelete', async (req, res) => {
     }
     res.redirect('brdUdtForm?writId=' + req.query.writId);
 });
-
-// 검색
-router.get('/search', async (req, res) => {
-    var page = req.query.page;
-    var searchType = req.query.searchType;
-    var searchText = req.query.searchText;
-    if (req.query.searchType == 'writTitle') {
-        models.post.findAll({
-            include: {
-                model: models.user,
-                attributes: ['userNick'],
-            },
-            where: {
-                writTitle: {
-                    [Op.like]: "%" + searchText + "%"
-                },
-            },
-            attributes: [
-                'writRank', 'writTitle', 'writHit', 'user.userNick',
-                [sequelize.fn('date_format', sequelize.col('writDate'), '%Y-%m-%d'), 'writDatefmt'],
-                [sequelize.fn('date_format', sequelize.col('writUpdDate'), '%Y-%m-%d'), 'writUpdDatefmt']
-            ],
-            order: [
-                ['writDate', 'ASC']
-                //order by p.writRank is null asc, nullif(p.writRank, '') is null asc, p.writRank, p.writDate desc
-            ],
-            raw: true,
-        }).then(results => {
-            console.log(results);
-            let route = req.app.get('views') + '/m_board/board';
-            res.render(route, {
-                searchText: searchText,
-                searchType: searchType,
-                results: results,
-                page: page,
-                length: results.length - 1,
-                page_num: 15,
-                pass: true
-            });
-
-        }).catch(err => {
-            console.log(err);
-            return res.status(404).json({
-                message: 'error'
-            });
-        })
-    } else {
-        models.post.findAll({
-            include: {
-                model: models.user,
-                attributes: ['userNick'],
-            },
-            where: {
-                '$user.userNick$': {
-                    [Op.like]: "%" + req.query.searchText + "%"
-                },
-            },
-            attributes: [
-                'writRank', 'writTitle', 'writHit', 'user.userNick',
-                [sequelize.fn('date_format', sequelize.col('writDate'), '%Y-%m-%d'), 'writDatefmt'],
-                [sequelize.fn('date_format', sequelize.col('writUpdDate'), '%Y-%m-%d'), 'writUpdDatefmt']
-            ],
-            order: [
-                ['writDate', 'ASC']
-            ],
-            raw: true,
-        }).then(results => {
-            let route = req.app.get('views') + '/m_board/board';
-            res.render(route, {
-                searchText: searchText,
-                searchType: searchType,
-                results: results,
-                page: page,
-                length: results.length - 1,
-                page_num: 15,
-                pass: true
-            });
-            console.log(results);
-        }).catch(err => {
-            console.log(err);
-            return res.status(404).json({
-                message: 'error'
-            });
-        })
-    }
-
-});
-
-
 
 module.exports = router;

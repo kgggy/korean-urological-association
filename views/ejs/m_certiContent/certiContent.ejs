@@ -1,6 +1,6 @@
 <style>
     .image-box {
-        height: 220px;
+        height: 280px;
         overflow: hidden;
         margin: 0 auto;
     }
@@ -10,88 +10,138 @@
         height: 100%;
         object-fit: cover;
     }
+
+    .certiContentEach {
+        width: calc(100% / 4);
+        text-align: center;
+    }
+
+    .certiContentAll {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0 !important;
+        list-style: none;
+    }
+
+    #firstForm {
+        display: flex;
+        justify-content: end;
+        gap: 5px;
+    }
 </style>
-
-<%if(results.length == 0){%>
-<h3 class="float_l" id="category_title"></h3>
-<%} else if(results[0].certiDivision == '0') {%>
-<h3 class="" id="category_title">탄소실천 글 목록</h3>
-<% } else {%>
-<h3 class="" id="category_title">챌린지 글 목록</h3>
-<% } %>
-
-<div align="right">
-    <form action="/admin/m_certiContent/search" method="get">
-        <input type="hidden" name="page" value="1">
-        <input type="hidden" name="certiDivision" value="<%= results[0].certiDivision %>">
-        <select name="searchType">
-            <% if(searchType != null) { %>
-            <option value="0" selected="selected">--전체--</option>
-            <option value="certiTitleId" <%if(searchType=="certiTitleId"){%> selected="selected" <%}%>>테마</option>
-            <option value="userNick" <%if(searchType=="userNick"){%> selected="selected" <%}%>>닉네임</option>
-            <% } else {%> <option value="0" selected="selected">--전체--</option>
-            <option value="certiTitleId">테마</option>
-            <option value="userNick">닉네임</option>
+<main class="main">
+    <!-- Breadcrumb-->
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">Home</li>
+        <li class="breadcrumb-item">
+            <% if(param == 0) { %>
+            <a style="font-weight: bold;">탄소실천관리</a>
+            <% } else {%>
+            <a style="font-weight: bold;">챌린지관리</a>
             <% } %>
-        </select>
-        <% if(searchText != null) { %>
-        <input type="text" name="searchText" value="<%=searchText%>" />
-        <% } else {%>
-        <input type="text" name="searchText" />
-        <% } %>
-        <button type="submit" id="searchAction">검색</button>
-    </form>
-</div>
-
-<div class="certiContentAll-wrap">
-    <ul class="certiContentAll">
-        <% if(results.length > 0) { %>
-        <% for(var i = (page * page_num) - page_num; i < (page * page_num); i++) { 
-                    if(i > length){
-                        i++;
-                     } else { %>
-        <li class="certiContentEach">
-            <% if(results.length > 0 && results[i].fileRoute != null && results[i].fileRoute != ''){ %>
-            <div class="image-box"><img class="image-thumbnail" src="../../../<%= results[i].fileRoute %>"
-                    style="width:100%; padding:15px !important;" alt="">
-            </div><% } else {%>
-            <div class="image-box"><img class="image-thumbnail" src="../../../public/images/certification/sprout.png"
-                    style="padding:15px !important;" alt="">
-            </div> <% } %>
-            <div class="detailBtn" style="margin-top: 15px;">
-                <button type="button" onclick="selectOne('/admin/m_certiContent/one', '', 'width=640, height=700, scrollbars=1', '<%= results[i].certiContentId %>', '<%= results[i].certiDivision %>',
-                '')">상세보기</button>
-                <button type="button" onclick="comment('/admin/m_certiContent/certiComment', '', 'width=640, height=700, scrollbars=1', '<%= results[i].certiContentId %>',
+        <li class="breadcrumb-item active">글관리</li>
+    </ol>
+    <div class="container-fluid">
+        <div class="animated fadeIn">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <%if(param == 0){%>
+                            <i class="fa fa-align-justify"></i> 탄소실천 글 관리
+                            <% } else {%>
+                            <i class="fa fa-align-justify"></i> 챌린지 글 관리
+                            <% } %>
+                        </div>
+                        <div class="card-body">
+                            <div align="right">
+                                <form id="firstForm" action="/admin/m_certiContent/search" method="get">
+                                    <input type="hidden" name="page" value="1">
+                                    <input type="hidden" name="certiDivision" value="<%= param %>">
+                                    <input type="hidden" name="uid" value="81">
+                                    <select class="dropdown" name="searchType">
+                                        <option value="0" selected="selected">--전체--</option>
+                                        <option value="certiTitleId" <%if(searchType=="certiTitleId"){%>
+                                            selected="selected" <%}%>>테마</option>
+                                    <option value="userNick" <%if(searchType=="userNick"){%> selected="selected" <%}%>>닉네임</option>
+                                </select>
+                                <input class="searchbox" type="text" name="searchText" value="<%=searchText%>" />
+                                        <button class="btn btn-block btn-outline-success" type="submit"
+                                            id="searchAction">검색</button>
+                                </form>
+                            </div>
+                            <form id="boardForm" name="boardForm" method="" action="">
+                                <input type="hidden" name="certiDivision" value="<%= param %>">
+                                <div class="certiContentAll-wrap">
+                                    <ul class="certiContentAll">
+                                        <% if(results.length > 0) { %>
+                                        <% for(var i = (page * page_num) - page_num; i < (page * page_num); i++) { 
+                                        if(i > length){
+                                            i++;
+                                        } else { %>
+                                        <li class="certiContentEach">
+                                            <% if(results.length > 0 && results[i].fileRoute != null && results[i].fileRoute != ''){ %>
+                                            <div class="image-box"><img class="image-thumbnail"
+                                                    src="../../../<%= results[i].fileRoute %>"
+                                                    style="width:100%; padding:15px !important;" alt="">
+                                            </div><% } else {%>
+                                            <div class="image-box"><img class="image-thumbnail"
+                                                    src="../../../public/images/certification/sprout.png"
+                                                    style="padding:15px !important;" alt="">
+                                            </div> <% } %>
+                                            <div class="detailBtn" style="margin-top: 15px;">
+                                                <button id="enrollAction" type="button"
+                                                    class="btn btn-block btn-outline-success" onclick="selectOne('/admin/m_certiContent/one', '', 'width=640, height=700, scrollbars=1', '<%= results[i].certiContentId %>', '<%= results[i].certiDivision %>',
+                '')" style="width:30%">상세보기</button>
+                                                <button id="enrollAction" type="button"
+                                                    class="btn btn-block btn-outline-success" onclick="comment('/admin/m_certiContent/certiComment', '', 'width=640, height=700, scrollbars=1', '<%= results[i].certiContentId %>',
                 '')">댓글</button>
+                                            </div>
+                                        </li>
+                                        <% } %>
+                                        <% } %>
+                                        <% } else {%>
+                                        <p>조회된 글이 없습니다.</p>
+                                        <% }%>
+                                    </ul>
+                                </div>
+                                <p class="float_r">
+                                    <!-- 나중에 boardId랑 uid(admin) 관리자걸로 고쳐줘야함!!!!!!!!!!!!!!!!!!!!-->
+                                    <input id="enrollAction" type="button" class="btn btn-block btn-outline-success"
+                                        onclick="enroll()" value="등록" />
+                                </p>
+                            </form>
+                            <div class="mt_20">
+                                <div class="paging" id="page_navi">
+                                    <ul class="pagination customPaging">
+                                        <li>
+                                            <a href="/admin/m_certiContent/certicontentAll?certiDivision=<%= param %>&page=1"
+                                                class="num">
+                                                << </a> </li> <li>
+                                                    <a <%if((page<last-1)||(page==1)){%><%} else {%>
+                                                        href="/admin/m_certiContent/certicontentAll?certiDivision=<%= param %>&page=<%= parseInt(page) - 1 %>"
+                                                        class="num" <% } %>>
+                                                        < </a> </li>
+                                                            <% for(var i = 0; i < results.length / page_num; i++){  %>
+                                                            <li class="paging_on">
+                                                            <a href="/admin/m_certiContent/certicontentAll?certiDivision=<%= param %>&page=<%= i + 1 %>"
+                                                                <%if(page==i+1){%>class="selected"
+                                                                <%}%> class="num"><%= i + 1 %></a> </li> <% } %> <li> <a
+                                                                    <%if(page>last-1){%><%} else {%>
+                                                                    href="/admin/m_certiContent/certicontentAll?certiDivision=<%= param %>&page=<%= parseInt(page) + 1 %>"
+                                                                    class="num" <% } %>>></a></li>
+                                        <li><a href="/admin/m_certiContent/certicontentAll?certiDivision=<%= param %>&page=<%= last%>"
+                                                class="num">>></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </li>
-        <% } %>
-        <% } %>
-        <% } else {%>
-        <p>조회된 글이 없습니다.</p>
-        <% }%>
-    </ul>
-</div>
-<div class="mt_20">
-    <div class="paging" id="page_navi">
-        <ul>
-            <li class="paging_on">
-                <% for(var i = 0; i < results.length / page_num; i++){  %>
-                <a
-                    href="/admin/m_certiContent/certiContentAll?certiDivision=<%= results[0].certiDivision %>&page=<%= i + 1 %>"><%= i + 1 %></a>
-                <% } %>
-            </li>
-        </ul>
+        </div>
     </div>
-    <p class="float_r">
-        <!-- 나중에 boardId랑 uid(admin) 관리자걸로 고쳐줘야함!!!!!!!!!!!!!!!!!!!!-->
-        <% if(results.length > 0){ %>
-        <input type="button" onclick="enroll('/admin/m_certiContent/certiWritForm', '', 'width=640, height=700, scrollbars=1', '<%=results[0].certiDivision%>',
-        '')" value="등록" />
-        <% }%>
-    </p>
-</div>
-
+</main>
 <script>
     //상세보기
     function selectOne(theURL, winName, features, certiContentId, certiDivision, mode) {
@@ -100,9 +150,10 @@
     }
 
     //탄소실천, 챌린지 글 등록
-    function enroll(theURL, winName, features, certiDivision, mode) {
-        theURL += '?certiDivision=' + certiDivision;
-        window.open(theURL, winName, features);
+    function enroll() {
+        $("form[name='boardForm']").attr("method", "get");
+        $("form[name='boardForm']").attr("action", "certiWritForm");
+        $("form[name='boardForm']").submit();
     }
 
     //댓글
@@ -110,6 +161,4 @@
         theURL += '?certiContentId=' + certiContentId;
         window.open(theURL, winName, features);
     }
-
-    console.log()
 </script>

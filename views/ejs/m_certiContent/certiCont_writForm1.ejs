@@ -1,0 +1,64 @@
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<link rel="stylesheet" type="text/css" href="/stylesheets/css/default.css" />
+	<link rel="stylesheet" type="text/css" href="/stylesheets/css/basic.css" />
+	<link rel="stylesheet" type="text/css" href="/stylesheets/css/layout.css" />
+	<!--<link href="/js/jquery/css/jquery-ui-1.8.2.custom.css" rel="stylesheet" type="text/css"/>-->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css" />
+	<script type="text/javascript" src="/stylesheets/jquery/jquery-1.7.1.min.js"></script>
+	<script type="text/javascript" src="/stylesheets/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+	<script type="text/javascript" src="/stylesheets/jquery/jquery.validate.js"></script>
+	<script type="text/javascript" src="/stylesheets/jquery/jquery.form.js"></script>
+	<script src="/stylesheets/js/common.js"></script>
+</head>
+<div class="popup">
+	<h2><span class="float_l">탄소실천 글 등록</span></h2>
+	<div class="content">
+		<form name="writForm" enctype="multipart/form-data">
+			<!--uid value값 바꿔주기!!!!!!!-->
+			<input type="hidden" id="uid" name="uid" value="81">
+			<input type="hidden" id="certiTitleId" name="certiTitleId" value="">
+			<table class="mb_10">
+				<tr>
+					<th>탄소실천 종류 선택</th>
+					<td>
+						<select id="titleSelect" name="titleSelect" width="100px">
+							<% for(i = 0; i < titles.length; i++) { %>
+							<option value="title" data-certiTitleId="<%= titles[i].certiTitleId %>">
+								<%= titles[i].certiTitle %></option>
+							<% } %>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<th>사진</th>
+					<td><input type="file" id="file" name="file"></td>
+				</tr>
+			</table>
+
+			<p class="btn">
+				<button class="btn_big_blue hand" type="button" id="update_btn">등록</button>
+				<button class="btn_big_black hand" onclick="history.go(-1)">취소</button>
+			</p>
+		</form>
+	</div>
+</div>
+
+<script>
+	var formObj = $("form[name='writForm']");
+	$(document).ready(function () {
+		// 등록
+		$("#update_btn").on("click", function () {
+			$('input[name=certiTitleId]').val($('#titleSelect option:selected').attr('data-certiTitleId'));
+			formObj.attr("action", "certiContWrit");
+			formObj.attr("method", "post");
+			if (confirm("등록하시겠습니까?") == true) {
+				alert("등록이 왼료되었습니다.");
+				formObj.submit();
+			}
+		});
+	});
+</script>

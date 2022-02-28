@@ -143,7 +143,7 @@ router.get('/page', async (req, res) => {
   }
   try {
     connection.query(sql, function (err, results) {
-      var last = Math.ceil((results.length - 1) / 15);
+      var last = Math.ceil((results.length) / 15);
       if (err) {
         console.log(err);
       }

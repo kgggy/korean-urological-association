@@ -75,9 +75,9 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item">Home</li>
         <li class="breadcrumb-item">
-            <a style="font-weight: bold;">게시판관리</a>
+            <a style="font-weight: bold;">회원관리</a>
         </li>
-        <li class="breadcrumb-item active">언론보도</li>
+        <li class="breadcrumb-item active">회원정보</li>
     </ol>
 
     <div class="container-fluid">
@@ -133,7 +133,7 @@
                                 </form>
                             </div>
 
-                            <table class="table userTable table-responsive-sm table-hover">
+                            <table id="exampleTable" class="table userTable table-responsive-sm table-hover">
                                 <colgroup>
                                     <col width="5%" />
                                     <col width="20%" />
@@ -257,6 +257,7 @@
                 return false;
             }
         })
+
         // 엑셀 다운로드
         $("#excelFileExport").on("click", function () {
             formObj.attr("action", "userExcel");
@@ -264,11 +265,6 @@
         })
 
     });
-
-    //등록폼 열기
-    function enroll(theURL, winName, features, boardId, mode) {
-        window.open(theURL, winName, features);
-    }
 
     // 선택
     $("#chkAll").click(function () {

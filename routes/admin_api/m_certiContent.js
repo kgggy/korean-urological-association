@@ -64,10 +64,8 @@ router.get('/certiContentAll', async (req, res) => {
         connection.query(sql, param, (err, results) => {
             if (err) {
                 console.log(err);
-                response.json({
-                    msg: "query error"
-                });
             }
+            var last = Math.ceil((results.length) / 12);
             let route = req.app.get('views') + '/m_certiContent/certiContent';
             res.render(route, {
                 searchType: null,
@@ -76,7 +74,9 @@ router.get('/certiContentAll', async (req, res) => {
                 page: page,
                 length: results.length - 1,
                 page_num: 12,
-                pass: true
+                pass: true,
+                param: param,
+                last: last
             });
         });
     } catch (error) {
@@ -223,7 +223,18 @@ router.post('/certiContUpdate', upload.array('file'), async (req, res) => {
 //탄소실천글 등록 페이지로 이동
 router.get('/certiWritForm', async (req, res) => {
     const division = req.query.certiDivision;
+    console.log(division)
     const sql = "select certiTitleId, certiTitle, certiDiff from certification where certiDivision = 0";
+    // 분류 드롭다운 가져오기
+    const sql2 = "select count(*), certiSubDivision\
+    from certification\
+   where certiSubDivision !='' or not null group by certiSubDivision";
+    connection.query(sql2, (err, results1) => {
+        if (err) {
+            console.log(err)
+        }
+        div = results1;
+    })
     connection.query(sql, (err, titles) => {
         if (err) {
             console.log(err)
@@ -232,8 +243,25 @@ router.get('/certiWritForm', async (req, res) => {
         res.render(route, {
             division: division,
             titles: titles,
-            layout: false
+            div: div
         });
+    });
+});
+
+//분류 드롭다운 가져오기(ajax)
+router.get('/certiWritForm_subdropdown', async (req, res) => {
+    const param = req.query.param;
+    const sql = "select certiTitle from certification where certiSubDivision = ? and  nullif(certiTitle,'') is not null";
+    connection.query(sql, param, (err, results) => {
+        if (err) {
+            console.log(err)
+        }
+        div = JSON.stringify(results);
+        // let route = req.app.get('views') + '/m_certiContent/certiCont_writForm';
+        // res.render(route, {
+        //     div: div
+        // });
+        res.send(div);
     });
 });
 

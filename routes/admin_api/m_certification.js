@@ -76,14 +76,10 @@ router.get('/certiAll', async (req, res) => {
             }
             div = results1;
         })
-
         connection.query(sql, param, (err, results) => {
-            var last = Math.ceil((results.length - 1) / 15);
+            var last = Math.ceil((results.length) / 10);
             if (err) {
                 console.log(err);
-                response.json({
-                    msg: "query error"
-                });
             }
             let route = req.app.get('views') + '/m_certification/certification';
             res.render(route, {
@@ -95,7 +91,8 @@ router.get('/certiAll', async (req, res) => {
                 length: results.length - 1,
                 page_num: 10,
                 pass: true,
-                last: last
+                last: last,
+                param: param
             });
             // console.log(results);
         });
@@ -106,7 +103,7 @@ router.get('/certiAll', async (req, res) => {
 
 //종류 상세조회
 router.get('/selectOne', async (req, res) => {
-    try {     
+    try {
         const param = req.query.certiTitleId;
         const sql = "select *, date_format(certiStartDate, '%Y-%m-%d') as certiStartDatefmt, date_format(certiEndDate, '%Y-%m-%d') as certiEndDatefmt\
                       from certification\
@@ -124,106 +121,6 @@ router.get('/selectOne', async (req, res) => {
     } catch (error) {
         res.status(401).send(error.message);
     }
-});
-
-//탄소실천, 챌린지 게시글(사진) 업로드
-router.post('/', upload.single('file'), async function (req, res) {
-    const paths = req.files.map(data => data.path);
-    const orgName = req.files.map(data => data.originalname);
-    console.log(paths);
-    try {
-        const contentId = uuid();
-        const param1 = [contentId, req.query.certiTitleId, req.query.uid];
-        const sql1 = "insert into certiContent(certiContentId, certiTitleId, uid) values(?, ?, ?)";
-        connection.query(sql1, param1, (err) => {
-            if (err) {
-                throw err;
-            }
-            for (let i = 0; i < paths.length; i++) {
-                const param2 = [contentId, paths[i], i + 1, orgName[i]];
-                // console.log(param2);
-                const sql2 = "insert into file(certiContentId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
-                connection.query(sql2, param2, (err) => {
-                    if (err) {
-                        throw err;
-                    } else {
-                        return;
-                    }
-                });
-
-            };
-        });
-        return res.json(paths);
-    } catch (error) {
-        res.send(error.message);
-    }
-});
-
-//탄소실천, 챌린지 종류 삭제
-router.get('/certiDelete', async (req, res) => {
-    try {
-        const param = req.query.certiTitleId;
-        console.log(param);
-        const sql = "delete from certification where certiTitleId = ?";
-        connection.query(sql, param, (err, row) => {
-            if (err) {
-                console.log(err);
-                response.json({
-                    msg: "query error"
-                });
-            }
-            res.redirect('certiAll?certiDivision=' + req.query.certiDivision + '&page=1');
-        });
-    } catch (error) {
-        res.send(error.message);
-    }
-});
-
-//파일 다운로드
-router.get('/download/:certiContentId/:fileNo', async (req, res) => {
-    try {
-        const param = [req.params.certiContentId, req.params.fileNo];
-        const sql = "select fileRoute from file where certiContentId = ? and fileNo = ?";
-        let route;
-        connection.query(sql, param, (err, result) => {
-            if (err) {
-                console.error(err);
-                res.json({
-                    msg: "query error"
-                });
-            }
-            route = result;
-            console.log(result);
-            res.status(200).json(route);
-        });
-    } catch (error) {
-        res.status(401).send(error.message);
-    }
-});
-
-//탄소실천 이미지 삭제
-router.get('/certiImgDelete', async (req, res) => {
-    const param = req.query.certiImage;
-    // console.log(typeof(param))
-    try {
-        const sql = "update certification set certiImage = null where certiTitleId = ?";
-        connection.query(sql, req.query.certiTitleId, (err, row) => {
-            if (err) {
-                console.log(err)
-            }
-            fs.unlinkSync(param, (err) => {
-                if (err) {
-                    console.log(err);
-                }
-                return;
-            });
-        })
-    } catch (error) {
-        if (error.code == "ENOENT") {
-            console.log("프로필 삭제 에러 발생");
-        }
-    }
-    res.redirect('certiUdtForm?certiTitleId=' + req.query.certiTitleId);
 });
 
 //탄소실천 등록 페이지로 이동
@@ -258,12 +155,13 @@ router.post('/certiWrit', upload.single('file'), async (req, res) => {
         var param = "";
         if (req.file != null) {
             path = req.file.path;
-            param = [req.body.certiDivision, req.body.certiTitle, req.body.certiDetail, req.body.certiPoint, req.body.certiDiff, path, req.body.certiSubDivision, req.body.certiStartDate, req.body.certiEndDate];
+            param = [req.body.certiDivision, req.body.certiTitle, req.body.certiDetail, req.body.certiPoint, req.body.certiDiff, path, req.body.certiSubDivision, req.body.certiStartDate, req.body.certiEndDate, req.body.certiShow];
         } else {
-            param = [req.body.certiDivision, req.body.certiTitle, req.body.certiDetail, req.body.certiPoint, req.body.certiDiff, req.body.certiImage, req.body.certiSubDivision, req.body.certiStartDate, req.body.certiEndDate];
+            param = [req.body.certiDivision, req.body.certiTitle, req.body.certiDetail, req.body.certiPoint, req.body.certiDiff, req.body.certiImage, req.body.certiSubDivision, req.body.certiStartDate, req.body.certiEndDate, req.body.certiShow];
         }
-        const sql = "insert into certification(certiDivision, certiTitle, certiDetail, certiPoint, certiDiff, certiImage, certiSubDivision, certiStartDate, certiEndDate)\
-                          values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        const sql = "insert into certification(certiDivision, certiTitle, certiDetail, certiPoint, certiDiff, certiImage, certiSubDivision, certiStartDate, certiEndDate, certiShow)\
+                          values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                          console.log(param);
         connection.query(sql, param, function (err, result, fields) {
             if (err) {
                 console.log(err);
@@ -279,7 +177,7 @@ router.post('/certiWrit', upload.single('file'), async (req, res) => {
 router.get('/certiUdtForm', async (req, res) => {
     try {
         // 분류 드롭다운 가져오기
-        var div="";
+        var div = "";
         const sql2 = "select count(*), certiSubDivision\
                        from certification\
                       where certiSubDivision !='' or not null group by certiSubDivision";
@@ -288,12 +186,11 @@ router.get('/certiUdtForm', async (req, res) => {
                 console.log(err)
             }
             div = results1;
-        });       
+        });
         const param = req.query.certiTitleId;
         const sql = "select *, date_format(certiStartDate, '%Y-%m-%d') as certiStartDatefmt, date_format(certiEndDate, '%Y-%m-%d') as certiEndDatefmt\
                       from certification\
                      where certiTitleId = ?";
-
         connection.query(sql, param, function (err, result, fields) {
             if (err) {
                 console.log(err);
@@ -301,7 +198,7 @@ router.get('/certiUdtForm', async (req, res) => {
             let route = req.app.get('views') + '/m_certification/certi_udtForm';
             res.render(route, {
                 result: result,
-                div:div
+                div: div
             });
         });
     } catch (error) {
@@ -334,31 +231,57 @@ router.post('/certiUpdate', upload.single('file'), async (req, res) => {
     });
 });
 
-//탄소 종류 단계별 검색
-router.get('/search', async (req, res) => {
-    const searchType = req.query.searchType;
-    const page = req.query.page;
+//탄소실천, 챌린지 종류 삭제
+router.get('/certiDelete', async (req, res) => {
     try {
-
-        const sql = "select * from certification where certiDiff = ?";
-        connection.query(sql, searchType, (err, results, row) => {
+        const param = req.query.certiTitleId;
+        console.log(param);
+        const sql = "delete from certification where certiTitleId = ?";
+        connection.query(sql, param, (err, row) => {
             if (err) {
-                console.error(err);
+                console.log(err);
             }
-            let route = req.app.get('views') + '/m_certification/certification';
-            res.render(route, {
-                searchType: searchType,
-                results: results,
-                page: page,
-                length: results.length - 1,
-                page_num: 6,
-                pass: true
-            });
-        })
-
+            if (req.query.certiImage != undefined) {
+                // req.query.certiImage = [req.query.certiImage];
+                // console.log(req.query.certiImage);
+                fs.unlinkSync(req.query.certiImage, (err) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                    return;
+                });
+            }
+            res.redirect('certiAll?certiDivision=' + req.query.certiDivision + '&page=1');
+        });
     } catch (error) {
-        res.status(401).send(error.message);
+        res.send(error.message);
     }
 });
+
+//탄소실천 이미지 삭제
+router.get('/certiImgDelete', async (req, res) => {
+    const param = req.query.certiImage;
+    // console.log(typeof(param))
+    try {
+        const sql = "update certification set certiImage = null where certiTitleId = ?";
+        connection.query(sql, req.query.certiTitleId, (err, row) => {
+            if (err) {
+                console.log(err)
+            }
+            fs.unlinkSync(param, (err) => {
+                if (err) {
+                    console.log(err);
+                }
+                return;
+            });
+        })
+    } catch (error) {
+        if (error.code == "ENOENT") {
+            console.log("프로필 삭제 에러 발생");
+        }
+    }
+    res.redirect('certiUdtForm?certiTitleId=' + req.query.certiTitleId);
+});
+
 
 module.exports = router;

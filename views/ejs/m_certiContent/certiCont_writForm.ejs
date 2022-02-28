@@ -1,57 +1,119 @@
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
-	<link rel="stylesheet" type="text/css" href="/stylesheets/css/default.css" />
-	<link rel="stylesheet" type="text/css" href="/stylesheets/css/basic.css" />
-	<link rel="stylesheet" type="text/css" href="/stylesheets/css/layout.css" />
-	<!--<link href="/js/jquery/css/jquery-ui-1.8.2.custom.css" rel="stylesheet" type="text/css"/>-->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css" />
-	<script type="text/javascript" src="/stylesheets/jquery/jquery-1.7.1.min.js"></script>
-	<script type="text/javascript" src="/stylesheets/jquery/jquery-ui-1.8.16.custom.min.js"></script>
-	<script type="text/javascript" src="/stylesheets/jquery/jquery.validate.js"></script>
-	<script type="text/javascript" src="/stylesheets/jquery/jquery.form.js"></script>
-	<script src="/stylesheets/js/common.js"></script>
-</head>
-<div class="popup">
-	<h2><span class="float_l">탄소실천 글 등록</span></h2>
-	<div class="content">
-		<form name="writForm" enctype="multipart/form-data">
-			<!--uid value값 바꿔주기!!!!!!!-->
-			<input type="hidden" id="uid" name="uid" value="81">
-			<input type="hidden" id="certiTitleId" name="certiTitleId" value="">
-			<table class="mb_10">
-				<tr>
-					<th>탄소실천 종류 선택</th>
-					<td>
-						<select id="titleSelect" name="titleSelect" width="100px">
-							<% for(i = 0; i < titles.length; i++) { %>
-							<option value="title" data-certiTitleId="<%= titles[i].certiTitleId %>">
-								<%= titles[i].certiTitle %></option>
-							<% } %>
-						</select>
-					</td>
-				</tr>
-				<tr>
-					<th>사진</th>
-					<td><input type="file" id="file" name="file"></td>
-				</tr>
-			</table>
+<style>
+	.subTitle {
+		display: inline-block;
+		text-align: left;
+		width: 500px !important;
+		height: 34px !important;
+		position: relative;
+		width: 160px;
+		border: 1px solid #ccc;
+		cursor: pointer;
+		background: #fff;
+		border-radius: 3px;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		user-select: none;
+	}
 
-			<p class="btn">
-				<button class="btn_big_blue hand" type="button" id="update_btn">등록</button>
-				<button class="btn_big_black hand" onclick="history.go(-1)">취소</button>
-			</p>
-		</form>
+	.sub div:first-child {
+		display: inline-block;
+		text-align: left;
+		padding-right: 50px;
+		width: auto !important;
+		height: 34px !important;
+	}
+
+	.subTitle option {
+		font-size: 13px !important;
+		padding: 10px 12px !important;
+	}
+
+	.subTitle option.hover {
+		background-color: orange;
+	}
+</style>
+<main class="main">
+	<!-- Breadcrumb-->
+	<ol class="breadcrumb">
+		<li class="breadcrumb-item">Home</li>
+		<li class="breadcrumb-item">
+			<% if(division == 0) { %>
+			<a style="font-weight: bold;">탄소실천관리</a>
+			<% } else {%>
+			<a style="font-weight: bold;">챌린지관리</a>
+			<% } %>
+		</li>
+		<li class="breadcrumb-item active">글관리</li>
+	</ol>
+
+	<div class="container-fluid">
+		<div class="animated fadeIn">
+			<div class="row">
+				<div class="col-lg-6">
+					<div class="card">
+						<div class="card-header">
+							<i class="fa fa-align-justify"></i> 글관리
+						</div>
+						<div class="card-body">
+							<!-- 컨텐츠 -->
+							<form action="" id="writForm" method="post" enctype="multipart/form-data"
+								autocomplete="off">
+								<div class="form-group row">
+									<label class="col-md-2 col-form-label" for="text-input">분류</label>
+									<div class="col-md-9">
+										<select class="dropdown" name="certiSubDivision" id="certiSubDivision">
+											<option value='' selected="selected">--선택--</option>
+											<% for(var i = 0; i < div.length ; i++){  %>
+											<option value="<%= div[i].certiSubDivision %>">
+												<%= div[i].certiSubDivision %></option>
+											<% } %>
+										</select>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-md-2 col-form-label" for="text-input">종류명</label>
+									<div class="col-md-9 sub">
+										<select class="subTitle" name="certiTitle">
+
+										</select>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-md-2 col-form-label">첨부파일</label>
+									<div style="display: flex; flex-direction: column; gap: 25px; padding-left: 15px">
+										<input type="file" id="file" name="file">
+										<input type="file" id="file" name="file" />
+										<input type="file" id="file" name="file" />
+										<input type="file" id="file" name="file" />
+										<input type="file" id="file" name="file" />
+									</div>
+								</div>
+						</div>
+						<!--option 버튼  -->
+						<div class="option_button" style="padding-left: 1.25rem; margin-bottom: 15px;">
+							<div>
+								<button class="btn btn-block btn-outline-success" type="button"
+									id="enroll_btn">등록</button>
+							</div>
+							<div>
+								<button class="btn btn-block btn-outline-danger" type="button"
+									onclick="history.go(-1)">취소</button>
+							</div>
+						</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
-</div>
+	</div>
+</main>
 
-<script>
+<script type="text/javascript">
 	var formObj = $("form[name='writForm']");
 	$(document).ready(function () {
 		// 등록
-		$("#update_btn").on("click", function () {
+		$("#enroll_btn").on("click", function () {
 			$('input[name=certiTitleId]').val($('#titleSelect option:selected').attr('data-certiTitleId'));
 			formObj.attr("action", "certiContWrit");
 			formObj.attr("method", "post");
@@ -59,6 +121,39 @@
 				alert("등록이 왼료되었습니다.");
 				formObj.submit();
 			}
+		});
+
+		$("select[name='certiSubDivision']").on("change", function () {
+			// alert("aaa")
+			var target = $("select[name='certiTitle']");
+			target.empty();
+			var sub = $("#certiSubDivision option:selected").val();
+			console.log(sub)
+			if (sub == "") {
+				target.append("<option value=''>--분류를 선택해주세요--</option>");
+				return;
+			}
+			$.ajax({
+				url: '/admin/m_certiContent/certiWritForm_subdropdown',
+				dataType: 'json',
+				type: 'GET',
+				data: {
+					param: sub
+				},
+				success: function (div) {
+					if (div.length == 0) {
+						// alert(JSON.stringify(div));
+						target.append("<option value=''>종류가 존재하지 않습니다.</option>");
+					} else {
+						$(div).each(function (i) {
+							target.append("<option value='" + div[i].certiTitle +
+								"'>" + div[
+									i]
+								.certiTitle + "</option>")
+						});
+					}
+				}
+			});
 		});
 	});
 </script>
