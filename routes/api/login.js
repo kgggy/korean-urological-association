@@ -148,10 +148,8 @@ router.post('/admin', async (req, res) => {
   });
 
   if (nickChk == null) {
-    return res.json({
-      nickChk: false,
-      message: "아이디를 다시 확인해주세요.",
-    });
+    res.send('<script>alert("아이디를 다시 확인해주세요."); location.href="/";</script>')
+    return false;
   }
 
   const pwdChk = await models.user.findOne({
@@ -161,10 +159,7 @@ router.post('/admin', async (req, res) => {
   });
 
   if (pwdChk == null) {
-    return res.json({
-      pwdChk: false,
-      message: "패스워드를 다시 확인해주세요.",
-    });
+    return res.send('<script>alert("패스워드를 다시 확인해주세요."); location.href="/";</script>')
   }
 
   if (nickChk != null && pwdChk != null) {

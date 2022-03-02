@@ -115,7 +115,7 @@ router.get('/one', async (req, res) => {
     }
 });
 
-//탄소실천, 챌린지 게시글(사진) 업로드
+//탄소실천, 챌린지 게시글 + 사진 업로드
 router.post('/certiContWrit', upload.array('file'), async function (req, res) {
     const paths = req.files.map(data => data.path);
     const orgName = req.files.map(data => data.originalname);
@@ -142,7 +142,7 @@ router.post('/certiContWrit', upload.array('file'), async function (req, res) {
 
             };
         });
-        res.send("<script>opener.parent.location.reload(); window.close();</script>");
+        res.redirect('certiContentAll?certiDivision=' + req.body.certiDivision + '&page=1');
     } catch (error) {
         res.send(error.message);
     }
@@ -175,26 +175,26 @@ router.get('/certiContDelete', async (req, res) => {
 });
 
 //파일 다운로드
-router.get('/download/:certiContentId/:fileNo', async (req, res) => {
-    try {
-        const param = [req.params.certiContentId, req.params.fileNo];
-        const sql = "select fileRoute from file where certiContentId = ? and fileNo = ?";
-        let route;
-        connection.query(sql, param, (err, result) => {
-            if (err) {
-                console.error(err);
-                res.json({
-                    msg: "query error"
-                });
-            }
-            route = result;
-            console.log(result);
-            res.status(200).json(route);
-        });
-    } catch (error) {
-        res.status(401).send(error.message);
-    }
-});
+// router.get('/download/:certiContentId/:fileNo', async (req, res) => {
+//     try {
+//         const param = [req.params.certiContentId, req.params.fileNo];
+//         const sql = "select fileRoute from file where certiContentId = ? and fileNo = ?";
+//         let route;
+//         connection.query(sql, param, (err, result) => {
+//             if (err) {
+//                 console.error(err);
+//                 res.json({
+//                     msg: "query error"
+//                 });
+//             }
+//             route = result;
+//             console.log(result);
+//             res.status(200).json(route);
+//         });
+//     } catch (error) {
+//         res.status(401).send(error.message);
+//     }
+// });
 
 //탄소실천 글 수정
 router.post('/certiContUpdate', upload.array('file'), async (req, res) => {
@@ -257,46 +257,42 @@ router.get('/certiWritForm_subdropdown', async (req, res) => {
             console.log(err)
         }
         div = JSON.stringify(results);
-        // let route = req.app.get('views') + '/m_certiContent/certiCont_writForm';
-        // res.render(route, {
-        //     div: div
-        // });
         res.send(div);
     });
 });
 
 //탄소실천 글 등록
-router.post('/', upload.array('file'), async function (req, res) {
-    const paths = req.files.map(data => data.path);
-    const orgName = req.files.map(data => data.originalname);
-    console.log(req.body);
-    try {
-        const contentId = uuid();
-        const param1 = [contentId, req.body.certiTitleId, req.body.uid];
-        const sql1 = "insert into certiContent(certiContentId, certiTitleId, uid) values(?, ?, ?)";
-        connection.query(sql1, param1, (err) => {
-            if (err) {
-                throw err;
-            }
-            for (let i = 0; i < paths.length; i++) {
-                const param2 = [contentId, paths[i], i + 1, orgName[i]];
-                console.log(param2);
-                const sql2 = "insert into file(certiContentId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
-                connection.query(sql2, param2, (err) => {
-                    if (err) {
-                        throw err;
-                    } else {
-                        return;
-                    }
-                });
+// router.post('/', upload.array('file'), async function (req, res) {
+//     const paths = req.files.map(data => data.path);
+//     const orgName = req.files.map(data => data.originalname);
+//     console.log(req.body);
+//     try {
+//         const contentId = uuid();
+//         const param1 = [contentId, req.body.certiTitleId, req.body.uid];
+//         const sql1 = "insert into certiContent(certiContentId, certiTitleId, uid) values(?, ?, ?)";
+//         connection.query(sql1, param1, (err) => {
+//             if (err) {
+//                 throw err;
+//             }
+//             for (let i = 0; i < paths.length; i++) {
+//                 const param2 = [contentId, paths[i], i + 1, orgName[i]];
+//                 console.log(param2);
+//                 const sql2 = "insert into file(certiContentId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
+//                 connection.query(sql2, param2, (err) => {
+//                     if (err) {
+//                         throw err;
+//                     } else {
+//                         return;
+//                     }
+//                 });
 
-            };
-        });
-        res.send("<script>opener.parent.location.reload(); window.close();</script>");
-    } catch (error) {
-        res.send(error.message);
-    }
-});
+//             };
+//         });
+//         res.send("<script>opener.parent.location.reload(); window.close();</script>");
+//     } catch (error) {
+//         res.send(error.message);
+//     }
+// });
 
 //탄소실천글 수정 페이지로 이동
 router.get('/certiContUdtForm', async (req, res) => {

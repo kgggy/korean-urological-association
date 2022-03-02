@@ -100,7 +100,6 @@ router.get('/all', async (req, res) => {
                 pass: true,
                 last: last
             });
-            // console
         });
     } catch (error) {
         res.status(500).send(error.message);

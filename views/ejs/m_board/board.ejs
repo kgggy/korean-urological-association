@@ -88,22 +88,22 @@
                                     <ul class="pagination customPaging">
                                         <% if(results.length > 0){ %>
                                         <li>
-                                            <a href="/admin/m_board/all?boardId=<%= results[0].boardId %>&page=1"
+                                            <a href="/admin/m_board/all?boardId=<%= results[0].boardId %>&page=1&searchType=<%= searchType %>&searchText=<%= searchText %>"
                                                 class="num">
                                                 << </a> </li> <li>
                                                     <a <%if((page<last-1)||(page==1)){%><%} else {%>
-                                                        href="/admin/m_board/all?boardId=<%= results[0].boardId %>&page=<%= parseInt(page) - 1 %>"
+                                                        href="/admin/m_board/all?boardId=<%= results[0].boardId %>&page=<%= parseInt(page) - 1 %>&searchType=<%= searchType %>&searchText=<%= searchText %>"
                                                         class="num" <% } %>>
                                                         < </a> </li>
                                                             <% for(var i = 0; i < results.length / page_num; i++){  %>
                                                             <li class="paging_on">
-                                                            <a href="/admin/m_board/all?boardId=<%= results[0].boardId %>&page=<%= i + 1 %>"
+                                                            <a href="/admin/m_board/all?boardId=<%= results[0].boardId %>&page=<%= i + 1 %>&searchType=<%= searchType %>&searchText=<%= searchText %>"
                                                                 <%if(page==i+1){%>class="selected"
                                                                 <%}%> class="num"><%= i + 1 %></a> </li> <% } %> <li> <a
                                                                     <%if(page>last-1){%><%} else {%>
-                                                                    href="/admin/m_board/all?boardId=<%= results[0].boardId %>&page=<%= parseInt(page) + 1 %>"
+                                                                    href="/admin/m_board/all?boardId=<%= results[0].boardId %>&page=<%= parseInt(page) + 1 %>&searchType=<%= searchType %>&searchText=<%= searchText %>"
                                                                     class="num" <% } %>>></a></li>
-                                        <li><a href="/admin/m_board/all?boardId=<%= results[0].boardId %>&page=<%= last%>"
+                                        <li><a href="/admin/m_board/all?boardId=<%= results[0].boardId %>&page=<%= last%>&searchType=<%= searchType %>&searchText=<%= searchText %>"
                                                 class="num">>></a></li>
                                         <% } %>
                                     </ul>

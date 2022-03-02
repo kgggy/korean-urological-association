@@ -56,8 +56,11 @@
 						</div>
 						<div class="card-body">
 							<!-- 컨텐츠 -->
-							<form action="" id="writForm" method="post" enctype="multipart/form-data"
+							<form action="" id="writForm" name="writForm" method="post" enctype="multipart/form-data"
 								autocomplete="off">
+								<!--나중에 uid 수정하기~~!~!~!-->
+								<input type="hidden" id="uid" name="uid" value="81">
+								<input type="hidden" id="certiDivision" name="certiDivision" value="<%= division %>">
 								<div class="form-group row">
 									<label class="col-md-2 col-form-label" for="text-input">분류</label>
 									<div class="col-md-9">
@@ -73,8 +76,8 @@
 								<div class="form-group row">
 									<label class="col-md-2 col-form-label" for="text-input">종류명</label>
 									<div class="col-md-9 sub">
-										<select class="subTitle" name="certiTitle">
-
+										<select class="subTitle" name="certiTitle" id="certiTitle">
+											
 										</select>
 									</div>
 								</div>
@@ -115,9 +118,22 @@
 		// 등록
 		$("#enroll_btn").on("click", function () {
 			$('input[name=certiTitleId]').val($('#titleSelect option:selected').attr('data-certiTitleId'));
-			formObj.attr("action", "certiContWrit");
-			formObj.attr("method", "post");
+			var certiSubDivision = $("#certiSubDivision").val();
+			var certiTitle = $("#certiTitle").val();
+
+			if (certiSubDivision == '') {
+				alert("분류를 선택해주세요.");
+				$("#certiSubDivision").focus();
+				return false;
+			}
+			if (certiTitle == '') {
+				alert("종류명을 선택해주세요.");
+				$("#certiTitle").focus();
+				return false;
+			}
 			if (confirm("등록하시겠습니까?") == true) {
+				formObj.attr("action", "/admin/m_certiContent/certiContWrit");
+				formObj.attr("method", "post");
 				alert("등록이 왼료되었습니다.");
 				formObj.submit();
 			}
@@ -143,13 +159,13 @@
 				success: function (div) {
 					if (div.length == 0) {
 						// alert(JSON.stringify(div));
+						target.attr('disabled', 'disabled');
 						target.append("<option value=''>종류가 존재하지 않습니다.</option>");
 					} else {
+						target.append("<option value='' selected='selected'>--선택--</option>");
 						$(div).each(function (i) {
-							target.append("<option value='" + div[i].certiTitle +
-								"'>" + div[
-									i]
-								.certiTitle + "</option>")
+							target.removeAttr('disabled', 'disabled');
+							target.append("<option value='" + div[i].certiTitle + "'>" + div[i].certiTitle + "</option>")
 						});
 					}
 				}
