@@ -73,7 +73,7 @@ router.get('/:certiDivision', async (req, res) => {
     }
 });
 
-//날짜순 전체 탄소실천글
+//날짜순 전체 탄소실천/챌린지 글
 router.get('/certiContents/:certiTitleId', async (req, res) => {
     try {
         const param = req.params.certiTitleId;

@@ -23,10 +23,38 @@
         list-style: none;
     }
 
-    #firstForm {
-        display: flex;
-        justify-content: end;
-        gap: 5px;
+    /* 드롭다운 스타일 */
+    .subTitle {
+        display: inline-block;
+        text-align: left;
+        width: 300px !important;
+        height: 34px !important;
+        position: relative;
+        width: 160px;
+        border: 1px solid #ccc;
+        cursor: pointer;
+        background: #fff;
+        border-radius: 3px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+    }
+
+    .sub div:first-child {
+        display: inline-block;
+        text-align: left;
+        padding-right: 50px;
+        width: auto !important;
+        height: 34px !important;
+    }
+
+    .subTitle option {
+        font-size: 13px !important;
+        padding: 10px 12px !important;
+    }
+
+    .subTitle option.hover {
+        background-color: orange;
     }
 </style>
 <main class="main">
@@ -60,13 +88,21 @@
                                 <input type="hidden" name="certiContentId" value="">
                                 <input type="hidden" name="uid" value="81">
                                 <div align="right">
-                                    <select class="dropdown" name="searchType">
-                                        <option value="0" selected="selected">--전체--</option>
-                                        <option value="certiTitleId" <%if(searchType=="certiTitleId"){%> selected="selected" <%}%>>테마</option>
-                                        <option value="userNick" <%if(searchType=="userNick"){%> selected="selected" <%}%>>닉네임</option>
+                                    <select id="certiSubDivision" name="certiSubDivision" class="dropdown">
+                                        <option value="" selected="selected">--분류--</option>
+                                        <% for(var i = 0; i < div.length ; i++){  %>
+                                        <option value="<%= div[i].certiSubDivision %>"
+                                            <%if(certiSubDivision==div[i].certiSubDivision){%> selected="selected"
+                                            <%}%>><%= div[i].certiSubDivision %></option> <% } %> </select> <select
+                                            class="subTitle" name="searchType" id="searchType">
+                                            <% if(searchType != ''){ %>
+                                        <option value="" selected="selected"><%= results[0].certiTitle %></option>
+                                        <% } else { %>
+                                        <option value="" selected="selected">--종류명--</option>
+                                        <% } %>
                                     </select>
-                                    <input class="searchbox" type="text" name="searchText" value="<%=searchText%>" />
-                                    <button class="btn btn-block btn-outline-success" type="submit" id="searchAction">검색</button>
+                                    <input class="btn btn-block btn-outline-success" type="button" id="searchAction"
+                                        value="검색" onclick="search()" />
                                 </div>
                                 <div class="certiContentAll-wrap">
                                     <ul class="certiContentAll">
@@ -85,16 +121,18 @@
                                             <div class="image-box"><img class="image-thumbnail"
                                                     src="../../../public/images/certification/sprout.png"
                                                     style="padding:15px !important;" alt="">
-                                            </div> 
+                                            </div>
                                             <% } %>
                                             <div class="detailBtn" style="margin-top: 15px;">
                                                 <button id="enrollAction" type="button"
                                                     class="btn btn-block btn-outline-success"
                                                     onclick="selectOne('<%= results[i].certiContentId %>')"
                                                     style="width:90px">상세보기</button>
+                                                <% if(results[i].commentyn != 0) { %>
                                                 <button id="enrollAction" type="button"
-                                                    class="btn btn-block btn-outline-success" onclick="comment('/admin/m_certiContent/certiComment', '', 'width=640, height=700, scrollbars=1', '<%= results[i].certiContentId %>',
-                '<%= param %>')">댓글</button>
+                                                    class="btn btn-block btn-outline-success" onclick="comment('/admin/m_comment/certiComment', '', 'width=640, height=700, scrollbars=1', '<%= results[i].certiContentId %>',
+                                                '<%= param %>')">댓글</button>
+                                                <% } %>
                                             </div>
                                         </li>
                                         <% } %>
@@ -114,22 +152,18 @@
                                         <ul class="pagination customPaging">
                                             <li><a href="/admin/m_certiContent/certicontentAll?certiDivision=<%= param %>&page=1"
                                                     class="num">
-                                                    << </a> 
-                                            </li> 
-                                            <li><a <%if((page<last-1)||(page==1)){%><%} else {%>
-                                                    href="/admin/m_certiContent/certicontentAll?certiDivision=<%= param %>&page=<%= parseInt(page) - 1 %>"
-                                                    class="num" <% } %>>
-                                                    < </a> 
-                                            </li>
-                                            <% for(var i = 0; i < results.length / page_num; i++){  %>
-                                            <li class="paging_on"><a href="/admin/m_certiContent/certicontentAll?certiDivision=<%= param %>&page=<%= i + 1 %>"
-                                                    <%if(page==i+1){%>class="selected"
-                                                    <%}%> class="num"><%= i + 1 %></a> 
-                                            </li> 
-                                            <% } %>
-                                            <li><a <%if(page>last-1){%><%} else {%>
-                                                    href="/admin/m_certiContent/certicontentAll?certiDivision=<%= param %>&page=<%= parseInt(page) + 1 %>"
-                                                    class="num" <% } %>>></a>
+                                                    << </a> </li> <li><a <%if((page<last-1)||(page==1)){%><%} else {%>
+                                                            href="/admin/m_certiContent/certicontentAll?certiDivision=<%= param %>&page=<%= parseInt(page) - 1 %>"
+                                                            class="num" <% } %>>
+                                                            < </a> </li>
+                                                                <% for(var i = 0; i < results.length / page_num; i++){  %>
+                                                                <li class="paging_on"><a
+                                                                    href="/admin/m_certiContent/certicontentAll?certiDivision=<%= param %>&page=<%= i + 1 %>"
+                                                                    <%if(page==i+1){%>class="selected"
+                                                                    <%}%> class="num"><%= i + 1 %></a> </li> <% } %>
+                                                                    <li><a <%if(page>last-1){%><%} else {%>
+                                                                        href="/admin/m_certiContent/certicontentAll?certiDivision=<%= param %>&page=<%= parseInt(page) + 1 %>"
+                                                                        class="num" <% } %>>></a>
                                             </li>
                                             <li><a href="/admin/m_certiContent/certicontentAll?certiDivision=<%= param %>&page=<%= last%>"
                                                     class="num">>></a></li>
@@ -145,19 +179,20 @@
     </div>
 </main>
 <script>
+    var formObj = $("form[name='certiContForm']");
     //상세보기
     function selectOne(certiContentId) {
         $("input[name='certiContentId']").val(certiContentId);
-        $("form[name='certiContForm']").attr("method", "get");
-        $("form[name='certiContForm']").attr("action", "one");
-        $("form[name='certiContForm']").submit();
+        formObj.attr("method", "get");
+        formObj.attr("action", "one");
+        formObj.submit();
     }
 
     //탄소실천, 챌린지 글 등록
     function enroll() {
-        $("form[name='certiContForm']").attr("method", "get");
-        $("form[name='certiContForm']").attr("action", "certiWritForm");
-        $("form[name='certiContForm']").submit();
+        formObj.attr("method", "get");
+        formObj.attr("action", "certiWritForm");
+        formObj.submit();
     }
 
     //댓글
@@ -165,4 +200,46 @@
         theURL += '?certiContentId=' + certiContentId + '&certiDivision=' + certiDivision;
         window.open(theURL, winName, features);
     }
+
+    //검색
+    function search() {
+        formObj.attr("method", "get");
+        formObj.attr("action", "certiContentAll");
+        formObj.submit();
+    }
+    //분류에 따른 종류명 불러오기
+    $("select[name='certiSubDivision']").on("change", function () {
+        // alert("aaa")
+        var target = $("select[name='searchType']");
+        target.empty();
+        var sub = $("#certiSubDivision option:selected").val();
+        // console.log(sub)
+        if (sub == "") {
+            target.append("<option value=''>--분류를 선택해주세요--</option>");
+            return;
+        }
+        $.ajax({
+            url: '/admin/m_certiContent/certiWritForm_subdropdown',
+            dataType: 'json',
+            type: 'GET',
+            data: {
+                param: sub
+            },
+            success: function (secondDiv) {
+                if (secondDiv.length == 0) {
+                    // alert(JSON.stringify(secondDiv));
+                    target.attr('disabled', 'disabled');
+                    target.append("<option value=''>종류가 존재하지 않습니다.</option>");
+                } else {
+                    target.append("<option value='' selected='selected'>--선택--</option>");
+                    $(secondDiv).each(function (i) {
+                        target.removeAttr('disabled', 'disabled');
+                        target.append("<option value='" + secondDiv[i]
+                            .certiTitleId + "'>" + secondDiv[i].certiTitle +
+                            "</option>")
+                    });
+                }
+            }
+        });
+    });
 </script>

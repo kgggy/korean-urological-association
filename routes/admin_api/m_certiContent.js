@@ -1,17 +1,12 @@
 const multer = require("multer");
 const path = require('path');
 const fs = require('fs');
-const {
-    parse
-} = require("csv-parse");
 
 var express = require('express');
 var router = express.Router();
 const mysql = require('mysql');
 
 const connt = require("../../config/db")
-var url = require('url');
-// const upload = require('./file.js');
 
 // DB 커넥션 생성
 var connection = mysql.createConnection(connt);
@@ -112,15 +107,35 @@ router.get('/search', async (req, res) => {
 router.get('/certiContentAll', async (req, res) => {
     try {
         var page = req.query.page;
-        const param = req.query.certiDivision;
-        const sql = "select distinct f.fileRoute, c.certiContentId, c.certiTitleId, f.fileNo, e.certiDivision, c.certiContentDate\
-                       from certiContent c\
-                  left join file f on f.certiContentId = c.certiContentId\
-                  left join certification e on e.certiTitleId = c.certiTitleId\
-                      where e.certiDivision = ? and f.fileNo = 1\
-                      order by c.certiContentDate desc";
-        //댓글 존재여부
-        
+        var param = req.query.certiDivision;
+        var certiSubDivision = req.query.certiSubDivision == undefined ? "" : req.query.certiSubDivision;
+        var searchType = req.query.searchType == undefined ? "" : req.query.searchType;
+        var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
+        var sql = "select distinct f.fileRoute, c.certiContentId, c.certiTitleId, f.fileNo, e.certiDivision, c.certiContentDate, e.certiTitle,\
+        (select count(*) from comment where comment.certiContentId = c.certiContentId) as commentyn\
+        from certiContent c\
+        left join file f on f.certiContentId = c.certiContentId\
+        left join certification e on e.certiTitleId = c.certiTitleId\
+        where e.certiDivision = ? and f.fileNo = 1";
+        if (certiSubDivision != '') {
+            sql += " and e.certiSubDivision = '" + certiSubDivision + "' \n";
+        }
+        if (searchType != '') {
+            sql += " and e.certiTitleId = '" + searchType + "' \n";
+        }
+        sql += " order by c.certiContentDate desc";
+        console.log(sql)
+        // 분류 드롭다운 가져오기
+        const sql2 = "select count(*), certiSubDivision\
+                       from certification\
+                       where certiSubDivision !='' or not null group by certiSubDivision";
+        var div = "";
+        connection.query(sql2, (err, results1) => {
+            if (err) {
+                console.log(err)
+            }
+            div = results1;
+        })
         connection.query(sql, param, (err, results) => {
             if (err) {
                 console.log(err);
@@ -128,16 +143,19 @@ router.get('/certiContentAll', async (req, res) => {
             var last = Math.ceil((results.length) / 12);
             let route = req.app.get('views') + '/m_certiContent/certiContent';
             res.render(route, {
-                searchType: null,
-                searchText: null,
+                param:param,
+                div: div,
+                certiSubDivision: certiSubDivision,
+                searchType: searchType,
+                searchText: searchText,
                 results: results,
                 page: page,
                 length: results.length - 1,
                 page_num: 12,
                 pass: true,
-                param: param,
                 last: last
             });
+            console.log(results)
         });
     } catch (error) {
         res.status(401).send(error.message);
@@ -379,31 +397,6 @@ router.post('/certiContUpdate', upload.array('file'), async (req, res) => {
             };
         })
         res.redirect('one?certiContentId=' + req.body.certiContentId);
-    } catch (error) {
-        res.send(error.message);
-    }
-});
-
-//탄소실천, 챌린지 게시글 별 댓글 전체조회
-router.get('/certiComment', async (req, res) => {
-    try {
-        const param = [req.query.certiContentId, req.query.certiContentId];
-        const division = req.query.certiDivision;
-        const sql = "select c.*, u.userNick, date_format(cmtDate, '%Y-%m-%d') as cmtDatefmt,\
-                            (select count(*) from comment where certiContentId = ? group by certiContentId) as cmtCount\
-                       from comment c\
-                  left join user u on u.uid = c.uid\
-                      where certiContentId = ?";
-        connection.query(sql, param, (err, results) => {
-            if (err) {
-                console.log(err);
-            }
-            let route = req.app.get('views') + '/m_certiContent/certiCont_cmtViewForm';
-            res.render(route, {
-                results: results,
-                division: division
-            });
-        })
     } catch (error) {
         res.send(error.message);
     }
