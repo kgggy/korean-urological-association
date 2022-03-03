@@ -1,0 +1,7 @@
+.cmtFrm .cmtInfo{display: flex; font-size: 14px; align-items: center;}
+.cmtFrm .cmtInfo img{width: 11px; height: 15px;}
+.cmtFrm .cmtDelBtn{width: 42px; margin: 0 !important; width: 50px !important; padding: 0 !important;}
+.cmtFrm .cmtInfo span:first-of-type, 
+.cmtFrm .cmtInfo span:nth-of-type(2){padding: 0 5px;}
+.cmtFrm .cmtInfo-wrap{display: flex; justify-content: space-between; width: 100%; margin-bottom: 10px;}
+.row{margin: 0 !important; margin-bottom: 15px !important;}

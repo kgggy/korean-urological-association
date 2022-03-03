@@ -39,27 +39,24 @@
 						</div>
 						<div class="card-body">
 							<!-- 컨텐츠 -->
-							<form action="" id="commentForm" method="get">
+							<form action="" id="commentForm" method="get" class="cmtFrm">
 								<input type="hidden" id="certiContentId" name="certiContentId"
 									value="<%= certiContentId %>">
 								<input type="hidden" id="certiDivision" name="certiDivision" value="<%= division %>">
 								<input type="hidden" id="cmtId" name="cmtId" value="">
 								<% for(var i = 0; i < results.length; i++) {%>
-								<div class="form-group row">
-									<div class="col-md-9">
-										<img src="../../../public/images/icon_admin.gif">
-										<label class="col-md-2 col-form-label"
-											for="text-input"><%= results[i].userNick %></label>
-										<p class="col-md-2 col-form-label" for="text-input">
-											<%= results[i].cmtDatefmt %>
-										</p>
-										<input class="form-control" id="writTitle" type="text" name="writTitle"
-											value="<%= results[i].cmtContent %>" disabled="disabled">
-									</div>
-									<div>
-										<input class="btn btn-block btn-outline-danger" type="submit" id="delete_btn"
+								<div class="form-group row col-md-9">
+									<div class="cmtInfo-wrap">
+										<div class="cmtInfo">
+											<img src="../../../public/images/icon_admin.gif">
+											<span><%= results[i].userNick %></span>
+											<span><%= results[i].cmtDatefmt %></span>
+										</div>
+										<input class="btn btn-block btn-outline-danger cmtDelBtn" type="submit" id="delete_btn"
 											value="삭제" data-cmtId="<%= results[i].cmtId %>">
 									</div>
+										<div class="form-control" id="writTitle" type="text" name="writTitle"
+											><%= results[i].cmtContent %></div>
 								</div>
 								<% } %>
 							</form>
