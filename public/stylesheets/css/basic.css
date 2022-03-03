@@ -128,3 +128,4 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#45484d', end
 .certiContentAll-wrap .certiContentAll{display: flex; flex-wrap: wrap;}
 .certiContentAll-wrap .certiContentAll .certiContentEach{width: calc(100% / 4 - 4%); margin: 0 2%; text-align: center;}
 .certiContentAll-wrap .certiContentAll .certiContentEach img{display: block; width: 100%;}
+
