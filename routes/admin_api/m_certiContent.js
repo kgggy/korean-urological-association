@@ -120,7 +120,7 @@ router.get('/certiContentAll', async (req, res) => {
                       where e.certiDivision = ? and f.fileNo = 1\
                       order by c.certiContentDate desc";
         //댓글 존재여부
-        const sql
+        
         connection.query(sql, param, (err, results) => {
             if (err) {
                 console.log(err);

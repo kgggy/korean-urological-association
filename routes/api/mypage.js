@@ -41,7 +41,7 @@ router.get('/all', async (req, res) => {
 //사용자의 탄소실천 글 전체 조회
 router.get('/certi', async (req, res) => {
     try {
-        const sql = "select f.fileRoute, c.certiContentId\
+        const sql = "select f.fileRoute, c.certiContentId, c.certiTitleId, c.certiContentDate\
                        from certiContent c\
                   left join file f on f.certiContentId = c.certiContentId\
                   left join certification t on t.certiTitleId = c.certiTitleId\

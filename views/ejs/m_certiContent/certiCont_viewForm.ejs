@@ -1,95 +1,128 @@
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
-	<link rel="stylesheet" type="text/css" href="/stylesheets/css/default.css" />
-	<link rel="stylesheet" type="text/css" href="/stylesheets/css/basic.css" />
-	<link rel="stylesheet" type="text/css" href="/stylesheets/css/layout.css" />
-	<!--<link href="/js/jquery/css/jquery-ui-1.8.2.custom.css" rel="stylesheet" type="text/css"/>-->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css" />
-	<script type="text/javascript" src="/stylesheets/jquery/jquery-1.7.1.min.js"></script>
-	<script type="text/javascript" src="/stylesheets/jquery/jquery-ui-1.8.16.custom.min.js"></script>
-	<script type="text/javascript" src="/stylesheets/jquery/jquery.validate.js"></script>
-	<script type="text/javascript" src="/stylesheets/jquery/jquery.form.js"></script>
-	<script src="/stylesheets/js/common.js"></script>
-</head>
-<div class="popup">
-	<h2><span class="float_l">탄소실천 글 상세보기</span></h2>
-	<div class="content">
-		<table class="mb_10">
-			<tr>
-				<th>글번호</th>
-				<td><%=result[0].certiContentId%></td>
-			</tr>
-			<tr>
-				<th>테마</th>
-				<td><%=result[0].certiTitle%></td>
-			</tr>
-			<tr>
-				<th>좋아요 수</th>
-				<td><%=result[0].rcount%></td>
-			</tr>
-			<tr>
-				<th>작성자</th>
-				<td><%=result[0].userNick%></td>
-			</tr>
-			<tr>
-				<th>작성일</th>
-				<td><%=result[0].certiContentDatefmt%></td>
-			</tr>
-			<tr>
-				<th>사진</th>
-				
-				<td><img src="../../../<%= result[0].fileRoute %>" alt="사진"
-					style="padding:20px !important; width:60%;" /></td>
-			</tr>
-		</table>
+<main class="main">
+    <!-- Breadcrumb-->
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">Home</li>
+        <li class="breadcrumb-item">
+            <a style="font-weight: bold;">탄소 실천 관리</a>
+        </li>
+        <li class="breadcrumb-item active">탄소 실천 글 관리</li>
+        <!-- Breadcrumb Menu-->
+    </ol>
+    <div class="container-fluid">
+        <div class="animated fadeIn">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <%if(division == 0){%>
+                        <div class="card-header">
+                            <i class="fa fa-align-justify"></i> 탄소실천 글 상세보기</div>
+                        <% } else {%>
+                        <div class="card-header">
+                            <i class="fa fa-align-justify"></i> 챌린지 글 상세보기</div>
+                        <% } %>
+                        <div class="card-body">
+                            <!-- 컨텐츠 -->
+                            <form id="udtForm" name="udtForm" method="" action="">
+                                <input type="hidden" id="certiDivision" name="certiDivision" value="<%= division %>">
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-form-label" for="text-input">글번호</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" id="certiContentId" type="text"
+                                            name="certiContentId" readonly value="<%=result[0].certiContentId%>">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-form-label" for="text-input">분류</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" id="certiSubDivision" type="text"
+                                            name="certiSubDivision" disabled="disabled"
+                                            value="<%=result[0].certiSubDivision%>">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-form-label" for="text-input">종류명</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" id="certiTitle" type="text" name="certiTitle"
+                                            disabled="disabled" value="<%=result[0].certiTitle%>">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-form-label" for="text-input">좋아요 수</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" id="rcount" type="text" name="rcount"
+                                            disabled="disabled" value="<%=result[0].rcount%>">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-form-label" for="text-input">작성자</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" id="userNick" type="text" name="userNick"
+                                            disabled="disabled" value="<%=result[0].userNick%>">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-form-label" for="text-input">작성일</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" id="certiContentDatefmt" type="text"
+                                            name="certiContentDatefmt" disabled="disabled"
+                                            value="<%=result[0].certiContentDatefmt%>">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-form-label" for="text-input">이미지</label>
+                                    <div class="col-md-9">
+                                        <% if(result.length > 0 && result[0].fileRoute != null && result[0].fileRoute != '') {%>
+                                        <% for(var i = 0; i < result.length; i++) { %>
+                                        <img src="../../../<%= result[i].fileRoute %>" alt="사진"
+                                            style="padding:0 50px 50px 0 !important; width:40%; vertical-align: top !important;" />
+                                        <input type="hidden" name="fileRoute" value="<%=result[i].fileRoute%>">
+                                        <% } %>
+                                        <% }else{ %>
+                                        이미지가 존재하지 않습니다.
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <!--option 버튼  -->
+                                <div class="option_button">
+                                    <div>
+                                        <button class="btn btn-block btn-outline-success" type="button"
+                                            id="update_btn">수정</button>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-block btn-outline-danger" type="button"
+                                            id="delete_btn">삭제</button>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-block btn-outline-success" type="button"
+                                            onclick="location.href='/admin/m_certiContent/certiContentAll?certiDivision=<%=division%>&page=1'">목록</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</main>
 
-		<form name="udtForm">
-			<p class="btn">
-				<input type="hidden" id="certiContentId" name="certiContentId" value="<%=result[0].certiContentId%>">
-				<input type="hidden" id="fileRoute" name="fileRoute" value="<%= result[0].fileRoute %>">
-				<input type="hidden" id="certiDivision" name="certiDivision" value="">
-				<button class="btn_big_blue hand" type="button" id="update_btn">수정</button>
-				<button class="btn_big_blue hand" type="button" id="delete_btn">삭제</button>
-				<button class="btn_big_black hand" onclick="opener.parent.location.reload();self.close();">취소</button>
-			</p>
-		</form>
-	</div>
-</div>
-
-<script>
-	//쿼리스트링값 가져와서 넘기기
-	function getUrlParams() {
-            var params = {};
-            window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (str, key, value) {
-                params[key] = value;
-            });
-            return params;
-        }
-        var param = getUrlParams();
-        var certiDivision = document.getElementById("certiDivision");
-        certiDivision.value = param.certiDivision;
-
-	var formObj = $("form[name='udtForm']");
-	$(document).ready(function () {
-		// 수정 폼 연결
-		$("#update_btn").on("click", function () {
-			formObj.attr("action", "certiContUdtForm");
-			formObj.attr("method", "get");
-			formObj.submit();
-		});
-		// 삭제
-		$("#delete_btn").on("click", function () {
-			formObj.attr("action", "certiContDelete");
-			formObj.attr("method", "get");
-			if (confirm("게시글을 삭제하시겠습니까?") == true) {
-				alert("삭제되었습니다.");
-				formObj.submit();
-			} else {
-				return;
-			}
-		});
-	})
+<script type="text/javascript">
+    var formObj = $("form[name='udtForm']");
+    $(document).ready(function () {
+        // 수정 폼 연결
+        $("#update_btn").on("click", function () {
+            formObj.attr("action", "certiContUdtForm");
+            formObj.attr("method", "get");
+            formObj.submit();
+        });
+        // 삭제
+        $("#delete_btn").on("click", function () {
+            formObj.attr("action", "certiContDelete");
+            formObj.attr("method", "get");
+            if (confirm("게시글을 삭제하시겠습니까?") == true) {
+                formObj.submit();
+            } else {
+                return;
+            }
+        });
+    })
 </script>

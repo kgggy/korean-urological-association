@@ -1,4 +1,15 @@
-<script type="text/javascript">
+<style>
+	.navbar-toggler-icon {
+		display: none;
+	}
+
+	.button:not(:disabled),
+	[type="button"]:not(:disabled),
+	[type="reset"]:not(:disabled) {
+		pointer-events: none;
+	}
+</style>
+<!-- <script type="text/javascript">
 	$(document).ready(function () {
 		comment_ajax();
 
@@ -87,4 +98,70 @@
 			<dd>data.comment_content</dd>
 		</dl>
 	</div>
-</div>
+</div> -->
+<main class="main">
+	<!-- Breadcrumb-->
+	<ol class="breadcrumb">
+        <li class="breadcrumb-item">Home</li>
+        <%if(division == 0){%>
+        <li class="breadcrumb-item">
+            <a style="font-weight: bold;">탄소 실천 관리</a>
+        </li>
+        <li class="breadcrumb-item active">탄소 실천 댓글 관리</li>
+        <% } else {%>
+        <li class="breadcrumb-item">
+            <a style="font-weight: bold;">챌린지 관리</a>
+        </li>
+        <li class="breadcrumb-item active">챌린지 댓글 관리</li>
+        <% } %>
+        <!-- Breadcrumb Menu-->
+    </ol>
+
+	<div class="container-fluid">
+		<div class="animated fadeIn">
+			<div class="row">
+				<div class="col-lg-6">
+					<div class="card">
+						<div class="card-header">
+							<i class="fa fa-align-justify"></i> 댓글(<%= results[0].cmtCount %>개)
+						</div>
+						<div class="card-body">
+							<!-- 컨텐츠 -->
+							<form action="" id="boardwrite" method="get">
+								<input type="hidden" id="writContent" name="writContent" value="">
+								<% for(var i = 0; i < results.length; i++) {%>
+								<div class="form-group row">
+									<div class="col-md-9">
+									<img src="../../../public/images/icon_admin.gif">
+									<label class="col-md-2 col-form-label" for="text-input"><%= results[i].userNick %></label>
+									<p class="col-md-2 col-form-label" for="text-input"><%= results[i].cmtDatefmt %></p>
+										<input class="form-control" id="writTitle" type="text" name="writTitle"
+											value="<%= results[i].cmtContent %>" disabled="disabled">
+									</div>
+									<div>
+                                        <input class="btn btn-block btn-outline-danger" type="submit"
+                                            id="delete_btn" value="삭제">
+                                    </div>
+								</div>
+								<% } %>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
+
+<script>
+	// 삭제
+	$("#delete_btn").on("click", function () {
+            formObj.attr("action", "certiContDelete");
+            formObj.attr("method", "get");
+            if (confirm("게시글을 삭제하시겠습니까?") == true) {
+                formObj.submit();
+            } else {
+                return;
+            }
+        });
+</script>

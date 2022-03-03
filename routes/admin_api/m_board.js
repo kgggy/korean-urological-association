@@ -132,38 +132,6 @@ router.get('/selectOne', async (req, res) => {
     }
 });
 
-//게시글 삭제
-router.get('/brdDelete', async (req, res) => {
-    try {
-        const param = req.query.writId;
-        const boardId = req.query.boardId;
-        // console.log(param);
-        const sql = "delete from post where writId = ?";
-        connection.query(sql, param, (err, row) => {
-            if (err) {
-                console.log(err);
-            }
-            if (req.query.fileRoute != undefined) {
-                console.log(req.query.fileRoute);
-                if (Array.isArray(req.query.fileRoute) == false) {
-                    req.query.fileRoute = [req.query.fileRoute];
-                }
-                for (let i = 0; i < req.query.fileRoute.length; i++) {
-                    fs.unlinkSync(req.query.fileRoute[i], (err) => {
-                        if (err) {
-                            console.log(err);
-                        }
-                        return;
-                    });
-                }
-            }
-            res.send('<script>alert("게시글이 삭제되었습니다."); location.href="/admin/m_board/all?boardId=' + boardId + '&page=1";</script>');
-        });
-    } catch (error) {
-        res.send(error.message);
-    }
-});
-
 //게시글 등록 폼 이동
 router.get('/writForm', async (req, res) => {
     console.log(req.query.uid)
@@ -295,6 +263,38 @@ router.get('/fileDelete', async (req, res) => {
         }
     }
     res.redirect('brdUdtForm?writId=' + req.query.writId);
+});
+
+//게시글 삭제
+router.get('/brdDelete', async (req, res) => {
+    try {
+        const param = req.query.writId;
+        const boardId = req.query.boardId;
+        // console.log(param);
+        const sql = "delete from post where writId = ?";
+        connection.query(sql, param, (err, row) => {
+            if (err) {
+                console.log(err);
+            }
+            if (req.query.fileRoute != undefined) {
+                console.log(req.query.fileRoute);
+                if (Array.isArray(req.query.fileRoute) == false) {
+                    req.query.fileRoute = [req.query.fileRoute];
+                }
+                for (let i = 0; i < req.query.fileRoute.length; i++) {
+                    fs.unlinkSync(req.query.fileRoute[i], (err) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        return;
+                    });
+                }
+            }
+            res.send('<script>alert("게시글이 삭제되었습니다."); location.href="/admin/m_board/all?boardId=' + boardId + '&page=1";</script>');
+        });
+    } catch (error) {
+        res.send(error.message);
+    }
 });
 
 module.exports = router;

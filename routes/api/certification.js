@@ -74,29 +74,29 @@ router.get('/:certiDivision', async (req, res) => {
 });
 
 //날짜순 전체 탄소실천글
-// router.get('/certiContents/:certiTitleId', async (req, res) => {
-//     try {
-//         const param = req.params.certiTitleId;
-//         const sql = "select f.fileRoute, c.certiContentId, c.certiContentDate\
-//                        from file f \
-//                        join certiContent c\
-//                          on f.certiContentId = c.certiContentId\
-//                       where c.certiTitleId = ? and f.fileNo = 1";
-//         let certiContents;
-//         connection.query(sql, param, (err, results) => {
-//             if (err) {
-//                 console.log(err);
-//                 response.json({
-//                     msg: "query error"
-//                 });
-//             }
-//             certiContents = results;
-//             res.status(200).json(certiContents);
-//         });
-//     } catch (error) {
-//         res.status(401).send(error.message);
-//     }
-// });
+router.get('/certiContents/:certiTitleId', async (req, res) => {
+    try {
+        const param = req.params.certiTitleId;
+        const sql = "select f.fileRoute, c.certiContentId, c.certiContentDate\
+                       from file f \
+                       join certiContent c\
+                         on f.certiContentId = c.certiContentId\
+                      where c.certiTitleId = ? and f.fileNo = 1";
+        let certiContents;
+        connection.query(sql, param, (err, results) => {
+            if (err) {
+                console.log(err);
+                response.json({
+                    msg: "query error"
+                });
+            }
+            certiContents = results;
+            res.status(200).json(certiContents);
+        });
+    } catch (error) {
+        res.status(401).send(error.message);
+    }
+});
 
 //탄소실천, 챌린지 게시글 상세조회
 router.get('/one/:certiContentId', async (req, res) => {
