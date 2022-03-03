@@ -87,6 +87,7 @@
                                 <input type="hidden" name="certiDivision" value="<%= param %>">
                                 <input type="hidden" name="certiContentId" value="">
                                 <input type="hidden" name="uid" value="81">
+                                <% if(results.length > 0) { %>
                                 <div align="right">
                                     <select id="certiSubDivision" name="certiSubDivision" class="dropdown">
                                         <option value="" selected="selected">--분류--</option>
@@ -104,6 +105,7 @@
                                     <input class="btn btn-block btn-outline-success" type="button" id="searchAction"
                                         value="검색" onclick="search()" />
                                 </div>
+                                <% } %>
                                 <div class="certiContentAll-wrap">
                                     <ul class="certiContentAll">
                                         <% if(results.length > 0) { %>
@@ -147,6 +149,7 @@
                                     <input id="enrollAction" type="button" class="btn btn-block btn-outline-success"
                                         onclick="enroll()" value="등록" />
                                 </p>
+                                <% if(results.length > 0) { %>
                                 <div class="mt_20">
                                     <div class="paging" id="page_navi">
                                         <ul class="pagination customPaging">
@@ -170,6 +173,7 @@
                                         </ul>
                                     </div>
                                 </div>
+                                <% }%>
                             </form>
                         </div>
                     </div>
