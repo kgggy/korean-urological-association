@@ -88,7 +88,7 @@
                                 <input type="hidden" name="certiContentId" value="">
                                 <input type="hidden" name="uid" value="81">
                                 <% if(results.length > 0 && param == 0) { %>
-                                <div align="right">
+                                <div class="selectBoxAlign">
                                     <select id="certiSubDivision" name="certiSubDivision" class="dropdown">
                                         <option value="" selected="selected">--분류--</option>
                                         <% for(var i = 0; i < div.length ; i++){  %>
@@ -102,12 +102,11 @@
                                         <option value="" selected="selected">--종류명--</option>
                                         <% } %>
                                     </select>
-                                    <% if(searchText != '') { %> <input class="searchbox" type="text" name="searchText"
-                                            value="<%=searchText%>" />
-                                        <% } else {%>
-                                        <input class="searchbox" type="text" name="searchText"
-                                            placeholder=" 작성자" />
-                                        <% } %>
+                                    <% if(searchText != '') { %>
+                                    <input class="searchbox" type="text" name="searchText" value="<%=searchText%>" />
+                                    <% } else {%>
+                                    <input class="searchbox" type="text" name="searchText" placeholder=" 작성자" />
+                                    <% } %>
                                     <input class="btn btn-block btn-outline-success" type="button" id="searchAction"
                                         value="검색" onclick="search()" />
                                 </div>
