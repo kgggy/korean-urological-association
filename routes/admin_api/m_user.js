@@ -434,86 +434,87 @@ router.get('/userExcel', async (req, res) => {
   var conf = {};
 
   conf.cols = [{
-    caption: '번호',
-    type: 'number',
-    width: 8
-  },{
-    caption: '이메일',
-    captionStyleIndex: 1,
-    type: 'string',
-    width: 12
-  },{
-    caption: '닉네임',
-    captionStyleIndex: 1,
-    type: 'string',
-    width: 12
-  }, {
-    caption: '나이',
-    captionStyleIndex: 1,
-    type: 'number',
-    width: 12
-  }, 
-  // {
-  //   caption: '주소',
-  //   captionStyleIndex: 1,
-  //   type: 'string',
-  //   width: 12
-  // }, 
-  {
-    caption: '학교',
-    captionStyleIndex: 1,
-    type: 'string',
-    width: 15
-  }, {
-    caption: '포인트',
-    captionStyleIndex: 1,
-    type: 'number',
-    width: 15
-  }, {
-    caption: '계산점수',
-    captionStyleIndex: 1,
-    type: 'number',
-    width: 12
-  }, {
-    caption: '나무등급',
-    captionStyleIndex: 1,
-    type: 'string',
-    width: 12
-  }, 
-  // {
-  //   caption: '작성한 게시글 수',
-  //   captionStyleIndex: 1,
-  //   type: 'string',
-  //   width: 12
-  // },
-  {
-    caption: '가입일',
-    captionStyleIndex: 1,
-    type: 'string',
-    width: 12
-  }, 
-  {
-    caption: '로그인 경로',
-    captionStyleIndex: 1,
-    type: 'string',
-    width: 12
-  },
-  // {
-  //   caption: '권한',
-  //   captionStyleIndex: 1,
-  //   type: 'string',
-  //   width: 12
-  // }, {
-  //   caption: '상태',
-  //   captionStyleIndex: 1,
-  //   type: 'string',
-  //   width: 12
-  // }, 
-  {
-    caption: '개인정보 동의여부',
-    captionStyleIndex: 1,
-    type: 'number',
-    width: 12}
+      caption: '번호',
+      type: 'number',
+      width: 8
+    }, {
+      caption: '이메일',
+      captionStyleIndex: 1,
+      type: 'string',
+      width: 50
+    }, {
+      caption: '닉네임',
+      captionStyleIndex: 1,
+      type: 'string',
+      width: 30
+    }, {
+      caption: '나이',
+      captionStyleIndex: 1,
+      type: 'number',
+      width: 8
+    },
+    {
+      caption: '주소',
+      captionStyleIndex: 1,
+      type: 'string',
+      width: 30
+    },
+    {
+      caption: '학교',
+      captionStyleIndex: 1,
+      type: 'string',
+      width: 15
+    }, {
+      caption: '포인트',
+      captionStyleIndex: 1,
+      type: 'number',
+      width: 15
+    }, {
+      caption: '계산점수',
+      captionStyleIndex: 1,
+      type: 'number',
+      width: 12
+    }, {
+      caption: '나무등급',
+      captionStyleIndex: 1,
+      type: 'string',
+      width: 12
+    },
+    {
+      caption: '작성한 게시글 수',
+      captionStyleIndex: 1,
+      type: 'string',
+      width: 12
+    },
+    {
+      caption: '가입일',
+      captionStyleIndex: 1,
+      type: 'string',
+      width: 12
+    },
+    {
+      caption: '로그인 경로',
+      captionStyleIndex: 1,
+      type: 'string',
+      width: 12
+    },
+    {
+      caption: '권한',
+      captionStyleIndex: 1,
+      type: 'string',
+      width: 12
+    }, {
+      caption: '상태',
+      captionStyleIndex: 1,
+      type: 'string',
+      width: 12
+    },
+    {
+      caption: '개인정보 동의여부',
+      captionStyleIndex: 1,
+      type: 'string',
+      width: 12
+    }
   ];
 
   // const book = xlsx.utils.book_new();
@@ -522,7 +523,14 @@ router.get('/userExcel', async (req, res) => {
   //   ["번호", "닉네임", "나이"]
   // ])
 
-  var sql = "select * from user where 1=1";
+  var sql = "select *,\
+                    date_format(userRegDate, '%Y-%m-%d') as userRegDatefmt,\
+                    case when userAuth = '0' then '일반회원' when userAuth = '1' then '기업' end as userAuthfmt,\
+                    case when userStatus = '0' then '활동중' when userStatus = '1' then '탈퇴' end as userStatusfmt,\
+                    case when userSocialDiv = 'b' then '일반 가입' when userSocialDiv = 'A' then '소셜로그인(애플)' when userSocialDiv = 'G' then '소셜로그인(구글)' when userSocialDiv = 'N' then '소셜로그인(네이버)' end as userSocialDivfmt,\
+                    case when userAgree = '0' then '동의' else '비동의' end as userAgreefmt\
+              from user\
+             where 1=1";
 
   if (searchType != '') {
     sql += " and userAuth = '" + searchType + "' \n";
@@ -546,9 +554,7 @@ router.get('/userExcel', async (req, res) => {
     sql += " and (userNick like '%" + searchText + "%' or userEmail like '%" + searchText + "%' or userSchool like '%" + searchText + "%') order by uid";
   }
 
-  console.log(sql)
   try {
-    console.log("trytry")
     connection.query(sql, function (err, results) {
       if (err) {
         console.log(err);
@@ -560,28 +566,25 @@ router.get('/userExcel', async (req, res) => {
           results[i].userEmail,
           results[i].userNick,
           results[i].userAge,
-          // results[i].userAdres1 + ' ' + results[i].userAdres2,
+          results[i].userAdres1 + ' ' + results[i].userAdres2,
           results[i].userSchool,
           results[i].userPoint,
           results[i].userScore,
           results[i].userTree,
-          // results[i].countAll,
-          results[i].userRegDate,
-          results[i].userSocialDiv,
-          // results[i].userAuth,
-          // results[i].userStatus,
-          results[i].userAgree
+          results[i].countAll,
+          results[i].userRegDatefmt,
+          results[i].userSocialDivfmt,
+          results[i].userAuthfmt,
+          results[i].userStatusfmt,
+          results[i].userAgreefmt
         ];
         arr.push(resultData);
       }
       conf.rows = arr;
       var result = nodeExcel.execute(conf);
       res.setHeader('Content-Type', 'application/vnd.openxmlformats');
-      res.setHeader("Content-Disposition", "attachment; filename=" + "excel_export.xlsx");
+      res.setHeader("Content-Disposition", "attachment; filename=" + "ecoce_user.xlsx");
       res.end(result, 'binary');
-      // xlsx.utils.book_append_sheet( book, conf, "ECOCE 사용자" );
-      // console.log(conf)
-      // xlsx.writeFile( book, "ecoce_user" ); 
     });
   } catch (error) {
     res.status(401).send(error.message);
