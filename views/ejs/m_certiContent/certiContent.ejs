@@ -87,7 +87,7 @@
                                 <input type="hidden" name="certiDivision" value="<%= param %>">
                                 <input type="hidden" name="certiContentId" value="">
                                 <input type="hidden" name="uid" value="81">
-                                <% if(results.length > 0) { %>
+                                <% if(results.length > 0 && param == 0) { %>
                                 <div align="right">
                                     <select id="certiSubDivision" name="certiSubDivision" class="dropdown">
                                         <option value="" selected="selected">--분류--</option>
@@ -102,6 +102,12 @@
                                         <option value="" selected="selected">--종류명--</option>
                                         <% } %>
                                     </select>
+                                    <% if(searchText != '') { %> <input class="searchbox" type="text" name="searchText"
+                                            value="<%=searchText%>" />
+                                        <% } else {%>
+                                        <input class="searchbox" type="text" name="searchText"
+                                            placeholder=" 작성자" />
+                                        <% } %>
                                     <input class="btn btn-block btn-outline-success" type="button" id="searchAction"
                                         value="검색" onclick="search()" />
                                 </div>
@@ -153,22 +159,22 @@
                                 <div class="mt_20">
                                     <div class="paging" id="page_navi">
                                         <ul class="pagination customPaging">
-                                            <li><a href="/admin/m_certiContent/certicontentAll?certiDivision=<%= param %>&page=1"
+                                            <li><a href="/admin/m_certiContent/certicontentAll?certiDivision=<%= param %>&page=1<%= keepSearch %>"
                                                     class="num">
                                                     << </a> </li> <li><a <%if((page<last-1)||(page==1)){%><%} else {%>
-                                                            href="/admin/m_certiContent/certicontentAll?certiDivision=<%= param %>&page=<%= parseInt(page) - 1 %>"
+                                                            href="/admin/m_certiContent/certicontentAll?certiDivision=<%= param %>&page=<%= parseInt(page) - 1 %><%= keepSearch %>"
                                                             class="num" <% } %>>
                                                             < </a> </li>
                                                                 <% for(var i = 0; i < results.length / page_num; i++){  %>
                                                                 <li class="paging_on"><a
-                                                                    href="/admin/m_certiContent/certicontentAll?certiDivision=<%= param %>&page=<%= i + 1 %>"
+                                                                    href="/admin/m_certiContent/certicontentAll?certiDivision=<%= param %>&page=<%= i + 1 %><%= keepSearch %>"
                                                                     <%if(page==i+1){%>class="selected"
                                                                     <%}%> class="num"><%= i + 1 %></a> </li> <% } %>
                                                                     <li><a <%if(page>last-1){%><%} else {%>
-                                                                        href="/admin/m_certiContent/certicontentAll?certiDivision=<%= param %>&page=<%= parseInt(page) + 1 %>"
+                                                                        href="/admin/m_certiContent/certicontentAll?certiDivision=<%= param %>&page=<%= parseInt(page) + 1 %><%= keepSearch %>"
                                                                         class="num" <% } %>>></a>
                                             </li>
-                                            <li><a href="/admin/m_certiContent/certicontentAll?certiDivision=<%= param %>&page=<%= last%>"
+                                            <li><a href="/admin/m_certiContent/certicontentAll?certiDivision=<%= param %>&page=<%= last%><%= keepSearch %>"
                                                     class="num">>></a></li>
                                         </ul>
                                     </div>

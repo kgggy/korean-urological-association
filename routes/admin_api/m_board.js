@@ -72,6 +72,7 @@ router.get('/all', async (req, res) => {
         var page = req.query.page;
         var searchType = req.query.searchType == undefined ? "" : req.query.searchType;
         var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
+        var keepSearch = "&searchType=" + searchType + "&searchText=" + searchText;
         var sql = "select p.*, c.*, u.userNick, u.uid, date_format(writDate, '%Y-%m-%d') as writDatefmt, date_format(writUpdDate, '%Y-%m-%d') as writUpdDatefmt\
                        from post p\
                   left join community c\
@@ -98,7 +99,8 @@ router.get('/all', async (req, res) => {
                 length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
                 page_num: 15, //한 페이지에 보여줄 개수
                 pass: true,
-                last: last
+                last: last,
+                keepSearch: keepSearch
             });
         });
     } catch (error) {

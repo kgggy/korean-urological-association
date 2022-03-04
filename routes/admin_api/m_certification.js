@@ -57,6 +57,7 @@ router.get('/certiAll', async (req, res) => {
         var param = req.query.certiDivision;
         var division = req.query.division == undefined ? "" : req.query.division;
         var searchType = req.query.searchType == undefined ? "" : req.query.searchType;
+        var keepSearch = "&searchType=" + searchType + "&division=" + division;
         var sql = "select *, date_format(certiStartDate, '%Y-%m-%d') as certiStartDatefmt, date_format(certiEndDate, '%Y-%m-%d') as certiEndDatefmt\
                      from certification where certiDivision = ? and nullif(certiTitle,'') is not null";
         var div = "";
@@ -92,7 +93,8 @@ router.get('/certiAll', async (req, res) => {
                 page_num: 10,
                 pass: true,
                 last: last,
-                param: param
+                param: param,
+                keepSearch: keepSearch
             });
             // console.log(results);
         });
@@ -150,30 +152,29 @@ router.get('/certiWritForm', async (req, res) => {
 
 //탄소실천 등록
 router.post('/certiWrit', upload.single('file'), async (req, res) => {
-    console.log("aaaaaaaaaaaaa")
-    // try {
-    //     var path = "";
-    //     var param = "";
-    //     console.log(path + "-------------");
-    //     console.log(param);
-    //     if (req.file != null) {
-    //         path = req.file.path;
-    //         param = [req.body.certiDivision, req.body.certiTitle, req.body.certiDetail, req.body.certiPoint, req.body.certiDiff, path, req.body.certiSubDivision, req.body.certiStartDate, req.body.certiEndDate, req.body.certiShow];
-    //     } else {
-    //         param = [req.body.certiDivision, req.body.certiTitle, req.body.certiDetail, req.body.certiPoint, req.body.certiDiff, req.body.certiImage, req.body.certiSubDivision, req.body.certiStartDate, req.body.certiEndDate, req.body.certiShow];
-    //     }
-    //     const sql = "insert into certification(certiDivision, certiTitle, certiDetail, certiPoint, certiDiff, certiImage, certiSubDivision, certiStartDate, certiEndDate, certiShow)\
-    //                       values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    //                       console.log(param);
-    //     connection.query(sql, param, function (err, result, fields) {
-    //         if (err) {
-    //             console.log(err);
-    //         }
-    //         res.redirect('certiAll?certiDivision=' + req.body.certiDivision + '&page=1');
-    //     });
-    // } catch (error) {
-    //     res.status(401).send(error.message);
-    // }
+    try {
+        var path = "";
+        var param = "";
+        // console.log(path + "-------------");
+        // console.log(param);
+        if (req.file != null) {
+            path = req.file.path;
+            param = [req.body.certiDivision, req.body.certiTitle, req.body.certiDetail, req.body.certiPoint, req.body.certiDiff, path, req.body.certiSubDivision, req.body.certiStartDate, req.body.certiEndDate, req.body.certiShow];
+        } else {
+            param = [req.body.certiDivision, req.body.certiTitle, req.body.certiDetail, req.body.certiPoint, req.body.certiDiff, req.body.certiImage, req.body.certiSubDivision, req.body.certiStartDate, req.body.certiEndDate, req.body.certiShow];
+        }
+        const sql = "insert into certification(certiDivision, certiTitle, certiDetail, certiPoint, certiDiff, certiImage, certiSubDivision, certiStartDate, certiEndDate, certiShow)\
+                          values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                          console.log(param);
+        connection.query(sql, param, function (err, result, fields) {
+            if (err) {
+                console.log(err);
+            }
+            res.redirect('certiAll?certiDivision=' + req.body.certiDivision + '&page=1');
+        });
+    } catch (error) {
+        res.status(401).send(error.message);
+    }
 });
 
 //탄소실천 수정 페이지로 이동

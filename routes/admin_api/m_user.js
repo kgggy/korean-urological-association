@@ -116,7 +116,9 @@ router.get('/page', async (req, res) => {
   var searchType3 = req.query.searchType3 == undefined ? "" : req.query.searchType3;
   var searchType4 = req.query.searchType4 == undefined ? "" : req.query.searchType4;
   var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
-
+  var keepSearch = "&searchType=" + searchType + "&searchType1=" + searchType1 +
+    "&searchType2=" + searchType2 + "&searchType3=" + searchType3 +
+    "&searchType4=" + searchType4 +"&searchText=" + searchText;
 
   var sql = "select * from user where 1=1";
 
@@ -160,7 +162,8 @@ router.get('/page', async (req, res) => {
         length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
         page_num: 15, //한 페이지에 보여줄 개수
         pass: true,
-        last: last //마지막 장
+        last: last, //마지막 장
+        keepSearch: keepSearch
       });
     });
   } catch (error) {

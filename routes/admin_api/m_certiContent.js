@@ -45,64 +45,6 @@ var upload = multer({ //multer안에 storage정보
 
 });
 
-//탄소 실천 글 검색
-router.get('/search', async (req, res) => {
-    const searchType = req.query.searchType;
-    const searchText = req.query.searchText;
-    const page = req.query.page;
-    try {
-        if (searchType == "0") {
-            res.redirect('certiContentAll?certiDivision=' + req.query.certiDivision + "&page=1");
-        } else if (searchType == "certiTitleId") {
-            const sql = "select distinct f.fileRoute, c.certiContentId, c.certiTitleId, f.fileNo, e.certiDivision, c.certiContentDate\
-            from certiContent c\
-       left join file f on f.certiContentId = c.certiContentId\
-       left join certification e on e.certiTitleId = c.certiTitleId\
-           where e.certiDivision = ? and f.fileNo = 1\
-           order by c.certiContentDate desc";
-            connection.query(sql, searchType, (err, results, row) => {
-                if (err) {
-                    console.error(err);
-                }
-                let route = req.app.get('views') + '/m_certification/certification';
-                res.render(route, {
-                    searchType: searchType,
-                    searchText: searchText,
-                    results: results,
-                    page: page,
-                    length: results.length - 1,
-                    page_num: 12,
-                    pass: true
-                });
-            })
-        } else if (searchType == "userNick") {
-            const sql = "select distinct f.fileRoute, c.certiContentId, c.certiTitleId, f.fileNo, e.certiDivision, c.certiContentDate\
-            from certiContent c\
-       left join file f on f.certiContentId = c.certiContentId\
-       left join certification e on e.certiTitleId = c.certiTitleId\
-           where e.certiDivision = ? and f.fileNo = 1\
-           order by c.certiContentDate desc";
-            connection.query(sql, searchType, (err, results, row) => {
-                if (err) {
-                    console.error(err);
-                }
-                let route = req.app.get('views') + '/m_certification/certification';
-                res.render(route, {
-                    searchType: searchType,
-                    searchText: searchText,
-                    results: results,
-                    page: page,
-                    length: results.length - 1,
-                    page_num: 12,
-                    pass: true
-                });
-            })
-        }
-    } catch (error) {
-        res.status(401).send(error.message);
-    }
-});
-
 //탄소실천, 챌린지 글 주제별 전체 썸네일 조회
 router.get('/certiContentAll', async (req, res) => {
     try {
@@ -111,11 +53,13 @@ router.get('/certiContentAll', async (req, res) => {
         var certiSubDivision = req.query.certiSubDivision == undefined ? "" : req.query.certiSubDivision;
         var searchType = req.query.searchType == undefined ? "" : req.query.searchType;
         var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
-        var sql = "select distinct f.fileRoute, c.certiContentId, c.certiTitleId, f.fileNo, e.certiDivision, c.certiContentDate, e.certiTitle,\
+        var keepSearch = "&certiSubDivision=" + certiSubDivision + "&searchType=" + searchType + "&searchText=" + searchText;
+        var sql = "select distinct f.fileRoute, c.certiContentId, c.certiTitleId, f.fileNo, e.certiDivision, c.certiContentDate, e.certiTitle, u.uid,\
         (select count(*) from comment where comment.certiContentId = c.certiContentId) as commentyn\
         from certiContent c\
         left join file f on f.certiContentId = c.certiContentId\
         left join certification e on e.certiTitleId = c.certiTitleId\
+        left join user u on u.uid = c.uid\
         where e.certiDivision = ? and f.fileNo = 1";
         if (certiSubDivision != '') {
             sql += " and e.certiSubDivision = '" + certiSubDivision + "' \n";
@@ -123,6 +67,9 @@ router.get('/certiContentAll', async (req, res) => {
         if (searchType != '') {
             sql += " and e.certiTitleId = '" + searchType + "' \n";
         }
+        if (searchText != '') {
+            sql += " and u.userNick like '%" + searchText + "%'";
+          }
         sql += " order by c.certiContentDate desc";
         console.log(sql)
         // 분류 드롭다운 가져오기
@@ -153,7 +100,8 @@ router.get('/certiContentAll', async (req, res) => {
                 length: results.length - 1,
                 page_num: 12,
                 pass: true,
-                last: last
+                last: last,
+                keepSearch: keepSearch
             });
             console.log(results)
         });

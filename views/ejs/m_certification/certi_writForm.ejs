@@ -23,6 +23,9 @@
                         <div class="card-body">
                             <!-- 컨텐츠 -->
                             <form id="certiForm" name="certiForm" method="" action="" enctype="multipart/form-data">
+                                <input type="hidden" name="certiDivision" value="<%= division %>">
+                                <input type="hidden" name="certiSubDivision" value="">
+                                <input type="hidden" name="certiShow" value="">
                                 <div class="form-group row">
                                     <label class="col-md-2 col-form-label" for="text-input">대표 이미지</label>
                                     <div class="col-md-9">
@@ -32,7 +35,7 @@
                                 <div class="form-group row">
                                     <label class="col-md-2 col-form-label" for="text-input">분류</label>
                                     <div class="col-md-9">
-                                        <select class="dropdown" name="certiSubDivision" id="certiSubDivision">
+                                        <select class="dropdown" id="certiSubDivision">
                                             <option value='' selected="selected">--선택--</option>
                                             <% for(var i = 0; i < div.length ; i++){  %>
                                             <option value="<%= div[i].certiSubDivision %>">
@@ -91,13 +94,13 @@
                                 <div class="form-group row">
                                     <label class="col-md-2 col-form-label" for="text-input">노출여부</label>
                                     <div class="col-md-9">
-                                        <select class="dropdown" name="certiShow" id="certiShow">
+                                        <select class="dropdown" id="certiShow">
                                             <option value='0' selected="selected">노출</option>
                                             <option value="1">비노출</option>
                                         </select>
                                     </div>
                                 </div>
-                                <div class="form-group row">
+                                <!-- <div class="form-group row">
                                     <label class="col-md-2 col-form-label">예시 이미지</label>
                                     <div style="display: flex; flex-direction: column; gap: 25px; padding-left: 15px">
                                         <input type="file" id="file" name="files">
@@ -106,7 +109,7 @@
                                         <input type="file" id="file" name="files" />
                                         <input type="file" id="file" name="files" />
                                     </div>
-                                </div>
+                                </div> -->
                                 <!--option 버튼  -->
                                 <div class="option_button">
                                     <div>
@@ -142,7 +145,8 @@
             return false;
         }
         if (confirm("등록하시겠습니까?") == true) {
-            // $('input[name=certiSubDivision]').val($("#division option:selected").text());
+            $('input[name=certiSubDivision]').val($("#certiSubDivision option:selected").val());
+            $('input[name=certiShow]').val($("#certiShow option:selected").val());
             $("#certiForm").attr("action", "certiWrit");
             $("#certiForm").attr("method", "post");
             $("#certiForm").submit();

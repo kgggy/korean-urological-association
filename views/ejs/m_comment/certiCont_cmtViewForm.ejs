@@ -82,7 +82,7 @@
 <script>
 	// 삭제
 	$("#delete_btn").on("click", function () {
-		$('input[name=cmtId').val($(this).attr('data-cmtId'));
+		$('input[name=cmtId]').val($(this).attr('data-cmtId'));
 		$("#commentForm").attr("action", "cmtDelete");
 		$("#commentForm").attr("method", "get");
 		if (confirm("댓글을 삭제하시겠습니까?") == true) {
