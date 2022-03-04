@@ -73,7 +73,7 @@ router.get('/:certiDivision', async (req, res) => {
     }
 });
 
-//날짜순 전체 탄소실천/챌린지 글
+//날짜순 각 종류별 탄소실천/챌린지 글
 router.get('/certiContents/:certiTitleId', async (req, res) => {
     try {
         const param = req.params.certiTitleId;
@@ -82,6 +82,31 @@ router.get('/certiContents/:certiTitleId', async (req, res) => {
                        join certiContent c\
                          on f.certiContentId = c.certiContentId\
                       where c.certiTitleId = ? and f.fileNo = 1";
+        let certiContents;
+        connection.query(sql, param, (err, results) => {
+            if (err) {
+                console.log(err);
+                response.json({
+                    msg: "query error"
+                });
+            }
+            certiContents = results;
+            res.status(200).json(certiContents);
+        });
+    } catch (error) {
+        res.status(401).send(error.message);
+    }
+});
+
+//날짜순 전체 종류의 탄소실천/챌린지 글
+router.get('/certiContentsAll/:certiDivision', async (req, res) => {
+    try {
+        const param = req.params.certiDivision;
+        const sql = "select f.fileRoute, c.certiContentId, c.certiContentDate\
+                       from certiContent c\
+                  left join file f on f.certiContentId = c.certiContentId\
+                  left join certification t on t.certiTitleId = c.certiTitleId\
+                      where t.certiDivision = ? and f.fileNo = 1";
         let certiContents;
         connection.query(sql, param, (err, results) => {
             if (err) {

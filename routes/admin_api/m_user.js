@@ -12,6 +12,9 @@ const crypto = require('crypto');
 const models = require('../../models');
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
+
+// const xlsx = require('xlsx');
+var nodeExcel = require('excel-export');
 // DB 커넥션 생성
 var connection = mysql.createConnection(connt);
 connection.connect();
@@ -40,72 +43,72 @@ var upload = multer({ //multer안에 storage정보
 
 });
 
-//로그인 페이지
-router.get('/login', async (req, res) => {
-  let route = req.app.get('views') + '/index';
-  res.render(route, {
-    layout: false
-  });
-})
+// //로그인 페이지
+// router.get('/login', async (req, res) => {
+//   let route = req.app.get('views') + '/index';
+//   res.render(route, {
+//     layout: false
+//   });
+// })
 
-//로그인
-router.post('/', async (req, res) => {
-  const {
-    userPwd,
-    userEmail
-  } = req.body;
+// //로그인
+// router.post('/', async (req, res) => {
+//   const {
+//     userPwd,
+//     userEmail
+//   } = req.body;
 
-  const emailChk = await models.user.findOne({
-    where: {
-      userEmail
-    }
-  });
+//   const emailChk = await models.user.findOne({
+//     where: {
+//       userEmail
+//     }
+//   });
 
-  if (emailChk == null) {
-    return res.json({
-      emailChk: false,
-      message: "이메일을 다시 확인해주세요.",
-    });
-  }
+//   if (emailChk == null) {
+//     return res.json({
+//       emailChk: false,
+//       message: "이메일을 다시 확인해주세요.",
+//     });
+//   }
 
-  const makePasswordHashed = (userEmail, plainPassword) =>
-    new Promise(async (resolve, reject) => {
-      // salt를 가져오는 부분은 각자의 DB에 따라 수정
-      const salt = await models.user
-        .findOne({
-          attributes: ['salt'],
-          raw: true,
-          where: {
-            userEmail,
-          },
-        }).then((result) => result.salt);
-      console.log(salt);
+//   const makePasswordHashed = (userEmail, plainPassword) =>
+//     new Promise(async (resolve, reject) => {
+//       // salt를 가져오는 부분은 각자의 DB에 따라 수정
+//       const salt = await models.user
+//         .findOne({
+//           attributes: ['salt'],
+//           raw: true,
+//           where: {
+//             userEmail,
+//           },
+//         }).then((result) => result.salt);
+//       console.log(salt);
 
-      crypto.pbkdf2(plainPassword, salt, 9999, 64, 'sha512', (err, key) => {
-        if (err) reject(err);
-        resolve(key.toString('base64'));
-      });
-    });
+//       crypto.pbkdf2(plainPassword, salt, 9999, 64, 'sha512', (err, key) => {
+//         if (err) reject(err);
+//         resolve(key.toString('base64'));
+//       });
+//     });
 
-  const password = await makePasswordHashed(userEmail, userPwd);
-  const dbPwd = await models.user.findOne({
-    where: {
-      userEmail
-    }
-  });
-  console.log(dbPwd);
-  if (password == dbPwd.userPwd) { // dbPwd: ['userPwd'] 해도 됨
-    res.json(
-      dbPwd
-    );
+//   const password = await makePasswordHashed(userEmail, userPwd);
+//   const dbPwd = await models.user.findOne({
+//     where: {
+//       userEmail
+//     }
+//   });
+//   console.log(dbPwd);
+//   if (password == dbPwd.userPwd) { // dbPwd: ['userPwd'] 해도 됨
+//     res.json(
+//       dbPwd
+//     );
 
-  } else {
-    res.json({
-      pwdChk: false,
-      message: "비밀번호를 확인해주세요.",
-    });
-  }
-});
+//   } else {
+//     res.json({
+//       pwdChk: false,
+//       message: "비밀번호를 확인해주세요.",
+//     });
+//   }
+// });
 
 //사용자 전체조회
 router.get('/page', async (req, res) => {
@@ -118,7 +121,7 @@ router.get('/page', async (req, res) => {
   var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
   var keepSearch = "&searchType=" + searchType + "&searchType1=" + searchType1 +
     "&searchType2=" + searchType2 + "&searchType3=" + searchType3 +
-    "&searchType4=" + searchType4 +"&searchText=" + searchText;
+    "&searchType4=" + searchType4 + "&searchText=" + searchText;
 
   var sql = "select * from user where 1=1";
 
@@ -418,6 +421,171 @@ router.get('/imgDelete', async (req, res) => {
     }
   }
   res.redirect('userUdtForm?uid=' + req.query.uid);
+});
+
+//엑셀 다운로드
+router.get('/userExcel', async (req, res) => {
+  var searchType = req.query.searchType == undefined ? "" : req.query.searchType;
+  var searchType1 = req.query.searchType1 == undefined ? "" : req.query.searchType1;
+  var searchType2 = req.query.searchType2 == undefined ? "" : req.query.searchType2;
+  var searchType3 = req.query.searchType3 == undefined ? "" : req.query.searchType3;
+  var searchType4 = req.query.searchType4 == undefined ? "" : req.query.searchType4;
+  var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
+  var conf = {};
+
+  conf.cols = [{
+    caption: '번호',
+    type: 'number',
+    width: 8
+  },{
+    caption: '이메일',
+    captionStyleIndex: 1,
+    type: 'string',
+    width: 12
+  },{
+    caption: '닉네임',
+    captionStyleIndex: 1,
+    type: 'string',
+    width: 12
+  }, {
+    caption: '나이',
+    captionStyleIndex: 1,
+    type: 'number',
+    width: 12
+  }, 
+  // {
+  //   caption: '주소',
+  //   captionStyleIndex: 1,
+  //   type: 'string',
+  //   width: 12
+  // }, 
+  {
+    caption: '학교',
+    captionStyleIndex: 1,
+    type: 'string',
+    width: 15
+  }, {
+    caption: '포인트',
+    captionStyleIndex: 1,
+    type: 'number',
+    width: 15
+  }, {
+    caption: '계산점수',
+    captionStyleIndex: 1,
+    type: 'number',
+    width: 12
+  }, {
+    caption: '나무등급',
+    captionStyleIndex: 1,
+    type: 'string',
+    width: 12
+  }, 
+  // {
+  //   caption: '작성한 게시글 수',
+  //   captionStyleIndex: 1,
+  //   type: 'string',
+  //   width: 12
+  // },
+  {
+    caption: '가입일',
+    captionStyleIndex: 1,
+    type: 'string',
+    width: 12
+  }, 
+  {
+    caption: '로그인 경로',
+    captionStyleIndex: 1,
+    type: 'string',
+    width: 12
+  },
+  // {
+  //   caption: '권한',
+  //   captionStyleIndex: 1,
+  //   type: 'string',
+  //   width: 12
+  // }, {
+  //   caption: '상태',
+  //   captionStyleIndex: 1,
+  //   type: 'string',
+  //   width: 12
+  // }, 
+  {
+    caption: '개인정보 동의여부',
+    captionStyleIndex: 1,
+    type: 'number',
+    width: 12}
+  ];
+
+  // const book = xlsx.utils.book_new();
+
+  // conf.cols = xlsx.utils.aoa_to_sheet([
+  //   ["번호", "닉네임", "나이"]
+  // ])
+
+  var sql = "select * from user where 1=1";
+
+  if (searchType != '') {
+    sql += " and userAuth = '" + searchType + "' \n";
+  }
+  if (searchType1 != '') {
+    sql += " and userAgree = '" + searchType1 + "' \n";
+  }
+  if (searchType2 != '') {
+    sql += " and userStatus = '" + searchType2 + "' \n";
+  }
+  if (searchType3 != '' && searchType3 == '61') {
+    sql += " and userAge >= 60 \n";
+  } else if (searchType3 != '' && searchType3 == '20') {
+    sql += " and  userAge <> 0 and userAge <= 20 \n";
+  } else if (searchType3 != '' && searchType3 == '30' || searchType3 == '40' || searchType3 == '50' || searchType3 == '60')
+    sql += " and userAge between " + searchType3 + "-10 and " + searchType3 + " \n";
+  if (searchType4 != '') {
+    sql += " and userTree = '" + searchType4 + "' \n";
+  }
+  if (searchText != '') {
+    sql += " and (userNick like '%" + searchText + "%' or userEmail like '%" + searchText + "%' or userSchool like '%" + searchText + "%') order by uid";
+  }
+
+  console.log(sql)
+  try {
+    console.log("trytry")
+    connection.query(sql, function (err, results) {
+      if (err) {
+        console.log(err);
+      }
+      var arr = [];
+      for (var i = 0; i < results.length; i++) {
+        var resultData = [
+          results[i].uid,
+          results[i].userEmail,
+          results[i].userNick,
+          results[i].userAge,
+          // results[i].userAdres1 + ' ' + results[i].userAdres2,
+          results[i].userSchool,
+          results[i].userPoint,
+          results[i].userScore,
+          results[i].userTree,
+          // results[i].countAll,
+          results[i].userRegDate,
+          results[i].userSocialDiv,
+          // results[i].userAuth,
+          // results[i].userStatus,
+          results[i].userAgree
+        ];
+        arr.push(resultData);
+      }
+      conf.rows = arr;
+      var result = nodeExcel.execute(conf);
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats');
+      res.setHeader("Content-Disposition", "attachment; filename=" + "excel_export.xlsx");
+      res.end(result, 'binary');
+      // xlsx.utils.book_append_sheet( book, conf, "ECOCE 사용자" );
+      // console.log(conf)
+      // xlsx.writeFile( book, "ecoce_user" ); 
+    });
+  } catch (error) {
+    res.status(401).send(error.message);
+  }
 });
 
 module.exports = router;
