@@ -99,7 +99,7 @@
     // 삭제
     $(document).ready(function () {
         const formObj = $("form[name='bannerForm']");
-        $("button").on("click", function () {
+        $("#delete_btn").on("click", function () {
             $('input[name=bannerId').val($(this).attr('data-bannerId'));
             $('input[name=bannerRoute').val($(this).attr('data-bannerRoute'));
             formObj.attr("action", "bannerDelete");
