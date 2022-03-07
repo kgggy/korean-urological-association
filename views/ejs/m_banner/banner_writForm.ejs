@@ -52,35 +52,41 @@
 						</div>
 						<div class="card-body">
 							<!-- 컨텐츠 -->
-							<form action="" id="bannerWritForm" name="bannerWritForm" method="" enctype="multipart/form-data">
-								<!--나중에 uid 수정하기~~!~!~!-->
-								<input type="hidden" id="uid" name="uid" value="81">
-								<input type="hidden" id="certiDivision" name="certiDivision" value="<%= division %>">
-								<input type="hidden" id="certiTitleId" name="certiTitleId" value="">
-								<div class="form-group row">
-									<label class="col-md-2 col-form-label" for="text-input">분류</label>
-									<div class="col-md-9">
-										<select class="dropdown" name="certiSubDivision" id="certiSubDivision">
-											<option value='' selected="selected">--선택--</option>
-											<% for(var i = 0; i < div.length ; i++){  %>
-											<option value="<%= div[i].certiSubDivision %>">
-												<%= div[i].certiSubDivision %></option>
-											<% } %>
-										</select>
-									</div>
-								</div>
-								<div class="form-group row">
-									<label class="col-md-2 col-form-label" for="text-input">종류명</label>
-									<div class="col-md-9 sub">
-										<select class="subTitle" name="certiTitle" id="certiTitle">
-
-										</select>
-									</div>
-								</div>
+							<form action="" id="bannerWritForm" name="bannerWritForm" method=""
+								enctype="multipart/form-data">
+								<input type="hidden" name="bannerDiv" value="0">
+								<input type="hidden" name="showYN" value="">
 								<div class="form-group row">
 									<label class="col-md-2 col-form-label">이미지</label>
 									<div style="display: flex; flex-direction: column; gap: 25px; padding-left: 15px">
 										<input type="file" id="file" name="file">
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-md-2 col-form-label" for="text-input">시작 날짜</label>
+									<div class="col-md-9 sub">
+										<input type="date" id="startDate" name="startDate" value="">
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-md-2 col-form-label" for="text-input">종료 날짜</label>
+									<div class="col-md-9 sub">
+										<input type="date" id="endDate" name="endDate" value="">
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-md-2 col-form-label" for="text-input">순서</label>
+									<div class="col-md-9 sub">
+										<input type="number" id="showNo" name="showNo" value="">
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-md-2 col-form-label" for="text-input">노출 여부</label>
+									<div class="col-md-9 sub">
+										<select class="dropdown" id="showYN">
+											<option value='0' selected="selected">노출</option>
+											<option value="1">비노출</option>
+										</select>
 									</div>
 								</div>
 								<!--option 버튼  -->
@@ -104,65 +110,43 @@
 </main>
 
 <script type="text/javascript">
-	var formObj = $("form[name='writForm']");
+	var formObj = $("form[name='bannerWritForm']");
 	$(document).ready(function () {
+		//확장자 체크
+		$("input:file[name='file']").change(function () {
+			var str = $(this).val();
+			var fileName = str.split('\\').pop().toLowerCase();
+			// alert(fileName);
+			checkFileName(fileName);
+		});
+
 		// 등록
 		$("#enroll_btn").on("click", function () {
-			$('input[name=certiTitleId]').val($('#certiTitle option:selected').val());
-			var certiSubDivision = $("#certiSubDivision").val();
-			var certiTitle = $("#certiTitle").val();
-			console.log(certiTitle)
+			var bannerImg = $("#file").val();
 
-			if (certiSubDivision == '') {
-				alert("분류를 선택해주세요.");
-				$("#certiSubDivision").focus();
-				return false;
-			}
-			if (certiTitle == '') {
-				alert("종류명을 선택해주세요.");
-				$("#certiTitle").focus();
+			if (bannerImg == '') {
+				alert("이미지를 선택해주세요.");
 				return false;
 			}
 			if (confirm("등록하시겠습니까?") == true) {
-				formObj.attr("action", "/admin/m_certiContent/certiContWrit");
+				$('input[name=showYN]').val($("#showYN option:selected").val());
+				formObj.attr("action", "bannerWrit");
 				formObj.attr("method", "post");
+				alert("등록이 완료되었습니다.");
 				formObj.submit();
-			}
-		});
-
-		$("select[name='certiSubDivision']").on("change", function () {
-			// alert("aaa")
-			var target = $("select[name='certiTitle']");
-			target.empty();
-			var sub = $("#certiSubDivision option:selected").val();
-			// console.log(sub)
-			if (sub == "") {
-				target.append("<option value=''>--분류를 선택해주세요--</option>");
+			} else {
 				return;
 			}
-			$.ajax({
-				url: '/admin/m_certiContent/certiWritForm_subdropdown',
-				dataType: 'json',
-				type: 'GET',
-				data: {
-					param: sub
-				},
-				success: function (secondDiv) {
-					if (secondDiv.length == 0) {
-						// alert(JSON.stringify(secondDiv));
-						target.attr('disabled', 'disabled');
-						target.append("<option value=''>종류가 존재하지 않습니다.</option>");
-					} else {
-						target.append("<option value='' selected='selected'>--선택--</option>");
-						$(secondDiv).each(function (i) {
-							target.removeAttr('disabled', 'disabled');
-							target.append("<option value='" + secondDiv[i]
-								.certiTitleId + "'>" + secondDiv[i].certiTitle +
-								"</option>")
-						});
-					}
-				}
-			});
 		});
 	});
+
+	//확장자 체크
+	function checkFileName(str) {
+		var ext = str.split('.').pop().toLowerCase();
+		// alert(ext);
+		if ($.inArray(ext, ['jpg', 'png', 'jpeg', 'gif']) == -1) {
+			alert(ext + '파일은 업로드 하실 수 없습니다.');
+			$("input:file[name='file']").val("");
+		}
+	}
 </script>

@@ -7,7 +7,6 @@ var router = express.Router();
 const mysql = require('mysql');
 
 const connt = require("../../config/db")
-var url = require('url');
 
 //파일 업로드 모듈
 var upload = multer({ //multer안에 storage정보  
@@ -40,7 +39,7 @@ connection.connect();
 router.get('/banner', async (req, res) => {
     try {
         const sql = "select *, date_format(startDate, '%Y-%m-%d') as startDatefmt, date_format(endDate, '%Y-%m-%d') as endDatefmt\
-                       from banner where bannerDiv = ? order by bannerId";
+                       from banner where bannerDiv = ? order by showNo is null asc, nullif(showNo, '') is null asc, showNo, bannerId";
         connection.query(sql, req.query.bannerDiv, (err, results) => {
             if (err) {
                 console.log(err);
@@ -61,9 +60,7 @@ router.get('/banner', async (req, res) => {
 //배너 등록폼 이동
 router.get('/bannerWritForm', async (req, res) => {
     let route = req.app.get('views') + '/m_banner/banner_writForm';
-    res.render(route, {
-        layout: false
-    });
+    res.render(route);
 });
 
 //배너 등록
@@ -78,14 +75,14 @@ router.post('/bannerWrit', upload.single('file'), async function (req, res) {
     } else {
         param = [req.body.bannerRoute, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, req.body.showYN, req.body.showNo, req.body.bannerDiv];
     }
-    console.log(param);
+    // console.log(param);
     try {
         const sql = "insert into banner(bannerRoute, startDate, endDate, showYN, showNo, bannerDiv) values(?, if(? = '',null,?), if(? = '',null,?), ?, ?, ?)";
         connection.query(sql, param, (err) => {
             if (err) {
                 throw err;
             }
-            res.send("<script>opener.parent.location.reload(); window.close();</script>");
+            res.redirect("/admin/m_banner/banner?bannerDiv=" + req.body.bannerDiv);
         });
     } catch (error) {
         res.send(error.message);
@@ -103,8 +100,7 @@ router.get('/bannerUdtForm', async (req, res) => {
             }
             let route = req.app.get('views') + '/m_banner/banner_udtForm';
             res.render(route, {
-                'result': result,
-                layout: false
+                'result': result
             });
         });
     } catch (error) {
@@ -132,7 +128,7 @@ router.post('/bannerUpdate', upload.single('file'), async (req, res) => {
         if (err) {
             console.error(err);
         }
-        res.send("<script>opener.parent.location.reload(); window.close();</script>");
+        res.redirect('banner?bannerDiv=' + req.body.bannerDiv);
     });
 });
 
@@ -165,11 +161,13 @@ router.get('/bannerDelete', async (req, res) => {
     try {
         const bannerDiv = req.query.bannerDiv;
         const param = req.query.bannerRoute;
+        console.log(bannerDiv, param, req.query.bannerId)
         const sql = "delete from banner where bannerId = ?";
         connection.query(sql, req.query.bannerId, (err, row) => {
             if (err) {
                 console.log("쿼리 에러입니다.");
             }
+            console.log(param);
             fs.unlinkSync(param, (err) => {
                 if (err) {
                     console.log(err);

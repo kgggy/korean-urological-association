@@ -8,3 +8,59 @@
 .selectBoxAlign{display: flex; justify-content: end; gap: 8px;}
 table.dataTable tbody td{vertical-align: middle !important;}
 table.dataTable tbody tr{height: 65px;}
+
+/* 회원가입 */
+.signUp-body {background-color: #F9CC9D; margin: 0;}
+:root{--light-gray-color: #f1f1f1;
+    --gray-color: rgb(212, 212, 212);
+    --middle-gray-color: rgb(159 159 159);
+    --dark-gray-color: rgb(104, 104, 104);
+    --orange-color: #ff7950;
+    --blue-color: #7edaf6;
+    --padding-wrap: 20px;
+ }
+
+.signUp-wrap{max-width: 650px; margin: 0 auto; background-color: white; padding: 30px;}
+.signup-input{width: 100%; box-sizing: border-box; height: 40px; outline: none; padding: 0 8px !important; border: none; border-bottom: 1px solid var(--gray-color);}
+.signUp-wrap .inputInfo p{font-size: 14px; font-weight: 500; margin-bottom: 6px;}
+.signUp-wrap input[type="text"], input[type="password"], input[type="number"] {margin-bottom: 15px;}
+.signUp-wrap .chkAllText{font-size: 14px;}
+.inputTel{flex: 1 1 68% !important; margin-right: 2%;}
+.inputId{flex: 1 1 75% !important; margin-right: 2% !important;}
+.codeBtn{flex: 1 1 30%; border: 1px solid #ccc; border-radius: 4px; background: white; color: var(--dark-gray-color); height: 40px; cursor: pointer; }
+.idChkBtn{flex: 1 1 23%; border: 1px solid #ccc; border-radius: 4px; background: white; color: var(--dark-gray-color); height: 40px; cursor: pointer; }
+.inputTel-wrap, .inputId-wrap{display: flex; justify-content: space-between;}
+.idText::after, .pwText::after, .pwCheckText::after , .nameText::after, .ageText::after
+{content: "*"; color: red;}
+.essential-term::before{content: "(필수) "; color: var(--orange-color);}
+.option-term::before{content: "(선택) "; color: var(--dark-gray-color);}
+.term{display: flex; justify-content: space-between; flex-wrap:wrap; align-items: center; word-break: break-all;}
+.agree-wrap .chkAndtitle{display: flex; align-items: center; color: var(--dark-gray-color);}
+.agree-wrap .chkAndtitle .termTitle{padding-left: 5px;}
+.agree-wrap .chkAll .termTitle{font-size: 15px; font-weight: bold;}
+.agree-wrap ul{font-size: 14px; padding: 0;}
+.agree-wrap ul li{padding-bottom: 5px;}
+.agree-wrap ul li:first-child{padding-top: 10px;}
+.noneBtn-padding{padding: 5px 0;}
+.agree-wrap ul li button{border: none; background: transparent; padding: 5px; cursor: pointer; color: var(--dark-gray-color);}
+.termWarn{background: var(--light-gray-color); padding: 20px; font-size: 13px; color: var(--dark-gray-color);}
+.signUp-imgWrap{text-align: center;}
+.signUp-imgWrap img{width: 200px;}
+
+/* 회원가입 모달창 */
+.modal-custom{display:none; position:fixed; z-index:1; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgb(0,0,0); background-color:rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+.modal-content{background: white; position:fixed; top: calc(50% - 15px); left: 50%; transform: translate(-50%, -50%); width:80%; 
+   max-height: 70%; overflow-y: scroll;
+   box-shadow:0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+   -webkit-animation-name:animatetop; -webkit-animation-duration:0.4s; animation-name:animatetop; animation-duration:0.4s}
+
+.close-modal{text-align: center; background: var(--orange-color); color: white; height: 50px; line-height: 50px; font-weight: 500;}
+.close-modal:hover,.close-modal:focus{color:#000; text-decoration:none; cursor:pointer; }
+.modal-header{text-align: center; padding: 20px 0;}
+#success{width: 100%; border: none; border-radius: 4px; height: 40px; font-size: 15px; font-weight: bold; background: var(--light-gray-color); color: var(--dark-gray-color);}
+.signUpActive{border: none; background-color: var(--orange-color) !important; cursor: pointer; color: white !important;}
+.modal-body{padding: 0 20px 20px 20px;}
+.signUpSuccess{padding: 20px 0;}
+
+li {list-style: none;}
