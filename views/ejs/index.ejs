@@ -101,14 +101,14 @@
 			<h1>
 				ECOCE
 			</h1>
-			<form name="login" method="post" autocomplete="off">
+			<form action="/admin/login" name="login" method="post" autocomplete="off">
 				<div class="login">
 					<ul>
-						<li><strong>ID</strong><input id="id" name="id" type="text" tabindex="1" /></li>
-						<li><strong>Password</strong><input id="password" name="password" type="password" tabindex="2" /></li>
+						<li><strong>ID</strong><input id="comNick" name="comNick" type="text" tabindex="1" /></li>
+						<li><strong>Password</strong><input id="comPwd" name="comPwd" type="password" tabindex="2" /></li>
 					</ul>
 					<span><input type="checkbox" id="loginSave" name="loginSave" />아이디 저장</span>
-					<a href="/admin/m_user" id="login"><img src="/images/admin/btn_login.gif" alt="login" /></a>
+					<button type="submit">로그인</button>
 				</div>		
 			</form>
 			<p><!-- Copyright ⓒ Daegu MBC. All rights reserved. --></p>

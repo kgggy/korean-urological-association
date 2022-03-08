@@ -91,7 +91,9 @@ router.post('/', async (req, res) => {
       userEmail
     }
   });
-  console.log(dbPwd);
+  console.log(userPwd);
+  console.log(dbPwd.userPwd);
+  console.log(password + "aaaaaaaaaaaa")
   if (password == dbPwd.userPwd) { // dbPwd: ['userPwd'] 해도 됨
     res.json(
       dbPwd

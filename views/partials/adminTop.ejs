@@ -13,11 +13,13 @@
 		<ul class="nav navbar-nav ml-auto">
 			<li class="nav-item d-md-down-none" style="margin-right: 20px;">
 				<span><a onclick="passwordChange()" style="cursor: pointer;"><strong></strong></a> 관리자 님! 반갑습니다.</span>
-				<a href="#" id="logoutBtn">
-					<i class="icon-logout"></i>
-					로그아웃
-				</a>
-			</li>
+				<form class="form-horizontal" action="/admin/logout">
+					<button style="border:none; color: #20a8d8; background-color: transparent; outline: none;">
+					  <i class="icon-logout"></i>
+					  로그아웃
+					</button>
+				  </form>
+				  </li>
 
 		</ul>
 		<!-- <button class="navbar-toggler aside-menu-toggler d-md-down-none" type="button" data-toggle="aside-menu-lg-show">

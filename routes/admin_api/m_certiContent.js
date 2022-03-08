@@ -69,10 +69,10 @@ router.get('/certiContentAll', async (req, res) => {
         }
         if (searchText != '') {
             sql += " and u.userNick like '%" + searchText + "%'";
-          }
+        }
         sql += " order by c.certiContentDate desc";
         console.log(sql)
-        // 분류 드롭다운 가져오기
+        //탄소실천 분류 드롭다운 가져오기
         const sql2 = "select count(*), certiSubDivision\
                        from certification\
                        where certiSubDivision !='' or not null group by certiSubDivision";
@@ -83,6 +83,18 @@ router.get('/certiContentAll', async (req, res) => {
             }
             div = results1;
         })
+
+        //챌린지 분류 드롭다운 가져오기
+        const sql3 = "select certiTitle\
+                       from certification\
+                       where certiDivision = 1";
+        var c_div = "";
+        connection.query(sql3, (err, results2) => {
+            if (err) {
+                console.log(err)
+            }
+            c_div = results2;
+        })
         connection.query(sql, param, (err, results) => {
             if (err) {
                 console.log(err);
@@ -90,7 +102,7 @@ router.get('/certiContentAll', async (req, res) => {
             var last = Math.ceil((results.length) / 12);
             let route = req.app.get('views') + '/m_certiContent/certiContent';
             res.render(route, {
-                param:param,
+                param: param,
                 div: div,
                 certiSubDivision: certiSubDivision,
                 searchType: searchType,
@@ -101,9 +113,10 @@ router.get('/certiContentAll', async (req, res) => {
                 page_num: 12,
                 pass: true,
                 last: last,
-                keepSearch: keepSearch
+                keepSearch: keepSearch,
+                c_div: c_div
             });
-            console.log(results)
+            // console.log(c_div)
         });
     } catch (error) {
         res.status(401).send(error.message);

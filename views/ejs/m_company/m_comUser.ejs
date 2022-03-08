@@ -24,43 +24,21 @@
             <div class="row">
                 <div class="col-lg-6">
                     <div class="card">
-                        <div class="card-header"><i class="fa fa-align-justify"></i> 일반 회원 관리 </div>
+                        <div class="card-header"><i class="fa fa-align-justify"></i> 기업 회원 관리 </div>
                         <div class="card-body">
                             <div align="right">
                                 <form name="userForm" action="" method="get" class="easydropdown">
                                     <input type="hidden" name="page" value="1">
-                                    <select name="searchType2" class="dropdown">
-                                        <option value="">회원상태</option>
-                                        <option value="0" <%if(searchType2=="0"){%> selected="selected" <%}%>>활동중</option>
-                                        <option value="1" <%if(searchType2=="1"){%> selected="selected" <%}%>>탈퇴</option>
-                                    </select>
                                     <select name="searchType1" class="dropdown">
                                         <option value="">동의여부</option>
                                         <option value="0" <%if(searchType1=="0"){%> selected="selected" <%}%>>동의</option>
                                         <option value="1" <%if(searchType1=="1"){%> selected="selected" <%}%>>비동의</option>
                                     </select>
-                                    <select name="searchType3" class="dropdown">
-                                        <option value="">나이대</option>
-                                        <option value="20" <%if(searchType3=="20"){%> selected="selected" <%}%>>10대</option>
-                                        <option value="30" <%if(searchType3=="30"){%> selected="selected" <%}%>>20대</option>
-                                        <option value="40" <%if(searchType3=="40"){%> selected="selected" <%}%>>30대</option>
-                                        <option value="50" <%if(searchType3=="50"){%> selected="selected" <%}%>>40대</option>
-                                        <option value="60" <%if(searchType3=="60"){%> selected="selected" <%}%>>50대</option>
-                                        <option value="61" <%if(searchType3=="61"){%> selected="selected" <%}%>>60대 이상</option>
-                                    </select>
-                                    <select name="searchType4" class="dropdown">
-                                        <option value="">나무등급</option>
-                                        <option value="씨앗" <%if(searchType4=="씨앗"){%> selected="selected" <%}%>>씨앗</option>
-                                        <option value="새싹" <%if(searchType4=="새싹"){%> selected="selected" <%}%>>새싹</option>
-                                        <option value="아기나무" <%if(searchType4=="아기나무"){%> selected="selected" <%}%>>아기나무</option>
-                                        <option value="꽃나무" <%if(searchType4=="꽃나무"){%> selected="selected" <%}%>>꽃나무</option>
-                                        <option value="열매나무" <%if(searchType4=="열매나무"){%> selected="selected" <%}%>>열매나무</option>
-                                    </select>
                                     <% if(searchText != '') { %> <input class="searchbox" type="text" name="searchText"
                                             value="<%=searchText%>" />
                                         <% } else {%>
                                         <input class="searchbox" type="text" name="searchText"
-                                            placeholder=" 이메일, 닉네임, 학교" />
+                                            placeholder=" 이메일, 닉네임, 기업명" />
                                         <% } %>
                                         <button class="btn btn-block btn-outline-success" type="submit"
                                             id="searchAction" style="margin-bottom: 10px;">검색</button>
@@ -70,20 +48,20 @@
                             <table id="exampleTable" class="table userTable table-responsive-sm table-hover">
                                 <colgroup>
                                     <col width="5%" />
-                                    <col width="20%" />
+                                    <col width="10%" />
                                     <col width="30%" />
                                     <col width="20%" />
                                     <col width="20%" />
-                                    <col width="20%" />
+                                    <col width="30%" />
                                 </colgroup>
                                 <thead>
                                     <tr>
                                         <th><input type="checkbox" name="chkAll" id="chkAll" /></th>
                                         <th>번호</th>
+                                        <th>기업명</th>
+                                        <th>대표자명</th>
+                                        <th>담당자명</th>
                                         <th>이메일</th>
-                                        <th>닉네임</th>
-                                        <th>포인트</th>
-                                        <th>권한</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -93,28 +71,22 @@
                                             i++;
                                         } else { %>
                                     <tr class="pointer">
-                                        <td><input type="checkbox" id="chk" name="chk" value="<%=results[i].uid %>" />
+                                        <td><input type="checkbox" id="chk" name="chk" value="<%=results[i].comId %>" />
                                         </td>
-                                        <td onclick="location.href='/admin/m_user/selectOne?uid=<%=results[i].uid%>'">
-                                            <%=results[i].uid%>
+                                        <td onclick="location.href='/admin/m_company/selectOne?comId=<%=results[i].comId%>'">
+                                            <%=results[i].comId%>
                                         </td>
-                                        <td onclick="location.href='/admin/m_user/selectOne?uid=<%=results[i].uid%>'">
-                                            <%=results[i].userEmail%>
+                                        <td onclick="location.href='/admin/m_company/selectOne?comId=<%=results[i].comId%>'">
+                                            <%=results[i].comName%>
                                         </td>
-                                        <td onclick="location.href='/admin/m_user/selectOne?uid=<%=results[i].uid%>'">
-                                            <%= results[i].userNick %>
+                                        <td onclick="location.href='/admin/m_company/selectOne?comId=<%=results[i].comId%>'">
+                                            <%= results[i].comPresiName %>
                                         </td>
-                                        <td onclick="location.href='/admin/m_user/selectOne?uid=<%=results[i].uid%>'">
-                                            <%= results[i].userPoint %>점
+                                        <td onclick="location.href='/admin/m_company/selectOne?comId=<%=results[i].comId%>'">
+                                            <%= results[i].comManagerName %>
                                         </td>
-                                        <td onclick="location.href='/admin/m_user/selectOne?uid=<%=results[i].uid%>'">
-                                            <%if(results[i].userStatus !=null && results[i].userStatus!='null' && results[i].userStatus!=''){%>
-                                            <% if (results[i].userStatus == '0'){%>
-                                            활동중
-                                            <% } else if (results[i].userStatus == '1') {%>
-                                            탈퇴
-                                            <%}%>   
-                                            <%}%>
+                                        <td onclick="location.href='/admin/m_company/selectOne?comId=<%=results[i].comId%>'">
+                                            <%= results[i].comEmail %>
                                         </td>
                                     </tr>
                                     <% } %>
@@ -143,20 +115,20 @@
                                 <div class="mt_20">
                                     <div class="paging" id="page_navi">
                                         <ul class="pagination customPaging">
-                                            <li> <a href="/admin/m_user/page?page=1<%= keepSearch %>" class="num">
+                                            <li> <a href="/admin/m_company/page?page=1<%= keepSearch %>" class="num">
                                                     <<</a> </li> <li> <a <%if((page<last-1)||(page==1)){%><%} else {%>
-                                                            href="/admin/m_user/page?page=<%= parseInt(page) - 1 %><%= keepSearch %>"
+                                                            href="/admin/m_company/page?page=<%= parseInt(page) - 1 %><%= keepSearch %>"
                                                             class="num" <% } %>>
                                                             <</a> </li>
                                                                 <% for(var i = 0; i < results.length / page_num; i++){  %>
                                                                 <li class="paging_on">
-                                                                <a href="/admin/m_user/page?page=<%= i + 1 %><%= keepSearch %>"
+                                                                <a href="/admin/m_company/page?page=<%= i + 1 %><%= keepSearch %>"
                                                                     <%if(page==i+1){%>class="selected"
                                                                     <%}%> class="num"><%= i + 1 %></a> </li> <% } %>
                                                                     <li> <a <%if(page>last-1){%><%} else {%>
-                                                                        href="/admin/m_user/page?page=<%= parseInt(page) + 1 %><%= keepSearch %>"
+                                                                        href="/admin/m_company/page?page=<%= parseInt(page) + 1 %><%= keepSearch %>"
                                                                         class="num" <% } %>>></a></li>
-                                            <li><a href="/admin/m_user/page?page=<%= last %><%= keepSearch %>" class="num">>></a></li>
+                                            <li><a href="/admin/m_company/page?page=<%= last %><%= keepSearch %>" class="num">>></a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -195,7 +167,7 @@
         const formObj2 = $("form[name='userForm']");
         //검색
         $("#searchAction").on("click", function () {
-            formObj2.attr("action", "/admin/m_user/page");
+            formObj2.attr("action", "/admin/m_company/page");
             formObj2.attr("method", "get");
             formObj2.submit();
         })

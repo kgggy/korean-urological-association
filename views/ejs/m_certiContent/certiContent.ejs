@@ -27,7 +27,6 @@
     .subTitle {
         display: inline-block;
         text-align: left;
-        width: 300px !important;
         height: 34px !important;
         position: relative;
         width: 160px;
@@ -56,6 +55,7 @@
     .subTitle option.hover {
         background-color: orange;
     }
+
 </style>
 <main class="main">
     <!-- Breadcrumb-->
@@ -87,8 +87,9 @@
                                 <input type="hidden" name="certiDivision" value="<%= param %>">
                                 <input type="hidden" name="certiContentId" value="">
                                 <input type="hidden" name="uid" value="81">
-                                <% if(results.length > 0 && param == 0) { %>
+                                <% if(results.length > 0) { %>
                                 <div class="selectBoxAlign">
+                                    <%if(param == 0){%>
                                     <select id="certiSubDivision" name="certiSubDivision" class="dropdown">
                                         <option value="" selected="selected">--분류--</option>
                                         <% for(var i = 0; i < div.length ; i++){  %>
@@ -102,6 +103,13 @@
                                         <option value="" selected="selected">--종류명--</option>
                                         <% } %>
                                     </select>
+                                    <% } else {%>
+                                    <select id="certiTitle" name="certiTitle" class="subTitle">
+                                        <option value="" selected="selected">--종류명--</option>
+                                        <% for(var i = 0; i < c_div.length ; i++){  %>
+                                        <option value="<%= c_div[i].certiTitle %>"
+                                            ><%= c_div[i].certiTitle %></option> <% } %> </select>
+                                    <% } %>
                                     <% if(searchText != '') { %>
                                     <input class="searchbox" type="text" name="searchText" value="<%=searchText%>" />
                                     <% } else {%>

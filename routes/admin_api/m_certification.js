@@ -57,7 +57,9 @@ router.get('/certiAll', async (req, res) => {
         var param = req.query.certiDivision;
         var division = req.query.division == undefined ? "" : req.query.division;
         var searchType = req.query.searchType == undefined ? "" : req.query.searchType;
-        var keepSearch = "&searchType=" + searchType + "&division=" + division;
+        // var c_searchType = req.query.c_searchType == undefined ? "" : req.query.c_searchType;
+        var c_searchType1 = req.query.c_searchType1 == undefined ? "" : req.query.c_searchType1;
+        var keepSearch = "&searchType=" + searchType + "&division=" + division + "&c_searchType1=" + c_searchType1;
         var sql = "select *, date_format(certiStartDate, '%Y-%m-%d') as certiStartDatefmt, date_format(certiEndDate, '%Y-%m-%d') as certiEndDatefmt\
                      from certification where certiDivision = ? and nullif(certiTitle,'') is not null";
         var div = "";
@@ -66,6 +68,12 @@ router.get('/certiAll', async (req, res) => {
         }
         if (searchType != '') {
             sql += " and certiDiff = '" + searchType + "' \n";
+        }
+        // if (c_searchType != '') {
+        //     sql += " and certiShow = '" + c_searchType + "' \n";
+        // }
+        if (c_searchType1 != '') {
+            sql += " and certiShow = '" + c_searchType1 + "' \n";
         }
         // 분류 드롭다운 가져오기
         const sql2 = "select count(*), certiSubDivision\
@@ -87,6 +95,8 @@ router.get('/certiAll', async (req, res) => {
                 div: div,
                 division: division,
                 searchType: searchType,
+                // c_searchType: c_searchType,
+                c_searchType1: c_searchType1,
                 results: results,
                 page: page,
                 length: results.length - 1,
@@ -155,8 +165,6 @@ router.post('/certiWrit', upload.single('file'), async (req, res) => {
     try {
         var path = "";
         var param = "";
-        // console.log(path + "-------------");
-        // console.log(param);
         if (req.file != null) {
             path = req.file.path;
             param = [req.body.certiDivision, req.body.certiTitle, req.body.certiDetail, req.body.certiPoint, req.body.certiDiff, path, req.body.certiSubDivision, req.body.certiStartDate, req.body.certiEndDate, req.body.certiShow];
@@ -165,7 +173,7 @@ router.post('/certiWrit', upload.single('file'), async (req, res) => {
         }
         const sql = "insert into certification(certiDivision, certiTitle, certiDetail, certiPoint, certiDiff, certiImage, certiSubDivision, certiStartDate, certiEndDate, certiShow)\
                           values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                          console.log(param);
+        console.log(param);
         connection.query(sql, param, function (err, result, fields) {
             if (err) {
                 console.log(err);
