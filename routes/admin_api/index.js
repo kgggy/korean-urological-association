@@ -38,5 +38,4 @@ router.use('/m_certiContent', m_certiContent);
 router.use('/m_comment', m_comment);
 router.use('/m_company', m_company);
 
-
 module.exports = router;

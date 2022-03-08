@@ -141,9 +141,35 @@
 </main>
 
 <script>
+    $(document).ready(function () {
+		//확장자 체크
+		$("input:file[name='file']").change(function () {
+			var str = $(this).val();
+			var fileName = str.split('\\').pop().toLowerCase();
+			// alert(fileName);
+			checkFileName(fileName);
+		});
+    });
+
+    //확장자 체크
+	function checkFileName(str) {
+		var ext = str.split('.').pop().toLowerCase();
+		// alert(ext);
+		if ($.inArray(ext, ['jpg', 'png', 'jpeg', 'gif']) == -1) {
+			alert(ext + '파일은 업로드 하실 수 없습니다.');
+			$("input:file[name='file']").val("");
+		}
+	}
+
     const formObj = $("form[name='certiUpdate']");
     //수정
     $("#update_btn").on("click", function () {
+        var certiImg = $("#file").val();
+
+        if (certiImg == '') {
+            alert("이미지를 선택해주세요.");
+            return false;
+        }
         if ($("#division option:selected").val() == '') {
             alert("분류를 선택해주세요.");
             return false;

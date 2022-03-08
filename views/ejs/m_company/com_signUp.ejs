@@ -82,7 +82,7 @@
 
 			</div>
 
-			<div class="agree-wrap">
+			<!-- <div class="agree-wrap">
 				<ul>
 					<li>
 						<div class="chkAll chkAndtitle">
@@ -123,18 +123,18 @@
 			</div>
 			<div class="termWarn">
 				<p>필수항목 동의 거부 시에는 회원가입이 제한됩니다.</p>
-			</div>
+			</div> -->
 
 			<div class="signUpSuccess">
-				<button type="submit" id="success" disabled="disabled">회원가입</button>
+				<button type="submit" id="success" >회원가입</button>
 			</div>
 		</form>
 	</div>
 
-	<!-- 모달 -->
+	<!-- 모달 
 	<div id="myModal1" class="modal-custom">
 
-		<!-- 모달내용 -->
+		 모달내용 
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4>이용동의</h4>
@@ -146,12 +146,12 @@
 			<div class="close-modal">닫기</i>
 			</div>
 		</div>
-	</div>
+	</div>-->
 
-	<!-- 모달 -->
+	<!-- 모달 
 	<div id="myModal2" class="modal-custom">
 
-		<!-- 모달내용 -->
+		 모달내용 
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4>마케팅 활용 동의</h4>
@@ -163,12 +163,12 @@
 			<div class="close-modal">닫기</i>
 			</div>
 		</div>
-	</div>
+	</div>-->
 
-	<!-- 모달 -->
-	<div id="myModal3" class="modal-custom">
+	<!-- 모달 
+	<div id="myModal3" class="modal-custom">-->
 
-		<!-- 모달내용 -->
+		<!-- 모달내용 
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4>개인정보 수집 이용동의</h4>
@@ -212,73 +212,73 @@
 			<div class="close-modal">닫기</i>
 			</div>
 		</div>
-	</div>
+	</div>-->
 
 	<script>
-		$(document).ready(function () {
-			$("#chkAll").click(function () {
-				if ($("#chkAll").is(":checked")) {
-					$("input[name=chk]").prop("checked", true);
-					$("#success").prop("disabled", false);
-					$("#success").addClass("signUpActive");
-				} else {
-					$("input[name=chk]").prop("checked", false);
-					$('#success').prop("disabled", true);
-					$("#success").removeClass("signUpActive");
-				}
-			});
+		// $(document).ready(function () {
+		// 	$("#chkAll").click(function () {
+		// 		if ($("#chkAll").is(":checked")) {
+		// 			$("input[name=chk]").prop("checked", true);
+		// 			$("#success").prop("disabled", false);
+		// 			$("#success").addClass("signUpActive");
+		// 		} else {
+		// 			$("input[name=chk]").prop("checked", false);
+		// 			$('#success').prop("disabled", true);
+		// 			$("#success").removeClass("signUpActive");
+		// 		}
+		// 	});
 
 
-			$("input[name=chk]").click(function () {
-				var total = $("input[name=chk]").length;
-				var checked = $("input[name=chk]:checked").length;
-				if (total != checked)
-					$("#chkAll").prop("checked", false);
-				else
-					$("#chkAll").prop("checked", true);
-			});
-		});
+		// 	$("input[name=chk]").click(function () {
+		// 		var total = $("input[name=chk]").length;
+		// 		var checked = $("input[name=chk]:checked").length;
+		// 		if (total != checked)
+		// 			$("#chkAll").prop("checked", false);
+		// 		else
+		// 			$("#chkAll").prop("checked", true);
+		// 	});
+		// });
 
-		var btn = document.querySelectorAll(".modal-custom-button");
-		var modals = document.querySelectorAll('.modal-custom');
-		var exitBtns = document.getElementsByClassName("close-modal");
+		// var btn = document.querySelectorAll(".modal-custom-button");
+		// var modals = document.querySelectorAll('.modal-custom');
+		// var exitBtns = document.getElementsByClassName("close-modal");
 
-		for (var i = 0; i < btn.length; i++) {
-			btn[i].onclick = function (e) {
-				e.preventDefault();
-				modal = document.querySelector(e.target.getAttribute("href"));
-				modal.style.display = "block";
-			}
-		}
+		// for (var i = 0; i < btn.length; i++) {
+		// 	btn[i].onclick = function (e) {
+		// 		e.preventDefault();
+		// 		modal = document.querySelector(e.target.getAttribute("href"));
+		// 		modal.style.display = "block";
+		// 	}
+		// }
 
-		for (var i = 0; i < exitBtns.length; i++) {
-			exitBtns[i].onclick = function () {
-				for (var index in modals) {
-					if (typeof modals[index].style !== 'undefined')
-						modals[index].style.display = "none";
-				}
-			}
-		}
+		// for (var i = 0; i < exitBtns.length; i++) {
+		// 	exitBtns[i].onclick = function () {
+		// 		for (var index in modals) {
+		// 			if (typeof modals[index].style !== 'undefined')
+		// 				modals[index].style.display = "none";
+		// 		}
+		// 	}
+		// }
 
-		window.onclick = function (event) {
-			if (event.target.classList.contains('modal-custom')) {
-				for (var index in modals) {
-					if (typeof modals[index].style !== 'undefined')
-						modals[index].style.display = "none";
-				}
-			}
-		}
+		// window.onclick = function (event) {
+		// 	if (event.target.classList.contains('modal-custom')) {
+		// 		for (var index in modals) {
+		// 			if (typeof modals[index].style !== 'undefined')
+		// 				modals[index].style.display = "none";
+		// 		}
+		// 	}
+		// }
 
-		$("input.necessary").click(function () {
-			var total = $("input.necessary").length;
-			var checked = $("input.necessary:checked").length;
-			if (total == checked) {
-				$("#success").prop("disabled", false);
-				$("#success").addClass("signUpActive");
-			} else {
-				$('#success').prop("disabled", true);
-				$("#success").removeClass("signUpActive");
-			}
-		});
+		// $("input.necessary").click(function () {
+		// 	var total = $("input.necessary").length;
+		// 	var checked = $("input.necessary:checked").length;
+		// 	if (total == checked) {
+		// 		$("#success").prop("disabled", false);
+		// 		$("#success").addClass("signUpActive");
+		// 	} else {
+		// 		$('#success').prop("disabled", true);
+		// 		$("#success").removeClass("signUpActive");
+		// 	}
+		// });
 	</script>
 </body>

@@ -49,20 +49,22 @@
                                 <div class="form-group row">
                                     <label class="col-md-2 col-form-label" for="text-input">종류명</label>
                                     <div class="col-md-9">
-                                        <input class="form-control" id="certiTitle" type="text" name="certiTitle" value="">
+                                        <input class="form-control" id="certiTitle" type="text" name="certiTitle"
+                                            value="">
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-md-2 col-form-label" for="text-input">설명글</label>
                                     <div class="col-md-9">
-                                        <input class="form-control" id="certiDetail" type="text" name="certiDetail" value="">
+                                        <input class="form-control" id="certiDetail" type="text" name="certiDetail"
+                                            value="">
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-md-2 col-form-label" for="text-input">포인트</label>
                                     <div class="col-md-9">
-                                        <input class="form-control" id="certiPoint" type="text" name="certiPoint" value=""
-                                            placeholder="숫자만 입력해주세요.">
+                                        <input class="form-control" id="certiPoint" type="text" name="certiPoint"
+                                            value="" placeholder="숫자만 입력해주세요.">
                                     </div>
                                 </div>
                                 <% if(division == 0) {%>
@@ -77,19 +79,22 @@
                                 <div class="form-group row">
                                     <label class="col-md-2 col-form-label" for="text-input">권한</label>
                                     <div class="col-md-9">
-                                        <input class="form-control" id="certiAuth" type="text" name="certiAuth" value="">
+                                        <input class="form-control" id="certiAuth" type="text" name="certiAuth"
+                                            value="">
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-md-2 col-form-label" for="text-input">시작 날짜</label>
                                     <div class="col-md-9">
-                                        <input class="form-control" id="certiStartDate" type="date" name="certiStartDate" value="">
+                                        <input class="form-control" id="certiStartDate" type="date"
+                                            name="certiStartDate" value="">
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-md-2 col-form-label" for="text-input">마지막 날짜</label>
                                     <div class="col-md-9">
-                                        <input class="form-control" id="certiEndDate" type="date" name="certiEndDate" value="">
+                                        <input class="form-control" id="certiEndDate" type="date" name="certiEndDate"
+                                            value="">
                                     </div>
                                 </div>
                                 <% } %>
@@ -115,12 +120,12 @@
                                 <!--option 버튼  -->
                                 <div class="option_button">
                                     <div>
-                                        <button class="btn btn-block btn-outline-success" type="button"
-                                            id="update_btn" onclick="certiWrite()">등록</button>
+                                        <button class="btn btn-block btn-outline-success" type="button" id="update_btn"
+                                            onclick="certiWrite()">등록</button>
                                     </div>
                                     <div>
-                                        <button class="btn btn-block btn-outline-danger" type="button"
-                                            id="delete_btn" onclick="history.go(-1)">취소</button>
+                                        <button class="btn btn-block btn-outline-danger" type="button" id="delete_btn"
+                                            onclick="history.go(-1)">취소</button>
                                     </div>
                                 </div>
                             </form>
@@ -131,15 +136,47 @@
         </div>
 </main>
 <script type="text/javascript">
+    $(document).ready(function () {
+		//확장자 체크
+		$("input:file[name='file']").change(function () {
+			var str = $(this).val();
+			var fileName = str.split('\\').pop().toLowerCase();
+			// alert(fileName);
+			checkFileName(fileName);
+		});
+    });
+
+    //확장자 체크
+	function checkFileName(str) {
+		var ext = str.split('.').pop().toLowerCase();
+		// alert(ext);
+		if ($.inArray(ext, ['jpg', 'png', 'jpeg', 'gif']) == -1) {
+			alert(ext + '파일은 업로드 하실 수 없습니다.');
+			$("input:file[name='file']").val("");
+		}
+	}
+
+    //종류 등록
     function certiWrite() {
         var certiTitle = $("#certiTitle").val();
         var certiDiff = $("#certiDiff").val();
+        var certiPoint = $("#certiPoint").val();
+        var certiImg = $("#file").val();
+
+        if (certiImg == '') {
+            alert("이미지를 선택해주세요.");
+            return false;
+        }
         if ($("#certiSubDivision option:selected").val() == "") {
             alert("분류를 선택하세요");
             return false;
         }
         if (certiTitle == "") {
             alert("종류명을 입력하세요");
+            return false;
+        }
+        if (certiPoint == "") {
+            alert("포인트를 입력하세요");
             return false;
         }
         if (certiDiff == "") {

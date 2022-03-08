@@ -31,10 +31,7 @@ router.post('/login', async (req, res) => {
     });
 
     if (nickChk == null) {
-        return res.json({
-            comNick: false,
-            message: "이메일을 다시 확인해주세요.",
-        });
+        return res.send('<script>alert("아이디 또는 비밀번호를 잘못 입력했습니다."); location.href = document.referrer;</script>');
     }
 
     const makePasswordHashed = (comNick, plainPassword) =>
@@ -70,12 +67,12 @@ router.post('/login', async (req, res) => {
         } else { // 세션 없는 admin일 경우 만들어줌
             req.session.user = {
                 // isAdmin: true,           // user, admin 구분해주려고. admin 계정밖에 없으니까 필요없음.
-                id: dbPwd.comId,
-                nick: comNick
+                comId: dbPwd.comId,
+                comNick: comNick
             };
             res.redirect('/admin/m_user/page?page=1');
             console.log("session 만들어짐!!!")
-            // console.log(req.session.user.id)
+            // console.log(req.session.user)
         }
     } else {
         return res.send('<script>alert("아이디 또는 비밀번호를 잘못 입력했습니다."); location.href = document.referrer;</script>');

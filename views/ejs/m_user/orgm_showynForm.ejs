@@ -158,19 +158,6 @@
 					</td>
 					<th><label><input type="radio">노출</label>
 				</tr>
-				<tr>
-					<th>권한</th>
-					<td>
-						<%if(result[0].userAuth !=null && result[0].userAuth!='null' && result[0].userAuth!=''){%>
-						<% if (result[0].userAuth == '0'){%>
-						일반회원
-						<% } else if (result[0].userAuth == '1') {%>
-						기업
-						<%}%>   
-						<%}%>
-					</td>
-					<th><label><input type="radio">노출</label>
-				</tr>
 			</table>
 
 			<p class="btn">
@@ -208,11 +195,7 @@
 		})
 
 		//check box
-		if ($('#userAuthValue').val() == '0') {
-			$('#userAuth1').prop("checked", true);
-		} else if ($('#userAuthValue').val() == '1') {
-			$('#userAuth2').prop("checked", true);
-		};
+		
 
 		if ($('#userStatusValue').val() == '0') {
 			$('#userStatus1').prop("checked", true);

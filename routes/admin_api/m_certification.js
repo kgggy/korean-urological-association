@@ -1,30 +1,16 @@
 const multer = require("multer");
 const path = require('path');
 const fs = require('fs');
-const {
-    parse
-} = require("csv-parse");
 
 var express = require('express');
 var router = express.Router();
 const mysql = require('mysql');
 
 const connt = require("../../config/db")
-var url = require('url');
-// const upload = require('./file.js');
 
 // DB 커넥션 생성
 var connection = mysql.createConnection(connt);
 connection.connect();
-
-//uuid 생성
-const {
-    v4: uuidv4
-} = require('uuid');
-const uuid = () => {
-    const tokens = uuidv4().split('-');
-    return tokens[2] + tokens[1] + tokens[0] + tokens[3] + tokens[4]
-}
 
 //파일 업로드 모듈
 var upload = multer({ //multer안에 storage정보  
@@ -57,9 +43,8 @@ router.get('/certiAll', async (req, res) => {
         var param = req.query.certiDivision;
         var division = req.query.division == undefined ? "" : req.query.division;
         var searchType = req.query.searchType == undefined ? "" : req.query.searchType;
-        // var c_searchType = req.query.c_searchType == undefined ? "" : req.query.c_searchType;
-        var c_searchType1 = req.query.c_searchType1 == undefined ? "" : req.query.c_searchType1;
-        var keepSearch = "&searchType=" + searchType + "&division=" + division + "&c_searchType1=" + c_searchType1;
+        var c_searchType = req.query.c_searchType == undefined ? "" : req.query.c_searchType;
+        var keepSearch = "&searchType=" + searchType + "&division=" + division + "&c_searchType=" + c_searchType;
         var sql = "select *, date_format(certiStartDate, '%Y-%m-%d') as certiStartDatefmt, date_format(certiEndDate, '%Y-%m-%d') as certiEndDatefmt\
                      from certification where certiDivision = ? and nullif(certiTitle,'') is not null";
         var div = "";
@@ -69,11 +54,8 @@ router.get('/certiAll', async (req, res) => {
         if (searchType != '') {
             sql += " and certiDiff = '" + searchType + "' \n";
         }
-        // if (c_searchType != '') {
-        //     sql += " and certiShow = '" + c_searchType + "' \n";
-        // }
-        if (c_searchType1 != '') {
-            sql += " and certiShow = '" + c_searchType1 + "' \n";
+        if (c_searchType != '') {
+            sql += " and certiShow = '" + c_searchType + "' \n";
         }
         // 분류 드롭다운 가져오기
         const sql2 = "select count(*), certiSubDivision\
@@ -95,8 +77,7 @@ router.get('/certiAll', async (req, res) => {
                 div: div,
                 division: division,
                 searchType: searchType,
-                // c_searchType: c_searchType,
-                c_searchType1: c_searchType1,
+                c_searchType: c_searchType,
                 results: results,
                 page: page,
                 length: results.length - 1,
@@ -106,7 +87,6 @@ router.get('/certiAll', async (req, res) => {
                 param: param,
                 keepSearch: keepSearch
             });
-            // console.log(results);
         });
     } catch (error) {
         res.status(401).send(error.message);
@@ -120,7 +100,7 @@ router.get('/selectOne', async (req, res) => {
         const sql = "select *, date_format(certiStartDate, '%Y-%m-%d') as certiStartDatefmt, date_format(certiEndDate, '%Y-%m-%d') as certiEndDatefmt\
                       from certification\
                      where certiTitleId = ?";
-        connection.query(sql, param, function (err, result, fields) {
+        connection.query(sql, param, function (err, result) {
             if (err) {
                 console.log(err);
             }
@@ -128,7 +108,6 @@ router.get('/selectOne', async (req, res) => {
             res.render(route, {
                 result: result
             });
-            console.log(result)
         });
     } catch (error) {
         res.status(401).send(error.message);
@@ -143,7 +122,7 @@ router.get('/certiWritForm', async (req, res) => {
         const sql = "select count(*), certiSubDivision\
                        from certification\
                       where certiSubDivision !='' or not null group by certiSubDivision";
-        connection.query(sql, (err, div, row) => {
+        connection.query(sql, (err, div) => {
             if (err) {
                 console.log(err)
             }
@@ -154,13 +133,11 @@ router.get('/certiWritForm', async (req, res) => {
             });
         })
     } catch (error) {
-        if (error.code == "ENOENT") {
-            console.log("프로필 삭제 에러 발생");
-        }
+        res.status(401).send(error.message);
     }
 });
 
-//탄소실천 등록
+//탄소실천 종류 등록
 router.post('/certiWrit', upload.single('file'), async (req, res) => {
     try {
         var path = "";
@@ -247,20 +224,16 @@ router.post('/certiUpdate', upload.single('file'), async (req, res) => {
 router.get('/certiDelete', async (req, res) => {
     try {
         const param = req.query.certiTitleId;
-        console.log(param);
         const sql = "delete from certification where certiTitleId = ?";
-        connection.query(sql, param, (err, row) => {
+        connection.query(sql, param, (err) => {
             if (err) {
                 console.log(err);
             }
-            if (req.query.certiImage != undefined) {
-                // req.query.certiImage = [req.query.certiImage];
-                // console.log(req.query.certiImage);
+            if (req.query.certiImage != '') {
                 fs.unlinkSync(req.query.certiImage, (err) => {
                     if (err) {
                         console.log(err);
                     }
-                    return;
                 });
             }
             res.redirect('certiAll?certiDivision=' + req.query.certiDivision + '&page=1');
@@ -276,7 +249,7 @@ router.get('/certiImgDelete', async (req, res) => {
     // console.log(typeof(param))
     try {
         const sql = "update certification set certiImage = null where certiTitleId = ?";
-        connection.query(sql, req.query.certiTitleId, (err, row) => {
+        connection.query(sql, req.query.certiTitleId, (err) => {
             if (err) {
                 console.log(err)
             }

@@ -128,14 +128,15 @@ router.get('/one', async (req, res) => {
     try {
         const param = req.query.certiContentId;
         const division = req.query.certiDivision;
-        const sql = "select f.fileRoute, e.certiTitle, e.certiSubDivision,\
+        const sql = "select distinct f.fileRoute, e.certiTitle, e.certiSubDivision,\
                             (select count(*) from recommend where certiContentId = ?) as rcount,\
-                             c.uid, c.certiContentId, date_format(c.certiContentDate, '%Y-%m-%d') as certiContentDatefmt, u.userNick, u.userImg\
+                             c.uid, c.comId, c.certiContentId, date_format(c.certiContentDate, '%Y-%m-%d') as certiContentDatefmt, u.userNick, u.userImg, p.comNick\
                        from certiContent c\
                   left join certification e  on c.certiTitleId = e.certiTitleId\
                   left join file f on c.certiContentId = f.certiContentId\
                   left join recommend r on r.certiContentId = c.certiContentId\
                   left join user u on c.uid = u.uid\
+                  left join company p on p.comId = c.comId\
                  where c.certiContentId = ?";
         connection.query(sql, [param, param], (err, result) => {
             if (err) {
@@ -156,9 +157,9 @@ router.get('/one', async (req, res) => {
 //탄소실천글 등록 페이지로 이동
 router.get('/certiWritForm', async (req, res) => {
     const division = req.query.certiDivision;
-    console.log(division)
+    // console.log(division)
     const sql = "select certiTitleId, certiTitle, certiDiff from certification where certiDivision = 0";
-    // 분류 드롭다운 가져오기
+    // 탄소실천 분류 드롭다운 가져오기
     const sql2 = "select count(*), certiSubDivision\
                     from certification\
                    where certiSubDivision !='' or not null group by certiSubDivision";
@@ -168,6 +169,17 @@ router.get('/certiWritForm', async (req, res) => {
         }
         div = results1;
     })
+    // 챌린지 분류 드롭다운 가져오기
+    const sql3 = "select count(*), certiTitle, certiTitleId\
+                    from certification\
+                   where certiDivision = 1\
+                group by certiTitle, certiTitleId";
+    connection.query(sql3, (err, results2) => {
+        if (err) {
+            console.log(err)
+        }
+        c_div = results2;
+    })
     connection.query(sql, (err, titles) => {
         if (err) {
             console.log(err)
@@ -176,7 +188,8 @@ router.get('/certiWritForm', async (req, res) => {
         res.render(route, {
             division: division,
             titles: titles,
-            div: div
+            div: div,
+            c_div: c_div
         });
     });
 });
@@ -201,8 +214,9 @@ router.post('/certiContWrit', upload.array('file'), async function (req, res) {
     // console.log(paths);
     try {
         const contentId = uuid();
-        const param1 = [contentId, req.body.certiTitleId, req.body.uid];
-        const sql1 = "insert into certiContent(certiContentId, certiTitleId, uid) values(?, ?, ?)";
+        const sessionUid = req.session.user.comId;
+        const param1 = [contentId, req.body.certiTitleId, sessionUid];
+        const sql1 = "insert into certiContent(certiContentId, certiTitleId, comId) values(?, ?, ?)";
         connection.query(sql1, param1, (err) => {
             if (err) {
                 throw err;
@@ -232,7 +246,7 @@ router.get('/certiContDelete', async (req, res) => {
     try {
         const param = req.query.certiContentId;
         const sql = "delete from certiContent where certiContentId = ?";
-        connection.query(sql, param, (err, row) => {
+        connection.query(sql, param, (err) => {
             if (err) {
                 console.log(err);
             }

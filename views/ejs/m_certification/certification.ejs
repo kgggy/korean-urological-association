@@ -42,10 +42,10 @@
                                     <option value="4" <%if(searchType=="4"){%> selected="selected" <%}%>>4단계</option>
                                     <option value="5" <%if(searchType=="5"){%> selected="selected" <%}%>>5단계</option>
                                 </select>
-                                <% } else { %> <select name="c_searchType1" class="dropdown">
+                                <% } else { %> <select name="c_searchType" class="dropdown">
                                     <option value="" selected="selected">노출여부</option>
-                                    <option value="0" <%if(c_searchType1=="0"){%> selected="selected" <%}%>>노출</option>
-                                    <option value="1" <%if(c_searchType1=="1"){%> selected="selected" <%}%>>비노출</option>
+                                    <option value="0" <%if(c_searchType=="0"){%> selected="selected" <%}%>>노출</option>
+                                    <option value="1" <%if(c_searchType=="1"){%> selected="selected" <%}%>>비노출</option>
                                 </select>
                                 <%}%> <input class="btn btn-block btn-outline-success" type="button" id="searchAction"
                                         value="검색" />
@@ -113,7 +113,7 @@
                                         <% } %>
                                         <% } else { %>
                                         <tr>
-                                            <td colspan="8">
+                                            <td colspan="7">
                                                 등록된 목록이 없습니다.
                                             </td>
                                         </tr>
@@ -122,7 +122,6 @@
                                 </table>
                                 <div class="mt_20">
                                     <p class="float_r">
-                                        <!-- 나중에 boardId랑 uid(admin) 관리자걸로 고쳐줘야함!!!!!!!!!!!!!!!!!!!!-->
                                         <input id="enrollAction" class="btn btn-block btn-outline-success" type="button"
                                             onclick="enroll()" value="등록" />
                                     </p>

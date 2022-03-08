@@ -99,20 +99,6 @@
                         </div>
                      </div>
                      <div class="form-group row">
-                        <label class="col-md-2 col-form-label" for="text-input">권한</label>
-                        <div class="col-md-9">
-                           <%if(result[0].userAuth !=null && result[0].userAuth!='null' && result[0].userAuth!=''){%>
-                           <% if (result[0].userAuth == '0'){%>
-                           <input class="form-control" id="ucmtitle" type="text" name="ucmtitle" disabled="disabled"
-                              value="일반회원">
-                           <% } else if (result[0].userAuth == '1') {%>
-                           <input class="form-control" id="ucmtitle" type="text" name="ucmtitle" disabled="disabled"
-                              value="기업">
-                           <%}%>   
-                              <%}%>
-                        </div>
-                     </div>
-                     <div class="form-group row">
                         <label class="col-md-2 col-form-label" for="text-input">상태</label>
                         <div class="col-md-9">
                            <%if(result[0].userStatus !=null && result[0].userStatus!='null' && result[0].userStatus!=''){%>

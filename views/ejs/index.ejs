@@ -1,117 +1,71 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
+<title>ECOCE</title>
+<link rel="shortcut icon" href="/public/user/main/logo01.ico" type="image/x-icon" />
+<link rel="stylesheet" type="text/css" href="/public/stylesheets/css/style.css" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.5.5/css/simple-line-icons.min.css">
+<link href="/public/stylesheets/pace-progress/css/pace.min.css" rel="stylesheet">
+<link href="/public/stylesheets/datatables-plugins/dataTables.bootstrap4.min.css" rel="stylesheet">
 
-		<style>
-			body{margin:0; padding:0; border-top:7px solid #2f63c0; background:url(/images/admin/bg_login_body.gif) repeat-x #eeeff1; font-size:12px; color:#555; font-family:'맑은고딕',malgun gothic,'돋움',dotum,Tahoma,Geneva, sans-serif;}
-			h1{margin:0 0 20px 0; text-align:center;}
-			input[type~="text"], input[type~="password"] {width:78%; border:1px solid #ccc; padding:3px; font-size:20px; ime-mode:disabled;}
-			input[type~="checkbox"] {margin:0 5px 0 0; padding:2px 0 2px 5px; vertical-align:middle;}
-			p{margin:5px; text-align:center;}
-			strong{text-align:right; padding-right:7px;}
-			img {border:none;}
-			
-			 #container{width:480px; margin:5px auto 20px auto; padding:80px 0; overflow:hidden;}
-			.login{height:130px; padding:40px; border:1px solid #2b2b2b; background:#eeeff1; overflow:hidden;}
-			.login ul{margin:0 0 10px 0; padding:0; overflow:hidden;}
-			.login li{margin:10px 0; padding:0; list-style:none; font-size:14px;}
-			.login strong{display:inline-block;; width:70px;}
-			.login span{float:left; margin-left:70px;}
-			.login img {float:right; margin-right:5px;}
-	
-			#container p {margin-top:15px;}
-		</style>
-		<script type="text/javascript">
-		$(document).ready(function(){
-			$('input[name="ad_id"]').focus();
-			
-			var ad_id = "";
-			if(getCookie('login_k')!=null && getCookie('login_k')!=''){
-				ad_id = getCookie('login_k');
-				$('#loginSave').prop('checked',true);
-			}
-			
-			$('input[name="ad_id"]').val(getCookie('login_k'));
-			
-			$('#login').click(function(e){
-				e.preventDefault();
-				var frm = document.loginForm;
-				var id = $('input[name="ad_id"]');
-				var pw = $('input[name="ad_pw"]');
-				
-				if(id.val()==""){
-					alert('아이디를 입력해주세요.');
-					id.focus();
-					return false;
-				}else if(pw.val()==""){
-					alert('비밀번호를 입력해주세요.');
-					pw.focus();
-					return false;
-				}
-				
-				setCookie("login_k", id.val(), 100);
-				frm.action='/admin/web/orgm_list'
-				frm.submit();
-			});
-			
-			$('#loginSave').click(function(){
-				var flg = $(this).prop('checked');
-				var id = $('input[name="ad_id"]').val();
-				if(flg){
-					setCookie("login_k", id, 100);
-				}else{
-					setCookie("login_k","", -1);
-				}
-			});
-			
-			$('#ad_pw').keydown(function(e){
-				if(e.keyCode == 13) $('#login').click();
-			});
-		});
-		// 쿠키 생성
-		 function setCookie(cName, cValue, cDay){
-		      var expire = new Date();
-		      expire.setDate(expire.getDate() + cDay);
-		      cookies = cName + '=' + escape(cValue) + '; path=/ '; // 한글 깨짐을 막기위해 escape(cValue)를 합니다.
-		      if(typeof cDay != 'undefined') cookies += ';expires=' + expire.toGMTString() + ';';
-		      document.cookie = cookies;
-		 }
+<style>
+	.btn-primary {
+    color: #fff;
+    background-color: #f8841f;
+    border-color: #f8841f;
+}
+.btn-primary:hover{
+	opacity: 0.7;
+	background-color: #f8841f;
+    border-color: #f8841f;
+}
+</style>
 
-		 // 쿠키 가져오기
-		 function getCookie(cName) {
-		      cName = cName + '=';
-		      var cookieData = document.cookie;
-		      var start = cookieData.indexOf(cName);
-		      var cValue = '';
-		      if(start != -1){
-		           start += cName.length;
-		           var end = cookieData.indexOf(';', start);
-		           if(end == -1)end = cookieData.length;
-		           cValue = cookieData.substring(start, end);
-		      }
-		      return unescape(cValue);
-		 }
-		
+<body class="app flex-row align-items-center"
+	style="background: url('${contextPath}/images/user/main/banner1-6.png') no-repeat; background-size: 100%;">
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-md-8">
+				<div class="card-group">
+					<div class="card p-4" style="opacity: 0.96;">
+						<div class="card-body">
+							<img alt="로고" src="../../public/images/logo.png" width="60%">
+							<p class="text-muted">Sign In to your account</p>
 
-		</script>
-		 
-	</head>
-	
-	<body>
-		<div id="container">
-			<h1>
-				ECOCE
-			</h1>
-			<form action="/admin/login" name="login" method="post" autocomplete="off">
-				<div class="login">
-					<ul>
-						<li><strong>ID</strong><input id="comNick" name="comNick" type="text" tabindex="1" /></li>
-						<li><strong>Password</strong><input id="comPwd" name="comPwd" type="password" tabindex="2" /></li>
-					</ul>
-					<span><input type="checkbox" id="loginSave" name="loginSave" />아이디 저장</span>
-					<button type="submit">로그인</button>
-				</div>		
-			</form>
-			<p><!-- Copyright ⓒ Daegu MBC. All rights reserved. --></p>
+							<form class="form-horizontal" id="frm" action="/admin/login" method="post">
+								<div class="input-group mb-3">
+									<div class="input-group-prepend">
+										<span class="input-group-text">
+											<i class="icon-user"></i>
+										</span>
+									</div>
+									<input class="form-control" type="text" placeholder="아이디" id="comNick" name="comNick"
+										value="" />
+								</div>
+								<div class="input-group mb-4">
+									<div class="input-group-prepend">
+										<span class="input-group-text">
+											<i class="icon-lock"></i>
+										</span>
+									</div>
+									<input class="form-control" type="password" placeholder="패스워드" id="comPwd" value=""
+										name="comPwd" />
+								</div>
+								<div class="row">
+									<div class="col-6">
+										<button class="btn btn-primary px-4" type="submit" id="loginBtn">Login</button>
+									</div>
+								</div>
+							</form>
+
+						</div>
+
+					</div>
+					<div class="card text-white bg-primary d-md-down-none" style="width:44%; opacity: 0.96;">
+							<div style="text-align: center;">
+								<img alt="로고" src="../../public/images/aaron-burden-2IzoIHBgYAo-unsplash.jpg" width="100%">
+							</div>
+					</div>
+				</div>
+			</div>
 		</div>
-	</body>
-</html>
+	</div>
+</body>

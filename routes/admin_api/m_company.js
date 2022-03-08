@@ -12,25 +12,14 @@ const Op = sequelize.Op;
 var connection = mysql.createConnection(connt);
 connection.connect();
 
-//로그인 페이지로 이동
-// router.get('/login', async (req, res) => {
-//     let route = req.app.get('views') + '/index';
-//     console.log(route);
-//     res.render(route, {
-//         layout: false
-//     });
-// });
-
-//회원가입 페이지 이동
+//등록 페이지 이동
 router.get('/join', async (req, res) => {
-    let route = req.app.get('views') + '/m_company/ComSignUp.ejs';
+    let route = req.app.get('views') + '/m_company/com_signUp.ejs';
     console.log(route);
-    res.render(route, {
-        layout: false
-    });
+    res.render(route);
 });
 
-//기업 회원가입
+//기업 회원등록
 router.post('/companyEnroll', async (req, res) => {
     const {
         comNick,

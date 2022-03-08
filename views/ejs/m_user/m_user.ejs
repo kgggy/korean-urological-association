@@ -29,15 +29,15 @@
                             <div align="right">
                                 <form name="userForm" action="" method="get" class="easydropdown">
                                     <input type="hidden" name="page" value="1">
-                                    <select name="searchType2" class="dropdown">
-                                        <option value="">회원상태</option>
-                                        <option value="0" <%if(searchType2=="0"){%> selected="selected" <%}%>>활동중</option>
-                                        <option value="1" <%if(searchType2=="1"){%> selected="selected" <%}%>>탈퇴</option>
-                                    </select>
                                     <select name="searchType1" class="dropdown">
+                                        <option value="">회원상태</option>
+                                        <option value="0" <%if(searchType1=="0"){%> selected="selected" <%}%>>활동중</option>
+                                        <option value="1" <%if(searchType1=="1"){%> selected="selected" <%}%>>탈퇴</option>
+                                    </select>
+                                    <select name="searchType2" class="dropdown">
                                         <option value="">동의여부</option>
-                                        <option value="0" <%if(searchType1=="0"){%> selected="selected" <%}%>>동의</option>
-                                        <option value="1" <%if(searchType1=="1"){%> selected="selected" <%}%>>비동의</option>
+                                        <option value="0" <%if(searchType2=="0"){%> selected="selected" <%}%>>동의</option>
+                                        <option value="1" <%if(searchType2=="1"){%> selected="selected" <%}%>>비동의</option>
                                     </select>
                                     <select name="searchType3" class="dropdown">
                                         <option value="">나이대</option>

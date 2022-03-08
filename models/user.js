@@ -70,11 +70,12 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(500),
       allowNull: true
     },
-    userAuth: {
-      type: DataTypes.STRING(1),
-      allowNull: false,
-      defaultValue: "0"
-    },
+
+    // userAuth: {
+    //   type: DataTypes.STRING(1),
+    //   allowNull: false,
+    //   defaultValue: "0"
+    // },
     userRegDate: {
       type: DataTypes.DATE,
       allowNull: false,

@@ -263,7 +263,7 @@ router.get('/all/:uid', async (req, res) => {
   try {
     const param = req.params.uid;
     let user;
-    connection.query('select userNick, userImg, userAuth from user where uid = ?', param, (err, results, fields) => {
+    connection.query('select userNick, userImg from user where uid = ?', param, (err, results) => {
       if (err) {
         console.log(err);
       }

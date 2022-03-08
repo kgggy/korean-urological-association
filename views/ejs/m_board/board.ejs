@@ -31,8 +31,6 @@
                             </form> 
                             <form id="boardForm" name="boardForm" method="" action="">
                                 <input type="hidden" name="boardId" value="<%=community[0].boardId%>">
-                                <!--수정 필요!@!!!!!-->
-                                <input type="hidden" name="uid" value="81">
                                 <table id="exampleTable" class="table table-responsive-sm table-hover">
                                     <colgroup>
                                         <col width="7%" />
@@ -61,7 +59,7 @@
                                             } else { %> <tr
                                         onclick="location.href='/admin/m_board/selectOne?writId=<%=results[i].writId%>'">
                                         <td><%= i+1 %></td>
-                                        <td><%=results[i].userNick%></td>
+                                        <td><%=results[i].userNick%><%=results[i].comNick%></td>
                                         <td><%=results[i].writRank%></td>
                                         <td><%=results[i].writTitle%></td>
                                         <td><%=results[i].writHit %></td>
@@ -79,7 +77,6 @@
                                         <% } %>
                                         </tbody>
                                         </table>
-                                        <!-- 나중에 boardId랑 uid(admin) 고쳐줘야함!!!!!!!!!!!!!!!!!!!!-->
                                         <button id="enrollAction" class="btn btn-block btn-outline-success"
                                             onclick="enroll()">등록</button>
                             </form>

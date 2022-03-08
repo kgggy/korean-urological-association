@@ -71,5 +71,15 @@ module.exports = function (sequelize, DataTypes) {
       foreignKey: "uid"
     })
   };
+  recommend.associate = function (models) {
+    recommend.belongsTo(models.certiContent, {
+      foreignKey: "certiContentId"
+    })
+  };
+  recommend.associate = function (models) {
+    recommend.belongsTo(models.post, {
+      foreignKey: "writId"
+    })
+  };
   return recommend;
 };

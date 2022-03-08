@@ -73,12 +73,11 @@ router.get('/all', async (req, res) => {
         var searchType = req.query.searchType == undefined ? "" : req.query.searchType;
         var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
         var keepSearch = "&searchType=" + searchType + "&searchText=" + searchText;
-        var sql = "select p.*, c.*, u.userNick, u.uid, date_format(writDate, '%Y-%m-%d') as writDatefmt, date_format(writUpdDate, '%Y-%m-%d') as writUpdDatefmt\
+        var sql = "select p.*, c.*, u.userNick, m.comNick, u.uid, date_format(writDate, '%Y-%m-%d') as writDatefmt, date_format(writUpdDate, '%Y-%m-%d') as writUpdDatefmt\
                        from post p\
-                  left join community c\
-                         on c.boardId = p.boardId\
-                  left join user u\
-                         on u.uid = p.uid\
+                  left join community c on c.boardId = p.boardId\
+                  left join user u  on u.uid = p.uid\
+                  left join company m on m.comId = p.comId\
                       where p.boardId = ?";
         if (searchType != '' && searchText != '') {
             sql += " and " + searchType + " like '%" + searchText + "%'";
@@ -112,10 +111,11 @@ router.get('/all', async (req, res) => {
 router.get('/selectOne', async (req, res) => {
     try {
         const param = req.query.writId;
-        const sql = "select p.*, f.fileRoute, f.fileOrgName, f.fileNo, u.userNick, date_format(writDate, '%Y-%m-%d') as writDatefmt, date_format(writUpdDate, '%Y-%m-%d') as writUpdDatefmt\
+        const sql = "select p.*, c.comNick, f.fileRoute, f.fileOrgName, f.fileNo, u.userNick, date_format(writDate, '%Y-%m-%d') as writDatefmt, date_format(writUpdDate, '%Y-%m-%d') as writUpdDatefmt\
                         from post p\
                    left join file f on f.writId = p.writId\
                    left join user u on u.uid = p.uid\
+                   left join company c on c.comId = p.comId\
                        where p.writId = ?";
 
         connection.query(sql, param, (err, result) => {
@@ -149,13 +149,14 @@ router.get('/writForm', async (req, res) => {
 router.post('/boardwrite', upload.array('file'), async (req, res, next) => {
     const paths = req.files.map(data => data.path);
     const orgName = req.files.map(data => data.originalname);
-    console.log(req.body);
-    console.log(req.files);
+    // console.log(req.body);
+    // console.log(req.files);
+    const sessionId = req.session.user.comId;
     try {
         const boardWritId = uuid();
         // req.body.writRank = parseInt(req.body.writRank);
-        const param1 = [boardWritId, req.body.boardId, req.body.uid, req.body.writTitle, req.body.writContent, req.body.writRank, req.body.writRank];
-        const sql1 = "insert into post(writId, boardId, uid, writTitle, writContent, writRank) values(?, ?, ?, ?, ?, if(trim(?)='', null, ?))";
+        const param1 = [boardWritId, req.body.boardId, sessionId, req.body.writTitle, req.body.writContent, req.body.writRank, req.body.writRank];
+        const sql1 = "insert into post(writId, boardId, comId, writTitle, writContent, writRank) values(?, ?, ?, ?, ?, if(trim(?)='', null, ?))";
         connection.query(sql1, param1, (err, row) => {
             if (err) {
                 throw err;

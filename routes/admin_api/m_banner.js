@@ -168,11 +168,13 @@ router.get('/bannerDelete', async (req, res) => {
                 console.log("쿼리 에러입니다.");
             }
             console.log(param);
-            fs.unlinkSync(param, (err) => {
-                if (err) {
-                    console.log(err);
-                }
-            });
+            if(param !== '') {
+                fs.unlinkSync(param, (err) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+            }
             res.redirect('banner?bannerDiv=' + bannerDiv);
         });
     } catch (error) {

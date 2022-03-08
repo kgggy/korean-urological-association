@@ -45,6 +45,7 @@
                                     </div>
 
                                 </div>
+                                <%if(result[0].certiDivision == 0){%>
                                 <div class="form-group row">
                                     <label class="col-md-2 col-form-label" for="text-input">분류</label>
                                     <div class="col-md-9">
@@ -52,6 +53,7 @@
                                             disabled="disabled" value="<%=result[0].certiSubDivision%>">
                                     </div>
                                 </div>
+                                <% } %>
                                 <div class="form-group row">
                                     <label class="col-md-2 col-form-label" for="text-input">종류명</label>
                                     <div class="col-md-9">

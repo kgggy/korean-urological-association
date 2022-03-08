@@ -2,10 +2,8 @@
 	.subTitle {
 		display: inline-block;
 		text-align: left;
-		width: 500px !important;
 		height: 34px !important;
 		position: relative;
-		width: 160px;
 		border: 1px solid #ccc;
 		cursor: pointer;
 		background: #fff;
@@ -58,10 +56,9 @@
 							<!-- 컨텐츠 -->
 							<form action="" id="writForm" name="writForm" method="post" enctype="multipart/form-data"
 								autocomplete="off">
-								<!--나중에 uid 수정하기~~!~!~!-->
-								<input type="hidden" id="uid" name="uid" value="81">
 								<input type="hidden" id="certiDivision" name="certiDivision" value="<%= division %>">
 								<input type="hidden" id="certiTitleId" name="certiTitleId" value="">
+								<% if(division == 0) { %>
 								<div class="form-group row">
 									<label class="col-md-2 col-form-label" for="text-input">분류</label>
 									<div class="col-md-9">
@@ -82,6 +79,20 @@
 										</select>
 									</div>
 								</div>
+								<% } else {%>
+									<div class="form-group row">
+										<label class="col-md-2 col-form-label" for="text-input">종류명</label>
+										<div class="col-md-9">
+											<select class="subTitle" name="certiTitle" id="certiTitle">
+												<option value='' selected="selected">--선택--</option>
+												<% for(var i = 0; i < c_div.length ; i++){  %>
+												<option value="<%= c_div[i].certiTitleId %>">
+													<%= c_div[i].certiTitle %></option>
+												<% } %>
+											</select>
+										</div>
+									</div>
+								<% } %>
 								<div class="form-group row">
 									<label class="col-md-2 col-form-label">첨부파일</label>
 									<div style="display: flex; flex-direction: column; gap: 25px; padding-left: 15px">
@@ -115,12 +126,21 @@
 <script type="text/javascript">
 	var formObj = $("form[name='writForm']");
 	$(document).ready(function () {
+		//확장자 체크
+		$("input:file[name='file']").change(function () {
+			var str = $(this).val();
+			var fileName = str.split('\\').pop().toLowerCase();
+			// alert(fileName);
+			checkFileName(fileName);
+		});
+
 		// 등록
 		$("#enroll_btn").on("click", function () {
 			$('input[name=certiTitleId]').val($('#certiTitle option:selected').val());
 			var certiSubDivision = $("#certiSubDivision").val();
 			var certiTitle = $("#certiTitle").val();
-			console.log(certiTitle)
+			var img = $("#file").val();
+			// console.log(certiTitle)
 
 			if (certiSubDivision == '') {
 				alert("분류를 선택해주세요.");
@@ -130,6 +150,11 @@
 			if (certiTitle == '') {
 				alert("종류명을 선택해주세요.");
 				$("#certiTitle").focus();
+				return false;
+			}
+			if (img == '') {
+				alert("이미지를 선택해주세요.");
+				$("#certiSubDivision").focus();
 				return false;
 			}
 			if (confirm("등록하시겠습니까?") == true) {
@@ -174,4 +199,14 @@
 			});
 		});
 	});
+
+	//확장자 체크
+	function checkFileName(str) {
+		var ext = str.split('.').pop().toLowerCase();
+		// alert(ext);
+		if ($.inArray(ext, ['jpg', 'png', 'jpeg', 'gif']) == -1) {
+			alert(ext + '파일은 업로드 하실 수 없습니다.');
+			$("input:file[name='file']").val("");
+		}
+	}
 </script>

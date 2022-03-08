@@ -7,13 +7,11 @@ const multer = require("multer");
 const path = require('path');
 
 const connt = require("../../config/db")
-var url = require('url');
 const crypto = require('crypto');
 const models = require('../../models');
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
-
-// const xlsx = require('xlsx');
+//엑셀파일 생성
 var nodeExcel = require('excel-export');
 // DB 커넥션 생성
 var connection = mysql.createConnection(connt);
@@ -46,26 +44,22 @@ var upload = multer({ //multer안에 storage정보
 //사용자 전체조회
 router.get('/page', async (req, res) => {
   var page = req.query.page;
-  var searchType = req.query.searchType == undefined ? "" : req.query.searchType;
   var searchType1 = req.query.searchType1 == undefined ? "" : req.query.searchType1;
   var searchType2 = req.query.searchType2 == undefined ? "" : req.query.searchType2;
   var searchType3 = req.query.searchType3 == undefined ? "" : req.query.searchType3;
   var searchType4 = req.query.searchType4 == undefined ? "" : req.query.searchType4;
   var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
-  var keepSearch = "&searchType=" + searchType + "&searchType1=" + searchType1 +
+  var keepSearch = "&searchType1=" + searchType1 +
     "&searchType2=" + searchType2 + "&searchType3=" + searchType3 +
     "&searchType4=" + searchType4 + "&searchText=" + searchText;
 
   var sql = "select * from user where 1=1";
 
-  if (searchType != '') {
-    sql += " and userAuth = '" + searchType + "' \n";
-  }
   if (searchType1 != '') {
-    sql += " and userAgree = '" + searchType1 + "' \n";
+    sql += " and userStatus = '" + searchType1 + "' \n";
   }
   if (searchType2 != '') {
-    sql += " and userStatus = '" + searchType2 + "' \n";
+    sql += " and userAgree = '" + searchType2 + "' \n";
   }
   if (searchType3 != '' && searchType3 == '61') {
     sql += " and userAge >= 60 \n";
@@ -87,7 +81,6 @@ router.get('/page', async (req, res) => {
       }
       let route = req.app.get('views') + '/m_user/m_user';
       res.render(route, {
-        searchType: searchType,
         searchType1: searchType1,
         searchType2: searchType2,
         searchType3: searchType3,
@@ -137,20 +130,7 @@ router.get('/userInsertForm', (req, res) => {
 
 //사용자 등록
 router.post('/userInsert', upload.single('file'), async (req, res) => {
-  const {
-    file,
-    userNick,
-    userEmail,
-    userAge,
-    userAdres1,
-    userAdres2,
-    userSchool,
-    userPoint,
-    userScore,
-    userStatus,
-    userAgree,
-    userAuth
-  } = req.body;
+  const { file, userNick, userEmail, userAge, userAdres1, userAdres2, userSchool, userPoint, userScore, userStatus, userAgree } = req.body;
 
   const sameEmailUser = await models.user.findOne({
     where: {
@@ -197,40 +177,12 @@ router.post('/userInsert', upload.single('file'), async (req, res) => {
 
   if (req.file != null) {
     const userImg = req.file.path;
-    await models.user.create({
-      userPwd,
-      salt,
-      userImg,
-      userNick,
-      userEmail,
-      userAge,
-      userAdres1,
-      userAdres2,
-      userSchool,
-      userPoint,
-      userScore,
-      userStatus,
-      userAgree,
-      userAuth
-    });
+    await models.user.create({ userPwd, salt, userImg, userNick, userEmail, userAge, userAdres1, userAdres2, userSchool, 
+                                userPoint, userScore, userStatus, userAgree });
   } else {
-    await models.user.create({
-      userPwd,
-      salt,
-      userNick,
-      userEmail,
-      userAge,
-      userAdres1,
-      userAdres2,
-      userSchool,
-      userPoint,
-      userScore,
-      userStatus,
-      userAgree,
-      userAuth
-    });
+    await models.user.create({ userPwd, salt, userNick, userEmail, userAge, userAdres1, userAdres2, userSchool, 
+                                userPoint, userScore, userStatus, userAgree });
   }
-
   res.send('<script>alert("회원 등록이 완료되었습니다."); location.href="/admin/m_user/page?page=1";</script>');
 });
 
@@ -241,16 +193,15 @@ router.get('/userUdtForm', async (req, res) => {
     const sql = "select *, ((select count(*) from certiContent where uid = ?) +\
                         (select count(*) from post where uid = ?)) as contentAll\
                   from user where uid = ?";
-    connection.query(sql, param, function (err, result, fields) {
+    connection.query(sql, param, function (err, result) {
       if (err) {
         console.log(err);
       }
       let route = req.app.get('views') + '/m_user/orgm_udtForm';
       console.log(route);
       res.render(route, {
-        'result': result
+        result: result
       });
-      console.log(result);
     });
 
   } catch (error) {
@@ -267,20 +218,19 @@ router.post('/userUpdate', upload.single('file'), async (req, res) => {
     param = [req.body.userNick, req.body.userEmail, req.body.userAge,
       req.body.userAdres1, req.body.userAdres2, path, req.body.userSchool,
       req.body.userPoint, req.body.userScore, req.body.userStatus,
-      req.body.userAgree, req.body.userAuth, req.body.uid
+      req.body.userAgree, req.body.uid
     ];
   } else {
     param = [req.body.userNick, req.body.userEmail, req.body.userAge,
       req.body.userAdres1, req.body.userAdres2, req.body.userImg, req.body.userSchool,
       req.body.userPoint, req.body.userScore, req.body.userStatus,
-      req.body.userAgree, req.body.userAuth, req.body.uid
+      req.body.userAgree, req.body.uid
     ];
   }
-  console.log(typeof (param));
   const sql = "update user set userNick = ?, userEmail = ?, userAge = ?, userAdres1 = ?, userAdres2 = ?, userImg = ?, \
-                               userSchool = ?, userPoint = ?, userScore = ?, userStatus = ?, userAgree = ?, userAuth = ?\
+                               userSchool = ?, userPoint = ?, userScore = ?, userStatus = ?, userAgree = ? \
                                where uid = ?";
-  connection.query(sql, param, (err, row) => {
+  connection.query(sql, param, (err) => {
     if (err) {
       console.error(err);
     }
@@ -289,26 +239,26 @@ router.post('/userUpdate', upload.single('file'), async (req, res) => {
 });
 
 //사용자 여러명 삭제
-router.get('/userDelete', (req, res) => {
-  const param = req.query.uid;
-  // const route = req.query.userImg;
-  const str = param.split(',');
-  for (var i = 0; i < str.length; i++) {
-    const sql = "delete from user where uid = ?";
-    connection.query(sql, str[i], (err, row) => {
-      if (err) {
-        console.log(err)
-      }
-      // fs.unlinkSync(route, (err) => {
-      //   if (err) {
-      //     console.log(err);
-      //   }
-      //   return;
-      // });
-    });
-  }
-  res.redirect('page?page=1');
-});
+// router.get('/userDelete', (req, res) => {
+//   const param = req.query.uid;
+//   const route = req.query.userImg;
+//   const str = param.split(',');
+//   for (var i = 0; i < str.length; i++) {
+//     const sql = "delete from user where uid = ?";
+//     connection.query(sql, str[i], (err, row) => {
+//       if (err) {
+//         console.log(err)
+//       }
+//       fs.unlinkSync(route, (err) => {
+//         if (err) {
+//           console.log(err);
+//         }
+//         return;
+//       });
+//     });
+//   }
+//   res.redirect('page?page=1');
+// });
 
 //사용자 한명 삭제
 router.get('/oneUserDelete', (req, res) => {
@@ -334,10 +284,9 @@ router.get('/oneUserDelete', (req, res) => {
 //프로필 삭제
 router.get('/imgDelete', async (req, res) => {
   const param = req.query.userImg;
-  console.log(param)
   try {
     const sql = "update user set userImg = null where uid = ?";
-    connection.query(sql, req.query.uid, (err, row) => {
+    connection.query(sql, req.query.uid, (err) => {
       if (err) {
         console.log(err)
       }
@@ -358,7 +307,6 @@ router.get('/imgDelete', async (req, res) => {
 
 //엑셀 다운로드
 router.get('/userExcel', async (req, res) => {
-  var searchType = req.query.searchType == undefined ? "" : req.query.searchType;
   var searchType1 = req.query.searchType1 == undefined ? "" : req.query.searchType1;
   var searchType2 = req.query.searchType2 == undefined ? "" : req.query.searchType2;
   var searchType3 = req.query.searchType3 == undefined ? "" : req.query.searchType3;
@@ -450,29 +398,19 @@ router.get('/userExcel', async (req, res) => {
     }
   ];
 
-  // const book = xlsx.utils.book_new();
-
-  // conf.cols = xlsx.utils.aoa_to_sheet([
-  //   ["번호", "닉네임", "나이"]
-  // ])
-
   var sql = "select *,\
                     date_format(userRegDate, '%Y-%m-%d') as userRegDatefmt,\
-                    case when userAuth = '0' then '일반회원' when userAuth = '1' then '기업' end as userAuthfmt,\
                     case when userStatus = '0' then '활동중' when userStatus = '1' then '탈퇴' end as userStatusfmt,\
                     case when userSocialDiv = 'b' then '일반 가입' when userSocialDiv = 'A' then '소셜로그인(애플)' when userSocialDiv = 'G' then '소셜로그인(구글)' when userSocialDiv = 'N' then '소셜로그인(네이버)' end as userSocialDivfmt,\
                     case when userAgree = '0' then '동의' else '비동의' end as userAgreefmt\
               from user\
              where 1=1";
 
-  if (searchType != '') {
-    sql += " and userAuth = '" + searchType + "' \n";
-  }
   if (searchType1 != '') {
-    sql += " and userAgree = '" + searchType1 + "' \n";
+  sql += " and userStatus = '" + searchType1 + "' \n";
   }
   if (searchType2 != '') {
-    sql += " and userStatus = '" + searchType2 + "' \n";
+    sql += " and userAgree = '" + searchType2 + "' \n";
   }
   if (searchType3 != '' && searchType3 == '61') {
     sql += " and userAge >= 60 \n";
@@ -507,7 +445,6 @@ router.get('/userExcel', async (req, res) => {
           results[i].countAll,
           results[i].userRegDatefmt,
           results[i].userSocialDivfmt,
-          results[i].userAuthfmt,
           results[i].userStatusfmt,
           results[i].userAgreefmt
         ];
