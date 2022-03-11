@@ -78,7 +78,7 @@
 						<i class="nav-icon icon-earphones-alt "></i> 마이페이지</a>
 					<ul class="nav-dropdown-items">
 						<li class="nav-item">
-							<a class="nav-link" onclick="session()">
+							<a href="/admin/c_mypage/selectOne" class="nav-link" >
 								<i class="nav-icon icon-arrow-right"></i> 내 정보 관리</a>
 						</li>
 					</ul>
@@ -86,11 +86,3 @@
 			</ul>
 		</nav>
 	</div>
-
-	<script>
-		function session() {
-			var sessionId = sessionStorage.getItem("comId");
-			console.log(sessionId);
-			// location.href="/admin/c_mypage/selectOne?comId=" + sessionId; 
-		}
-	</script>

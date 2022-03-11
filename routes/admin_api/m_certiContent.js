@@ -221,9 +221,9 @@ router.post('/certiContWrit', upload.array('file'), async function (req, res) {
                 throw err;
             }
             for (let i = 0; i < paths.length; i++) {
-                const param2 = [contentId, paths[i], i + 1, orgName[i]];
+                const param2 = [contentId, paths[i], i + 1, orgName[i], path.extname(paths[i])];
                 // console.log(param2);
-                const sql2 = "insert into file(certiContentId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
+                const sql2 = "insert into file(certiContentId, fileRoute, fileNo, fileOrgName, fileType) values (?, ?, ?, ?, ?)";
                 connection.query(sql2, param2, (err) => {
                     if (err) {
                         throw err;
@@ -289,7 +289,7 @@ router.get('/fileDelete', async (req, res) => {
                 return;
             });
         })
-        res.redirect('certiContUdtForm?certiContentId=' + req.query.certiContentId);
+        res.redirect('certiContUdtForm?certiContentId=' + req.query.certiContentId + '&certiDivision=' + req.query.certiDivision);
     } catch (error) {
         if (error.code == "ENOENT") {
             console.log("탄소실천/챌린지 첨부파일 삭제 에러 발생");
@@ -311,7 +311,7 @@ router.get('/certiContUdtForm', async (req, res) => {
                  left join recommend r on r.certiContentId = c.certiContentId\
                  left join user u on c.uid = u.uid\
                     where c.certiContentId = ?"
-        // 분류 드롭다운 가져오기
+        // 탄소실천 대분류 드롭다운 가져오기
         const sql2 = "select count(*), certiSubDivision\
                         from certification\
                        where certiSubDivision !='' or not null group by certiSubDivision";
@@ -321,6 +321,17 @@ router.get('/certiContUdtForm', async (req, res) => {
             }
             div = results1;
         })
+        // 챌린지 분류 드롭다운 가져오기
+        const sql3 = "select count(*), certiTitle, certiTitleId\
+                        from certification\
+                       where certiDivision = 1\
+                    group by certiTitle, certiTitleId";
+        connection.query(sql3, (err, results2) => {
+            if (err) {
+                console.log(err)
+            }
+            c_div = results2;
+        })
         connection.query(sql, [param, param], function (err, result) {
             if (err) {
                 console.log(err);
@@ -329,7 +340,8 @@ router.get('/certiContUdtForm', async (req, res) => {
             res.render(route, {
                 result: result,
                 division: division,
-                div: div
+                div: div,
+                c_div: c_div
             });
         });
     } catch (error) {

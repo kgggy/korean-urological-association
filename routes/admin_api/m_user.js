@@ -239,26 +239,38 @@ router.post('/userUpdate', upload.single('file'), async (req, res) => {
 });
 
 //사용자 여러명 삭제
-// router.get('/userDelete', (req, res) => {
-//   const param = req.query.uid;
-//   const route = req.query.userImg;
-//   const str = param.split(',');
-//   for (var i = 0; i < str.length; i++) {
-//     const sql = "delete from user where uid = ?";
-//     connection.query(sql, str[i], (err, row) => {
-//       if (err) {
-//         console.log(err)
-//       }
-//       fs.unlinkSync(route, (err) => {
-//         if (err) {
-//           console.log(err);
-//         }
-//         return;
-//       });
-//     });
-//   }
-//   res.redirect('page?page=1');
-// });
+router.get('/userDelete', (req, res) => {
+  const param = req.query.uid;
+  const route = req.query.userImg;
+  // console.log(param)
+  // console.log(route);
+  const str = param.split(',');
+  const img = route.split(',');
+  // console.log(str);
+  // console.log(img);
+  for (var i = 0; i < str.length; i++) {
+    const sql = "delete from user where uid = ?";
+    connection.query(sql, str[i], (err) => {
+      if (err) {
+        console.log(err)
+      }
+    });
+  }
+  // console.log(img.length);
+  for (var i = 0; i < img.length; i++) {
+    // console.log(img[i] + "if문 밖의 콘솔");
+    if(img[i] !== '' || img[i] !== undefined || img[i] !== null) {
+      // console.log(img[i] + "if문 안의 콘솔");
+      fs.unlinkSync(img[i], (err) => {
+        if (err) {
+          console.log(err);
+        }
+        return;
+      });
+    }
+  }
+  res.send('<script>alert("삭제되었습니다."); location.href="/admin/m_user/page?page=1";</script>');
+});
 
 //사용자 한명 삭제
 router.get('/oneUserDelete', (req, res) => {

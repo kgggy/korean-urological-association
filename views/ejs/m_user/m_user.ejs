@@ -66,102 +66,110 @@
                                             id="searchAction" style="margin-bottom: 10px;">검색</button>
                                 </form>
                             </div>
-
-                            <table id="exampleTable" class="table userTable table-responsive-sm table-hover">
-                                <colgroup>
-                                    <col width="5%" />
-                                    <col width="20%" />
-                                    <col width="30%" />
-                                    <col width="20%" />
-                                    <col width="20%" />
-                                    <col width="20%" />
-                                </colgroup>
-                                <thead>
-                                    <tr>
-                                        <th><input type="checkbox" name="chkAll" id="chkAll" /></th>
-                                        <th>번호</th>
-                                        <th>이메일</th>
-                                        <th>닉네임</th>
-                                        <th>포인트</th>
-                                        <th>권한</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% if(results.length > 0) { %>
-                                    <% for(var i = (page * page_num) - page_num; i < (page * page_num); i++) { 
+                            <form name="udtForm" style="display: inline-block;">
+                                <table id="exampleTable" class="table userTable table-responsive-sm table-hover">
+                                    <colgroup>
+                                        <col width="5%" />
+                                        <col width="20%" />
+                                        <col width="30%" />
+                                        <col width="20%" />
+                                        <col width="20%" />
+                                        <col width="20%" />
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th><input type="checkbox" name="chkAll" id="chkAll" /></th>
+                                            <th>번호</th>
+                                            <th>이메일</th>
+                                            <th>닉네임</th>
+                                            <th>포인트</th>
+                                            <th>권한</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if(results.length > 0) { %>
+                                        <% for(var i = (page * page_num) - page_num; i < (page * page_num); i++) { 
                                         if(i > length){
                                             i++;
                                         } else { %>
-                                    <tr class="pointer">
-                                        <td><input type="checkbox" id="chk" name="chk" value="<%=results[i].uid %>" />
-                                        </td>
-                                        <td onclick="location.href='/admin/m_user/selectOne?uid=<%=results[i].uid%>'">
-                                            <%=results[i].uid%>
-                                        </td>
-                                        <td onclick="location.href='/admin/m_user/selectOne?uid=<%=results[i].uid%>'">
-                                            <%=results[i].userEmail%>
-                                        </td>
-                                        <td onclick="location.href='/admin/m_user/selectOne?uid=<%=results[i].uid%>'">
-                                            <%= results[i].userNick %>
-                                        </td>
-                                        <td onclick="location.href='/admin/m_user/selectOne?uid=<%=results[i].uid%>'">
-                                            <%= results[i].userPoint %>점
-                                        </td>
-                                        <td onclick="location.href='/admin/m_user/selectOne?uid=<%=results[i].uid%>'">
-                                            <%if(results[i].userStatus !=null && results[i].userStatus!='null' && results[i].userStatus!=''){%>
-                                            <% if (results[i].userStatus == '0'){%>
-                                            활동중
-                                            <% } else if (results[i].userStatus == '1') {%>
-                                            탈퇴
-                                            <%}%>   
+                                        <tr class="pointer">
+                                            <td><input type="checkbox" id="chk" name="chk" value="<%=results[i].uid %>"
+                                                    data-img="<%=results[i].userImg%>" />
+                                            </td>
+                                            <td
+                                                onclick="location.href='/admin/m_user/selectOne?uid=<%=results[i].uid%>'">
+                                                <%=results[i].uid%>
+                                            </td>
+                                            <td
+                                                onclick="location.href='/admin/m_user/selectOne?uid=<%=results[i].uid%>'">
+                                                <%=results[i].userEmail%>
+                                            </td>
+                                            <td
+                                                onclick="location.href='/admin/m_user/selectOne?uid=<%=results[i].uid%>'">
+                                                <%= results[i].userNick %>
+                                            </td>
+                                            <td
+                                                onclick="location.href='/admin/m_user/selectOne?uid=<%=results[i].uid%>'">
+                                                <%= results[i].userPoint %>점
+                                            </td>
+                                            <td
+                                                onclick="location.href='/admin/m_user/selectOne?uid=<%=results[i].uid%>'">
+                                                <%if(results[i].userStatus !=null && results[i].userStatus!='null' && results[i].userStatus!=''){%>
+                                                <% if (results[i].userStatus == '0'){%>
+                                                활동중
+                                                <% } else if (results[i].userStatus == '1') {%>
+                                                탈퇴
+                                                <%}%>   
                                             <%}%>
-                                        </td>
-                                    </tr>
-                                    <% } %>
-                                    <% } %>
-                                    <% } else { %>
-                                    <tr>
-                                        <td colspan="10">등록된 회원이 없습니다.</td>
-                                    </tr>
-                                    <% } %>
-                                </tbody>
-                            </table>
-                            <div>
+                                            </td>
+                                        </tr>
+                                        <% } %>
+                                        <% } %>
+                                        <% } else { %>
+                                        <tr>
+                                            <td colspan="10">등록된 회원이 없습니다.</td>
+                                        </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
                                 <div>
-                                    <button id="enrollAction" class="btn btn-block btn-outline-success"
-                                        style="width: 60px; display: inline-block;"
-                                        onclick="location.href='/admin/m_user/userInsertForm'">등록</button>
-                                    <form name="udtForm" style="display: inline-block;">
+                                    <div>
+                                        <button type="button" id="enrollAction"
+                                            class="btn btn-block btn-outline-success"
+                                            style="width: 60px; display: inline-block;"
+                                            onclick="location.href='/admin/m_user/userInsertForm'">등록</button>
+                                        <input type="hidden" id="userImg" name="userImg" value="" />
                                         <input type="hidden" id="uid" name="uid" value="" />
                                         <button class="btn btn-block btn-outline-danger" type="button"
                                             id="delete_btn">삭제</button>
                                         <input class="btn btn-block btn-outline-success" type="button"
                                             id="excelFileExport" value="엑셀 다운로드"
                                             style="margin-bottom: 15px; width: 140px; display: inline-block;" />
-                                    </form>
-                                </div>
-                                <div class="mt_20">
-                                    <div class="paging" id="page_navi">
-                                        <ul class="pagination customPaging">
-                                            <li> <a href="/admin/m_user/page?page=1<%= keepSearch %>" class="num">
-                                                    <<</a> </li> <li> <a <%if((page<last-1)||(page==1)){%><%} else {%>
-                                                            href="/admin/m_user/page?page=<%= parseInt(page) - 1 %><%= keepSearch %>"
-                                                            class="num" <% } %>>
-                                                            <</a> </li>
-                                                                <% for(var i = 0; i < results.length / page_num; i++){  %>
-                                                                <li class="paging_on">
-                                                                <a href="/admin/m_user/page?page=<%= i + 1 %><%= keepSearch %>"
-                                                                    <%if(page==i+1){%>class="selected"
-                                                                    <%}%> class="num"><%= i + 1 %></a> </li> <% } %>
-                                                                    <li> <a <%if(page>last-1){%><%} else {%>
-                                                                        href="/admin/m_user/page?page=<%= parseInt(page) + 1 %><%= keepSearch %>"
-                                                                        class="num" <% } %>>></a></li>
-                                            <li><a href="/admin/m_user/page?page=<%= last %><%= keepSearch %>" class="num">>></a></li>
-                                        </ul>
+                                    </div>
+                                    <div class="mt_20">
+                                        <div class="paging" id="page_navi">
+                                            <ul class="pagination customPaging">
+                                                <li> <a href="/admin/m_user/page?page=1<%= keepSearch %>" class="num">
+                                                        <<</a> </li> <li> <a
+                                                                <%if((page<last-1)||(page==1)){%><%} else {%>
+                                                                href="/admin/m_user/page?page=<%= parseInt(page) - 1 %><%= keepSearch %>"
+                                                                class="num" <% } %>>
+                                                                <</a> </li>
+                                                                    <% for(var i = 0; i < results.length / page_num; i++){  %>
+                                                                    <li class="paging_on">
+                                                                    <a href="/admin/m_user/page?page=<%= i + 1 %><%= keepSearch %>"
+                                                                        <%if(page==i+1){%>class="selected"
+                                                                        <%}%> class="num"><%= i + 1 %></a> </li> <% } %>
+                                                                        <li> <a <%if(page>last-1){%><%} else {%>
+                                                                            href="/admin/m_user/page?page=<%= parseInt(page) + 1 %><%= keepSearch %>"
+                                                                            class="num" <% } %>>></a></li>
+                                                <li><a href="/admin/m_user/page?page=<%= last %><%= keepSearch %>"
+                                                        class="num">>></a></li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -177,16 +185,19 @@
             $("input[name=chk]:checked").each(function () {
                 chkArr.push($(this).val());
             });
-            // console.log(chkArr);
             $('#uid').val(chkArr);
             if (chkArr == "") {
                 alert("삭제할 목록을 선택해주세요.");
                 return false;
             }
+            var chkImg = [];
+            $("input[name=chk]:checked").each(function () {
+                chkImg.push($(this).attr('data-img'));
+            });
+            $('#userImg').val(chkImg);
             formObj.attr("action", "userDelete");
             formObj.attr("method", "get");
             if (confirm("삭제하시겠습니까?") == true) {
-                alert("삭제되었습니다.");
                 formObj.submit();
             } else {
                 return false;
@@ -199,7 +210,7 @@
             formObj2.attr("method", "get");
             formObj2.submit();
         })
-       
+
 
         // 엑셀 다운로드
         $("#excelFileExport").on("click", function () {

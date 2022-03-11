@@ -144,8 +144,7 @@ router.get('/writForm', async (req, res) => {
 router.post('/boardwrite', upload.array('file'), async (req, res, next) => {
     const paths = req.files.map(data => data.path);
     const orgName = req.files.map(data => data.originalname);
-    // console.log(req.body);
-    // console.log(req.files);
+    // console.log(paths);
     const sessionId = req.session.user.comId;
     try {
         const boardWritId = uuid();
@@ -157,9 +156,9 @@ router.post('/boardwrite', upload.array('file'), async (req, res, next) => {
                 throw err;
             }
             for (let i = 0; i < paths.length; i++) {
-                const param2 = [boardWritId, paths[i], i + 1, orgName[i]];
+                const param2 = [boardWritId, paths[i], i + 1, orgName[i], path.extname(paths[i])];
                 // console.log(param2);
-                const sql2 = "insert into file(writId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
+                const sql2 = "insert into file(writId, fileRoute, fileNo, fileOrgName, fileType) values (?, ?, ?, ?, ?)";
                 connection.query(sql2, param2, (err) => {
                     if (err) {
                         throw err;
@@ -203,24 +202,31 @@ router.get('/brdUdtForm', async (req, res) => {
 router.post('/brdUpdate', upload.array('file'), (req, res) => {
     const paths = req.files.map(data => data.path);
     const orgName = req.files.map(data => data.originalname);
-    // console.log(paths);
     try {
         const param = [req.body.writTitle, req.body.writContent, req.body.writRank, req.body.writRank, req.body.writId];
         const sql1 = "update post set writTitle = ?, writContent = ?, writUpdDate = sysdate(), writRank = if(trim(?)='', null, ?) where writId = ?";
-        connection.query(sql1, param, (err, row) => {
+        connection.query(sql1, param, (err) => {
             if (err) {
                 console.error(err);
             }
+            //파일 안넣고 삭제만 하는 경우에도 fileNo 재설정 해주기 위함.
+            const sql3 = "SELECT @fileNo:=0;\
+                              UPDATE file SET fileNo=@fileNo:=@fileNo+1 where writId = ?;";
+            const param3 = [req.body.writId];
+            connection.query(sql3, param3, (err) => {
+                if (err) {
+                    throw err;
+                }
+            });
             for (let i = 0; i < paths.length; i++) {
                 const sql2 = "insert into file(writId, fileRoute, fileOrgName) values (?, ?, ?)";
                 const param2 = [req.body.writId, paths[i], orgName[i]];
-                // console.log(param2);
                 connection.query(sql2, param2, (err) => {
                     if (err) {
                         throw err;
                     }
                     const sql3 = "SELECT @fileNo:=0;\
-                                      UPDATE file SET fileNo=@fileNo:=@fileNo+1 where writId = ?;";
+                    UPDATE file SET fileNo=@fileNo:=@fileNo+1 where writId = ?;";
                     const param3 = [req.body.writId];
                     connection.query(sql3, param3, (err) => {
                         if (err) {
@@ -228,7 +234,6 @@ router.post('/brdUpdate', upload.array('file'), (req, res) => {
                         }
                         // console.log("fileNo update success");
                     });
-
                 });
             };
             res.redirect('selectOne?writId=' + req.body.writId);

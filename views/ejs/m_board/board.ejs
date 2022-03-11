@@ -1,3 +1,8 @@
+<style>
+    div.dataTables_wrapper div.dataTables_filter label {
+        display: block !important;
+    }
+</style>
 <main class="main">
     <!-- Breadcrumb-->
     <ol class="breadcrumb">
@@ -16,7 +21,7 @@
                             <i class="fa fa-align-justify"></i> <%=community[0].boardName%>
                         </div>
                         <div class="card-body">
-                            <form name="searchForm" action="/admin/m_board/all" method="get" class="easydropdown">
+                            <!-- <form name="searchForm" action="/admin/m_board/all" method="get" class="easydropdown">
                                 <input type="hidden" name="page" value="1">
                                 <input type="hidden" name="boardId" value="<%=community[0].boardId%>">
                                 <%if(results.length > 0){%>
@@ -28,7 +33,7 @@
                                     <% } %> <input class="searchbox" type="text" name="searchText"
                                         <%if(searchText!=null){%>value="<%=searchText%>" <%}%>>
                                 <button class="btn btn-block btn-outline-success" type="submit" id="searchAction"  style="margin-bottom: 10px;">검색</button>
-                            </form> 
+                            </form>  -->
                             <form id="boardForm" name="boardForm" method="" action="">
                                 <input type="hidden" name="boardId" value="<%=community[0].boardId%>">
                                 <table id="exampleTable" class="table table-responsive-sm table-hover">
@@ -57,14 +62,14 @@
                                             if(i > length){
                                                 i++;
                                             } else { %> <tr
-                                        onclick="location.href='/admin/m_board/selectOne?writId=<%=results[i].writId%>'">
-                                        <td><%= i+1 %></td>
-                                        <td><%=results[i].userNick%><%=results[i].comNick%></td>
-                                        <td><%=results[i].writRank%></td>
-                                        <td><%=results[i].writTitle%></td>
-                                        <td><%=results[i].writHit %></td>
-                                        <td><%=results[i].writDatefmt%></td>
-                                        <td><%=results[i].writUpdDatefmt%></td>
+                                            onclick="location.href='/admin/m_board/selectOne?writId=<%=results[i].writId%>'">
+                                            <td><%= i+1 %></td>
+                                            <td><%=results[i].userNick%><%=results[i].comNick%></td>
+                                            <td><%=results[i].writRank%></td>
+                                            <td><%=results[i].writTitle%></td>
+                                            <td><%=results[i].writHit %></td>
+                                            <td><%=results[i].writDatefmt%></td>
+                                            <td><%=results[i].writUpdDatefmt%></td>
                                         </tr>
                                         <% } %>
                                         <% } %>
@@ -75,10 +80,10 @@
                                             </td>
                                         </tr>
                                         <% } %>
-                                        </tbody>
-                                        </table>
-                                        <button id="enrollAction" class="btn btn-block btn-outline-success"
-                                            onclick="enroll()">등록</button>
+                                    </tbody>
+                                </table>
+                                <button id="enrollAction" class="btn btn-block btn-outline-success"
+                                    onclick="enroll()">등록</button>
                             </form>
                             <div class="mt_20">
                                 <div class="paging" id="page_navi">

@@ -235,7 +235,10 @@
 <%- script %>
 <script>
     $("#exampleTable").DataTable({
-        paging: false
+        paging: false,
+        "language": {
+            "zeroRecords": "데이터가 존재하지 않습니다."
+        }
     });
 </script>
 

@@ -137,7 +137,6 @@ router.get('/:uid', async (req, res) => {
 router.patch('/', upload.single('file'), async (req, res) => {
   var param;
   var pathe = "";
-  var orgpathe = req.body.userImg;
 
   const {
     userNick,
@@ -145,8 +144,8 @@ router.patch('/', upload.single('file'), async (req, res) => {
     userImg
   } = req.body;
 
-  console.log(uid);
-  console.log(userImg);
+  // console.log(uid);
+  // console.log(userImg);
 
   const sameNickNameUser = await models.user.findOne({
     where: {
@@ -176,8 +175,8 @@ router.patch('/', upload.single('file'), async (req, res) => {
     if (err) {
       console.error(err);
     }
-    if (req.file != null) {
-      fs.unlinkSync(orgpathe, (err) => {
+    if (req.file != null || userImg != undefined) {
+      fs.unlinkSync(userImg, (err) => {
         if (err) {
           console.log(err);
         }
@@ -254,17 +253,18 @@ router.post('/pwdUpdate/:uid', async (req, res) => {
 // });
 
 
-// 회원 삭제
+// 회원 탈퇴
 router.delete('/:uid', (req, res) => {
   const param = req.params.uid;
   const route = req.query.userImg;
-  // console.log(param);
+  console.log(param);
+  console.log(route);
   const sql = "delete from user where uid = ?";
   connection.query(sql, param, (err) => {
     if (err) {
       console.log(err)
     }
-    if (route != '') {
+    if (route != '' || route != undefined) {
       fs.unlinkSync(route, (err) => {
         if (err) {
           console.log(err);

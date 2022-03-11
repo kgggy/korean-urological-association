@@ -13,7 +13,7 @@ connection.connect();
 //기업 사용자 상세조회
 router.get('/selectOne', async (req, res) => {
   try {
-    const param = req.query.comId;
+    const param = req.session.user.comId;
     const sql = "select * from company where comId = ?";
     connection.query(sql, param, function (err, result) {
       if (err) {
@@ -26,7 +26,7 @@ router.get('/selectOne', async (req, res) => {
     });
 
   } catch (error) {
-    res.status(401).send(error.message);
+    res.status(401).send("<script>alert('로그인이 필요합니다.');location.href='/admin'</script>");
   }
 });
 
