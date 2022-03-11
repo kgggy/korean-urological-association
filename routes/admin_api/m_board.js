@@ -8,11 +8,6 @@ const path = require('path');
 
 
 const connt = require("../../config/db")
-var url = require('url');
-
-const models = require('../../models');
-const sequelize = require('sequelize');
-const Op = sequelize.Op;
 
 const {
     v4: uuidv4
@@ -157,7 +152,7 @@ router.post('/boardwrite', upload.array('file'), async (req, res, next) => {
         // req.body.writRank = parseInt(req.body.writRank);
         const param1 = [boardWritId, req.body.boardId, sessionId, req.body.writTitle, req.body.writContent, req.body.writRank, req.body.writRank];
         const sql1 = "insert into post(writId, boardId, comId, writTitle, writContent, writRank) values(?, ?, ?, ?, ?, if(trim(?)='', null, ?))";
-        connection.query(sql1, param1, (err, row) => {
+        connection.query(sql1, param1, (err) => {
             if (err) {
                 throw err;
             }
@@ -275,7 +270,7 @@ router.get('/brdDelete', async (req, res) => {
         const boardId = req.query.boardId;
         // console.log(param);
         const sql = "delete from post where writId = ?";
-        connection.query(sql, param, (err, row) => {
+        connection.query(sql, param, (err) => {
             if (err) {
                 console.log(err);
             }

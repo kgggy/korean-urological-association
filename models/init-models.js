@@ -1,12 +1,12 @@
 var DataTypes = require("sequelize").DataTypes;
-var _company = require("./company");
+var _certification = require("./certification");
 
 function initModels(sequelize) {
-  var company = _company(sequelize, DataTypes);
+  var certification = _certification(sequelize, DataTypes);
 
 
   return {
-    company,
+    certification,
   };
 }
 module.exports = initModels;

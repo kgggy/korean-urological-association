@@ -5,6 +5,7 @@ const fs = require('fs');
 var express = require('express');
 var router = express.Router();
 const mysql = require('mysql');
+const models = require("../../models");
 
 const connt = require("../../config/db")
 var url = require('url');
@@ -18,6 +19,9 @@ connection.connect();
 const {
     v4: uuidv4
 } = require('uuid');
+const {
+    REPL_MODE_SLOPPY
+} = require("repl");
 const uuid = () => {
     const tokens = uuidv4().split('-');
     return tokens[2] + tokens[1] + tokens[0] + tokens[3] + tokens[4]
@@ -49,28 +53,47 @@ var upload = multer({ //multer안에 storage정보
 
 //탄소실천, 챌린지 주제 전체 조회
 router.get('/:certiDivision', async (req, res) => {
-    try {
-        const param = req.params.certiDivision;
-        const sql = "select * from certification\
-                      where certiDivision = ?\
-                        and certiShow not in('1')\
-                        and (((certiStartDate || certiEndDate) is null\
-                         or (sysdate() between certiStartDate and certiEndDate))\
-                         or ((certiEndDate is null or certiEndDate = 0) and certiStartDate < sysdate()));";
-        let certifications;
-        connection.query(sql, param, (err, results) => {
-            if (err) {
-                console.log(err);
-                response.json({
-                    msg: "query error"
-                });
-            }
-            certifications = results;
-            res.status(200).json(certifications);
+    // try {
+    //     const param = req.params.certiDivision;
+    //     const sql = "select c.*, f.fileRoute, f.fileNo, f.fileOrgName from certification c\
+    //               left join file f on f.certiTitleId = c.certiTitleId\
+    //                   where certiDivision = ?\
+    //                     and certiShow not in('1')\
+    //                     and (((certiStartDate || certiEndDate) is null\
+    //                      or (sysdate() between certiStartDate and certiEndDate))\
+    //                      or ((certiEndDate is null or certiEndDate = 0) and certiStartDate < sysdate()));";
+    //     let certifications;
+    //     connection.query(sql, param, (err, results) => {
+    //         if (err) {
+    //             console.log(err);
+    //             response.json({
+    //                 msg: "query error"
+    //             });
+    //         }
+    //         certifications = results;
+    //         res.status(200).json(certifications);
+    //     });
+    // } catch (error) {
+    //     res.status(401).send(error.message);
+    // }
+    const certiDivison = req.params.certiDivision;
+    let titles = [];
+    const certification = await models.certification.findAndCountAll({
+        where: {certiDivision:certiDivison},
+        raw: true,
+    });
+    for (let i = 0; i < certification.count; i++) {
+        const file = await models.file.findAll({
+            where: {
+                certiTitleId: certification.rows[i].certiTitleId
+            },
+            order:[['fileNo', 'asc']],
+            raw: true,
         });
-    } catch (error) {
-        res.status(401).send(error.message);
+        certification.rows[i]['fileRoute'] = file;
+        titles[i] = certification.rows[i];
     }
+    res.json(titles);
 });
 
 //날짜순 각 종류별 탄소실천/챌린지 글
@@ -176,15 +199,23 @@ router.post('/', upload.array('file'), async function (req, res) {
                 throw err;
             }
         });
+
+        const param3 = [req.query.certiTitleId, req.query.uid];
+        const sql3 = "update user set userPoint = userPoint + (select certiPoint from certification where certiTitleId=?) where uid = ?";
+        connection.query(sql3, param3, (err) => {
+            if (err) {
+                throw err;
+            }
+        });
+
         for (let i = 0; i < paths.length; i++) {
             const param2 = [contentId, paths[i], i + 1, orgName[i]];
-            console.log(param2 + "============================");
             const sql2 = "insert into file(certiContentId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
             connection.query(sql2, param2, (err) => {
                 if (err) {
                     console.log(err);
                 } else {
-                  return;
+                    return;
                 }
             });
 
@@ -198,9 +229,17 @@ router.post('/', upload.array('file'), async function (req, res) {
 //탄소실천, 챌린지 글 삭제
 router.delete('/:certiContentId', async (req, res) => {
     try {
+        const param3 = [req.params.certiContentId, req.query.uid];
+        const sql3 = "update user set userPoint = userPoint - (select distinct c.certiPoint from certification c left join certiContent t on t.certiTitleId = c.certiTitleId where t.certiContentId=?) where uid = ?";
+        connection.query(sql3, param3, (err) => {
+            if (err) {
+                throw err;
+            }
+        });
+
         const param = req.params.certiContentId;
         const sql = "delete from certiContent where certiContentId = ?";
-        connection.query(sql, param, (err, row) => {
+        connection.query(sql, param, (err) => {
             if (err) {
                 console.log(err);
                 response.json({

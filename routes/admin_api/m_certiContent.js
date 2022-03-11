@@ -71,7 +71,7 @@ router.get('/certiContentAll', async (req, res) => {
             sql += " and u.userNick like '%" + searchText + "%'";
         }
         sql += " order by c.certiContentDate desc";
-        console.log(sql)
+        // console.log(sql)
         //탄소실천 분류 드롭다운 가져오기
         const sql2 = "select count(*), certiSubDivision\
                        from certification\
@@ -128,7 +128,7 @@ router.get('/one', async (req, res) => {
     try {
         const param = req.query.certiContentId;
         const division = req.query.certiDivision;
-        const sql = "select distinct f.fileRoute, e.certiTitle, e.certiSubDivision,\
+        const sql = "select distinct f.fileRoute, f.fileOrgName, e.certiTitle, e.certiSubDivision,\
                             (select count(*) from recommend where certiContentId = ?) as rcount,\
                              c.uid, c.comId, c.certiContentId, date_format(c.certiContentDate, '%Y-%m-%d') as certiContentDatefmt, u.userNick, u.userImg, p.comNick\
                        from certiContent c\
@@ -147,7 +147,6 @@ router.get('/one', async (req, res) => {
                 result: result,
                 division: division
             });
-            console.log(result);
         });
     } catch (error) {
         res.status(401).send(error.message);
@@ -371,7 +370,7 @@ router.post('/certiContUpdate', upload.array('file'), async (req, res) => {
                 });
             };
         })
-        res.redirect('one?certiContentId=' + req.body.certiContentId);
+        res.redirect('one?page=1&certiDivision=' + req.body.certiDivision + '&certiContentId=' + req.body.certiContentId);
     } catch (error) {
         res.send(error.message);
     }

@@ -60,10 +60,9 @@ router.post('/login', async (req, res) => {
         raw: true
     })
     if (password == dbPwd.comPwd) {
-        // console.log("success")
         if (req.session.user) {
+            console.log("session 있음.")
             res.redirect('/admin/m_user/page?page=1');
-            console.log("session 원래있움~~~")
         } else { // 세션 없는 admin일 경우 만들어줌
             req.session.user = {
                 // isAdmin: true,           // user, admin 구분해주려고. admin 계정밖에 없으니까 필요없음.

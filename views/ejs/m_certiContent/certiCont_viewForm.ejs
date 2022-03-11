@@ -2,11 +2,17 @@
     <!-- Breadcrumb-->
     <ol class="breadcrumb">
         <li class="breadcrumb-item">Home</li>
+        <%if(division == 0){%>
         <li class="breadcrumb-item">
             <a style="font-weight: bold;">탄소 실천 관리</a>
         </li>
         <li class="breadcrumb-item active">탄소 실천 글 관리</li>
-        <!-- Breadcrumb Menu-->
+        <% } else {%>
+        <li class="breadcrumb-item">
+            <a style="font-weight: bold;">챌린지 관리</a>
+        </li>
+        <li class="breadcrumb-item active">챌린지 글 관리</li>
+        <% } %>
     </ol>
     <div class="container-fluid">
         <div class="animated fadeIn">
@@ -44,9 +50,8 @@
                                 <div class="form-group row">
                                     <label class="col-md-2 col-form-label" for="text-input">권한</label>
                                     <div class="col-md-9">
-                                        <input class="form-control" id="certiAuth" type="text"
-                                            name="certiAuth" disabled="disabled"
-                                            value="<%=result[0].certiAuth%>">
+                                        <input class="form-control" id="certiAuth" type="text" name="certiAuth"
+                                            disabled="disabled" value="<%=result[0].certiAuth%>">
                                     </div>
                                 </div>
                                 <% } %>
@@ -85,7 +90,11 @@
                                         <% if(result.length > 0 && result[0].fileRoute != null && result[0].fileRoute != '') {%>
                                         <% for(var i = 0; i < result.length; i++) { %>
                                         <img src="../../../<%= result[i].fileRoute %>" alt="사진"
-                                            style="padding:0 50px 50px 0 !important; width:40%; vertical-align: top !important;" />
+                                            style="padding:0 50px 8px 0 !important; width:40%; vertical-align: top !important;" />
+                                        <a href="../../../<%= result[i].fileRoute %>"
+                                            class="btn btn-block btn-outline-success" type="button" style="width:30%;"
+                                            download>파일 다운로드</a>
+                                        </p>
                                         <input type="hidden" name="fileRoute" value="<%=result[i].fileRoute%>">
                                         <% } %>
                                         <% }else{ %>

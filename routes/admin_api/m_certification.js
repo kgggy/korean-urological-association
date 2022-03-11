@@ -8,6 +8,15 @@ const mysql = require('mysql');
 
 const connt = require("../../config/db")
 
+const {
+    v4: uuidv4
+} = require('uuid');
+
+const uuid = () => {
+    const tokens = uuidv4().split('-');
+    return tokens[2] + tokens[1] + tokens[0] + tokens[3] + tokens[4]
+}
+
 // DB 커넥션 생성
 var connection = mysql.createConnection(connt);
 connection.connect();
@@ -57,6 +66,7 @@ router.get('/certiAll', async (req, res) => {
         if (c_searchType != '') {
             sql += " and certiShow = '" + c_searchType + "' \n";
         }
+        sql += " order by certiTitleId desc;"
         // 분류 드롭다운 가져오기
         const sql2 = "select count(*), certiSubDivision\
                        from certification\
@@ -97,9 +107,10 @@ router.get('/certiAll', async (req, res) => {
 router.get('/selectOne', async (req, res) => {
     try {
         const param = req.query.certiTitleId;
-        const sql = "select *, date_format(certiStartDate, '%Y-%m-%d') as certiStartDatefmt, date_format(certiEndDate, '%Y-%m-%d') as certiEndDatefmt\
-                      from certification\
-                     where certiTitleId = ?";
+        const sql = "select c.*, f.fileRoute, f.fileOrgName, f.fileNo, date_format(c.certiStartDate, '%Y-%m-%d') as certiStartDatefmt, date_format(c.certiEndDate, '%Y-%m-%d') as certiEndDatefmt\
+                      from certification c\
+                      left join file f on f.certiTitleId = c.certiTitleId\
+                     where c.certiTitleId = ? order by f.fileNo";
         connection.query(sql, param, function (err, result) {
             if (err) {
                 console.log(err);
@@ -138,25 +149,36 @@ router.get('/certiWritForm', async (req, res) => {
 });
 
 //탄소실천 종류 등록
-router.post('/certiWrit', upload.single('file'), async (req, res) => {
+router.post('/certiWrit', upload.array('file'), async (req, res, next) => {
+    const paths = req.files.map(data => data.path);
+    const orgName = req.files.map(data => data.originalname);
+    console.log(paths, orgName)
     try {
-        var path = "";
         var param = "";
-        if (req.file != null) {
-            path = req.file.path;
-            param = [req.body.certiDivision, req.body.certiTitle, req.body.certiDetail, req.body.certiPoint, req.body.certiDiff, path, req.body.certiSubDivision, req.body.certiStartDate, req.body.certiEndDate, req.body.certiShow];
+        if (req.files != null) {
+            param = [req.body.certiDivision, req.body.certiTitle, req.body.certiDetail, req.body.certiPoint, req.body.certiDiff, paths[0], req.body.certiSubDivision, req.body.certiStartDate, req.body.certiEndDate, req.body.certiShow];
         } else {
             param = [req.body.certiDivision, req.body.certiTitle, req.body.certiDetail, req.body.certiPoint, req.body.certiDiff, req.body.certiImage, req.body.certiSubDivision, req.body.certiStartDate, req.body.certiEndDate, req.body.certiShow];
         }
         const sql = "insert into certification(certiDivision, certiTitle, certiDetail, certiPoint, certiDiff, certiImage, certiSubDivision, certiStartDate, certiEndDate, certiShow)\
                           values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        console.log(param);
-        connection.query(sql, param, function (err, result, fields) {
+        // console.log(param);
+        connection.query(sql, param, function (err) {
             if (err) {
                 console.log(err);
             }
-            res.redirect('certiAll?certiDivision=' + req.body.certiDivision + '&page=1');
         });
+        for (let i = 0; i < paths.length-1; i++) {
+            const param2 = [paths[i + 1], i + 1, orgName[i + 1]];
+            console.log("param2(종류등록 파일배열) = " + param2);
+            const sql2 = "insert into file(certiTitleId, fileRoute, fileNo, fileOrgName) values ((select max(certiTitleId) from certification), ?, ?, ?)";
+           connection.query(sql2, param2, (err) => {
+               if (err) {
+                   throw err;
+                }
+            });
+        };
+        res.redirect('certiAll?certiDivision=' + req.body.certiDivision + '&page=1');
     } catch (error) {
         res.status(401).send(error.message);
     }
@@ -180,7 +202,7 @@ router.get('/certiUdtForm', async (req, res) => {
         const sql = "select *, date_format(certiStartDate, '%Y-%m-%d') as certiStartDatefmt, date_format(certiEndDate, '%Y-%m-%d') as certiEndDatefmt\
                       from certification\
                      where certiTitleId = ?";
-        connection.query(sql, param, function (err, result, fields) {
+        connection.query(sql, param, function (err, result) {
             if (err) {
                 console.log(err);
             }
@@ -236,8 +258,23 @@ router.get('/certiDelete', async (req, res) => {
                     }
                 });
             }
+            if (req.query.fileRoute != undefined) {
+                console.log(req.query.fileRoute);
+                if (Array.isArray(req.query.fileRoute) == false) {
+                    req.query.fileRoute = [req.query.fileRoute];
+                }
+                for (let i = 0; i < req.query.fileRoute.length; i++) {
+                    fs.unlinkSync(req.query.fileRoute[i], (err) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        return;
+                    });
+                }
+            }
             res.redirect('certiAll?certiDivision=' + req.query.certiDivision + '&page=1');
         });
+
     } catch (error) {
         res.send(error.message);
     }

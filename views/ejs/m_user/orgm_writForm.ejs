@@ -15,7 +15,7 @@
             <div class="col-lg-6">
                <div class="card">
                   <div class="card-header">
-                     <i class="fa fa-align-justify"></i> 회원정보 상세</div>
+                     <i class="fa fa-align-justify"></i> 회원 등록</div>
                   <form action="" id="userEnrollForm" method="post" enctype="multipart/form-data">
                      <div class="card-body">
                         <!-- 컨텐츠 -->
@@ -100,12 +100,13 @@
                         <!--option 버튼  -->
                         <div class="option_button">
                            <div>
-                              <button class="btn btn-block btn-outline-success" type="button" id="update_btn"
-                                 onclick="userUpdate()">등록</button>
+                              <button class="btn btn-block btn-outline-success" type="button"
+                                 id="update_btn">등록</button>
                            </div>
                            <div>
                               <button class="btn btn-block btn-outline-danger" type="button"
-                                 onclick="location.href='/admin/m_user/page?page=1'" style="margin-bottom: 10px;">취소</button>
+                                 onclick="location.href='/admin/m_user/page?page=1'"
+                                 style="margin-bottom: 10px;">취소</button>
                            </div>
                         </div>
                      </div>
@@ -130,7 +131,7 @@
       var userNick = $("#userNick").val();
       var userEmail = $("#userEmail").val();
       var userPwd = $("#userPwd").val();
-      
+
       if (userEmail == '') {
          alert("이메일을 입력해주세요.");
          $("#userEmail").focus();
@@ -138,9 +139,9 @@
       }
 
       if (userNick == '') {
-      alert("닉네임을 입력해주세요.");
-      $("#userNick").focus();
-      return false;
+         alert("닉네임을 입력해주세요.");
+         $("#userNick").focus();
+         return false;
       }
 
       if (userPwd == '') {

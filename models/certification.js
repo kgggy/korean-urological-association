@@ -34,7 +34,7 @@ module.exports = function(sequelize, DataTypes) {
       comment: "단계"
     },
     certiImage: {
-      type: DataTypes.STRING(100),
+      type: DataTypes.STRING(200),
       allowNull: true
     },
     certiAuth: {
@@ -46,6 +46,28 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(1),
       allowNull: false,
       defaultValue: "0"
+    },
+    certiSubDivision: {
+      type: DataTypes.STRING(15),
+      allowNull: true
+    },
+    certiStartDate: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    certiEndDate: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    certiExamImg1: {
+      type: DataTypes.STRING(200),
+      allowNull: true,
+      comment: "예시사진1"
+    },
+    certiExamImg2: {
+      type: DataTypes.STRING(200),
+      allowNull: true,
+      comment: "예시사진2"
     }
   }, {
     sequelize,
