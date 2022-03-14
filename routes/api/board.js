@@ -166,17 +166,6 @@ router.post('/', upload.array('file'), async (req, res, next) => {
     }
 });
 
-//파일 다운로드 눌렀을 때 작동
-// router.get('/download/uploads/images/:name', function (req, res) {
-//     var filename = req.params.name;
-
-//     var file = __dirname + '/../uploads/images/' + filename
-//     console.log(__dirname)
-//     console.log(req.path)
-//     console.log(file)
-//     res.download(file); // Set disposition and send it.
-//     });
-
 //파일 다운로드
 router.get('/download/:writId/:fileNo', async (req, res) => {
     try {
@@ -199,43 +188,71 @@ router.get('/download/:writId/:fileNo', async (req, res) => {
     }
 });
 
-
 //게시글 수정
-// router.post('/:writId', upload.array('file'), async (req, res) => {
-//     const paths = req.files.map(data => data.path);
-//     const orgName = req.files.map(data => data.originalname);
-//     try {
-//         const sql1 = "update post set writTitle = ?, writContent = ?, writUpdDate = sysdate() where writId = ?;";
-//         const sql2 = "delete from file where writId = ?;"
-//         connection.query(sql1 + sql2, [req.body.writTitle, req.body.writContent, req.params.writId, req.params.writId], (err, row) => {
-//             if (err) {
-//                 console.error(err);
-//                 res.json({
-//                     msg: "query error"
-//                 });
-//             }
-//             for (let i = 0; i < paths.length; i++) {
-//                 const sql3 = "insert into file(writId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
-//                 const param3 = [req.params.writId, paths[i], i + 1, orgName[i]];
-//                 connection.query(sql3, param3, (err) => {
-//                     if (err) {
-//                         throw err;
-//                     } else {
-//                         return;
-//                     }
-//                 });
-
-//             };
-//             return;
-
-//         });
-//         return res.json({
-//             msg: "success"
-//         });
-//     } catch (error) {
-//         res.send(error.message);
-//     }
-// });
+router.post('/:writId', upload.array('file'), (req, res) => {
+    const paths = req.files.map(data => data.path);
+    const orgName = req.files.map(data => data.originalname);
+    try {
+        const param = [req.body.writTitle, req.body.writContent, req.params.writId];
+        const sql1 = "update post set writTitle = ?, writContent = ?, writUpdDate = sysdate() where writId = ?";
+        connection.query(sql1, param, (err) => {
+            if (err) {
+                console.error(err);
+                res.json({
+                    msg: "query error"
+                });
+            }
+            //파일 안넣고 삭제만 하는 경우에도 fileNo 재설정 해주기 위함.
+            const sql3 = "SELECT @fileNo:=0;\
+                              UPDATE file SET fileNo=@fileNo:=@fileNo+1 where writId = ?;";
+            const param3 = [req.params.writId];
+            connection.query(sql3, param3, (err) => {
+                if (err) {
+                    throw err;
+                }
+            });
+            for (let i = 0; i < paths.length; i++) {
+                const sql2 = "insert into file(writId, fileRoute, fileOrgName) values (?, ?, ?)";
+                const param2 = [req.params.writId, paths[i], orgName[i]];
+                connection.query(sql2, param2, (err) => {
+                    if (err) {
+                        throw err;
+                    }
+                    const sql3 = "SELECT @fileNo:=0;\
+                    UPDATE file SET fileNo=@fileNo:=@fileNo+1 where writId = ?;";
+                    const param3 = [req.params.writId];
+                    connection.query(sql3, param3, (err) => {
+                        if (err) {
+                            throw err;
+                        }
+                        // console.log("fileNo update success");
+                    });
+                });
+            };
+            //첨부파일 삭제
+            const param4 = [req.params.writId, req.body.fileNo];
+            const fileRoute = req.body.fileRoute;
+            const sql4 = "delete from file where writId = ? and fileNo = ?";
+            connection.query(sql4, param4, (err, row) => {
+                if (err) {
+                    console.log(err)
+                }
+                console.log("fileRoute = " + fileRoute)
+                fs.unlinkSync(fileRoute.toString(), (err) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                    return;
+                });
+            })
+            return res.json({
+                msg: "success"
+            });
+        });
+    } catch (error) {
+        res.send(error.message);
+    }
+});
 
 //게시글 삭제
 router.delete('/:writId', async (req, res) => {
@@ -248,6 +265,23 @@ router.delete('/:writId', async (req, res) => {
                 res.json({
                     msg: "query error"
                 });
+            }
+            const route = req.query.fileRoute;
+            const fileRoute = route.split(',');
+            console.log(fileRoute);
+            if (fileRoute != undefined) {
+                if (Array.isArray(fileRoute) == false) {
+                    fileRoute = [fileRoute];
+                }
+                console.log(fileRoute);
+                for (let i = 0; i < fileRoute.length; i++) {
+                    fs.unlinkSync(fileRoute[i], (err) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        return;
+                    });
+                }
             }
             res.json({
                 msg: "success"

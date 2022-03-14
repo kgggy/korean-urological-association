@@ -26,10 +26,6 @@
                             <form id="certiForm" name="certiForm" method="" action="">
                                 <input type="hidden" id="certiDivision" name="certiDivision" value="<%=result[0].certiDivision%>">
                                 <input type="hidden" id="certiImage" name="certiImage" value="<%=result[0].certiImage%>">
-                                <input type="hidden" id="fileRoute" name="fileRoute" value="<%=result[0].fileRoute%>">
-                                <input type="hidden" id="fileRoute" name="fileRoute" value="<%=result[1].fileRoute%>">
-                                <input type="hidden" id="fileRoute" name="fileRoute" value="<%=result[1].fileRoute%>">
-                                <input type="hidden" id="fileRoute" name="fileRoute" value="<%=result[1].fileRoute%>">
                                 <div class="form-group row">
                                     <label class="col-md-2 col-form-label" for="text-input">번호</label>
                                     <div class="col-md-9">
@@ -88,40 +84,40 @@
                                 <div class="form-group row">
                                     <label class="col-md-2 col-form-label" for="text-input">종류명</label>
                                     <div class="col-md-9">
-                                        <input class="form-control" id="certiTitle" type="text" name="certiTitle" value="<%=result[0].certiTitle%>">
+                                        <input class="form-control" id="certiTitle" type="text" name="certiTitle" value="<%=result[0].certiTitle%>" readonly >
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-md-2 col-form-label" for="text-input">설명글</label>
                                     <div class="col-md-9">
-                                        <input class="form-control" id="certiDetail" type="text" name="certiDetail" value="<%=result[0].certiDetail%>">
+                                        <input class="form-control" id="certiDetail" type="text" name="certiDetail" value="<%=result[0].certiDetail%>" readonly >
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-md-2 col-form-label" for="text-input">포인트</label>
                                     <div class="col-md-9">
-                                        <input class="form-control" id="certiPoint" type="text" name="certiPoint" value="<%=result[0].certiPoint%>점">
+                                        <input class="form-control" id="certiPoint" type="text" name="certiPoint" value="<%=result[0].certiPoint%>" readonly >
                                     </div>
                                 </div>
                                 <% if(result[0].certiDivision == 0) {%>
                                 <div class="form-group row">
                                     <label class="col-md-2 col-form-label" for="text-input">단계</label>
                                     <div class="col-md-9">
-                                        <input class="form-control" id="certiDiff" type="text" name="certiDiff" value="<%=result[0].certiDiff%>단계">
+                                        <input class="form-control" id="certiDiff" type="text" name="certiDiff" value="<%=result[0].certiDiff%>" readonly >
                                     </div>
                                 </div>
                                 <% }else{ %>
                                 <div class="form-group row">
                                     <label class="col-md-2 col-form-label" for="text-input">권한</label>
                                     <div class="col-md-9">
-                                        <input class="form-control" id="certiAuth" type="text" name="certiAuth" value="<%=result[0].certiAuth%>">
+                                        <input class="form-control" id="certiAuth" type="text" name="certiAuth" value="<%=result[0].certiAuth%>" readonly >
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-md-2 col-form-label" for="text-input">기간</label>
                                     <div class="col-md-9">
                                         <input class="form-control" id="ucmtitle" type="text" name="ucmtitle"
-                                            value="<%=result[0].certiStartDatefmt%> ~ <%=result[0].certiEndDatefmt%>">
+                                            value="<%=result[0].certiStartDatefmt%> ~ <%=result[0].certiEndDatefmt%>" readonly >
                                     </div>
                                 </div>
                                 <% } %>
@@ -130,7 +126,7 @@
                                     <div class="col-md-9">
                                         <input class="form-control" id="certiShow" type="text" name="certiShow" <%if(result[0].certiShow==0){%> value="O" <%}else{%>
                                             value="X"
-                                            <%}%>>
+                                            <%}%> readonly >
                                     </div>
                                 </div>
                                 <!--option 버튼  -->

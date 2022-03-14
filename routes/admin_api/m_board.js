@@ -268,6 +268,40 @@ router.get('/fileDelete', async (req, res) => {
     res.redirect('brdUdtForm?writId=' + req.query.writId);
 });
 
+//게시글 여러개 삭제
+router.get('/boardsDelete', (req, res) => {
+    const boardId = req.query.boardId;
+    const param = req.query.writId;
+    const str = param.split(',');
+    for (var i = 0; i < str.length; i++) {
+        let fileRoute = [];
+        const sql1 = "select fileRoute from file where writId = ?";
+        connection.query(sql1, str[i], (err, result) => {
+            if (err) {
+                console.log(err)
+            }
+            fileRoute = result;
+            if (fileRoute != undefined) {
+                for (let j = 0; j < fileRoute.length; j++) {
+                    fs.unlinkSync(fileRoute[j].fileRoute, (err) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        return;
+                    });
+                }
+            }
+        });
+        const sql = "delete from post where writId = ?";
+        connection.query(sql, str[i], (err) => {
+            if (err) {
+                console.log(err)
+            }
+        });
+    }
+    res.send('<script>alert("삭제되었습니다."); location.href="/admin/m_board/all?boardId=' + boardId + '&page=1";</script>');
+});
+
 //게시글 삭제
 router.get('/brdDelete', async (req, res) => {
     try {

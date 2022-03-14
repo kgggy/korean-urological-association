@@ -2,6 +2,16 @@
     div.dataTables_wrapper div.dataTables_filter label {
         display: block !important;
     }
+
+    .userTable thead tr .sorting:first-child::before,
+    .userTable thead tr .sorting_asc:first-child::before,
+    .userTable thead tr .sorting_asc:first-child::after,
+    .userTable thead .sorting_desc:first-child:after,
+    .userTable thead .sorting:first-child:after,
+    .userTable thead .sorting:first-child {
+        content: none !important;
+        cursor: unset
+    }
 </style>
 <main class="main">
     <!-- Breadcrumb-->
@@ -36,54 +46,77 @@
                             </form>  -->
                             <form id="boardForm" name="boardForm" method="" action="">
                                 <input type="hidden" name="boardId" value="<%=community[0].boardId%>">
-                                <table id="exampleTable" class="table table-responsive-sm table-hover">
+                                <table id="exampleTable" class="table userTable table-responsive-sm table-hover">
                                     <colgroup>
-                                        <col width="7%" />
+                                        <col width="5%" />
+                                        <col width="5%" />
                                         <col width="8%" />
-                                        <col width="8%" />
-                                        <col width="15%" />
-                                        <col width="8%" />
-                                        <col width="10%" />
+                                        <col width="20%" />
+                                        <col width="30%" />
                                         <col width="11%" />
+                                        <col width="11%" />
+                                        <col width="10%" />
                                     </colgroup>
                                     <thead>
                                         <tr>
+                                            <th><input type="checkbox" name="chkAll" id="chkAll" /></th>
                                             <th>번호</th>
-                                            <th>작성자</th>
                                             <th>우선순위</th>
+                                            <th>작성자</th>
                                             <th>제목</th>
-                                            <th>조회수</th>
                                             <th>등록일</th>
                                             <th>수정일</th>
+                                            <th>조회수</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <% if(results.length > 0){ %> <% for(var i = (page * page_num) - page_num; i < (page * page_num); i++) { 
                                             if(i > length){
                                                 i++;
-                                            } else { %> <tr
-                                            onclick="location.href='/admin/m_board/selectOne?writId=<%=results[i].writId%>'">
-                                            <td><%= i+1 %></td>
-                                            <td><%=results[i].userNick%><%=results[i].comNick%></td>
-                                            <td><%=results[i].writRank%></td>
-                                            <td><%=results[i].writTitle%></td>
-                                            <td><%=results[i].writHit %></td>
-                                            <td><%=results[i].writDatefmt%></td>
-                                            <td><%=results[i].writUpdDatefmt%></td>
+                                            } else { %>
+                                        <tr>
+                                            <td><input type="checkbox" id="chk" name="chk"
+                                                    value="<%=results[i].writId %>" /></td>
+                                            <td
+                                                onclick="location.href='/admin/m_board/selectOne?writId=<%=results[i].writId%>'">
+                                                <%= i+1 %></td>
+                                            <td
+                                                onclick="location.href='/admin/m_board/selectOne?writId=<%=results[i].writId%>'">
+                                                <%=results[i].writRank%></td>
+                                            <td
+                                                onclick="location.href='/admin/m_board/selectOne?writId=<%=results[i].writId%>'">
+                                                <%=results[i].userNick%><%=results[i].comNick%></td>
+                                            <td
+                                                onclick="location.href='/admin/m_board/selectOne?writId=<%=results[i].writId%>'">
+                                                <%=results[i].writTitle%></td>
+                                            <td
+                                                onclick="location.href='/admin/m_board/selectOne?writId=<%=results[i].writId%>'">
+                                                <%=results[i].writDatefmt%></td>
+                                            <td
+                                                onclick="location.href='/admin/m_board/selectOne?writId=<%=results[i].writId%>'">
+                                                <%=results[i].writUpdDatefmt%></td>
+                                            <td
+                                                onclick="location.href='/admin/m_board/selectOne?writId=<%=results[i].writId%>'">
+                                                <%=results[i].writHit %></td>
                                         </tr>
                                         <% } %>
                                         <% } %>
                                         <% } else { %>
                                         <tr>
-                                            <td colspan="7">
-                                                등록된 목록이 없습니다.
+                                            <td colspan="8">
+                                                데이터가 존재하지 않습니다.
                                             </td>
                                         </tr>
                                         <% } %>
                                     </tbody>
                                 </table>
-                                <button id="enrollAction" class="btn btn-block btn-outline-success"
-                                    onclick="enroll()">등록</button>
+                                <div>
+                                    <input type="hidden" id="writId" name="writId" value="" />
+                                    <button id="enrollAction" class="btn btn-block btn-outline-success"
+                                        onclick="enroll()">등록</button>
+                                    <button class="btn btn-block btn-outline-danger" type="button"
+                                        id="delete_btn">삭제</button>
+                                </div>
                             </form>
                             <div class="mt_20">
                                 <div class="paging" id="page_navi">
@@ -120,14 +153,51 @@
 </main>
 
 <script>
-    function selectOne(theURL, winName, features, writId, mode) {
-        theURL += '?writId=' + writId;
-        window.open(theURL, winName, features);
-    }
-
+    const formObj = $("form[name='boardForm']");
+    //등록 
     function enroll() {
-        $("form[name='boardForm']").attr("method", "get");
-        $("form[name='boardForm']").attr("action", "writForm");
-        $("form[name='boardForm']").submit();
+        formObj.attr("method", "get");
+        formObj.attr("action", "writForm");
+        formObj.submit();
     }
+    // 삭제
+    $("#delete_btn").on("click", function () {
+        var chkArr = [];
+        $("input[name=chk]:checked").each(function () {
+            chkArr.push($(this).val());
+        });
+        $('#writId').val(chkArr);
+        if (chkArr == "") {
+            alert("삭제할 목록을 선택해주세요.");
+            return false;
+        }
+        // var chkImg = [];
+        // $("input[name=chk]:checked").each(function () {
+        //     chkImg.push($(this).attr('data-img'));
+        // });
+        // $('#userImg').val(chkImg);
+        formObj.attr("action", "boardsDelete");
+        formObj.attr("method", "get");
+        if (confirm("삭제하시겠습니까?") == true) {
+            formObj.submit();
+        } else {
+            return false;
+        }
+    })
+
+    //체크박스
+    $("#chkAll").click(function () {
+        if ($("#chkAll").is(":checked"))
+            $("input[name=chk]").prop("checked", true);
+        else
+            $("input[name=chk]").prop("checked", false);
+    });
+    $("input[name=chk]").click(function () {
+        var total = $("input[name=chk]").length;
+        var checked = $("input[name=chk]:checked").length;
+        if (total != checked)
+            $("#chkAll").prop("checked", false);
+        else
+            $("#chkAll").prop("checked", true);
+    });
 </script>

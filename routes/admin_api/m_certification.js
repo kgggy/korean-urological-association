@@ -168,13 +168,13 @@ router.post('/certiWrit', upload.array('file'), async (req, res, next) => {
                 console.log(err);
             }
         });
-        for (let i = 0; i < paths.length-1; i++) {
+        for (let i = 0; i < paths.length - 1; i++) {
             const param2 = [paths[i + 1], i + 1, orgName[i + 1]];
             console.log("param2(종류등록 파일배열) = " + param2);
             const sql2 = "insert into file(certiTitleId, fileRoute, fileNo, fileOrgName) values ((select max(certiTitleId) from certification), ?, ?, ?)";
-           connection.query(sql2, param2, (err) => {
-               if (err) {
-                   throw err;
+            connection.query(sql2, param2, (err) => {
+                if (err) {
+                    throw err;
                 }
             });
         };
@@ -187,29 +187,20 @@ router.post('/certiWrit', upload.array('file'), async (req, res, next) => {
 //탄소실천 수정 페이지로 이동
 router.get('/certiUdtForm', async (req, res) => {
     try {
+        const result = [req.query];
+        console.log(result)
         // 분류 드롭다운 가져오기
-        var div = "";
         const sql2 = "select count(*), certiSubDivision\
                        from certification\
                       where certiSubDivision !='' or not null group by certiSubDivision";
-        connection.query(sql2, (err, results1) => {
+        connection.query(sql2, (err, div) => {
             if (err) {
                 console.log(err)
             }
-            div = results1;
-        });
-        const param = req.query.certiTitleId;
-        const sql = "select *, date_format(certiStartDate, '%Y-%m-%d') as certiStartDatefmt, date_format(certiEndDate, '%Y-%m-%d') as certiEndDatefmt\
-                      from certification\
-                     where certiTitleId = ?";
-        connection.query(sql, param, function (err, result) {
-            if (err) {
-                console.log(err);
-            }
             let route = req.app.get('views') + '/m_certification/certi_udtForm';
             res.render(route, {
-                result: result,
-                div: div
+                div: div,
+                result: result
             });
         });
     } catch (error) {

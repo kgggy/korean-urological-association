@@ -2,18 +2,23 @@
     <!-- Breadcrumb-->
     <ol class="breadcrumb">
         <li class="breadcrumb-item">Home</li>
+        <%if(result[0].certiDivision == 0){%>
         <li class="breadcrumb-item">
             <a style="font-weight: bold;">탄소 실천 관리</a>
         </li>
         <li class="breadcrumb-item active">탄소 실천 종류 상세</li>
-        <!-- Breadcrumb Menu-->
+        <% } else {%>
+        <li class="breadcrumb-item">
+            <a style="font-weight: bold;">챌린지 관리</a>
+        </li>
+        <li class="breadcrumb-item active">챌린지 종류 상세</li>
+        <% } %>
     </ol>
     <div class="container-fluid">
         <div class="animated fadeIn">
             <div class="row">
                 <div class="col-lg-6">
                     <div class="card">
-                        <% if(result.length > 0) { %>
                         <%if(result[0].certiDivision == 0){%>
                         <div class="card-header">
                             <i class="fa fa-align-justify"></i> 탄소실천 종류 수정</div>
@@ -25,16 +30,14 @@
                             <!-- 컨텐츠 -->
                             <form action="" id="certiUpdate" name="certiUpdate" method="" enctype="multipart/form-data">
                                 <input type="hidden" id="certiSubDivision" name="certiSubDivision" value="">
-                                <input type="hidden" id="fileRoute" name="fileRoute" value="<%=result[0].fileRoute%>">
-                                <input type="hidden" id="fileRoute" name="fileRoute" value="<%=result[1].fileRoute%>">
                                 <input type="hidden" id="certiTitleId" name="certiTitleId"
                                     value="<%=result[0].certiTitleId%>">
                                 <input type="hidden" id="certiAuth" name="certiAuth" value="">
                                 <div class="form-group row">
                                     <label class="col-md-2 col-form-label" for="text-input">번호</label>
                                     <div class="col-md-9">
-                                        <input class="form-control" id="ucmtitle" type="text" name="ucmtitle"
-                                            disabled="disabled" value="<%=result[0].certiTitleId%>" readonly>
+                                        <input class="form-control" id="ucmtitle" type="text" name="ucmtitle" readonly
+                                            value="<%=result[0].certiTitleId%>" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -52,38 +55,7 @@
                                         <% } %>
                                     </div>
                                 </div>
-                                <div class="form-group row">
-                                    <label class="col-md-2 col-form-label" for="text-input">좋은 예</label>
-                                    <div class="col-md-9">
-                                        <div class="certi-img" style="background-color: rgb(186, 206, 190);">
-                                            <% if(result[0].fileRoute != null) {%>
-                                            <img src="../../../<%= result[0].fileRoute %>" alt="사진"
-                                                style="padding:20px !important; width:40%" />
-                                            <button id="searchAction"
-                                                class="btn btn-block btn-outline-danger fileDelete" type="button"
-                                                onclick="javascript:file_del();">삭제</button>
-                                            <% }else{ %>
-                                            <input type="file" id="file" name="file" />
-                                            <% } %>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-md-2 col-form-label" for="text-input">나쁜 예</label>
-                                    <div class="col-md-9">
-                                        <div class="certi-img" style="background-color: rgb(186, 206, 190);">
-                                            <% if(result[0].fileRoute != null) {%>
-                                            <img src="../../../<%= result[1].fileRoute %>" alt="사진"
-                                                style="padding:20px !important; width:40%" />
-                                            <button id="searchAction"
-                                                class="btn btn-block btn-outline-danger fileDelete" type="button"
-                                                onclick="javascript:file_del();">삭제</button>
-                                            <% }else{ %>
-                                            <input type="file" id="file" name="file" />
-                                            <% } %>
-                                        </div>
-                                    </div>
-                                </div>
+                                
                                 <% if(result[0].certiDivision == 0) {%>
                                 <div class="form-group row">
                                     <label class="col-md-2 col-form-label" for="text-input">분류</label>
@@ -163,7 +135,6 @@
                                     </div>
                             </form>
                         </div>
-                        <% } %>
                     </div>
                 </div>
             </div>
