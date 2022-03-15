@@ -13,17 +13,12 @@ const app = express(); //express 패키지 호출, app변수 객체 생성. => a
 const routes = require('./routes');
 const adminRoutes = require('./routes/admin_api');
 
-// view engine setup
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'pug');
-
 //app.use => 미들웨어 연결
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public'))); // css 연결
-// app.use(express.static(path.join(__dirname, 'views'))); // html 연결
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(expressLayouts);
@@ -56,14 +51,6 @@ app.set('views', path.join(__dirname, '/views/ejs'));
 app.get('/', (req, res) => {
   res.redirect('/admin');
 })
-// app.post(admin, (req, res) => { res.sendFile(__dirname + "/views/index.html"); })
-// app.get(admin + "orgm_list", (req, res) => { res.render(__dirname + ejs + "orgm_viewForm.ejs"); }) // 랜더링 필요하기 때문에 sendfile 대신 render 써줘야함
-// app.get(admin + "/memberList", (req, res) => { res.render(__dirname + ejs + "/memberList.ejs"); })
-// app.post(admin + "/memberList", (req, res) => { res.render(__dirname + ejs + "/memberList.ejs"); })
-// app.get(admin, (req, res) => { res.render(__dirname + ejs + "index.ejs"); });
-// app.get("/admin/orgm_list", (req, res) => { res.sendFile(__dirname + admin + "orgmember_mngt/orgm_listForm.html"); })
-//router.get('/admin/web', (req, res, next) => { res.render(__dirname + admin + "index.ejs");})
-
 
 app.use('/', routes);
 app.use('/admin',adminRoutes);

@@ -3,20 +3,19 @@ var router = express.Router();
 const mysql = require('mysql');
 
 const connt = require("../../config/db")
-var url = require('url');
 
 // DB 커넥션 생성
 var connection = mysql.createConnection(connt);
 connection.connect();
 
-//탄소실천, 챌린지 게시글 별 댓글 전체조회
-router.get('/certi/:certiContentId', async (req, res) => {
+//공지사항 댓글 전체조회
+router.get('/notice/:noticeId', async (req, res) => {
     try {
-        const param = [req.params.certiContentId];
-        const sql = "select * from comment where certiContentId = ?";
+        const param = [req.params.noticeId];
+        const sql = "select c.*, u.userName from comment c left join user u on u.uid = c.uid where noticeId = ?";
         let comment;
         connection.query(sql, param, (err, results) => {
-            if(err) {
+            if (err) {
                 res.json({
                     msg: "query error"
                 });
@@ -24,19 +23,19 @@ router.get('/certi/:certiContentId', async (req, res) => {
             comment = results;
             res.json(comment);
         })
-    } catch(error) {
+    } catch (error) {
         res.send(error.message);
     }
 });
 
-//레시피 게시글 별 댓글 전체조회
-router.get('/writ/:writId', async (req, res) => {
+//갤러리 댓글 전체조회
+router.get('/gallery/:galleryId', async (req, res) => {
     try {
-        const param = [req.params.writId];
-        const sql = "select * from comment where writId = ?";
+        const param = [req.params.galleryId];
+        const sql = "select * from comment where galleryId = ?";
         let comment;
         connection.query(sql, param, (err, results) => {
-            if(err) {
+            if (err) {
                 res.json({
                     msg: "query error"
                 });
@@ -44,16 +43,36 @@ router.get('/writ/:writId', async (req, res) => {
             comment = results;
             res.json(comment);
         })
-    } catch(error) {
+    } catch (error) {
         res.send(error.message);
     }
 });
 
-//탄소실천, 챌린지 게시글의 댓글 달기
-router.post('/certi', async (req, res) => {
-	    try {
-        const param = [req.query.certiContentId, req.query.uid, req.body.cmtContent];
-        const sql = "insert into comment(certiContentId, uid, cmtContent) values(?, ?, ?)";
+//자료실 댓글 전체조회
+router.get('/refer/:referId', async (req, res) => {
+    try {
+        const param = [req.params.referId];
+        const sql = "select * from comment where referId = ?";
+        let comment;
+        connection.query(sql, param, (err, results) => {
+            if (err) {
+                res.json({
+                    msg: "query error"
+                });
+            }
+            comment = results;
+            res.json(comment);
+        })
+    } catch (error) {
+        res.send(error.message);
+    }
+});
+
+//공지사항 게시글의 댓글 달기
+router.post('/notice/insert', async (req, res) => {
+    try {
+        const param = [req.body.noticeId, req.body.uid, req.body.cmtContent];
+        const sql = "insert into comment(noticeId, uid, cmtContent) values(?, ?, ?)";
         connection.query(sql, param, (err, row) => {
             if (err) {
                 console.log(err);
@@ -70,32 +89,32 @@ router.post('/certi', async (req, res) => {
     }
 });
 
-//레시피 게시글의 댓글 달기
-router.post('/writ', async (req, res) => {
+//갤러리 게시글의 댓글 달기
+router.post('/gallery/insert', async (req, res) => {
     try {
-    const param = [req.query.writId, req.query.uid, req.body.cmtContent];
-    const sql = "insert into comment(writId, uid, cmtContent) values(?, ?, ?)";
-    connection.query(sql, param, (err, row) => {
-        if (err) {
-            console.log(err);
+        const param = [req.body.galleryId, req.body.uid, req.body.cmtContent];
+        const sql = "insert into comment(galleryId, uid, cmtContent) values(?, ?, ?)";
+        connection.query(sql, param, (err, row) => {
+            if (err) {
+                console.log(err);
+                res.json({
+                    msg: "query error"
+                });
+            }
             res.json({
-                msg: "query error"
+                msg: "success"
             });
-        }
-        res.json({
-            msg: "success"
         });
-    });
-} catch (error) {
-    res.send(error.message);
-}
+    } catch (error) {
+        res.send(error.message);
+    }
 });
 
-//댓글 수정
-router.patch('/:cmtId', async (req, res) => {
-	    try {
-        const param = [req.body.cmtContent, req.params.cmtId];
-        const sql = "update comment set cmtContent =  ?, cmtUpdDate = sysdate() where cmtId = ?";
+//자료실 게시글의 댓글 달기
+router.post('/refer/insert', async (req, res) => {
+    try {
+        const param = [req.body.referId, req.body.uid, req.body.cmtContent];
+        const sql = "insert into comment(referId, uid, cmtContent) values(?, ?, ?)";
         connection.query(sql, param, (err, row) => {
             if (err) {
                 console.log(err);
@@ -113,8 +132,8 @@ router.patch('/:cmtId', async (req, res) => {
 });
 
 //댓글 삭제
-router.delete('/:cmtId', async (req, res) => {
-	    try {
+router.delete('/delete/:cmtId', async (req, res) => {
+    try {
         const param = [req.params.cmtId];
         const sql = "delete from comment where cmtId = ?";
         connection.query(sql, param, (err, row) => {

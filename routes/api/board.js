@@ -1,60 +1,47 @@
-const multer = require("multer");
-const path = require('path');
-const fs = require('fs');
-
 var express = require('express');
 var router = express.Router();
 const mysql = require('mysql');
+const models = require("../../models");
 
 const connt = require("../../config/db")
-var url = require('url');
-
-const {
-    v4: uuidv4
-} = require('uuid');
-
-const uuid = () => {
-    const tokens = uuidv4().split('-');
-    return tokens[2] + tokens[1] + tokens[0] + tokens[3] + tokens[4]
-}
-
-//파일 업로드 모듈
-var upload = multer({ //multer안에 storage정보  
-    storage: multer.diskStorage({
-        destination: (req, file, callback) => {
-            //파일이 이미지 파일이면
-            if (file.mimetype == "image/jpeg" || file.mimetype == "image/jpg" || file.mimetype == "image/png" || file.mimetype == "application/octet-stream") {
-                // console.log("이미지 파일입니다.");
-                callback(null, 'uploads/boardImgs');
-                //텍스트 파일이면
-            } else if (file.mimetype == "application/pdf" || file.mimetype == "application/txt") {
-                // console.log("텍스트 파일입니다.");
-                callback(null, 'uploads/boardTexts');
-            }
-        },
-        //파일이름 설정
-        filename: (req, file, done) => {
-            const ext = path.extname(file.originalname);
-            done(null, path.basename(file.originalname, ext) + Date.now() + ext);
-        },
-    }),
-    //파일 개수, 파일사이즈 제한
-    limits: {
-        files: 5,
-        fileSize: 1024 * 1024 * 1024 //1기가
-    },
-
-});
 
 // DB 커넥션 생성
 var connection = mysql.createConnection(connt);
 connection.connect();
 
-//커뮤니티 종류
+//탄소실천, 챌린지 주제 전체 조회
+router.get('/:certiDivision', async (req, res) => {
+    const certiDivison = req.params.certiDivision;
+    let titles = [];
+    const certification = await models.certification.findAndCountAll({
+        where: {
+            certiDivision: certiDivison
+        },
+        raw: true,
+    });
+    for (let i = 0; i < certification.count; i++) {
+        const file = await models.file.findAll({
+            where: {
+                certiTitleId: certification.rows[i].certiTitleId
+            },
+            order: [
+                ['fileNo', 'asc']
+            ],
+            raw: true,
+        });
+        certification.rows[i]['fileRoute'] = file;
+        titles[i] = certification.rows[i];
+    }
+    res.json(titles);
+});
+
+//게시판 메인
 router.get('/', async (req, res) => {
+    let notices;
+    let gallerys;
+    let refers;
     try {
-        let community;
-        const sql = "select * from community";
+        const sql = "select writDate, noticeTitle from notice order by writDate desc limit 2";
         connection.query(sql, (err, results) => {
             if (err) {
                 console.log(err);
@@ -62,25 +49,48 @@ router.get('/', async (req, res) => {
                     msg: "query error"
                 });
             }
-            community = results;
-            res.status(200).json(community);
+            notices = results;
+            const sql1 = "select writDate, referTitle from reference order by writDate desc limit 2";
+            connection.query(sql1, (err, results) => {
+                if (err) {
+                    console.log(err);
+                    res.json({
+                        msg: "query error"
+                    });
+                }
+                refers = results;
+                const sql2 = "select galleryId, fileRoute from file where fileId in (select min(fileId) from file group by galleryId) and galleryId is not null;";
+                connection.query(sql2, (err, results) => {
+                    if (err) {
+                        console.log(err);
+                        res.json({
+                            msg: "query error"
+                        });
+                    }
+                    gallerys = results;
+                    res.status(200).json([{
+                        notices: notices,
+                        gallerys: gallerys,
+                        refers: refers
+                    }]);
+                });
+            });
         });
     } catch (error) {
         res.status(401).send(error.message);
     }
 });
 
-//각 커뮤니티별 글 전체 목록 조회
-router.get('/:boardId', async (req, res) => {
+//날짜순 전체 종류의 탄소실천/챌린지 글
+router.get('/certiContentsAll/:certiDivision', async (req, res) => {
     try {
-        const param = req.params.boardId;
-        const sql = "select p.*, f.fileRoute, f.fileNo from post p\
-                  left join community c\
-                         on c.boardId = p.boardId \
-                  left join file f on f.writId = p.writId\
-                      where p.boardId = ? and (fileNo = 1 or fileNo is null)\
-                      order by p.writRank is null asc, nullif(p.writRank, '') is null asc, p.writRank, p.writDate desc";
-        let notices;
+        const param = req.params.certiDivision;
+        const sql = "select f.fileRoute, c.certiContentId, c.certiContentDate\
+                       from certiContent c\
+                  left join file f on f.certiContentId = c.certiContentId\
+                  left join certification t on t.certiTitleId = c.certiTitleId\
+                      where t.certiDivision = ? and f.fileNo = 1";
+        let certiContents;
         connection.query(sql, param, (err, results) => {
             if (err) {
                 console.log(err);
@@ -88,210 +98,12 @@ router.get('/:boardId', async (req, res) => {
                     msg: "query error"
                 });
             }
-            notices = results;
-            res.status(200).json(notices);
+            certiContents = results;
+            res.status(200).json(certiContents);
         });
     } catch (error) {
         res.status(401).send(error.message);
     }
 });
-
-//각 커뮤니티별 글 상세조회
-router.get('/one/:writId', async (req, res) => {
-    try {
-        // const boardId = req.params.boardId;
-        // const writId = req.params.writId;
-        const param = req.params.writId;
-        const sql1 = "update post set writHit= writHit + 1 where writId = ?";
-        const sql2 = "select p.*, f.*\
-                        from post p\
-                   left join file f on f.writId = p.writId\
-                       where p.writId = ?";
-        let notice;
-        connection.query(sql1, param, (err, row) => {
-            if (err) {
-                console.error(err);
-                res.json({
-                    msg: "hit query error"
-                });
-            }
-            connection.query(sql2, param, (err, result) => {
-                if (err) {
-                    console.log(err);
-                    res.json({
-                        msg: "select query error"
-                    });
-                }
-                notice = result;
-                res.status(200).json(notice);
-            });
-        });
-    } catch (error) {
-        res.status(401).send(error.message);
-    }
-});
-
-//게시글 작성 및 파일첨부
-router.post('/', upload.array('file'), async (req, res, next) => {
-    const paths = req.files.map(data => data.path);
-    const orgName = req.files.map(data => data.originalname);
-
-    try {
-        const boardWritId = uuid();
-        const param1 = [boardWritId, req.body.boardId, req.body.uid, req.body.writTitle, req.body.writContent];
-        const sql1 = "insert into post(writId, boardId, uid, writTitle, writContent) values(?, ?, ?, ?, ?)";
-        connection.query(sql1, param1, (err, row) => {
-            if (err) {
-                throw err;
-            }
-            for (let i = 0; i < paths.length; i++) {
-                const param2 = [boardWritId, paths[i], i + 1, orgName[i]];
-                // console.log(param2);
-                const sql2 = "insert into file(writId, fileRoute, fileNo, fileOrgName) values (?, ?, ?, ?)";
-                connection.query(sql2, param2, (err) => {
-                    if (err) {
-                        throw err;
-                    } else {
-                        return;
-                    }
-                });
-
-            };
-        });
-        return res.json({
-            msg: "success"
-        });
-    } catch (error) {
-        res.send(error.message);
-    }
-});
-
-//파일 다운로드
-router.get('/download/:writId/:fileNo', async (req, res) => {
-    try {
-        const param = [req.params.writId, req.params.fileNo];
-        const sql = "select fileRoute from file where writId = ? and fileNo = ?";
-        let route;
-        connection.query(sql, param, (err, result) => {
-            if (err) {
-                console.error(err);
-                res.json({
-                    msg: "query error"
-                });
-            }
-            route = result;
-            console.log(result);
-            res.status(200).json(route);
-        });
-    } catch (error) {
-        res.status(401).send(error.message);
-    }
-});
-
-//게시글 수정
-router.post('/:writId', upload.array('file'), (req, res) => {
-    const paths = req.files.map(data => data.path);
-    const orgName = req.files.map(data => data.originalname);
-    try {
-        const param = [req.body.writTitle, req.body.writContent, req.params.writId];
-        const sql1 = "update post set writTitle = ?, writContent = ?, writUpdDate = sysdate() where writId = ?";
-        connection.query(sql1, param, (err) => {
-            if (err) {
-                console.error(err);
-                res.json({
-                    msg: "query error"
-                });
-            }
-            //파일 안넣고 삭제만 하는 경우에도 fileNo 재설정 해주기 위함.
-            const sql3 = "SELECT @fileNo:=0;\
-                              UPDATE file SET fileNo=@fileNo:=@fileNo+1 where writId = ?;";
-            const param3 = [req.params.writId];
-            connection.query(sql3, param3, (err) => {
-                if (err) {
-                    throw err;
-                }
-            });
-            for (let i = 0; i < paths.length; i++) {
-                const sql2 = "insert into file(writId, fileRoute, fileOrgName) values (?, ?, ?)";
-                const param2 = [req.params.writId, paths[i], orgName[i]];
-                connection.query(sql2, param2, (err) => {
-                    if (err) {
-                        throw err;
-                    }
-                    const sql3 = "SELECT @fileNo:=0;\
-                    UPDATE file SET fileNo=@fileNo:=@fileNo+1 where writId = ?;";
-                    const param3 = [req.params.writId];
-                    connection.query(sql3, param3, (err) => {
-                        if (err) {
-                            throw err;
-                        }
-                        // console.log("fileNo update success");
-                    });
-                });
-            };
-            //첨부파일 삭제
-            const param4 = [req.params.writId, req.body.fileNo];
-            const fileRoute = req.body.fileRoute;
-            const sql4 = "delete from file where writId = ? and fileNo = ?";
-            connection.query(sql4, param4, (err, row) => {
-                if (err) {
-                    console.log(err)
-                }
-                console.log("fileRoute = " + fileRoute)
-                fs.unlinkSync(fileRoute.toString(), (err) => {
-                    if (err) {
-                        console.log(err);
-                    }
-                    return;
-                });
-            })
-            return res.json({
-                msg: "success"
-            });
-        });
-    } catch (error) {
-        res.send(error.message);
-    }
-});
-
-//게시글 삭제
-router.delete('/:writId', async (req, res) => {
-    try {
-        const param = req.params.writId;
-        const sql = "delete from post where writId = ?";
-        connection.query(sql, param, (err, row) => {
-            if (err) {
-                console.log(err);
-                res.json({
-                    msg: "query error"
-                });
-            }
-            const route = req.query.fileRoute;
-            const fileRoute = route.split(',');
-            console.log(fileRoute);
-            if (fileRoute != undefined) {
-                if (Array.isArray(fileRoute) == false) {
-                    fileRoute = [fileRoute];
-                }
-                console.log(fileRoute);
-                for (let i = 0; i < fileRoute.length; i++) {
-                    fs.unlinkSync(fileRoute[i], (err) => {
-                        if (err) {
-                            console.log(err);
-                        }
-                        return;
-                    });
-                }
-            }
-            res.json({
-                msg: "success"
-            })
-        });
-    } catch (error) {
-        res.send(error.message);
-    }
-});
-
-
 
 module.exports = router;

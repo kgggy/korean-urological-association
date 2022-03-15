@@ -27,7 +27,8 @@
     "node-hwp": "^0.1.0-alpha",
     "nodemon": "^2.0.15",
     "pug": "^2.0.4",
-    "sequelize": "^6.13.0",
+    "sequelize": "^6.17.0",
+    "sequelize-auto": "^0.8.8",
     "xlsx": "^0.18.3"
   }
 }

@@ -1,138 +1,116 @@
 var express = require('express');
 var router = express.Router();
 const mysql = require('mysql');
-
 const connt = require("../../config/db")
-var url = require('url');
+const models = require('../../models');
+const sequelize = require('sequelize');
+const Op = sequelize.Op;
+
+const multer = require("multer");
+const path = require('path');
+const fs = require('fs');
+
 
 // DB 커넥션 생성
 var connection = mysql.createConnection(connt);
 connection.connect();
 
-//사용자가 작성한 글 전체 조회
-router.get('/all', async (req, res) => {
-    try {
-        const sql = "select fileRoute, c.certiContentId, p.writId, c.certiContentDate, p.writDate, f.fileNo from file f\
-                  left join post p on p.writId = f.writId\
-                  right join certiContent c on c.certiContentId = f.certiContentId\
-                      where (p.uid = ? or c.uid = ?) and (f.fileNo = 1 or f.fileNo is null)\
-                      union\
-                     select fileRoute, c.certiContentId, p.writId, c.certiContentDate, p.writDate, f.fileNo from file f\
-                 right join post p on p.writId = f.writId\
-                  left join certiContent c on c.certiContentId = f.certiContentId\
-                      where (p.uid = ? or c.uid = ?) and (f.fileNo = 1 or f.fileNo is null)\
-                   order by writDate desc, certiContentDate desc;";
-        const param = [req.query.uid, req.query.uid, req.query.uid, req.query.uid];
-        let all;
-        connection.query(sql, param, (err, resutls) => {
-            if (err) {
-                res.json({
-                    msg: "query error"
-                });
+//파일업로드 모듈
+var upload = multer({ //multer안에 storage정보  
+    storage: multer.diskStorage({
+        destination: (req, file, callback) => {
+            //파일이 이미지 파일이면
+            if (file.mimetype == "image/jpeg" || file.mimetype == "image/jpg" || file.mimetype == "image/png" || file.mimetype == "application/octet-stream") {
+                // console.log("이미지 파일입니다.");
+                callback(null, 'uploads/userImg');
+                //텍스트 파일이면
             }
-            all = resutls;
-            res.status(200).json(all);
-        });
-    } catch (error) {
-        res.status(401).send(error.message);
-    }
+        },
+        //파일이름 설정
+        filename: (req, file, done) => {
+            const ext = path.extname(file.originalname);
+            done(null, path.basename(file.originalname, ext) + Date.now() + ext);
+        },
+    }),
+    //파일 개수, 파일사이즈 제한
+    limits: {
+        files: 5,
+        fileSize: 1024 * 1024 * 1024 //1기가
+    },
+
 });
 
-//사용자의 탄소실천 글 전체 조회
-router.get('/certi', async (req, res) => {
-    try {
-        const sql = "select f.fileRoute, c.certiContentId, c.certiTitleId, c.certiContentDate\
-                       from certiContent c\
-                  left join file f on f.certiContentId = c.certiContentId\
-                  left join certification t on t.certiTitleId = c.certiTitleId\
-                      where c.uid = ? and t.certiDivision = ? and (fileNo = 1 or fileNo is null)\
-                   order by c.certiContentDate desc";
-        const param = [req.query.uid, req.query.certiDivision];
-        let certi;
-        connection.query(sql, param, (err, resutls) => {
-            if (err) {
-                res.json({
-                    msg: "query error"
-                });
-            }
-            certi = resutls;
-            res.status(200).json(certi);
-        });
-    } catch (error) {
-        res.status(401).send(error.message);
-    }
-});
-
-//사용자의 레시피 글 전체 조회
-router.get('/recipe', async (req, res) => {
-    try {
-        const sql = "select f.fileRoute, p.writId\
-                       from post p\
-                  left join file f on f.writId = p.writId\
-                      where p.uid = ? and p.boardId = ? and (fileNo = 1 or fileNo is null)\
-                   order by p.writDate desc";
-        const param = [req.query.uid, req.query.boardId];
-        let certi;
-        connection.query(sql, param, (err, resutls) => {
-            if (err) {
-                res.json({
-                    msg: "query error"
-                });
-            }
-            certi = resutls;
-            res.status(200).json(certi);
-        });
-    } catch (error) {
-        res.status(401).send(error.message);
-    }
-});
-
-//내가 좋아요한 글
-router.get('/likes', async (req, res) => {
-    try {
-        const sql = "select distinct f.*\
-                       from recommend r\
-                  left join post p on p.writId = r.writId\
-                  left join certiContent c on c.certiContentId = r.certiContentId\
-                  left join file f on f.certiContentId = r.certiContentID or f.writId = r.writId\
-                      where r.uid = ? and (fileNo = 1 or fileNo is null)";
-        const param = [req.query.uid, req.query.boardId];
-        let certi;
-        connection.query(sql, param, (err, resutls) => {
-            if (err) {
-                res.json({
-                    msg: "query error"
-                });
-            }
-            certi = resutls;
-            res.status(200).json(certi);
-        });
-    } catch (error) {
-        res.status(401).send(error.message);
-    }
-});
-
-//참여한 챌린지 목록 및 게시글 개수
-router.get('/challenge/:uid', async (req, res) => {
+// 내 정보 상세보기
+router.get('/:uid', async (req, res) => {
     try {
         const param = req.params.uid;
-        const sql = "select certiTitleId, count(*) as certiCount\
-                       from certiContent\
-                      where uid = ? group by certiTitleId";
-        let certiCount;
-        connection.query(sql, param, (err, resutls) => {
+        let user;
+        connection.query('select * from user where uid = ?', param, (err, results, fields) => {
             if (err) {
-                res.json({
-                    msg: "query error"
-                });
+                console.log(err);
             }
-            certiCount = resutls;
-            res.status(200).json(certiCount);
+            user = results;
+            res.status(200).json(user);
         });
+        console.log(user)
     } catch (error) {
         res.status(401).send(error.message);
     }
 });
 
+// 회원정보수정
+router.patch('/', upload.single('file'), async (req, res) => {
+    var param;
+    var pathe = "";
+
+    const {
+        userNick,
+        uid,
+        userImg
+    } = req.body;
+
+    // console.log(uid);
+    // console.log(userImg);
+
+    const sameNickNameUser = await models.user.findOne({
+        where: {
+            userNick,
+            uid: {
+                [Op.notIn]: [uid],
+            },
+        }
+    });
+
+    if (sameNickNameUser !== null) {
+        return res.json({
+            registerSuccess: false,
+            message: "이미 존재하는 닉네임입니다.",
+        });
+    }
+
+    if (req.file != null) {
+        pathe = req.file.path;
+        param = [req.body.userNick, req.body.userAge, req.body.userSchool, req.body.userAdres1, req.body.userAdres2, pathe, req.body.uid];
+    } else {
+        param = [req.body.userNick, req.body.userAge, req.body.userSchool, req.body.userAdres1, req.body.userAdres2, req.body.userImg, req.body.uid];
+    }
+
+    const sql = "update user set userNick = ?,  userAge = ?, userSchool = ?,userAdres1 = ?, userAdres2 = ?, userImg = ? where uid = ?";
+    connection.query(sql, param, (err) => {
+        if (err) {
+            console.error(err);
+        }
+        if (req.file != null || userImg != undefined) {
+            fs.unlinkSync(userImg, (err) => {
+                if (err) {
+                    console.log(err);
+                }
+            });
+        }
+        return res.json({
+            msg: "success"
+        });
+    });
+});
 
 module.exports = router;

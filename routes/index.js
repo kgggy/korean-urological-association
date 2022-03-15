@@ -1,27 +1,28 @@
 const express = require('express');
 const router = express.Router();
 
-const login = require('./api/login.js');
-const user = require('./api/user.js')
-const board = require('./api/board.js');
-const certification = require('./api/certification.js');
-// const file = require('./api/file.js');
-const comment = require('./api/comment.js');
-const mypage = require('./api/mypage.js');
-const recommend = require('./api/recommend.js');
-const calculator = require('./api/calculator.js');
-const banner = require('./api/banner.js');
 
-router.use('/login', login);
+const greeting = require('./api/greeting.js');
+const user = require('./api/user.js')
+const mypage = require('./api/mypage.js');
+const notice = require('./api/notice.js');
+const gallery = require('./api/gallery.js');
+const refer = require('./api/refer.js');
+const support = require('./api/support.js');
+const comment = require('./api/comment.js');
+const others = require('./api/others.js');
+const board = require('./api/board.js');
+
+router.use('/greeting', greeting);
 router.use('/user', user);
-router.use('/board', board);
-router.use('/certification', certification);
-// router.use('/file', file);
-router.use('/comment', comment);
 router.use('/mypage', mypage);
-router.use('/recommend', recommend);
-router.use('/calculator', calculator);
-router.use('/banner', banner);
+router.use('/notice', notice);
+router.use('/gallery', gallery);
+router.use('/refer', refer);
+router.use('/support', support);
+router.use('/comment', comment);
+router.use('/others', others);
+router.use('/board', board);
 
 
 module.exports = router;

@@ -2,7 +2,7 @@
   "development": {
     "username": "resoft",
     "password": "Qwert1234!",
-    "database": "carbon",
+    "database": "urological_association_mmate",
     "host": "101.101.216.50",
     "dialect": "mysql"
   },
