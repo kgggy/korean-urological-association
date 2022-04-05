@@ -6,9 +6,9 @@ const models = require("../../models");
 const connt = require("../../config/db")
 
 // DB 커넥션 생성
-var connection = mysql.createConnection(connt);
-connection.connect();
-
+// var connection = mysql.createConnection(connt);
+// connection.connect();
+var connection = require('../../config/db').conn;
 //탄소실천, 챌린지 주제 전체 조회
 router.get('/:certiDivision', async (req, res) => {
     const certiDivison = req.params.certiDivision;

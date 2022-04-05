@@ -37,8 +37,9 @@ var upload = multer({ //multer안에 storage정보
 });
 
 // DB 커넥션 생성
-var connection = mysql.createConnection(connt);
-connection.connect();
+// var connection = mysql.createConnection(connt);
+// connection.connect();
+var connection = require('../../config/db').conn;
 
 //공지사항 글 전체 목록 조회
 router.get('/', async (req, res) => {

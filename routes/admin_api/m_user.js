@@ -14,8 +14,9 @@ const Op = sequelize.Op;
 //엑셀파일 생성
 var nodeExcel = require('excel-export');
 // DB 커넥션 생성
-var connection = mysql.createConnection(connt);
-connection.connect();
+//var connection = mysql.createConnection(connt);
+//connection.connect();                    
+var connection = require('../../config/db').conn;
 
 //파일업로드 모듈
 var upload = multer({ //multer안에 storage정보  
@@ -43,6 +44,7 @@ var upload = multer({ //multer안에 storage정보
 
 //사용자 전체조회
 router.get('/page', async (req, res) => {
+  console.log("====================user전체조회=========================")
   var page = req.query.page;
   var searchType1 = req.query.searchType1 == undefined ? "" : req.query.searchType1;
   var searchType2 = req.query.searchType2 == undefined ? "" : req.query.searchType2;
@@ -75,6 +77,7 @@ router.get('/page', async (req, res) => {
   }
   try {
     connection.query(sql, function (err, results) {
+      console.log(results)
       var last = Math.ceil((results.length) / 15);
       if (err) {
         console.log(err);

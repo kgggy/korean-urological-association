@@ -1,45 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const mysql = require('mysql');
-const connt = require("../../config/db")
-const models = require('../../models');
-const sequelize = require('sequelize');
-const Op = sequelize.Op;
-const crypto = require('crypto');
-
-const multer = require("multer");
-const path = require('path');
-const fs = require('fs');
-
-
-// DB 커넥션 생성
-var connection = mysql.createConnection(connt);
-connection.connect();
-
-//파일업로드 모듈
-var upload = multer({ //multer안에 storage정보  
-  storage: multer.diskStorage({
-    destination: (req, file, callback) => {
-      //파일이 이미지 파일이면
-      if (file.mimetype == "image/jpeg" || file.mimetype == "image/jpg" || file.mimetype == "image/png" || file.mimetype == "application/octet-stream") {
-        // console.log("이미지 파일입니다.");
-        callback(null, 'uploads/userProfile');
-        //텍스트 파일이면
-      }
-    },
-    //파일이름 설정
-    filename: (req, file, done) => {
-      const ext = path.extname(file.originalname);
-      done(null, path.basename(file.originalname, ext) + Date.now() + ext);
-    },
-  }),
-  //파일 개수, 파일사이즈 제한
-  limits: {
-    files: 5,
-    fileSize: 1024 * 1024 * 1024 //1기가
-  },
-
-});
+var connection = require('../../config/db').conn;
 
 // 전체 회원 목록
 router.get('/all', async (req, res) => {
@@ -53,6 +14,50 @@ router.get('/all', async (req, res) => {
       res.status(200).json(user);
     });
     console.log(user)
+  } catch (error) {
+    res.status(401).send(error.message);
+  }
+});
+
+//회원 검색
+router.get('/search', async (req, res) => {
+  var searchType1 = req.query.searchType1 == undefined ? "" : req.query.searchType1;
+  var searchType2 = req.query.searchType2 == undefined ? "" : req.query.searchType2;
+  var searchType3 = req.query.searchType3 == undefined ? "" : req.query.searchType3;
+  // var searchType4 = req.query.searchType4 == undefined ? "" : req.query.searchType4;
+  // var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
+  var sql = "select * from user where 1=1";
+
+  if (searchType1 != '') {
+    sql += " and userPosition = '" + searchType1 + "' \n";
+  }
+  if (searchType2 != '') {
+    sql += " and userAdres1 like '%" + searchType2 + "%' \n";
+  }
+  if (searchType3 != '') {
+    sql += " and userType = '" + searchType3 + "' \n";
+  }
+  // if (searchType4 != '') {
+  //   sql += " and userRole = '" + searchType4 + "' \n";
+  // }
+  // if (searchText != '') {
+  //   sql += " and (userNick like '%" + searchText + "%' or userEmail like '%" + searchText + "%' or userSchool like '%" + searchText + "%') order by uid";
+  // }
+  // console.log(sql);
+  try {
+    connection.query(sql, function (err, results) {
+      if (err) {
+        console.log(err);
+      }
+      res.json(
+        // searchType1: searchType1,
+        // searchType2: searchType2,
+        // searchType3: searchType3,
+        // searchType4: searchType4,
+        // searchText: searchText,
+        results
+      );
+    });
   } catch (error) {
     res.status(401).send(error.message);
   }

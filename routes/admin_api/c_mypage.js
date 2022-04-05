@@ -7,8 +7,9 @@ const connt = require("../../config/db")
 // const models = require('../../models');
 
 // DB 커넥션 생성
-var connection = mysql.createConnection(connt);
-connection.connect();
+//var connection = mysql.createConnection(connt);
+//connection.connect();                    
+var connection = require('../../config/db').conn;
 
 //기업 사용자 상세조회
 router.get('/selectOne', async (req, res) => {

@@ -7,8 +7,9 @@ const crypto = require('crypto');
 const models = require('../../models');
 
 // DB 커넥션 생성
-var connection = mysql.createConnection(connt);
-connection.connect();
+//var connection = mysql.createConnection(connt);
+//connection.connect();                    
+var connection = require('../../config/db').conn;
 
 //등록 페이지 이동
 router.get('/join', async (req, res) => {

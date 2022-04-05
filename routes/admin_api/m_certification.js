@@ -18,8 +18,9 @@ const uuid = () => {
 }
 
 // DB 커넥션 생성
-var connection = mysql.createConnection(connt);
-connection.connect();
+//var connection = mysql.createConnection(connt);
+//connection.connect();                    
+var connection = require('../../config/db').conn;
 
 //파일 업로드 모듈
 var upload = multer({ //multer안에 storage정보  

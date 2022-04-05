@@ -9,8 +9,9 @@ const mysql = require('mysql');
 const connt = require("../../config/db")
 
 // DB 커넥션 생성
-var connection = mysql.createConnection(connt);
-connection.connect();
+//var connection = mysql.createConnection(connt);
+//connection.connect();                    
+var connection = require('../../config/db').conn;
 
 //uuid 생성
 const {

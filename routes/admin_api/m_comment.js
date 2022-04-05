@@ -5,8 +5,9 @@ const mysql = require('mysql');
 const connt = require("../../config/db")
 
 // DB 커넥션 생성
-var connection = mysql.createConnection(connt);
-connection.connect();
+//var connection = mysql.createConnection(connt);
+//connection.connect();                    
+var connection = require('../../config/db').conn;
 
 //탄소실천, 챌린지 게시글 별 댓글 전체조회
 router.get('/certiComment', async (req, res) => {

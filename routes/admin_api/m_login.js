@@ -6,9 +6,9 @@ const crypto = require('crypto');
 const models = require('../../models');
 const sequelize = require('sequelize');
 // DB 커넥션 생성
-var connection = mysql.createConnection(connt);
-connection.connect();
-
+// var connection = mysql.createConnection(connt);
+// connection.connect();
+var connection = require('../../config/db').conn;
 //로그인 페이지로 이동
 router.get('/', (req, res) => {
     let route = req.app.get('views') + '/index';
@@ -19,14 +19,15 @@ router.get('/', (req, res) => {
 
 //로그인
 router.post('/login', async (req, res) => {
+    console.log("login ===============")
     const {
-        comPwd,
-        comNick
+        adminPwd,
+        adminId
     } = req.body;
 
-    const nickChk = await models.company.findOne({
+    const nickChk = await models.admin.findOne({
         where: {
-            comNick
+            adminId
         }
     });
 
@@ -34,32 +35,41 @@ router.post('/login', async (req, res) => {
         return res.send('<script>alert("아이디 또는 비밀번호를 잘못 입력했습니다."); location.href = document.referrer;</script>');
     }
 
-    const makePasswordHashed = (comNick, plainPassword) =>
-        new Promise(async (resolve, reject) => {
-            // salt를 가져오는 부분은 각자의 DB에 따라 수정
-            const salt = await models.company
-                .findOne({
-                    attributes: ['salt'],
-                    raw: true,
-                    where: {
-                        comNick,
-                    },
-                }).then((result) => result.salt);
+    // const makePasswordHashed = (adminId, plainPassword) =>
+    //     new Promise(async (resolve, reject) => {
+    //         // salt를 가져오는 부분은 각자의 DB에 따라 수정
+    //         const salt = await models.admin
+    //             .findOne({
+    //                 attributes: ['salt'],
+    //                 raw: true,
+    //                 where: {
+    //                     adminId,
+    //                 },
+    //             }).then((result) => result.salt);
 
-            crypto.pbkdf2(plainPassword, salt, 9999, 64, 'sha512', (err, key) => {
-                if (err) reject(err);
-                resolve(key.toString('base64'));
-            });
-        });
+    //         crypto.pbkdf2(plainPassword, salt, 9999, 64, 'sha512', (err, key) => {
+    //             if (err) reject(err);
+    //             resolve(key.toString('base64'));
+    //         });
+    //     });
 
-    const password = await makePasswordHashed(comNick, comPwd);
-    const dbPwd = await models.company.findOne({
+    // const password = await makePasswordHashed(adminId, adminPwd);
+    // const dbPwd = await models.admin.findOne({
+    //     where: {
+    //         adminId
+    //     },
+    //     raw: true
+    // })
+    const pwdChk = await models.admin.findOne({
         where: {
-            comNick
-        },
-        raw: true
-    })
-    if (password == dbPwd.comPwd) {
+            adminPwd
+        }
+    });
+
+    if (pwdChk == null) {
+        return res.send('<script>alert("아이디 또는 비밀번호를 잘못 입력했습니다."); location.href = document.referrer;</script>');
+    }
+    if (nickChk !== '' && pwdChk !== '') {
         if (req.session.user) {
             console.log("session 있음.")
             res.redirect('/admin/m_user/page?page=1');
@@ -67,7 +77,7 @@ router.post('/login', async (req, res) => {
             req.session.user = {
                 // isAdmin: true,           // user, admin 구분해주려고. admin 계정밖에 없으니까 필요없음.
                 comId: dbPwd.comId,
-                comNick: comNick
+                adminId: adminId
             };
             res.redirect('/admin/m_user/page?page=1');
             console.log("session 만들어짐!!!")
