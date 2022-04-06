@@ -44,7 +44,7 @@ var connection = require('../../config/db').conn;
 //공지사항 글 전체 목록 조회
 router.get('/', async (req, res) => {
     try {
-        const sql = "select writDate, noticeTitle from notice order by writDate desc";
+        const sql = "select * from notice order by noticeWritDate desc";
         let notices;
         connection.query(sql, (err, results) => {
             if (err) {

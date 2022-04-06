@@ -1,12 +1,5 @@
 var express = require('express');
 var router = express.Router();
-const mysql = require('mysql');
-
-const connt = require("../../config/db")
-
-// DB 커넥션 생성
-// var connection = mysql.createConnection(connt);
-// connection.connect();
 var connection = require('../../config/db').conn;
 
 //공지사항 댓글 전체조회

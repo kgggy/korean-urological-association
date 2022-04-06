@@ -24,43 +24,46 @@
             <div class="row">
                 <div class="col-lg-6">
                     <div class="card">
-                        <div class="card-header"><i class="fa fa-align-justify"></i> 일반 회원 관리 </div>
+                        <div class="card-header"><i class="fa fa-align-justify"></i> 회원 관리 </div>
                         <div class="card-body">
                             <div align="right">
                                 <form name="userForm" action="" method="get" class="easydropdown">
                                     <input type="hidden" name="page" value="1">
                                     <select name="searchType1" class="dropdown">
-                                        <option value="">회원상태</option>
-                                        <option value="0" <%if(searchType1=="0"){%> selected="selected" <%}%>>활동중</option>
-                                        <option value="1" <%if(searchType1=="1"){%> selected="selected" <%}%>>탈퇴</option>
+                                        <option value="">위치</option>
+                                        <option value="동구" <%if(searchType1=="동구"){%> selected="selected" <%}%>>동구</option>
+                                        <option value="서구" <%if(searchType1=="서구"){%> selected="selected" <%}%>>서구</option>
+                                        <option value="남구" <%if(searchType1=="남구"){%> selected="selected" <%}%>>남구</option>
+                                        <option value="북구" <%if(searchType1=="북구"){%> selected="selected" <%}%>>북구</option>
+                                        <option value="중구" <%if(searchType1=="중구"){%> selected="selected" <%}%>>중구</option>
+                                        <option value="수성구" <%if(searchType1=="수성구"){%> selected="selected" <%}%>>수성구</option>
+                                        <option value="달서구" <%if(searchType1=="달서구"){%> selected="selected" <%}%>>달서구</option>
+                                        <option value="달성구" <%if(searchType1=="달성구"){%> selected="selected" <%}%>>달성구</option>
                                     </select>
                                     <select name="searchType2" class="dropdown">
-                                        <option value="">동의여부</option>
-                                        <option value="0" <%if(searchType2=="0"){%> selected="selected" <%}%>>동의</option>
-                                        <option value="1" <%if(searchType2=="1"){%> selected="selected" <%}%>>비동의</option>
+                                        <option value="">형태</option>
+                                        <option value="개원" <%if(searchType2=="개원"){%> selected="selected" <%}%>>개원</option>
+                                        <option value="근무" <%if(searchType2=="근무"){%> selected="selected" <%}%>>근무</option>
+                                        <option value="전공의" <%if(searchType2=="전공의"){%> selected="selected" <%}%>>전공의</option>
+                                        <option value="휴직" <%if(searchType2=="휴직"){%> selected="selected" <%}%>>휴직</option>
                                     </select>
                                     <select name="searchType3" class="dropdown">
-                                        <option value="">나이대</option>
-                                        <option value="20" <%if(searchType3=="20"){%> selected="selected" <%}%>>10대</option>
-                                        <option value="30" <%if(searchType3=="30"){%> selected="selected" <%}%>>20대</option>
-                                        <option value="40" <%if(searchType3=="40"){%> selected="selected" <%}%>>30대</option>
-                                        <option value="50" <%if(searchType3=="50"){%> selected="selected" <%}%>>40대</option>
-                                        <option value="60" <%if(searchType3=="60"){%> selected="selected" <%}%>>50대</option>
-                                        <option value="61" <%if(searchType3=="61"){%> selected="selected" <%}%>>60대 이상</option>
-                                    </select>
-                                    <select name="searchType4" class="dropdown">
-                                        <option value="">나무등급</option>
-                                        <option value="씨앗" <%if(searchType4=="씨앗"){%> selected="selected" <%}%>>씨앗</option>
-                                        <option value="새싹" <%if(searchType4=="새싹"){%> selected="selected" <%}%>>새싹</option>
-                                        <option value="아기나무" <%if(searchType4=="아기나무"){%> selected="selected" <%}%>>아기나무</option>
-                                        <option value="꽃나무" <%if(searchType4=="꽃나무"){%> selected="selected" <%}%>>꽃나무</option>
-                                        <option value="열매나무" <%if(searchType4=="열매나무"){%> selected="selected" <%}%>>열매나무</option>
+                                        <option value="">역할</option>
+                                        <option value="병원장" <%if(searchType3=="병원장"){%> selected="selected" <%}%>>병원장</option>
+                                        <option value="원장" <%if(searchType3=="원장"){%> selected="selected" <%}%>>원장</option>
+                                        <option value="교수" <%if(searchType3=="교수"){%> selected="selected" <%}%>>교수</option>
+                                        <option value="겸직교수" <%if(searchType3=="겸직교수"){%> selected="selected" <%}%>>겸직교수</option>
+                                        <option value="부교수" <%if(searchType3=="부교수"){%> selected="selected" <%}%>>부교수</option>
+                                        <option value="조교수" <%if(searchType3=="조교수"){%> selected="selected" <%}%>>조교수</option>
+                                        <option value="임상강사" <%if(searchType3=="임상강사"){%> selected="selected" <%}%>>임상강사</option>
+                                        <option value="선생" <%if(searchType3=="선생"){%> selected="selected" <%}%>>선생</option>
+                                        <option value="주임과장" <%if(searchType3=="주임과장"){%> selected="selected" <%}%>>주임과장</option>
+                                        <option value="과장" <%if(searchType3=="과장"){%> selected="selected" <%}%>>과장</option>
                                     </select>
                                     <% if(searchText != '') { %> <input class="searchbox" type="text" name="searchText"
                                             value="<%=searchText%>" />
                                         <% } else {%>
-                                        <input class="searchbox" type="text" name="searchText"
-                                            placeholder=" 이메일, 닉네임, 학교" />
+                                        <input class="searchbox" type="text" name="searchText" placeholder=" 회원명, 병원명" />
                                         <% } %>
                                         <button class="btn btn-block btn-outline-success" type="submit"
                                             id="searchAction" style="margin-bottom: 10px;">검색</button>
@@ -70,20 +73,22 @@
                                 <table id="exampleTable" class="table userTable table-responsive-sm table-hover">
                                     <colgroup>
                                         <col width="5%" />
-                                        <col width="20%" />
+                                        <col width="5%" />
+                                        <col width="15%" />
                                         <col width="30%" />
                                         <col width="20%" />
-                                        <col width="20%" />
-                                        <col width="20%" />
+                                        <col width="10%" />
+                                        <col width="10%" />
                                     </colgroup>
                                     <thead>
                                         <tr>
                                             <th><input type="checkbox" name="chkAll" id="chkAll" /></th>
                                             <th>번호</th>
-                                            <th>이메일</th>
-                                            <th>닉네임</th>
-                                            <th>포인트</th>
-                                            <th>권한</th>
+                                            <th>회원명</th>
+                                            <th>병원명</th>
+                                            <th>병원번호</th>
+                                            <th>형태</th>
+                                            <th>역할</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -92,42 +97,36 @@
                                         if(i > length){
                                             i++;
                                         } else { %>
-                                        <tr class="pointer">
-                                            <td><input type="checkbox" id="chk" name="chk" value="<%=results[i].uid %>"
+                                        <tr class="pointer"
+                                            onclick="location.href='/admin/m_user/selectOne?uid=<%=results[i].uid%>&page=<%=page%><%=keepSearch%>'">
+                                            <td onclick="event.cancelBubble=true;"><input type="checkbox" id="chk"
+                                                    name="chk" value="<%=results[i].uid %>"
                                                     data-img="<%=results[i].userImg%>" />
                                             </td>
-                                            <td
-                                                onclick="location.href='/admin/m_user/selectOne?uid=<%=results[i].uid%>'">
+                                            <td>
                                                 <%=results[i].uid%>
                                             </td>
-                                            <td
-                                                onclick="location.href='/admin/m_user/selectOne?uid=<%=results[i].uid%>'">
-                                                <%=results[i].userEmail%>
+                                            <td>
+                                                <%=results[i].userName%>
                                             </td>
-                                            <td
-                                                onclick="location.href='/admin/m_user/selectOne?uid=<%=results[i].uid%>'">
-                                                <%= results[i].userNick %>
+                                            <td>
+                                                <%= results[i].hosName %>
                                             </td>
-                                            <td
-                                                onclick="location.href='/admin/m_user/selectOne?uid=<%=results[i].uid%>'">
-                                                <%= results[i].userPoint %>점
+                                            <td>
+                                                <%= results[i].hosPhone1 %>-<%= results[i].hosPhone2 %>-<%= results[i].hosPhone3 %>
                                             </td>
-                                            <td
-                                                onclick="location.href='/admin/m_user/selectOne?uid=<%=results[i].uid%>'">
-                                                <%if(results[i].userStatus !=null && results[i].userStatus!='null' && results[i].userStatus!=''){%>
-                                                <% if (results[i].userStatus == '0'){%>
-                                                활동중
-                                                <% } else if (results[i].userStatus == '1') {%>
-                                                탈퇴
-                                                <%}%>   
-                                            <%}%>
+                                            <td>
+                                                <%= results[i].userType %>
+                                            </td>
+                                            <td>
+                                                <%= results[i].userPosition %>
                                             </td>
                                         </tr>
                                         <% } %>
                                         <% } %>
                                         <% } else { %>
                                         <tr>
-                                            <td colspan="10">등록된 회원이 없습니다.</td>
+                                            <td colspan="7">등록된 회원이 없습니다.</td>
                                         </tr>
                                         <% } %>
                                     </tbody>

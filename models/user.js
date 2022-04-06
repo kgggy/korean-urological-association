@@ -36,7 +36,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(4),
       allowNull: true
     },
-    userPost: {
+    hosPost: {
       type: DataTypes.STRING(10),
       allowNull: true,
       comment: "우편번호"
@@ -98,6 +98,17 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(300),
       allowNull: true,
       comment: "홈페이지주소"
+    },
+    pushToken: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+      comment: "푸쉬토큰값"
+    },
+    pushYn: {
+      type: DataTypes.STRING(1),
+      allowNull: false,
+      defaultValue: "0",
+      comment: "0이면 받음, 1이면 안받음"
     }
   }, {
     sequelize,
