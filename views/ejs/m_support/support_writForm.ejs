@@ -1,0 +1,128 @@
+<style>
+	.subTitle {
+		display: inline-block;
+		text-align: left;
+		width: 500px !important;
+		height: 34px !important;
+		position: relative;
+		width: 160px;
+		border: 1px solid #ccc;
+		cursor: pointer;
+		background: #fff;
+		border-radius: 3px;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		user-select: none;
+	}
+
+	.sub div:first-child {
+		display: inline-block;
+		text-align: left;
+		padding-right: 50px;
+		width: auto !important;
+		height: 34px !important;
+	}
+
+	.subTitle option {
+		font-size: 13px !important;
+		padding: 10px 12px !important;
+	}
+
+	.subTitle option.hover {
+		background-color: orange;
+	}
+</style>
+<main class="main">
+	<!-- Breadcrumb-->
+	<ol class="breadcrumb">
+		<li class="breadcrumb-item">Home</li>
+		<li class="breadcrumb-item">
+			<a style="font-weight: bold;">후원</a>
+		</li>
+		<li class="breadcrumb-item active">후원등록</li>
+	</ol>
+
+	<div class="container-fluid">
+		<div class="animated fadeIn">
+			<div class="row">
+				<div class="col-lg-6">
+					<div class="card">
+						<div class="card-header">
+							<i class="fa fa-align-justify"></i> 후원 등록
+						</div>
+						<div class="card-body">
+							<!-- 컨텐츠 -->
+							<form action="" id="bannerWritForm" name="bannerWritForm" method=""
+								enctype="multipart/form-data">
+								<div class="form-group row">
+									<label class="col-md-2 col-form-label">이미지</label>
+									<div style="display: flex; flex-direction: column; gap: 25px; padding-left: 15px">
+										<input type="file" id="file" name="file">
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-md-2 col-form-label" for="text-input">업체명</label>
+									<div class="col-md-9 sub">
+										<input type="text" id="supporter" name="supporter" value="">
+									</div>
+								</div>
+								<!--option 버튼  -->
+								<div class="option_button" style="padding-left: 1.25rem; margin-bottom: 15px;">
+									<div>
+										<button class="btn btn-block btn-outline-success" type="button"
+											id="enroll_btn">등록</button>
+									</div>
+									<div>
+										<button class="btn btn-block btn-outline-danger" type="button"
+											onclick="history.go(-1)">취소</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
+
+<script type="text/javascript">
+	var formObj = $("form[name='bannerWritForm']");
+	$(document).ready(function () {
+		//확장자 체크
+		$("input:file[name='file']").change(function () {
+			var str = $(this).val();
+			var fileName = str.split('\\').pop().toLowerCase();
+			// alert(fileName);
+			checkFileName(fileName);
+		});
+
+		// 등록
+		$("#enroll_btn").on("click", function () {
+			var supportImg = $("#file").val();
+
+			if (supportImg == '') {
+				alert("이미지를 선택해주세요.");
+				return false;
+			}
+			if (confirm("등록하시겠습니까?") == true) {
+				formObj.attr("action", "supportWrit");
+				formObj.attr("method", "post");
+				alert("등록이 완료되었습니다.");
+				formObj.submit();
+			} else {
+				return;
+			}
+		});
+	});
+
+	//확장자 체크
+	function checkFileName(str) {
+		var ext = str.split('.').pop().toLowerCase();
+		// alert(ext);
+		if ($.inArray(ext, ['jpg', 'png', 'jpeg', 'gif']) == -1) {
+			alert(ext + '파일은 업로드 하실 수 없습니다.');
+			$("input:file[name='file']").val("");
+		}
+	}
+</script>
