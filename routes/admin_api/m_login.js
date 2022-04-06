@@ -76,7 +76,7 @@ router.post('/login', async (req, res) => {
         } else { // 세션 없는 admin일 경우 만들어줌
             req.session.user = {
                 // isAdmin: true,           // user, admin 구분해주려고. admin 계정밖에 없으니까 필요없음.
-                comId: dbPwd.comId,
+                // comId: dbPwd.comId,
                 adminId: adminId
             };
             res.redirect('/admin/m_user/page?page=1');
