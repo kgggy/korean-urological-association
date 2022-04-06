@@ -33,7 +33,6 @@ router.use('/', m_login);
 router.use('/m_user', m_user);
 router.use('/m_support', m_support);
 router.use('/m_notice', m_notice);
-router.use('/m_banner', m_banner);
 router.use('/m_certification', m_certification);
 router.use('/m_certiContent', m_certiContent);
 router.use('/m_comment', m_comment);
