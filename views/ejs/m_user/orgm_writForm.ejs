@@ -26,77 +26,70 @@
                            </div>
                         </div>
                         <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input" style="color: crimson;">이메일</label>
+                           <label class="col-md-2 col-form-label" for="text-input">회원명</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="userEmail" type="text" name="userEmail" value="">
+                              <input class="form-control" id="userName" type="text" name="userName"
+                                 value="">
                            </div>
                         </div>
                         <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input" style="color: crimson;">닉네임</label>
+                           <label class="col-md-2 col-form-label" for="text-input">병원명</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="userNick" type="text" name="userNick" value="">
+                              <input class="form-control" id="hosName" type="text" name="hosName"
+                                 value="">
                            </div>
                         </div>
                         <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input" style="color: crimson;">패스워드</label>
+                           <label class="col-md-2 col-form-label" for="text-input">우편번호</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="userPwd" type="text" name="userPwd" value="">
+                              <input class="form-control" id="hosPost" type="text" name="hosPost"
+                                 value="">
                            </div>
                         </div>
                         <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">나이</label>
+                           <label class="col-md-2 col-form-label" for="text-input">병원주소</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="userAge" type="number" name="userAge" value="">
+                              <input class="form-control" id="ucmtitle" type="text" name="ucmtitle"
+                                 value="">
+                              <input type="hidden" id="userAdres1" name="userAdres1" value="">
+                              <input type="hidden" id="userAdres2" name="userAdres2" value="">
+                              <input type="hidden" id="userAdres3" name="userAdres3" value="">
                            </div>
                         </div>
                         <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">주소</label>
-                           <div class="col-md-9">
-                              <input class="form-control" id="userAdres1" type="text" name="userAdres1"
-                                 placeholder="시 / 도 (ex.대구광역시)">
-                           </div>
-                           <label class="col-md-2 col-form-label" for="text-input"></label>
-                           <div class="col-md-9">
-                              <input class="form-control" id="userAdres2" type="text" name="userAdres2"
-                                 placeholder="시 / 군 / 구 (ex.달서구)">
-                           </div>
-                        </div>
-                        <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">학교</label>
-                           <div class="col-md-9">
-                              <input class="form-control" id="userSchool" type="text" name="userSchool" value="">
+                           <label class="col-md-2 col-form-label" for="text-input">병원번호</label>
+                           <div class="col-md-9" style="display: flex;text-align: center;align-items: center;">
+                              <input class="form-control phone" id="hosPhone1" type="text" name="hosPhone1"
+                                 value="">&nbsp;&nbsp;-&nbsp;&nbsp;
+                                 <input class="form-control phone" id="hosPhone2" type="text" name="hosPhone2"
+                                 value="">&nbsp;&nbsp;-&nbsp;&nbsp;
+                                 <input class="form-control phone" id="hosPhone3" type="text" name="hosPhone3"
+                                 value="">
                            </div>
                         </div>
                         <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">포인트</label>
+                           <label class="col-md-2 col-form-label" for="text-input">형태</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="userPoint" type="text" name="userPoint" value="">
+                              <input class="form-control" id="userType" type="text" name="userType"
+                                 value="">
                            </div>
                         </div>
                         <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">계산점수</label>
+                           <label class="col-md-2 col-form-label" for="text-input">역할</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="userScore" type="text" name="userScore" value="">
+                              <input class="form-control" id="userPosition" type="text" name="userPosition"
+                                 value="">
                            </div>
                         </div>
                         <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">상태</label>
+                           <label class="col-md-2 col-form-label" for="text-input">푸쉬알림</label>
                            <div class="col-md-9">
-                              <select class="dropdown" name="userStatus">
-                                 <option value="0">활동중</option>
-                                 <option value="1">탈퇴</option>
-                              </select>
-                           </div>
-                        </div>
-                        <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">개인정보 동의여부</label>
-                           <div class="col-md-9">
-                              <select class="dropdown" name="userAgree">
+                              <select class="dropdown" name="pushYn">
                                  <option value="0">동의</option>
                                  <option value="1">비동의</option>
-                              </select>
+                             </select>
                            </div>
-                        </div>
+                        </div> 
                         <!--option 버튼  -->
                         <div class="option_button">
                            <div>
@@ -119,34 +112,19 @@
 </main>
 
 <script type="text/javascript">
-   function file_del(route) {
-      if (confirm("실제 파일이 삭제됩니다 \n정말 삭제하시겠습니까?")) {
-         $("#boardWrit").attr("action", "imgDelete");
-         $("#boardWrit").attr("method", "get");
-         $("#boardWrit").submit();
-      }
-   }
-
    $("#update_btn").click(function () {
-      var userNick = $("#userNick").val();
-      var userEmail = $("#userEmail").val();
-      var userPwd = $("#userPwd").val();
+      var userName = $("#userName").val();
+      var hosName = $("#hosName").val();
 
-      if (userEmail == '') {
-         alert("이메일을 입력해주세요.");
-         $("#userEmail").focus();
+      if (userName == '') {
+         alert("회원명을 입력해주세요.");
+         $("#userName").focus();
          return false;
       }
 
-      if (userNick == '') {
-         alert("닉네임을 입력해주세요.");
-         $("#userNick").focus();
-         return false;
-      }
-
-      if (userPwd == '') {
-         alert("패스워드를 입력해주세요.");
-         $("#userPwd").focus();
+      if (hosName == '') {
+         alert("병원명을 입력해주세요.");
+         $("#hosName").focus();
          return false;
       }
 

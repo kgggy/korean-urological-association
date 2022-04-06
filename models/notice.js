@@ -2,8 +2,7 @@ const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('notice', {
     noticeId: {
-      autoIncrement: true,
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(5),
       allowNull: false,
       primaryKey: true,
       comment: "일련번호"
@@ -29,6 +28,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       defaultValue: 0,
       comment: "조회수"
+    },
+    noticeRank: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      comment: "공지사항 우선순위"
     }
   }, {
     sequelize,

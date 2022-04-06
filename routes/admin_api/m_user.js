@@ -1,21 +1,16 @@
 var express = require('express');
 var router = express.Router();
-const mysql = require('mysql');
 const fs = require('fs');
 
 const multer = require("multer");
 const path = require('path');
-
-const connt = require("../../config/db")
 const crypto = require('crypto');
 const models = require('../../models');
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
 //엑셀파일 생성
 var nodeExcel = require('excel-export');
-// DB 커넥션 생성
-//var connection = mysql.createConnection(connt);
-//connection.connect();                    
+// DB 커넥션 생성                
 var connection = require('../../config/db').conn;
 
 //파일업로드 모듈
@@ -44,40 +39,30 @@ var upload = multer({ //multer안에 storage정보
 
 //사용자 전체조회
 router.get('/page', async (req, res) => {
-  console.log("====================user전체조회=========================")
   var page = req.query.page;
   var searchType1 = req.query.searchType1 == undefined ? "" : req.query.searchType1;
   var searchType2 = req.query.searchType2 == undefined ? "" : req.query.searchType2;
   var searchType3 = req.query.searchType3 == undefined ? "" : req.query.searchType3;
-  var searchType4 = req.query.searchType4 == undefined ? "" : req.query.searchType4;
   var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
   var keepSearch = "&searchType1=" + searchType1 +
-    "&searchType2=" + searchType2 + "&searchType3=" + searchType3 +
-    "&searchType4=" + searchType4 + "&searchText=" + searchText;
+    "&searchType2=" + searchType2 + "&searchType3=" + searchType3 + "&searchText=" + searchText;
 
   var sql = "select * from user where 1=1";
 
   if (searchType1 != '') {
-    sql += " and userStatus = '" + searchType1 + "' \n";
+    sql += " and userAdres2 = '" + searchType1 + "' \n";
   }
   if (searchType2 != '') {
-    sql += " and userAgree = '" + searchType2 + "' \n";
+    sql += " and userType = '" + searchType2 + "' \n";
   }
-  if (searchType3 != '' && searchType3 == '61') {
-    sql += " and userAge >= 60 \n";
-  } else if (searchType3 != '' && searchType3 == '20') {
-    sql += " and  userAge <> 0 and userAge <= 20 \n";
-  } else if (searchType3 != '' && searchType3 == '30' || searchType3 == '40' || searchType3 == '50' || searchType3 == '60')
-    sql += " and userAge between " + searchType3 + "-10 and " + searchType3 + " \n";
-  if (searchType4 != '') {
-    sql += " and userTree = '" + searchType4 + "' \n";
+  if (searchType3 != '') {
+    sql += " and userPosition = '" + searchType3 + "' \n";
   }
   if (searchText != '') {
-    sql += " and (userNick like '%" + searchText + "%' or userEmail like '%" + searchText + "%' or userSchool like '%" + searchText + "%') order by uid";
+    sql += " and (hosName like '%" + searchText + "%' or userName like '%" + searchText + "%') order by uid";
   }
   try {
     connection.query(sql, function (err, results) {
-      console.log(results)
       var last = Math.ceil((results.length) / 15);
       if (err) {
         console.log(err);
@@ -87,7 +72,6 @@ router.get('/page', async (req, res) => {
         searchType1: searchType1,
         searchType2: searchType2,
         searchType3: searchType3,
-        searchType4: searchType4,
         searchText: searchText,
         results: results,
         page: page, //현재 페이지
@@ -106,17 +90,28 @@ router.get('/page', async (req, res) => {
 //사용자 상세조회
 router.get('/selectOne', async (req, res) => {
   try {
+    var searchType1 = req.query.searchType1 == undefined ? "" : req.query.searchType1;
+    var searchType2 = req.query.searchType2 == undefined ? "" : req.query.searchType2;
+    var searchType3 = req.query.searchType3 == undefined ? "" : req.query.searchType3;
+    var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
+    var keepSearch = "&searchType1=" + searchType1 +
+      "&searchType2=" + searchType2 + "&searchType3=" + searchType3 + "&searchText=" + searchText;
+    var page = req.query.page;
     const param = [req.query.uid, req.query.uid, req.query.uid];
-    const sql = "select *, ((select count(*) from certiContent where uid = ?) +\
-                           (select count(*) from post where uid = ?)) as contentAll\
-                   from user where uid = ?";
+    const sql = "select * from user where uid = ?";
     connection.query(sql, param, function (err, result) {
       if (err) {
         console.log(err);
       }
       let route = req.app.get('views') + '/m_user/orgm_viewForm';
       res.render(route, {
-        result: result
+        result: result,
+        page: page,
+        searchType1: searchType1,
+        searchType2: searchType2,
+        searchType3: searchType3,
+        searchText: searchText,
+        keepSearch: keepSearch
       });
     });
 
@@ -133,83 +128,66 @@ router.get('/userInsertForm', (req, res) => {
 
 //사용자 등록
 router.post('/userInsert', upload.single('file'), async (req, res) => {
-  const { file, userNick, userEmail, userAge, userAdres1, userAdres2, userSchool, userPoint, userScore, userStatus, userAgree } = req.body;
-
-  const sameEmailUser = await models.user.findOne({
-    where: {
-      userEmail
-    }
-  });
-  if (sameEmailUser !== null) {
-    return res.send('<script>alert("이미 존재하는 이메일입니다."); history.go(-1);</script>');
-  }
-
-  const sameNickNameUser = await models.user.findOne({
-    where: {
-      userNick
-    }
-  });
-  if (sameNickNameUser !== null) {
-    return res.send('<script>alert("이미 존재하는 닉네임입니다."); history.go(-1);</script>');
-  }
-
-  const createSalt = () =>
-    new Promise((resolve, reject) => {
-      crypto.randomBytes(64, (err, buf) => {
-        if (err) reject(err);
-        resolve(buf.toString('base64'));
-      });
-    });
-
-  const createHashedPassword = (plainPassword) =>
-    new Promise(async (resolve, reject) => {
-      const salt = await createSalt();
-      crypto.pbkdf2(plainPassword, salt, 9999, 64, 'sha512', (err, key) => {
-        if (err) reject(err);
-        resolve({
-          userPwd: key.toString('base64'),
-          salt
-        });
-      });
-    });
-
+  console.log(req.body)
   const {
-    userPwd,
-    salt
-  } = await createHashedPassword(req.body.userPwd);
+    file,
+    userName,
+    hosName,
+    hosPost,
+    userAdres1,
+    userAdres2,
+    userAdres3,
+    hosPhone1,
+    hosPhone2,
+    hosPhone3,
+    userType,
+    userPosition,
+    pushYn
+  } = req.body;
 
   if (req.file != null) {
     const userImg = req.file.path;
-    await models.user.create({ userPwd, salt, userImg, userNick, userEmail, userAge, userAdres1, userAdres2, userSchool, 
-                                userPoint, userScore, userStatus, userAgree });
+    await models.user.create({
+      userImg,
+      userName,
+      hosName,
+      hosPost,
+      userAdres1,
+      userAdres2,
+      userAdres3,
+      hosPhone1,
+      hosPhone2,
+      hosPhone3,
+      userType,
+      userPosition,
+      pushYn
+    });
   } else {
-    await models.user.create({ userPwd, salt, userNick, userEmail, userAge, userAdres1, userAdres2, userSchool, 
-                                userPoint, userScore, userStatus, userAgree });
+    await models.user.create({
+      userName,
+      hosName,
+      hosPost,
+      userAdres1,
+      userAdres2,
+      userAdres3,
+      hosPhone1,
+      hosPhone2,
+      hosPhone3,
+      userType,
+      userPosition,
+      pushYn
+    });
   }
   res.send('<script>alert("회원 등록이 완료되었습니다."); location.href="/admin/m_user/page?page=1";</script>');
 });
 
 //사용자 정보 수정 페이지 이동
-router.get('/userUdtForm', async (req, res) => {
-  try {
-    const param = [req.query.uid, req.query.uid, req.query.uid];
-    const sql = "select *, ((select count(*) from certiContent where uid = ?) +\
-                        (select count(*) from post where uid = ?)) as contentAll\
-                  from user where uid = ?";
-    connection.query(sql, param, function (err, result) {
-      if (err) {
-        console.log(err);
-      }
-      let route = req.app.get('views') + '/m_user/orgm_udtForm';
-      console.log(route);
-      res.render(route, {
-        result: result
-      });
-    });
-
-  } catch (error) {
-    res.status(401).send(error.message);
-  }
+router.post('/userUdtForm', async (req, res) => {
+  let route = req.app.get('views') + '/m_user/orgm_udtForm';
+  res.render(route, {
+    result: req.body,
+    page: req.body.page
+  });
 });
 
 //사용자 정보 수정
@@ -218,26 +196,26 @@ router.post('/userUpdate', upload.single('file'), async (req, res) => {
   var param = "";
   if (req.file != null) {
     path = req.file.path;
-    param = [req.body.userNick, req.body.userEmail, req.body.userAge,
-      req.body.userAdres1, req.body.userAdres2, path, req.body.userSchool,
-      req.body.userPoint, req.body.userScore, req.body.userStatus,
-      req.body.userAgree, req.body.uid
+    param = [path, req.body.userName, req.body.hosName,
+      req.body.hosPost, req.body.userAdres1, req.body.userAdres2, req.body.userAdres3,
+      req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3,
+      req.body.userType, req.body.userPosition, req.body.uid
     ];
   } else {
-    param = [req.body.userNick, req.body.userEmail, req.body.userAge,
-      req.body.userAdres1, req.body.userAdres2, req.body.userImg, req.body.userSchool,
-      req.body.userPoint, req.body.userScore, req.body.userStatus,
-      req.body.userAgree, req.body.uid
+    param = [req.body.userImg, req.body.userName, req.body.hosName,
+      req.body.hosPost, req.body.userAdres1, req.body.userAdres2, req.body.userAdres3,
+      req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3,
+      req.body.userType, req.body.userPosition, req.body.uid
     ];
   }
-  const sql = "update user set userNick = ?, userEmail = ?, userAge = ?, userAdres1 = ?, userAdres2 = ?, userImg = ?, \
-                               userSchool = ?, userPoint = ?, userScore = ?, userStatus = ?, userAgree = ? \
-                               where uid = ?";
+  const sql = "update user set userImg = ?, userName = ?, hosName = ?, hosPost = ?, userAdres1 = ?, userAdres2 = ?, \
+                               userAdres3 = ?, hosPhone1 = ?, hosPhone2 = ?, hosPhone3 = ?, userType = ? , userPosition = ?\
+                where uid = ?";
   connection.query(sql, param, (err) => {
     if (err) {
       console.error(err);
     }
-    res.redirect('selectOne?uid=' + req.body.uid);
+    res.redirect('selectOne?uid=' + req.body.uid + '&page=' + req.body.page);
   });
 });
 
@@ -251,6 +229,7 @@ router.get('/userDelete', (req, res) => {
   const img = route.split(',');
   // console.log(str);
   // console.log(img);
+  // DB 글삭제
   for (var i = 0; i < str.length; i++) {
     const sql = "delete from user where uid = ?";
     connection.query(sql, str[i], (err) => {
@@ -259,19 +238,32 @@ router.get('/userDelete', (req, res) => {
       }
     });
   }
-  // console.log(img.length);
+  //서버에서 프로필 이미지 삭제
   for (var i = 0; i < img.length; i++) {
-    // console.log(img[i] + "if문 밖의 콘솔");
-    if(img[i] !== '' || img[i] !== undefined || img[i] !== null) {
-      // console.log(img[i] + "if문 안의 콘솔");
+    if (img[i] !== '') {
+      console.log("프로필 이미지 존재함.")
       fs.unlinkSync(img[i], (err) => {
         if (err) {
           console.log(err);
         }
         return;
       });
+    } else {
+      console.log("프로필 이미지 존재하지않음.")
     }
   }
+  // for (var i = 0; i < img.length; i++) {
+  //   // console.log(img[i] + "if문 밖의 콘솔");
+  //   if (img[i] !== '' || img[i] !== undefined || img[i] !== null) {
+  //     // console.log(img[i] + "if문 안의 콘솔");
+  //     fs.unlinkSync(img[i], (err) => {
+  //       if (err) {
+  //         console.log(err);
+  //       }
+  //       return;
+  //     });
+  //   }
+  // }
   res.send('<script>alert("삭제되었습니다."); location.href="/admin/m_user/page?page=1";</script>');
 });
 
@@ -317,7 +309,10 @@ router.get('/imgDelete', async (req, res) => {
       console.log("프로필 삭제 에러 발생");
     }
   }
-  res.redirect('userUdtForm?uid=' + req.query.uid);
+  let route = req.app.get('views') + '/m_user/orgm_udtForm';
+  res.render(route, {
+    result: req.query
+  });
 });
 
 //엑셀 다운로드
@@ -422,7 +417,7 @@ router.get('/userExcel', async (req, res) => {
              where 1=1";
 
   if (searchType1 != '') {
-  sql += " and userStatus = '" + searchType1 + "' \n";
+    sql += " and userStatus = '" + searchType1 + "' \n";
   }
   if (searchType2 != '') {
     sql += " and userAgree = '" + searchType2 + "' \n";

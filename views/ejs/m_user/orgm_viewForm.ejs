@@ -16,136 +16,145 @@
                <div class="card">
                   <div class="card-header">
                      <i class="fa fa-align-justify"></i> 회원정보 상세</div>
-                  <div class="card-body">
-                     <!-- 컨텐츠 -->
-                     <div class="form-group row">
-                        <label class="col-md-2 col-form-label" for="text-input">회원번호</label>
-                        <div class="col-md-9">
-                           <input class="form-control" id="ucmtitle" type="text" name="ucmtitle" disabled="disabled"
-                              value="<%=result[0].uid%>">
+                  <form name="udtForm" role="form">
+                     <input type="hidden" name="page" value="<%=page%>">
+                     <div class="card-body">
+                        <!-- 컨텐츠 -->
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">회원번호</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="uid" type="text" name="uid" readonly
+                                 value="<%=result[0].uid%>">
+                           </div>
                         </div>
-                     </div>
-                     <div class="form-group row">
-                        <label class="col-md-2 col-form-label" for="text-input">프로필사진</label>
-                        <div class="col-md-9">
-                           <% if(result.length > 0 && result[0].userImg != null && result[0].userImg != '') {%>
-                           <img src="../../../<%= result[0].userImg %>" alt="사진" width="40%" />
-                           <% }else{ %>
-                           등록된 프로필 사진이 없습니다.
-                           <% } %>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">프로필사진</label>
+                           <div class="col-md-9">
+                              <input type="hidden" name="userImg" value="<%=result[0].userImg%>">
+                              <% if(result.length > 0 && result[0].userImg != null && result[0].userImg != '') {%>
+                              <img src="../../../<%= result[0].userImg %>" alt="사진" width="40%" />
+                              <% }else{ %>
+                              등록된 프로필 사진이 없습니다.
+                              <% } %>
+                           </div>
                         </div>
-                     </div>
-                     <div class="form-group row">
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">회원명</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="userName" type="text" name="userName" readonly
+                                 value="<%=result[0].userName%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">병원명</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="hosName" type="text" name="hosName" readonly
+                                 value="<%=result[0].hosName%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">우편번호</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="hosPost" type="text" name="hosPost" readonly
+                                 value="<%=result[0].hosPost%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">병원주소</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="ucmtitle" type="text" name="ucmtitle" readonly
+                                 value="<%=result[0].userAdres1%> <%=result[0].userAdres2%> <%=result[0].userAdres3%>">
+                              <input type="hidden" id="userAdres1" name="userAdres1" value="<%=result[0].userAdres1%>">
+                              <input type="hidden" id="userAdres2" name="userAdres2" value="<%=result[0].userAdres2%>">
+                              <input type="hidden" id="userAdres3" name="userAdres3" value="<%=result[0].userAdres3%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">병원번호</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="ucmtitle" type="text" name="ucmtitle" readonly
+                                 value="<%=result[0].hosPhone1%>-<%=result[0].hosPhone2%>-<%=result[0].hosPhone3%>">
+                              <input type="hidden" id="hosPhone1" name="hosPhone1" value="<%=result[0].hosPhone1%>">
+                              <input type="hidden" id="hosPhone2" name="hosPhone2" value="<%=result[0].hosPhone2%>">
+                              <input type="hidden" id="hosPhone3" name="hosPhone3" value="<%=result[0].hosPhone3%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">형태</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="userType" type="text" name="userType" readonly
+                                 value="<%=result[0].userType%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">역할</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="userPosition" type="text" name="userPosition" readonly
+                                 value="<%=result[0].userPosition%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">푸쉬알림</label>
+                           <div class="col-md-9">
+                              <% if (result[0].pushYn == '0'){%>
+                              <input class="form-control" id="pushYn" type="text" name="pushYn" readonly value="동의">
+                              <% } else if (result[0].pushYn == '1') {%>
+                              <input class="form-control" id="pushYn" type="text" name="pushYn" readonly value="비동의">
+                              <%}%>   
+                        </div>
+                     <!-- <div class="form-group row">
                         <label class="col-md-2 col-form-label" for="text-input">이메일</label>
                         <div class="col-md-9">
-                           <input class="form-control" id="ucmtitle" type="text" name="ucmtitle" disabled="disabled"
-                              value="<%=result[0].userEmail%>">
+                           <input class="form-control" id="userPosition" type="text" name="userPosition" readonly
+                              value="">
                         </div>
                      </div>
                      <div class="form-group row">
-                        <label class="col-md-2 col-form-label" for="text-input">닉네임</label>
+                        <label class="col-md-2 col-form-label" for="text-input">팩스</label>
                         <div class="col-md-9">
-                           <input class="form-control" id="ucmtitle" type="text" name="ucmtitle" disabled="disabled"
-                              value="<%=result[0].userNick%>">
+                           <input class="form-control" id="userPosition" type="text" name="userPosition" readonly
+                              value="">
                         </div>
                      </div>
                      <div class="form-group row">
-                        <label class="col-md-2 col-form-label" for="text-input">나이</label>
+                        <label class="col-md-2 col-form-label" for="text-input">휴대번호</label>
                         <div class="col-md-9">
-                           <input class="form-control" id="ucmtitle" type="text" name="ucmtitle" disabled="disabled"
-                              value="<%=result[0].userAge%>세">
+                           <input class="form-control" id="userPosition" type="text" name="userPosition" readonly
+                              value="">
                         </div>
                      </div>
                      <div class="form-group row">
-                        <label class="col-md-2 col-form-label" for="text-input">주소</label>
+                        <label class="col-md-2 col-form-label" for="text-input">병원이미지</label>
                         <div class="col-md-9">
-                           <input class="form-control" id="ucmtitle" type="text" name="ucmtitle" disabled="disabled"
-                              value="<%=result[0].userAdres1%> <%=result[0].userAdres2%>">
+                           <input class="form-control" id="userPosition" type="text" name="userPosition" readonly
+                              value="">
                         </div>
                      </div>
                      <div class="form-group row">
-                        <label class="col-md-2 col-form-label" for="text-input">학교</label>
+                        <label class="col-md-2 col-form-label" for="text-input">홈페이지</label>
                         <div class="col-md-9">
-                           <input class="form-control" id="ucmtitle" type="text" name="ucmtitle" disabled="disabled"
-                              value="<%=result[0].userSchool%>">
+                           <input class="form-control" id="userPosition" type="text" name="userPosition" readonly
+                              value="">
                         </div>
-                     </div>
-                     <div class="form-group row">
-                        <label class="col-md-2 col-form-label" for="text-input">포인트</label>
-                        <div class="col-md-9">
-                           <input class="form-control" id="ucmtitle" type="text" name="ucmtitle" disabled="disabled"
-                              value="<%=result[0].userPoint%>점">
-                        </div>
-                     </div>
-                     <div class="form-group row">
-                        <label class="col-md-2 col-form-label" for="text-input">계산점수</label>
-                        <div class="col-md-9">
-                           <input class="form-control" id="ucmtitle" type="text" name="ucmtitle" disabled="disabled"
-                              value="<%=result[0].userScore%>점">
-                        </div>
-                     </div>
-                     <div class="form-group row">
-                        <label class="col-md-2 col-form-label" for="text-input">나무등급</label>
-                        <div class="col-md-9">
-                           <input class="form-control" id="ucmtitle" type="text" name="ucmtitle" disabled="disabled"
-                              value="<%=result[0].userTree%>">
-                        </div>
-                     </div>
-                     <div class="form-group row">
-                        <label class="col-md-2 col-form-label" for="text-input">작성한 게시글 수</label>
-                        <div class="col-md-9">
-                           <input class="form-control" id="ucmtitle" type="text" name="ucmtitle" disabled="disabled"
-                              value="<%=result[0].contentAll%>개">
-                        </div>
-                     </div>
-                     <div class="form-group row">
-                        <label class="col-md-2 col-form-label" for="text-input">상태</label>
-                        <div class="col-md-9">
-                           <%if(result[0].userStatus !=null && result[0].userStatus!='null' && result[0].userStatus!=''){%>
-                           <% if (result[0].userStatus == '0'){%>
-                           <input class="form-control" id="ucmtitle" type="text" name="ucmtitle" disabled="disabled"
-                              value="활동중">
-                           <% } else if (result[0].userStatus == '1') {%>
-                           <input class="form-control" id="ucmtitle" type="text" name="ucmtitle" disabled="disabled"
-                              value="탈퇴">
-                           <%}%>   
-                                 <%}%>
-                        </div>
-                     </div>
-                     <div class="form-group row">
-                        <label class="col-md-2 col-form-label" for="text-input">개인정보 동의여부</label>
-                        <div class="col-md-9">
-                           <%if(result[0].userAgree !=null && result[0].userAgree!='null' && result[0].userAgree!=''){%>
-                           <% if (result[0].userAgree == '0'){%>
-                           <input class="form-control" id="ucmtitle" type="text" name="ucmtitle" disabled="disabled"
-                              value="동의">
-                           <% } else if (result[0].userAgree == '1') {%>
-                           <input class="form-control" id="ucmtitle" type="text" name="ucmtitle" disabled="disabled"
-                              value="비동의">
-                           <%}%>   
-                              <%}%>
+                     </div>-->
 
-                        </div>
-                     </div>
                      <!--option 버튼  -->
-                     <form name="udtForm" role="form">
-                        <input type="hidden" name="uid" value="<%=result[0].uid%>">
-                        <input type="hidden" name="userImg" value="<%=result[0].userImg%>">
                         <div class="option_button">
                            <div>
                               <button class="btn btn-block btn-outline-success" type="button"
                                  id="update_btn">수정</button>
-                              </div>
-                              <div>
-                                 <button class="btn btn-block btn-outline-danger" type="button" id="delete_btn">삭제</button>
-                              </div>
-                              <div>
-                                 <button class="btn btn-block btn-outline-success" type="button"
-                                    onclick="location.href='/admin/m_user/page?page=1'">목록</button>
-                              </div>
+                           </div>
+                           <div>
+                              <button class="btn btn-block btn-outline-danger" type="button"
+                                 id="delete_btn">삭제</button>
+                           </div>
+                           <div>
+                              <button class="btn btn-block btn-outline-success" type="button"
+                                 onclick="location.href='/admin/m_user/page?page=<%=page%><%=keepSearch%>'">목록</button>
+                           </div>
                         </div>
-                     </form>
-                  </div>
+                     </div>
+                  </form>
                </div>
             </div>
          </div>
@@ -159,7 +168,7 @@
       // 수정 폼 연결
       $("#update_btn").on("click", function () {
          formObj.attr("action", "userUdtForm");
-         formObj.attr("method", "get");
+         formObj.attr("method", "post");
          formObj.submit();
       });
       // 삭제

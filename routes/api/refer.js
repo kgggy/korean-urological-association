@@ -12,7 +12,7 @@ var connection = require('../../config/db').conn;
 //공지사항 글 전체 목록 조회
 router.get('/', async (req, res) => {
     try {
-        const sql = "select writDate, referTitle from reference order by writDate desc";
+        const sql = "select * from reference order by referWritDate desc";
         let refers;
         connection.query(sql, (err, results) => {
             if (err) {

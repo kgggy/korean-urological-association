@@ -9,7 +9,6 @@ const m_certification = require('./m_certification.js');
 const m_certiContent = require('./m_certiContent.js');
 const m_comment = require('./m_comment.js');
 const m_company = require('./m_company.js');
-const c_mypage = require('./c_mypage.js');
 
 // router.use('/', (req,res,next) => {
 //     if(req.url == '/' || req.url == '/login') {
@@ -38,6 +37,5 @@ router.use('/m_certification', m_certification);
 router.use('/m_certiContent', m_certiContent);
 router.use('/m_comment', m_comment);
 router.use('/m_company', m_company);
-router.use('/c_mypage', c_mypage);
 
 module.exports = router;
