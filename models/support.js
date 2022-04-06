@@ -1,26 +1,26 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('admin', {
-    adminNo: {
+  return sequelize.define('support', {
+    supportId: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
-      comment: "관리자 일련번호"
+      comment: "일련번호"
     },
-    adminId: {
-      type: DataTypes.STRING(45),
-      allowNull: false,
-      comment: "관리자 아이디"
+    supportImg: {
+      type: DataTypes.STRING(200),
+      allowNull: true,
+      comment: "이미지"
     },
-    adminPwd: {
+    supporter: {
       type: DataTypes.STRING(45),
-      allowNull: false,
-      comment: "관리자 비밀번호"
+      allowNull: true,
+      comment: "업체명"
     }
   }, {
     sequelize,
-    tableName: 'admin',
+    tableName: 'support',
     timestamps: false,
     indexes: [
       {
@@ -28,7 +28,7 @@ module.exports = function(sequelize, DataTypes) {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "adminNo" },
+          { name: "supportId" },
         ]
       },
     ]

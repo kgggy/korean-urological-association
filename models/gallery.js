@@ -6,22 +6,22 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
-      comment: "갤러리 글번호"
+      comment: "일련번호"
     },
-    writDate: {
+    galleryWritDate: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
       comment: "작성일자"
     },
     galleryTitle: {
-      type: DataTypes.STRING(45),
+      type: DataTypes.STRING(200),
       allowNull: false,
       comment: "제목"
     },
     galleryContent: {
       type: DataTypes.STRING(3000),
-      allowNull: true,
+      allowNull: false,
       comment: "내용"
     },
     galleryHit: {

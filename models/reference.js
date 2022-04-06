@@ -6,22 +6,22 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
-      comment: "자료실 글번호"
+      comment: "일련번호"
     },
-    writDate: {
+    referWritDate: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
       comment: "작성일자"
     },
     referTitle: {
-      type: DataTypes.STRING(45),
+      type: DataTypes.STRING(200),
       allowNull: false,
       comment: "제목"
     },
     referContent: {
       type: DataTypes.STRING(3000),
-      allowNull: true,
+      allowNull: false,
       comment: "내용"
     },
     referHit: {

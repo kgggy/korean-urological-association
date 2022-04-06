@@ -1,38 +1,38 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('notice', {
-    noticeId: {
+  return sequelize.define('file', {
+    fileId: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       comment: "일련번호"
     },
-    noticeWritDate: {
-      type: DataTypes.DATE,
+    fileRoute: {
+      type: DataTypes.STRING(300),
       allowNull: false,
-      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
-      comment: "작성일자"
+      comment: "파일경로"
     },
-    noticeTitle: {
+    fileOrgName: {
       type: DataTypes.STRING(200),
-      allowNull: false,
-      comment: "제목"
+      allowNull: true,
+      comment: "원본명"
     },
-    noticeContent: {
-      type: DataTypes.STRING(3000),
-      allowNull: false,
-      comment: "내용"
-    },
-    noticeHit: {
+    galleryId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0,
-      comment: "조회수"
+      allowNull: true
+    },
+    referId: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    noticeId: {
+      type: DataTypes.INTEGER,
+      allowNull: true
     }
   }, {
     sequelize,
-    tableName: 'notice',
+    tableName: 'file',
     timestamps: false,
     indexes: [
       {
@@ -40,7 +40,7 @@ module.exports = function(sequelize, DataTypes) {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "noticeId" },
+          { name: "fileId" },
         ]
       },
     ]

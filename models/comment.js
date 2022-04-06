@@ -1,38 +1,44 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('notice', {
-    noticeId: {
+  return sequelize.define('comment', {
+    cmtId: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       comment: "일련번호"
     },
-    noticeWritDate: {
+    cmtContent: {
+      type: DataTypes.STRING(500),
+      allowNull: false,
+      comment: "댓글 내용"
+    },
+    cmtWritDate: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
       comment: "작성일자"
     },
-    noticeTitle: {
-      type: DataTypes.STRING(200),
-      allowNull: false,
-      comment: "제목"
+    noticeId: {
+      type: DataTypes.INTEGER,
+      allowNull: true
     },
-    noticeContent: {
-      type: DataTypes.STRING(3000),
-      allowNull: false,
-      comment: "내용"
+    galleryId: {
+      type: DataTypes.INTEGER,
+      allowNull: true
     },
-    noticeHit: {
+    referId: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    uid: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0,
-      comment: "조회수"
+      comment: "작성자"
     }
   }, {
     sequelize,
-    tableName: 'notice',
+    tableName: 'comment',
     timestamps: false,
     indexes: [
       {
@@ -40,7 +46,7 @@ module.exports = function(sequelize, DataTypes) {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "noticeId" },
+          { name: "cmtId" },
         ]
       },
     ]
