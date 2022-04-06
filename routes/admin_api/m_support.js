@@ -4,9 +4,6 @@ const fs = require('fs');
 
 var express = require('express');
 var router = express.Router();
-const mysql = require('mysql');
-
-const connt = require("../../config/db")
 
 //파일 업로드 모듈
 var upload = multer({ //multer안에 storage정보  
@@ -15,7 +12,7 @@ var upload = multer({ //multer안에 storage정보
             //파일이 이미지 파일이면
             if (file.mimetype == "image/jpeg" || file.mimetype == "image/jpg" || file.mimetype == "image/png") {
                 // console.log("이미지 파일입니다.");
-                callback(null, 'public/images/banner');
+                callback(null, 'public/images/support');
             }
         },
         //파일이름 설정
@@ -31,9 +28,7 @@ var upload = multer({ //multer안에 storage정보
 
 });
 
-// DB 커넥션 생성
-//var connection = mysql.createConnection(connt);
-//connection.connect();                    
+// DB 커넥션 생성                   
 var connection = require('../../config/db').conn;
 
 //배너 전체조회
