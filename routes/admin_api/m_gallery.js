@@ -52,7 +52,7 @@ var upload = multer({ //multer안에 storage정보
 });
 
 //공지사항 글 전체조회
-router.get('/notice', async (req, res) => {
+router.get('/gallery', async (req, res) => {
     try {
         var page = req.query.page;
         var searchText = req.query.searchText == undefined ? "" : req.query.searchText;

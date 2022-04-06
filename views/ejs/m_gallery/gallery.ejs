@@ -22,7 +22,7 @@
         <li class="breadcrumb-item">
             <a style="font-weight: bold;">게시판관리</a>
         </li>
-        <li class="breadcrumb-item active">공지사항</li>
+        <li class="breadcrumb-item active"> 갤러리 </li>
     </ol>
     <div class="container-fluid">
         <div class="animated fadeIn">
@@ -30,7 +30,7 @@
                 <div class="col-lg-6">
                     <div class="card">
                         <div class="card-header">
-                            <i class="fa fa-align-justify"> 공지사항</i> 
+                            <i class="fa fa-align-justify"></i> 
                         </div>
                         <div class="card-body">
                             <form id="noticeForm" name="noticeForm" method="" action="">
@@ -267,7 +267,7 @@
                 < </a> </li>`
         for(var i = 0; i <= dataLength/dataPage; i++){ 
             temp += `<li class="paging_on">
-                    <a style="background-color:#FC8B5F; color:white;" href="/admin/m_notice/notice?page=${i + 1}&searchText=${datas.searchText}"`
+                    <a href="/admin/m_notice/notice?page=${i + 1}&searchText=${datas.searchText}"`
         if(page==i + 1){
             temp += `class="selected"`
         }else{
