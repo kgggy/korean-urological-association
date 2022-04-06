@@ -51,43 +51,25 @@ var upload = multer({ //multer안에 storage정보
 
 });
 
-//카테고리별 글 전체조회
-router.get('/all', async (req, res) => {
+//공지사항 글 전체조회
+router.get('/notice', async (req, res) => {
     try {
-        //카테고리 명 조회
-        const param = req.query.boardId;
-        const sql1 = "select * from community where boardId = ?";
-        let community = "";
-        connection.query(sql1, param, (err, results) => {
-            if (err) {
-                console.log(err);
-            }
-            community = results;
-        });
-        //게시판별 글 전체조회
         var page = req.query.page;
-        var searchType = req.query.searchType == undefined ? "" : req.query.searchType;
         var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
-        var keepSearch = "&searchType=" + searchType + "&searchText=" + searchText;
-        var sql = "select p.*, c.*, u.userNick, m.comNick, u.uid, date_format(writDate, '%Y-%m-%d') as writDatefmt, date_format(writUpdDate, '%Y-%m-%d') as writUpdDatefmt\
-                       from post p\
-                  left join community c on c.boardId = p.boardId\
-                  left join user u  on u.uid = p.uid\
-                  left join company m on m.comId = p.comId\
-                      where p.boardId = ?";
-        if (searchType != '' && searchText != '') {
-            sql += " and " + searchType + " like '%" + searchText + "%'";
+        var keepSearch = "&searchText=" + searchText;
+        var sql = "select *,  date_format(noticeWritDate, '%Y-%m-%d') as noticeWritDateFmt\
+                       from notice";
+        if (searchText != '') {
+            sql += "where noticeTitle like '%"+searchText+"%' or noticeContent like '%"+searchText+"%'";
         }
-        sql += " order by p.writRank is null asc, nullif(p.writRank, '') is null asc, p.writRank, p.writDate desc";
-        connection.query(sql, param, (err, results) => {
+        sql += " order by 1 desc";
+        connection.query(sql, (err, results) => {
             var last = Math.ceil((results.length) / 15);
             if (err) {
                 console.log(err);
             }
-            let route = req.app.get('views') + '/m_board/board';
+            let route = req.app.get('views') + '/m_notice/notice';
             res.render(route, {
-                community: community,
-                searchType: searchType,
                 searchText: searchText,
                 results: results,
                 page: page,
@@ -103,16 +85,45 @@ router.get('/all', async (req, res) => {
     }
 });
 
-//각 커뮤니티별 글 상세조회
+//게시글 검색(ajax)
+router.get('/noticeSearch', async (req, res) => {
+    var page = req.query.page;
+    var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
+    var keepSearch = "&searchText=" + searchText;
+    var sql = "select *,  date_format(noticeWritDate, '%Y-%m-%d') as noticeWritDateFmt from notice";
+    if (searchText != '') {
+        sql += " where noticeTitle like '%" + searchText + "%' or noticeContent like '%" + searchText + "%'";
+    }
+    sql += " order by 1 desc";
+    connection.query(sql, (err, results) => {
+        if (err) {
+            console.log(err)
+        }
+         console.log("searchText = " + searchText)
+         console.log("results = " + results)
+        var last = Math.ceil((results.length) / 10);
+        // ajaxSearch = results;
+        res.send({
+            ajaxSearch: results,
+            page: page,
+            length: results.length - 1,
+            page_num: 10,
+            pass: true,
+            last: last,
+            searchText: searchText
+        });
+        console.log("ajaxSearch = " + results.length);
+        // console.log("page = " + page)
+    });
+});
+
+//공지사항 글 상세조회
 router.get('/selectOne', async (req, res) => {
     try {
-        const param = req.query.writId;
-        const sql = "select p.*, c.comNick, f.fileRoute, f.fileOrgName, f.fileNo, u.userNick, date_format(writDate, '%Y-%m-%d') as writDatefmt, date_format(writUpdDate, '%Y-%m-%d') as writUpdDatefmt\
-                        from post p\
-                   left join file f on f.writId = p.writId\
-                   left join user u on u.uid = p.uid\
-                   left join company c on c.comId = p.comId\
-                       where p.writId = ?";
+        const param = req.query.noticeId;
+        const sql = "select *,date_format(noticeWritDate, '%Y-%m-%d') as noticeWritDateFmt\
+                        from notice\
+                       where notice = ?";
 
         connection.query(sql, param, (err, result) => {
             if (err) {
@@ -120,7 +131,7 @@ router.get('/selectOne', async (req, res) => {
                     msg: "select query error"
                 });
             }
-            let route = req.app.get('views') + '/m_board/brd_viewForm';
+            let route = req.app.get('views') + '/m_notice/notice_viewForm';
             res.render(route, {
                 'result': result
             });
@@ -133,31 +144,31 @@ router.get('/selectOne', async (req, res) => {
 //게시글 등록 폼 이동
 router.get('/writForm', async (req, res) => {
     console.log(req.query.uid)
-    console.log(req.query.boardId)
-    let route = req.app.get('views') + '/m_board/brd_writForm.ejs';
+    console.log(req.query.noticeId)
+    let route = req.app.get('views') + '/m_notice/notice_writForm.ejs';
     res.render(route, {
         uid: req.query.uid,
-        boardId: req.query.boardId
+        noticeId: req.query.noticeId
     });
 });
 
 //게시글 작성 및 파일첨부
-router.post('/boardwrite', upload.array('file'), async (req, res, next) => {
+router.post('/noticewrite', upload.array('file'), async (req, res, next) => {
     const paths = req.files.map(data => data.path);
     const orgName = req.files.map(data => data.originalname);
     // console.log(paths);
     const sessionId = req.session.user.comId;
     try {
-        const boardWritId = uuid();
+        const noticeWritId = uuid();
         // req.body.writRank = parseInt(req.body.writRank);
-        const param1 = [boardWritId, req.body.boardId, sessionId, req.body.writTitle, req.body.writContent, req.body.writRank, req.body.writRank];
-        const sql1 = "insert into post(writId, boardId, comId, writTitle, writContent, writRank) values(?, ?, ?, ?, ?, if(trim(?)='', null, ?))";
+        const param1 = [noticeWritId, req.body.noticeId, sessionId, req.body.writTitle, req.body.writContent, req.body.writRank, req.body.writRank];
+        const sql1 = "insert into post(writId, noticeId, comId, writTitle, writContent, writRank) values(?, ?, ?, ?, ?, if(trim(?)='', null, ?))";
         connection.query(sql1, param1, (err) => {
             if (err) {
                 throw err;
             }
             for (let i = 0; i < paths.length; i++) {
-                const param2 = [boardWritId, paths[i], i + 1, orgName[i], path.extname(paths[i])];
+                const param2 = [noticeWritId, paths[i], i + 1, orgName[i], path.extname(paths[i])];
                 // console.log(param2);
                 const sql2 = "insert into file(writId, fileRoute, fileNo, fileOrgName, fileType) values (?, ?, ?, ?, ?)";
                 connection.query(sql2, param2, (err) => {
@@ -167,7 +178,7 @@ router.post('/boardwrite', upload.array('file'), async (req, res, next) => {
                 });
             };
         });
-        res.send('<script>alert("게시글이 등록되었습니다."); location.href="/admin/m_board/all?boardId=' + req.body.boardId + '&page=1";</script>');
+        res.send('<script>alert("게시글이 등록되었습니다."); location.href="/admin/m_notice/all?noticeId=' + req.body.noticeId + '&page=1";</script>');
     } catch (error) {
         res.send(error.message);
     }
@@ -186,7 +197,7 @@ router.get('/brdUdtForm', async (req, res) => {
             if (err) {
                 console.log(err);
             }
-            let route = req.app.get('views') + '/m_board/brd_udtForm';
+            let route = req.app.get('views') + '/m_notice/brd_udtForm';
             console.log(route);
             res.render(route, {
                 'result': result
@@ -269,14 +280,15 @@ router.get('/fileDelete', async (req, res) => {
     res.redirect('brdUdtForm?writId=' + req.query.writId);
 });
 
-//게시글 여러개 삭제
-router.get('/boardsDelete', (req, res) => {
-    const boardId = req.query.boardId;
-    const param = req.query.writId;
+//공지사항 여러개 삭제
+router.get('/noticesDelete', (req, res) => {
+    const noticeId = req.query.noticeId;
+    const param = req.query.noticeId;
     const str = param.split(',');
+    console.log(param);
     for (var i = 0; i < str.length; i++) {
         let fileRoute = [];
-        const sql1 = "select fileRoute from file where writId = ?";
+        const sql1 = "select fileRoute from file where noticeId = ?";
         connection.query(sql1, str[i], (err, result) => {
             if (err) {
                 console.log(err)
@@ -293,23 +305,23 @@ router.get('/boardsDelete', (req, res) => {
                 }
             }
         });
-        const sql = "delete from post where writId = ?";
+        const sql = "delete from notice where noticeId = ?";
         connection.query(sql, str[i], (err) => {
             if (err) {
                 console.log(err)
             }
         });
     }
-    res.send('<script>alert("삭제되었습니다."); location.href="/admin/m_board/all?boardId=' + boardId + '&page=1";</script>');
+    res.send('<script>alert("삭제되었습니다."); location.href="/admin/m_notice/notice?page=1";</script>');
 });
 
-//게시글 삭제
-router.get('/brdDelete', async (req, res) => {
+//공지사항 삭제
+router.get('/noticeDelete', async (req, res) => {
     try {
         const param = req.query.writId;
-        const boardId = req.query.boardId;
+        const noticeId = req.query.noticeId;
         // console.log(param);
-        const sql = "delete from post where writId = ?";
+        const sql = "delete from notice where noticeId = ?";
         connection.query(sql, param, (err) => {
             if (err) {
                 console.log(err);
@@ -328,7 +340,7 @@ router.get('/brdDelete', async (req, res) => {
                     });
                 }
             }
-            res.send('<script>alert("게시글이 삭제되었습니다."); location.href="/admin/m_board/all?boardId=' + boardId + '&page=1";</script>');
+            res.send('<script>alert("게시글이 삭제되었습니다."); location.href="/admin/m_notice/notice?page=1";</script>');
         });
     } catch (error) {
         res.send(error.message);
