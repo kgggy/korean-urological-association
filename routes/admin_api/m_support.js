@@ -31,19 +31,18 @@ var upload = multer({ //multer안에 storage정보
 // DB 커넥션 생성                   
 var connection = require('../../config/db').conn;
 
-//배너 전체조회
-router.get('/banner', async (req, res) => {
+//후원목록조회
+router.get('/', async (req, res) => {
     try {
-        const sql = "select *, date_format(startDate, '%Y-%m-%d') as startDatefmt, date_format(endDate, '%Y-%m-%d') as endDatefmt\
-                       from banner where bannerDiv = ? order by showNo is null asc, nullif(showNo, '') is null asc, showNo, bannerId";
-        connection.query(sql, req.query.bannerDiv, (err, results) => {
+        const sql = "select * from support";
+        connection.query(sql, (err, results) => {
             if (err) {
                 console.log(err);
                 res.json({
                     msg: "query error"
                 });
             }
-            let route = req.app.get('views') + '/m_banner/banner';
+            let route = req.app.get('views') + '/m_support/support';
             res.render(route, {
                 'results': results
             });
@@ -53,48 +52,40 @@ router.get('/banner', async (req, res) => {
     }
 });
 
-//배너 등록폼 이동
-router.get('/bannerWritForm', async (req, res) => {
-    let route = req.app.get('views') + '/m_banner/banner_writForm';
+//후원광고 등록폼 이동
+router.get('/supportWritForm', async (req, res) => {
+    let route = req.app.get('views') + '/m_support/support_writForm';
     res.render(route);
 });
 
-//배너 등록
-router.post('/bannerWrit', upload.single('file'), async function (req, res) {
-    var path = "";
-    var param = "";
-    if (req.file != null) {
-        path = req.file.path;
-        param = [path, req.body.startDate, req.body.startDate,
-            req.body.endDate, req.body.endDate, req.body.showYN, req.body.showNo, req.body.bannerDiv
-        ];
-    } else {
-        param = [req.body.bannerRoute, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, req.body.showYN, req.body.showNo, req.body.bannerDiv];
-    }
-    // console.log(param);
+//후원광고 등록
+router.post('/supportWrit', upload.single('file'), async function (req, res) {
+    const path = req.file.path;
+    const param = [path, req.body.supporter];
+    console.log(param);
     try {
-        const sql = "insert into banner(bannerRoute, startDate, endDate, showYN, showNo, bannerDiv) values(?, if(? = '',null,?), if(? = '',null,?), ?, ?, ?)";
+        const sql = "insert into support(supportImg, supporter) values(?, ?)";
         connection.query(sql, param, (err) => {
             if (err) {
                 throw err;
             }
-            res.redirect("/admin/m_banner/banner?bannerDiv=" + req.body.bannerDiv);
+            res.redirect("/admin/m_support?page=1");
         });
     } catch (error) {
         res.send(error.message);
     }
 });
 
-//배너 수정폼 이동
-router.get('/bannerUdtForm', async (req, res) => {
+//후원광고 수정폼 이동
+router.get('/supportUdtForm', async (req, res) => {
     try {
-        const param = req.query.bannerId;
-        const sql = "select *, date_format(startDate, '%Y-%m-%d') as startDatefmt, date_format(endDate, '%Y-%m-%d') as endDatefmt from banner where bannerId = ?"
+        const param = req.query.supportId;
+        const sql = "select * from support where supportId = ?"
         connection.query(sql, param, function (err, result, fields) {
             if (err) {
                 console.log(err);
             }
-            let route = req.app.get('views') + '/m_banner/banner_udtForm';
+            let route = req.app.get('views') + '/m_support/support_udtForm';
             res.render(route, {
                 'result': result
             });
@@ -152,26 +143,23 @@ router.get('/bannerImgDelete', async (req, res) => {
     res.redirect('bannerUdtForm?bannerId=' + req.query.bannerId);
 });
 
-//배너 삭제
-router.get('/bannerDelete', async (req, res) => {
+//후원광고 삭제
+router.get('/supportDelete', async (req, res) => {
     try {
-        const bannerDiv = req.query.bannerDiv;
-        const param = req.query.bannerRoute;
-        console.log(bannerDiv, param, req.query.bannerId)
-        const sql = "delete from banner where bannerId = ?";
-        connection.query(sql, req.query.bannerId, (err, row) => {
+        const supportImg = req.query.supportImg;
+        const sql = "delete from support where supportId = ?";
+        connection.query(sql, req.query.supportId, (err, row) => {
             if (err) {
                 console.log("쿼리 에러입니다.");
             }
-            console.log(param);
-            if(param !== '') {
-                fs.unlinkSync(param, (err) => {
+            if (supportImg !== '') {
+                fs.unlinkSync(supportImg, (err) => {
                     if (err) {
                         console.log(err);
                     }
                 });
             }
-            res.redirect('banner?bannerDiv=' + bannerDiv);
+            res.redirect("/admin/m_support?page=1");
         });
     } catch (error) {
         res.send(error.message);
