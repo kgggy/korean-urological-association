@@ -35,7 +35,7 @@ router.get('/one/:galleryId', async (req, res) => {
         const sql1 = "update gallery set galleryHit= galleryHit + 1 where galleryId = ?";
         const sql2 = "select *\
                         from gallery n\
-                   left join file f on f.galleryId = n.galleryId\
+                   left join file f on f.boardId = n.galleryId\
                        where n.galleryId = ?";
         let gallery;
         connection.query(sql1, param, (err, row) => {

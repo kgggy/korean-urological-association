@@ -28,6 +28,24 @@
                                </div>
                             </div>
                             <div class="form-group row">
+                              <label class="col-md-2 col-form-label" for="text-input">첨부파일</label>
+                              <div class="col-md-9">
+                                 <% if(result[0].fileRoute != null && result[0].fileRoute != '') {%>
+                                    <% for(var i = 0; i < result.length; i++) { %>
+                                    <img src="../../../<%= result[i].fileRoute %>" alt="사진"
+                                        style="padding:0 50px 8px 0 !important; width:40%; vertical-align: top !important;" />
+                                    <a href="../../../<%= result[i].fileRoute %>"
+                                        class="btn btn-block btn-outline-success" type="button" style="width:30%;"
+                                        download>파일 다운로드</a>
+                                    </p>
+                                    <input type="hidden" name="fileRoute" value="<%=result[i].fileRoute%>">
+                                    <% } %>
+                                    <% }else{ %>
+                                    이미지가 존재하지 않습니다.
+                                    <% } %>
+                              </div>
+                           </div>
+                            <div class="form-group row">
                                <label class="col-md-2 col-form-label" for="text-input">제목</label>
                                <div class="col-md-9">
                                   <input class="form-control" id="ucmtitle" type="text" name="ucmtitle"

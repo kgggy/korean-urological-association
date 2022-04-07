@@ -99,8 +99,9 @@ router.get('/referSelectOne', async (req, res) => {
     try {
         const param = req.query.referId;
         const page = req.query.page;
-        const sql = "select *,date_format(referWritDate, '%Y-%m-%d') as referWritDateFmt\
-                        from reference\
+        const sql = "select r.*, date_format(referWritDate, '%Y-%m-%d') as referWritDateFmt, f.fileRoute\
+                        from reference r\
+                        left join file f on f.boardId = r.referId\
                        where referId = ?";
         connection.query(sql, param, (err, result) => {
             if (err) {
@@ -108,6 +109,7 @@ router.get('/referSelectOne', async (req, res) => {
                     msg: "select query error"
                 });
             }
+            console.log(result)
             let route = req.app.get('views') + '/m_refer/refer_viewForm';
             res.render(route, {
                 'result': result,
