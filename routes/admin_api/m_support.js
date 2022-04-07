@@ -62,7 +62,6 @@ router.get('/supportWritForm', async (req, res) => {
 router.post('/supportWrit', upload.single('file'), async function (req, res) {
     const path = req.file.path;
     const param = [path, req.body.supporter];
-    console.log(param);
     try {
         const sql = "insert into support(supportImg, supporter) values(?, ?)";
         connection.query(sql, param, (err) => {
@@ -121,7 +120,6 @@ router.post('/bannerUpdate', upload.single('file'), async (req, res) => {
 //후원 이미지 파일 삭제
 router.get('/supportImgDelete', async (req, res) => {
     const param = req.query.supportImg;
-    console.log(param, req.query.supportId)
     try {
         const sql = "update support set supportImg = null where supportId = ?";
         connection.query(sql, req.query.supportId, (err, row) => {
