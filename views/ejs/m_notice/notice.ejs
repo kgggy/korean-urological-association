@@ -140,7 +140,6 @@
         var chkArr = [];
         $("input[name=chk]:checked").each(function () {
             chkArr.push($(this).val());
-            alert(chkArr);
         });
         $('#noticeId').val(chkArr);
         if (chkArr == "") {
