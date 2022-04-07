@@ -36,25 +36,53 @@
                   <div class="card-body">
                      <!-- 컨텐츠 -->
                      <form name="udtForm" role="form">
-                        <input type="hidden" id="noticeContent" name="noticeContent" value="">
+                        <input type="hidden" id="galleryContent" name="galleryContent" value="">
+                        <input type="hidden" name="fileId" value="">
+                        <input type="hidden" name="fileRoute" value="">
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">글번호</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="noticeId" type="text" name="noticeId" readonly
-                                 value="<%=result[0].noticeId%>">
+                              <input class="form-control" id="galleryId" type="text" name="galleryId" readonly
+                                 value="<%=result[0].galleryId%>">
                            </div>
                         </div>
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">제목</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="noticeTitle" type="text" name="noticeTitle"
-                                 value="<%=result[0].noticeTitle%>">
+                              <input class="form-control" id="galleryTitle" type="text" name="galleryTitle"
+                                 value="<%=result[0].galleryTitle%>">
                            </div>
                         </div>
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">내용</label>
                            <div class="col-md-9">
-                              <textarea name="editor" class="editor" id="editor"><%-result[0].noticeContent %></textarea>
+                              <textarea name="editor" class="editor" id="editor"><%-result[0].galleryContent %></textarea>
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label">첨부파일</label>
+                           <% if(result[0].fileRoute != null) { %>
+                           <div class="file-wrap banner_img_wrap">
+                              <% for(var i = 0; i < result.length; i++) {%>
+                              <p><span><%=result[i].fileOrgName%></span>
+                                 <button name="fileDelete" data-fileId="<%=result[i].fileId%>"
+                                    data-fileRoute="<%=result[i].fileRoute%>"
+                                    class="btn btn-block btn-outline-danger fileDelete">삭제</button></p>
+                              <% } %>
+                              <% if(result.length < 5) { %>
+                              <% for(var i = 0; i < 5-result.length; i++) {%>
+                              <br><br><input type="file" id="file" name="file" /><br><br>
+                              <% } %>
+                              <% } %>
+                              <% } else {%>
+                              <div style="display: flex; flex-direction: column; gap: 25px; padding-left: 15px">
+                                 <input type="file" id="file" name="file">
+                                 <input type="file" id="file" name="file" />
+                                 <input type="file" id="file" name="file" />
+                                 <input type="file" id="file" name="file" />
+                                 <input type="file" id="file" name="file" />
+                              </div>
+                              <% } %>
                            </div>
                         </div>
                         <!--option 버튼  -->
@@ -65,7 +93,7 @@
                            </div>
                            <div>
                               <button class="btn btn-block btn-outline-danger" type="button"
-                                 onclick="location.href='/admin/m_notice/notice?page=1'">취소</button>
+                                 onclick="location.href='/admin/m_gallery/gallery?page=1'">취소</button>
                            </div>
                      </form>
                   </div>
@@ -93,12 +121,12 @@
       var formObj = $("form[name='udtForm']");
       // 수정 폼 연결
       $("#update_btn").on("click", function () {
-         var noticeTitle = $("#noticeTitle").val();
+         var galleryTitle = $("#galleryTitle").val();
          var content = editor.getData();
 
-         if (noticeTitle == "") {
+         if (galleryTitle == "") {
             alert("제목을 입력하세요.");
-            $("#noticeTitle").focus();
+            $("#galleryTitle").focus();
             return false;
          }
 
@@ -109,8 +137,9 @@
          }
 
          if (confirm("수정하시겠습니까?") == true) {
-            $('input[name=noticeContent]').attr('value', content);
-            formObj.attr("action", "noticeUpdate");
+            $('input[name=galleryContent]').attr('value', content);
+            formObj.attr("action", "galleryUpdate");
+            formObj.attr("enctype", "multipart/form-data");
             formObj.attr("method", "post");
             formObj.submit();
             alert("수정되었습니다.");
@@ -118,5 +147,19 @@
             return;
          }
       });
+       //첨부파일 삭제
+      $("[name=fileDelete]").on("click", function () {
+         $('input[name=fileId').val($(this).attr('data-fileId'));
+         $('input[name=fileRoute').val($(this).attr('data-fileRoute'));
+         if (confirm("실제 파일이 삭제됩니다. 정말 삭제하시겠습니까?") == true) {
+            formObj.attr("action", "fileDelete");
+            formObj.attr("method", "get");
+            alert("삭제되었습니다.");
+            formObj.submit();
+         } else {
+            return;
+         }
+      });
    })
+   
 </script>

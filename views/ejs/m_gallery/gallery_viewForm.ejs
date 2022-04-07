@@ -5,7 +5,7 @@
           <li class="breadcrumb-item">
              <a style="font-weight: bold;">게시판관리</a>
           </li>
-          <li class="breadcrumb-item active">공지사항 상세</li>
+          <li class="breadcrumb-item active">갤러리 상세</li>
           <!-- Breadcrumb Menu-->
        </ol>
 
@@ -15,23 +15,23 @@
                 <div class="col-lg-6">
                    <div class="card">
                       <form name="udtForm" role="form">
-                         <input type="hidden" id="noticeId" name="noticeId" value="<%=result[0].noticeId%>">
+                         <input type="hidden" id="galleryId" name="galleryId" value="<%=result[0].galleryId%>">
                          <div class="card-header">
-                            <i class="fa fa-align-justify"></i> 공지사항 상세</div>
+                            <i class="fa fa-align-justify"></i> 갤러리 상세</div>
                          <div class="card-body">
                             <!-- 컨텐츠 -->
                             <div class="form-group row">
                                <label class="col-md-2 col-form-label" for="text-input">글번호</label>
                                <div class="col-md-9">
                                   <input class="form-control" id="ucmtitle" type="text" name="ucmtitle"
-                                     disabled="disabled" value="<%=result[0].noticeId%>">
+                                     disabled="disabled" value="<%=result[0].galleryId%>">
                                </div>
                             </div>
                             <div class="form-group row">
                                <label class="col-md-2 col-form-label" for="text-input">제목</label>
                                <div class="col-md-9">
                                   <input class="form-control" id="ucmtitle" type="text" name="ucmtitle"
-                                     disabled="disabled" value="<%=result[0].noticeTitle%>">
+                                     disabled="disabled" value="<%=result[0].galleryTitle%>">
                                </div>
                             </div>
                             <div class="form-group row">
@@ -39,22 +39,37 @@
                                <div class="col-md-9">
                                   <input class="form-control" id="ucmtitle" type="text" name="ucmtitle"
                                      disabled="disabled"
-                                     value="<%=result[0].noticeDatefmt%>">
+                                     value="<%=result[0].galleryDatefmt%>">
                                </div>
                             </div>
                             <div class="form-group row">
                                <label class="col-md-2 col-form-label" for="text-input">조회수</label>
                                <div class="col-md-9">
                                   <input class="form-control" id="ucmtitle" type="text" name="ucmtitle"
-                                     disabled="disabled" value="<%=result[0].noticeHit%>">
+                                     disabled="disabled" value="<%=result[0].galleryHit%>">
                                </div>
                             </div>
                             <div class="form-group row">
                                <label class="col-md-2 col-form-label" for="text-input">내용</label>
                                <div class="col-md-9">
-                                  <%-result[0].noticeContent%>
+                                  <%-result[0].galleryContent%>
                                </div>
                             </div>
+                           <div class="form-group row">
+                              <label class="col-md-2 col-form-label" for="text-input">갤러리사진</label>
+                              <% if(result.length > 0 && result[0].fileRoute != null && result[0].fileRoute != '') {
+                                 for(i=0; i<result.length; i++){%>
+                                    <input class="form-control" id="fileRoute" type="hidden" name="fileRoute"
+                                      value="<%=result[i].fileRoute%>">
+                                    <div class="col-md-9" style="margin-bottom:20px">
+                                       <img src="../../../<%=result[i].fileRoute %>" alt="사진" width="40%" />
+                                    </div>
+                                    <br><br>
+                                    <div class="col-md-2"></div>
+                                 <% }}else{ %>
+                                 등록된 사진이 없습니다.
+                              <% } %>
+                           </div>
                             <!--option 버튼  -->
                             <div class="option_button">
                                <div>
@@ -67,7 +82,7 @@
                                  </div>
                                  <div>
                                     <button class="btn btn-block btn-outline-success" type="button"
-                                       onclick="location.href='/admin/m_notice/notice?page=1'">목록</button>
+                                       onclick="location.href='/admin/m_gallery/gallery?page=1'">목록</button>
                                  </div>
                             </div>
                          </div>
@@ -84,13 +99,13 @@
        $(document).ready(function () {
           // 수정 폼 연결
           $("#update_btn").on("click", function () {
-             formObj.attr("action", "noticeUdtForm");
+             formObj.attr("action", "galleryUdtForm");
              formObj.attr("method", "get");
              formObj.submit();
           });
           // 삭제
           $("#delete_btn").on("click", function () {
-             formObj.attr("action", "noticeDelete");
+             formObj.attr("action", "galleryDelete");
              formObj.attr("method", "get");
              if (confirm("게시글을 삭제하시겠습니까?") == true) {
                 formObj.submit();

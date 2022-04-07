@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const mysql = require('mysql');
 const fs = require('fs');
+const sharp = require('sharp');
 
 const multer = require("multer");
 const path = require('path');
@@ -46,7 +47,7 @@ var upload = multer({ //multer안에 storage정보
 
 });
 
-//공지사항 글 전체조회
+//갤러리 글 전체조회
 router.get('/gallery', async (req, res) => {
     try {
         var page = req.query.page;
@@ -54,9 +55,6 @@ router.get('/gallery', async (req, res) => {
         var keepSearch = "&searchText=" + searchText;
         var sql = "select *,  date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt\
                        from gallery";
-        if (searchText != '') {
-            sql += "where galleryTitle like '%"+searchText+"%' or galleryContent like '%"+searchText+"%'";
-        }
         sql += " order by 2 desc";
         connection.query(sql, (err, results) => {
             var last = Math.ceil((results.length) / 15);
@@ -80,7 +78,7 @@ router.get('/gallery', async (req, res) => {
     }
 });
 
-//게시글 검색(ajax)
+//갤러리 검색(ajax)
 router.get('/gallerySearch', async (req, res) => {
     var page = req.query.page;
     var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
@@ -112,13 +110,14 @@ router.get('/gallerySearch', async (req, res) => {
     });
 });
 
-//공지사항 글 상세조회
+//갤러리 글 상세조회
 router.get('/gallerySelectOne', async (req, res) => {
     try {
         const param = req.query.galleryId;
-        const sql = "select *,date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt\
-                        from gallery\
-                       where galleryId = ?";
+        const sql = "select g.*, date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt, f.fileRoute\
+                        from gallery g\
+                        left join file f on f.boardId = g.galleryId\
+                        where g.galleryId = ?";
 
         connection.query(sql, param, (err, result) => {
             if (err) {
@@ -136,7 +135,7 @@ router.get('/gallerySelectOne', async (req, res) => {
     }
 });
 
-//게시글 등록 폼 이동
+//갤러리 등록 폼 이동
 router.get('/galleryWritForm', async (req, res) => {
     console.log(req.query.uid)
     console.log(req.query.galleryId)
@@ -185,8 +184,8 @@ router.post('/galleryWrite', upload.array('file'), async (req, res, next) => {
                 }
                 for (let i = 0; i < paths.length; i++) {
                     console.log(result);
-                    const param3 = [paths[i], orgName[i], result.galleryId];
-                    const sql3 = "insert into file(fileRoute, fileOrgName, galleryId) values (?, ?, ?)";
+                    const param3 = [paths[i], orgName[i], result[0].galleryId];
+                    const sql3 = "insert into file(fileRoute, fileOrgName, boardId) values (?, ?, ?)";
                     connection.query(sql3, param3, (err) => {
                         if (err) {
                             throw err;
@@ -228,7 +227,10 @@ router.post('/galleryWrite', upload.array('file'), async (req, res, next) => {
 router.get('/galleryUdtForm', async (req, res) => {
     try {
         const param = req.query.galleryId;
-        const sql = "select * from gallery where galleryId = ?";
+        const sql = "select g.*, date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt, f.fileRoute, f.fileOrgName, f.fileId\
+                        from gallery g\
+                        left join file f on f.boardId = g.galleryId\
+                        where g.galleryId = ?";
         connection.query(sql, param, function (err, result) {
             if (err) {
                 console.log(err);
@@ -246,20 +248,32 @@ router.get('/galleryUdtForm', async (req, res) => {
     }
 });
 
-//게시글 수정
-router.post('/galleryUpdate', (req, res) => {
+//갤러리 수정
+router.post('/galleryUpdate', upload.array('file'), (req, res) => {
+    const paths = req.files.map(data => data.path);
+    const orgName = req.files.map(data => data.originalname);
     try {
-        const param = [req.body.galleryTitle, req.body.galleryContent, req.body.galleryId];
-        const sql = "update gallery set galleryTitle = ?, galleryContent = ?, galleryWritDate = sysdate() where galleryId = ?";
-        connection.query(sql, param, (err) => {
+        const param1 = [req.body.galleryTitle, req.body.galleryContent, req.body.galleryId];
+        const sql1 = "update gallery set galleryTitle = ?, galleryContent = ?, galleryWritDate = sysdate() where galleryId = ?";
+        connection.query(sql1, param1, (err) => {
             if (err) {
                 console.error(err);
             }
+            for (let i = 0; i < paths.length; i++) {
+                const sql2 = "insert into file(fileRoute, fileOrgName, boardId) values (?, ?, ?)";
+                const param2 = [paths[i], orgName[i], req.body.galleryId];
+                connection.query(sql2, param2, (err) => {
+                    if (err) {
+                        throw err;
+                    }
+                });
+            };
             res.redirect('gallerySelectOne?galleryId=' + req.body.galleryId);
         });
     } catch (error) {
         res.send(error.message);
     }
+    console.log('test');
 });
 
 //공지사항 여러개 삭제
@@ -267,9 +281,26 @@ router.get('/gallerysDelete', (req, res) => {
     const galleryId = req.query.galleryId;
     const param = req.query.galleryId;
     const str = param.split(',');
-    console.log(param);
     for (var i = 0; i < str.length; i++) {
-        const sql = "delete from gallery where galleryId = ?";
+        let fileRoute = [];
+        const sql1 = "select fileRoute from file where boardId = ?";
+        connection.query(sql1, str[i], (err, result) => {
+            if (err) {
+                console.log(err)
+            }
+            fileRoute = result;
+            if (fileRoute != undefined) {
+                for (let j = 0; j < fileRoute.length; j++) {
+                    fs.unlinkSync(fileRoute[j].fileRoute, (err) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        return;
+                    });
+                }
+            }
+        });
+        const sql = "call deleteGallery(?)";
         connection.query(sql, str[i], (err) => {
             if (err) {
                 console.log(err)
@@ -279,21 +310,59 @@ router.get('/gallerysDelete', (req, res) => {
     res.send('<script>alert("삭제되었습니다."); location.href="/admin/m_gallery/gallery?page=1";</script>');
 });
 
-//공지사항 삭제
+//갤러리 삭제
 router.get('/galleryDelete', async (req, res) => {
     try {
         const param = req.query.galleryId;
         // console.log(param);
-        const sql = "delete from gallery where galleryId = ?";
+        const sql = "call deleteGallery(?)";
         connection.query(sql, param, (err) => {
             if (err) {
                 console.log(err);
             }
-            res.send('<script>alert("공지사항이 삭제되었습니다."); location.href="/admin/m_gallery/gallery?page=1";</script>');
+            if (req.query.fileRoute != undefined) {
+                if (Array.isArray(req.query.fileRoute) == false) {
+                    req.query.fileRoute = [req.query.fileRoute];
+                }
+                for (let i = 0; i < req.query.fileRoute.length; i++) {
+                    fs.unlinkSync(req.query.fileRoute[i], (err) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        return;
+                    });
+                }
+            }
+            res.send('<script>alert("갤러리가 삭제되었습니다."); location.href="/admin/m_gallery/gallery?page=1";</script>');
         });
     } catch (error) {
         res.send(error.message);
     }
 });
 
+//첨부파일 삭제
+router.get('/fileDelete', async (req, res) => {
+    const param = req.query.fileId;
+    const fileRoute = req.query.fileRoute;
+    console.log()
+    try {
+        const sql = "delete from file where fileId = ?";
+        connection.query(sql, param, (err, row) => {
+            if (err) {
+                console.log(err)
+            }
+            fs.unlinkSync(fileRoute.toString(), (err) => {
+                if (err) {
+                    console.log(err);
+                }
+                return;
+            });
+        })
+    } catch (error) {
+        if (error.code == "ENOENT") {
+            console.log("프로필 삭제 에러 발생");
+        }
+    }
+    res.redirect('galleryUdtForm?galleryId=' + req.query.galleryId );
+});
 module.exports = router;
