@@ -95,36 +95,36 @@ router.get('/supportUdtForm', async (req, res) => {
     }
 });
 
-//배너 수정
+//후원 수정
 router.post('/bannerUpdate', upload.single('file'), async (req, res) => {
     var path = "";
     var param = "";
+    var sql = "";
     if (req.file != null) {
         path = req.file.path;
-        param = [path, req.body.bannerDiv, req.body.startDate, req.body.startDate,
-            req.body.endDate, req.body.endDate, req.body.showYN, req.body.showNo, req.body.bannerId
-        ];
+        param = [path, req.body.supporter, req.body.supportId];
+        sql = "update support set supportImg = ?, supporter = ?\
+                                     where supportId = ?";
     } else {
-        param = [req.body.bannerRoute, req.body.bannerDiv, req.body.startDate, req.body.startDate,
-            req.body.endDate, req.body.endDate, req.body.showYN, req.body.showNo, req.body.bannerId
-        ];
+        param = [req.body.supportImg, req.body.supporter, req.body.supportId];
+        sql = "update support set supportImg = ?, supporter = ?\
+                                     where supportId = ?";
     }
-    const sql = "update banner set bannerRoute = ?, bannerDiv = ?, startDate = if(? = '',null,?), endDate = if(? = '',null,?), showYN = ?, showNo = ?\
-                                 where bannerId = ?";
-    connection.query(sql, param, (err, row) => {
+    connection.query(sql, param, (err) => {
         if (err) {
             console.error(err);
         }
-        res.redirect('banner?bannerDiv=' + req.body.bannerDiv);
+        res.redirect('/admin/m_support?page=1');
     });
 });
 
-//배너 이미지 파일 삭제
-router.get('/bannerImgDelete', async (req, res) => {
-    const param = req.query.bannerRoute;
+//후원 이미지 파일 삭제
+router.get('/supportImgDelete', async (req, res) => {
+    const param = req.query.supportImg;
+    console.log(param, req.query.supportId)
     try {
-        const sql = "update banner set bannerRoute = null where bannerId = ?";
-        connection.query(sql, req.query.bannerId, (err, row) => {
+        const sql = "update support set supportImg = null where supportId = ?";
+        connection.query(sql, req.query.supportId, (err, row) => {
             if (err) {
                 console.log(err)
             }
@@ -140,7 +140,7 @@ router.get('/bannerImgDelete', async (req, res) => {
             console.log("배너 파일 삭제 에러 발생");
         }
     }
-    res.redirect('bannerUdtForm?bannerId=' + req.query.bannerId);
+    res.redirect('supportUdtForm?supportId=' + req.query.supportId);
 });
 
 //후원광고 삭제
