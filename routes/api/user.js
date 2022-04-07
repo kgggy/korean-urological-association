@@ -25,7 +25,7 @@ router.get('/search', async (req, res) => {
   var userAdres2 = req.query.userAdres2 == undefined ? "" : req.query.userAdres2;
   var userType = req.query.userType == undefined ? "" : req.query.userType;
   // var searchType4 = req.query.searchType4 == undefined ? "" : req.query.searchType4;
-  // var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
+  var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
   var sql = "select * from user where 1=1";
   if (userPosition != '') {
     sql += " and userPosition = '" + userPosition + "' \n";
@@ -39,21 +39,15 @@ router.get('/search', async (req, res) => {
   // if (searchType4 != '') {
   //   sql += " and userRole = '" + searchType4 + "' \n";
   // }
-  // if (searchText != '') {
-  //   sql += " and (userNick like '%" + searchText + "%' or userEmail like '%" + searchText + "%' or userSchool like '%" + searchText + "%') order by uid";
-  // }
-  // console.log(sql);
+  if (searchText != '') {
+    sql += " and (userName like '%" + searchText + "%' or hosName like '%" + searchText + "%') order by uid";
+  }
   try {
     connection.query(sql, function (err, results) {
       if (err) {
         console.log(err);
       }
       res.json(
-        // searchType1: searchType1,
-        // searchType2: searchType2,
-        // searchType3: searchType3,
-        // searchType4: searchType4,
-        // searchText: searchText,
         results
       );
     });

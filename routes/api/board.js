@@ -26,7 +26,7 @@ router.get('/', async (req, res) => {
                     });
                 }
                 refers = results;
-                const sql2 = "select galleryId, fileRoute from file where fileId in (select min(fileId) from file group by galleryId) and galleryId is not null;";
+                const sql2 = "select boardId, fileRoute from file where left(boardId, 1) = 'g' order by fileId desc limit 15;";
                 connection.query(sql2, (err, results) => {
                     if (err) {
                         console.log(err);
