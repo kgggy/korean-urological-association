@@ -19,6 +19,8 @@
 						<div class="card-body">
 							<!-- 컨텐츠 -->
 							<form action="" id="bannerUdt" name="bannerUdt" method="" enctype="multipart/form-data">
+								<input type="hidden" id="supportImg" name="supportImg" value="">
+								<input type="hidden" id="supportId" name="supportId" value="<%=result[0].supportId%>">
 								<div class="form-group row">
 									<label class="col-md-2 col-form-label">이미지</label>
 									<% if(result.length > 0 && result[0].supportImg != null && result[0].supportImg != '') { %>
@@ -32,18 +34,19 @@
 									<% } %>
 									</td>
 								</div>
-								
+
 								<div class="form-group row">
 									<label class="col-md-2 col-form-label" for="text-input">업체명</label>
 									<div class="col-md-9 sub">
-										<input type="text" id="supporter" name="supporter" value="<%=result[0].supporter%>">
+										<input type="text" id="supporter" name="supporter"
+											value="<%=result[0].supporter%>">
 									</div>
 								</div>
 								<!--option 버튼  -->
 								<div class="option_button" style="padding-left: 1.25rem; margin-bottom: 15px;">
 									<div>
-										<button class="btn btn-block btn-outline-success" type="button"
-											id="enroll_btn" onclick="bannerUpdate()">수정</button>
+										<button class="btn btn-block btn-outline-success" type="button" id="enroll_btn"
+											onclick="bannerUpdate()">수정</button>
 									</div>
 									<div>
 										<button class="btn btn-block btn-outline-danger" type="button"
@@ -82,6 +85,12 @@
 	}
 
 	function bannerUpdate() {
+		var supportImg = $("#file").val();
+
+		if (supportImg == '') {
+			alert("이미지를 선택해주세요.");
+			return false;
+		}
 		if (confirm("수정하시겠습니까?") == true) {
 			$('input[name=showYN]').val($("#showYN option:selected").val());
 			formObj.attr("action", "bannerUpdate");
@@ -92,12 +101,12 @@
 			return;
 		}
 	};
-	
+
 	// 첨부파일 삭제
 	$("[name=fileDelete]").on("click", function () {
 		$('input[name=supportImg').val($(this).attr('data-supportImg'));
 		if (confirm("실제 파일이 삭제됩니다. 정말 삭제하시겠습니까?") == true) {
-			formObj.attr("action", "bannerImgDelete");
+			formObj.attr("action", "supportImgDelete");
 			formObj.attr("method", "get");
 			formObj.submit();
 			alert("삭제되었습니다.");
