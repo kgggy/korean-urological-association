@@ -21,7 +21,7 @@
       <li class="breadcrumb-item">
          <a style="font-weight: bold;">게시판관리</a>
       </li>
-      <li class="breadcrumb-item active">공지사항 등록</li>
+      <li class="breadcrumb-item active">갤러리 등록</li>
       <!-- Breadcrumb Menu-->
    </ol>
 
@@ -31,23 +31,33 @@
             <div class="col-lg-6">
                <div class="card">
                   <div class="card-header">
-                     <i class="fa fa-align-justify"></i> 공지사항 등록
+                     <i class="fa fa-align-justify"></i> 갤러리 등록
                   </div>
                   <div class="card-body">
                      <!-- 컨텐츠 -->
-                     <form action="" id="noticewrite" method="post" autocomplete="off">
-                        <input type="hidden" id="noticeId" name="noticeId" value="<%= noticeId %>">
-                        <input type="hidden" id="noticeContent" name="noticeContent" value="">
+                     <form action="" id="galleryWrite" method="post" enctype="multipart/form-data" autocomplete="off">
+                        <input type="hidden" id="galleryId" name="galleryId" value="<%= galleryId %>">
+                        <input type="hidden" id="galleryContent" name="galleryContent" value="">
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">제목</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="noticeTitle" type="text" name="noticeTitle" value="">
+                              <input class="form-control" id="galleryTitle" type="text" name="galleryTitle" value="">
                            </div>
                         </div>
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">내용</label>
                            <div class="col-md-9">
                               <textarea name="editor" class="editor" id="editor"></textarea>
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label">첨부파일</label>
+                           <div style="display: flex; flex-direction: column; gap: 25px; padding-left: 15px">
+                              <input type="file" id="file" name="file">
+                              <input type="file" id="file" name="file" />
+                              <input type="file" id="file" name="file" />
+                              <input type="file" id="file" name="file" />
+                              <input type="file" id="file" name="file" />
                            </div>
                         </div>
                   </div>
@@ -87,14 +97,14 @@
       $("#enroll_btn").click(function () {
          // const aa = Array.from(editor.ui.componentFactory.names());
          // console.log(aa);
-         var noticeTitle = $("#noticeTitle").val();
+         var galleryTitle = $("#galleryTitle").val();
          // var content = $("#content").val();
          // $('input[name=inputNm]').attr('value',goContent);
          var content = editor.getData();
 
-         if (noticeTitle == "") {
+         if (galleryTitle == "") {
             alert("제목을 입력하세요.");
-            $("#noticeTitle").focus();
+            $("#galleryTitle").focus();
             return false;
          }
 
@@ -105,9 +115,9 @@
          }
 
          if (confirm("등록하시겠습니까?") == true) {
-            $('input[name=noticeContent]').attr('value', content);
-            $("#noticewrite").attr("action", "noticewrite");
-            $("#noticewrite").submit();
+            $('input[name=galleryContent]').attr('value', content);
+            $("#galleryWrite").attr("action", "galleryWrite");
+            $("#galleryWrite").submit();
          } else {
             return;
          }
@@ -124,7 +134,7 @@
       // var param = getUrlParams();
       // var uid = document.getElementById("uid");
       // uid.value = param.uid;
-      // var noticeId = document.getElementById("noticeId");
-      // noticeId.value = param.noticeId;
+      // var galleryId = document.getElementById("galleryId");
+      // galleryId.value = param.galleryId;
    });
 </script>

@@ -28,14 +28,9 @@ var upload = multer({ //multer안에 storage정보
     storage: multer.diskStorage({
         destination: (req, file, callback) => {
             //파일이 이미지 파일이면
-            if (file.mimetype == "image/jpeg" || file.mimetype == "image/jpg" || file.mimetype == "image/png" || file.mimetype == "application/octet-stream") {
                 // console.log("이미지 파일입니다.");
-                callback(null, 'uploads/boardImgs');
+                callback(null, 'uploads/gallery');
                 //텍스트 파일이면
-            } else {
-                // console.log("텍스트 파일입니다.");
-                callback(null, 'uploads/boardTexts');
-            }
         },
         //파일이름 설정
         filename: (req, file, done) => {
@@ -57,18 +52,18 @@ router.get('/gallery', async (req, res) => {
         var page = req.query.page;
         var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
         var keepSearch = "&searchText=" + searchText;
-        var sql = "select *,  date_format(noticeWritDate, '%Y-%m-%d') as noticeWritDateFmt\
-                       from notice";
+        var sql = "select *,  date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt\
+                       from gallery";
         if (searchText != '') {
-            sql += "where noticeTitle like '%"+searchText+"%' or noticeContent like '%"+searchText+"%'";
+            sql += "where galleryTitle like '%"+searchText+"%' or galleryContent like '%"+searchText+"%'";
         }
-        sql += " order by 1 desc";
+        sql += " order by 2 desc";
         connection.query(sql, (err, results) => {
             var last = Math.ceil((results.length) / 15);
             if (err) {
                 console.log(err);
             }
-            let route = req.app.get('views') + '/m_notice/notice';
+            let route = req.app.get('views') + '/m_gallery/gallery';
             res.render(route, {
                 searchText: searchText,
                 results: results,
@@ -86,13 +81,13 @@ router.get('/gallery', async (req, res) => {
 });
 
 //게시글 검색(ajax)
-router.get('/noticeSearch', async (req, res) => {
+router.get('/gallerySearch', async (req, res) => {
     var page = req.query.page;
     var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
     var keepSearch = "&searchText=" + searchText;
-    var sql = "select *,  date_format(noticeWritDate, '%Y-%m-%d') as noticeWritDateFmt from notice";
+    var sql = "select *,  date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt from gallery";
     if (searchText != '') {
-        sql += " where noticeTitle like '%" + searchText + "%' or noticeContent like '%" + searchText + "%'";
+        sql += " where galleryTitle like '%" + searchText + "%' or galleryContent like '%" + searchText + "%'";
     }
     sql += " order by 1 desc";
     connection.query(sql, (err, results) => {
@@ -118,12 +113,12 @@ router.get('/noticeSearch', async (req, res) => {
 });
 
 //공지사항 글 상세조회
-router.get('/noticeSelectOne', async (req, res) => {
+router.get('/gallerySelectOne', async (req, res) => {
     try {
-        const param = req.query.noticeId;
-        const sql = "select *,date_format(noticeWritDate, '%Y-%m-%d') as noticeWritDateFmt\
-                        from notice\
-                       where noticeId = ?";
+        const param = req.query.galleryId;
+        const sql = "select *,date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt\
+                        from gallery\
+                       where galleryId = ?";
 
         connection.query(sql, param, (err, result) => {
             if (err) {
@@ -131,7 +126,7 @@ router.get('/noticeSelectOne', async (req, res) => {
                     msg: "select query error"
                 });
             }
-            let route = req.app.get('views') + '/m_notice/notice_viewForm';
+            let route = req.app.get('views') + '/m_gallery/gallery_viewForm';
             res.render(route, {
                 'result': result
             });
@@ -142,42 +137,103 @@ router.get('/noticeSelectOne', async (req, res) => {
 });
 
 //게시글 등록 폼 이동
-router.get('/writForm', async (req, res) => {
+router.get('/galleryWritForm', async (req, res) => {
     console.log(req.query.uid)
-    console.log(req.query.noticeId)
-    let route = req.app.get('views') + '/m_notice/notice_writForm.ejs';
+    console.log(req.query.galleryId)
+    let route = req.app.get('views') + '/m_gallery/gallery_writForm.ejs';
     res.render(route, {
         uid: req.query.uid,
-        noticeId: req.query.noticeId
+        galleryId: req.query.galleryId
     });
 });
 
-//공지사항 작성
-router.post('/noticewrite', async (req, res, next) => {
+// 갤러리 등록
+router.post('/galleryWrite', upload.array('file'), async (req, res, next) => {
+    const paths = req.files.map(data => data.path);
+    const orgName = req.files.map(data => data.originalname);
+    console.log(paths);
+    console.log(orgName);
     try {
-        const param = [req.body.noticeTitle, req.body.noticeContent];
-        const sql = "call insertNotice(?,?)";
-        connection.query(sql, param, (err) => {
+        for (let i = 0; i < paths.length; i++) {
+            if (req.files[i].size > 1000000) {
+                sharp(paths[i]).resize({
+                    width: 2000
+                }).withMetadata() //이미지 방향 유지
+                    .toBuffer((err, buffer) => {
+                        if (err) {
+                            throw err;
+                        }
+                        fs.writeFileSync(paths[i], buffer, (err) => {
+                            if (err) {
+                                throw err
+                            }
+                        });
+                    });
+            }
+        }
+
+        const param1 = [req.body.galleryTitle, req.body.galleryContent];
+        const sql1 = "call insertgallery(?,?)";
+        connection.query(sql1, param1, (err) => {
             if (err) {
                 throw err;
             }
+            const sql2 = "SELECT * FROM gallery order by galleryWritDate desc limit 1"
+            connection.query(sql2, (err, result) => {
+                if (err) {
+                    throw err;
+                }
+                for (let i = 0; i < paths.length; i++) {
+                    console.log(result);
+                    const param3 = [paths[i], orgName[i], result.galleryId];
+                    const sql3 = "insert into file(fileRoute, fileOrgName, galleryId) values (?, ?, ?)";
+                    connection.query(sql3, param3, (err) => {
+                        if (err) {
+                            throw err;
+                        }
+                    });
+                };
+            });
         });
-        res.send('<script>alert("공지사항이 등록되었습니다."); location.href="/admin/m_notice/notice?page=1";</script>');
+        //fcm
+        var firebaseToken;
+        const token = "select pushToken from user where pushToken is not null";
+        connection.query(token, (err, result) => {
+            if (err) {
+                throw err;
+            }
+            for (var i = 0; i < result.length; i++) {
+                firebaseToken = result[i].pushToken;
+                pushing.sendFcmMessage({
+                    "message": {
+                        "token": firebaseToken,
+                        "notification": {
+                            "body": "공지사항을 확인해주세요.",
+                            "title": "ECOCE 공지사항"
+                        },
+                        "data": {
+                            "action": "notice"
+                        }
+                    }
+                });
+            }
+            res.send('<script>alert("갤러리가 등록되었습니다."); location.href="/admin/m_gallery/gallery?&page=1";</script>');
+        });
     } catch (error) {
         res.send(error.message);
     }
 });
 
 //게시글 수정 폼 이동
-router.get('/noticeUdtForm', async (req, res) => {
+router.get('/galleryUdtForm', async (req, res) => {
     try {
-        const param = req.query.noticeId;
-        const sql = "select * from notice where noticeId = ?";
+        const param = req.query.galleryId;
+        const sql = "select * from gallery where galleryId = ?";
         connection.query(sql, param, function (err, result) {
             if (err) {
                 console.log(err);
             }
-            let route = req.app.get('views') + '/m_notice/notice_udtForm';
+            let route = req.app.get('views') + '/m_gallery/gallery_udtForm';
             console.log(route);
             res.render(route, {
                 'result': result
@@ -191,15 +247,15 @@ router.get('/noticeUdtForm', async (req, res) => {
 });
 
 //게시글 수정
-router.post('/noticeUpdate', (req, res) => {
+router.post('/galleryUpdate', (req, res) => {
     try {
-        const param = [req.body.noticeTitle, req.body.noticeContent, req.body.noticeId];
-        const sql = "update notice set noticeTitle = ?, noticeContent = ?, noticeWritDate = sysdate() where noticeId = ?";
+        const param = [req.body.galleryTitle, req.body.galleryContent, req.body.galleryId];
+        const sql = "update gallery set galleryTitle = ?, galleryContent = ?, galleryWritDate = sysdate() where galleryId = ?";
         connection.query(sql, param, (err) => {
             if (err) {
                 console.error(err);
             }
-            res.redirect('noticeSelectOne?noticeId=' + req.body.noticeId);
+            res.redirect('gallerySelectOne?galleryId=' + req.body.galleryId);
         });
     } catch (error) {
         res.send(error.message);
@@ -207,33 +263,33 @@ router.post('/noticeUpdate', (req, res) => {
 });
 
 //공지사항 여러개 삭제
-router.get('/noticesDelete', (req, res) => {
-    const noticeId = req.query.noticeId;
-    const param = req.query.noticeId;
+router.get('/gallerysDelete', (req, res) => {
+    const galleryId = req.query.galleryId;
+    const param = req.query.galleryId;
     const str = param.split(',');
     console.log(param);
     for (var i = 0; i < str.length; i++) {
-        const sql = "delete from notice where noticeId = ?";
+        const sql = "delete from gallery where galleryId = ?";
         connection.query(sql, str[i], (err) => {
             if (err) {
                 console.log(err)
             }
         });
     }
-    res.send('<script>alert("삭제되었습니다."); location.href="/admin/m_notice/notice?page=1";</script>');
+    res.send('<script>alert("삭제되었습니다."); location.href="/admin/m_gallery/gallery?page=1";</script>');
 });
 
 //공지사항 삭제
-router.get('/noticeDelete', async (req, res) => {
+router.get('/galleryDelete', async (req, res) => {
     try {
-        const param = req.query.noticeId;
+        const param = req.query.galleryId;
         // console.log(param);
-        const sql = "delete from notice where noticeId = ?";
+        const sql = "delete from gallery where galleryId = ?";
         connection.query(sql, param, (err) => {
             if (err) {
                 console.log(err);
             }
-            res.send('<script>alert("공지사항이 삭제되었습니다."); location.href="/admin/m_notice/notice?page=1";</script>');
+            res.send('<script>alert("공지사항이 삭제되었습니다."); location.href="/admin/m_gallery/gallery?page=1";</script>');
         });
     } catch (error) {
         res.send(error.message);

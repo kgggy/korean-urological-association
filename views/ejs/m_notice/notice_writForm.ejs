@@ -35,7 +35,7 @@
                   </div>
                   <div class="card-body">
                      <!-- 컨텐츠 -->
-                     <form action="" id="noticewrite" method="post" autocomplete="off">
+                     <form action="" id="noticeWrite" method="post" autocomplete="off">
                         <input type="hidden" id="noticeId" name="noticeId" value="<%= noticeId %>">
                         <input type="hidden" id="noticeContent" name="noticeContent" value="">
                         <div class="form-group row">
@@ -106,8 +106,8 @@
 
          if (confirm("등록하시겠습니까?") == true) {
             $('input[name=noticeContent]').attr('value', content);
-            $("#noticewrite").attr("action", "noticewrite");
-            $("#noticewrite").submit();
+            $("#noticeWrite").attr("action", "noticeWrite");
+            $("#noticeWrite").submit();
          } else {
             return;
          }
