@@ -62,7 +62,7 @@ router.get('/notice', async (req, res) => {
         if (searchText != '') {
             sql += "where noticeTitle like '%"+searchText+"%' or noticeContent like '%"+searchText+"%'";
         }
-        sql += " order by 1 desc";
+        sql += " order by 2 desc";
         connection.query(sql, (err, results) => {
             var last = Math.ceil((results.length) / 15);
             if (err) {
@@ -142,7 +142,7 @@ router.get('/noticeSelectOne', async (req, res) => {
 });
 
 //게시글 등록 폼 이동
-router.get('/writForm', async (req, res) => {
+router.get('/galleryWritForm', async (req, res) => {
     console.log(req.query.uid)
     console.log(req.query.noticeId)
     let route = req.app.get('views') + '/m_notice/notice_writForm.ejs';
