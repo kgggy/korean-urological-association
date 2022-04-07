@@ -33,7 +33,7 @@
                             <i class="fa fa-align-justify"></i> 
                         </div>
                         <div class="card-body">
-                            <form id="noticeForm" name="noticeForm" method="" action="">
+                            <form id="galleryForm" name="galleryForm" method="" action="">
                                  <div style="display: flex; justify-content: end; gap: 5px;">
                                     <input type="hidden" id="page" name="page" value="<%=results[0].page%>">
                                     <input class="searchbox" type="text" name="searchText" id="searchText"
@@ -62,17 +62,17 @@
                                             if(i > length){
                                                 i++;
                                             } else { %>
-                                        <tr onclick="location.href='/admin/m_notice/noticeSelectOne?noticeId=<%=results[i].noticeId%>'">
+                                        <tr onclick="location.href='/admin/m_gallery/gallerySelectOne?galleryId=<%=results[i].galleryId%>'">
                                             <td onclick='event.cancelBubble=true;'><input type="checkbox" id="chk" name="chk"
-                                                    value="<%=results[i].noticeId %>" /></td>
+                                                    value="<%=results[i].galleryId %>" /></td>
                                             <td>
                                                 <%= results.length-i %></td>
                                             <td>
-                                                <%=results[i].noticeTitle%></td>
+                                                <%=results[i].galleryTitle%></td>
                                             <td>
-                                                <%=results[i].noticeHit%></td>
+                                                <%=results[i].galleryHit%></td>
                                             <td>
-                                                <%=results[i].noticeWritDateFmt %></td>
+                                                <%=results[i].galleryWritDateFmt %></td>
                                         </tr>
                                         <% } %>
                                         <% } %>
@@ -86,7 +86,7 @@
                                     </tbody>
                                 </table>
                                 <div>
-                                    <input type="hidden" id="noticeId" name="noticeId" value="" />
+                                    <input type="hidden" id="galleryId" name="galleryId" value="" />
                                     <button id="enrollAction" class="btn btn-block btn-outline-success"
                                         onclick="enroll()">등록</button>
                                     <button class="btn btn-block btn-outline-danger" type="button"
@@ -98,22 +98,22 @@
                                     <ul class="pagination customPaging">
                                         <% if(results.length > 0){ %>
                                         <li>
-                                            <a href="/admin/m_notice/notice?page=1<%= keepSearch %>"
+                                            <a href="/admin/m_gallery/gallery?page=1<%= keepSearch %>"
                                                 class="num">
                                                 << </a> </li> <li>
                                                     <a <%if((page<last-1)||(page==1)){%><%} else {%>
-                                                        href="/admin/m_notice/notice?page=<%= parseInt(page) - 1 %><%= keepSearch %>"
+                                                        href="/admin/m_gallery/gallery?page=<%= parseInt(page) - 1 %><%= keepSearch %>"
                                                         class="num" <% } %>>
                                                         < </a> </li>
                                                             <% for(var i = 0; i < results.length / page_num; i++){  %>
                                                             <li class="paging_on">
-                                                            <a href="/admin/m_notice/notice?page=<%= i + 1 %><%= keepSearch %>"
+                                                            <a href="/admin/m_gallery/gallery?page=<%= i + 1 %><%= keepSearch %>"
                                                                 <%if(page==i+1){%>class="selected"
                                                                 <%}%> class="num"><%= i + 1 %></a> </li> <% } %> <li> <a
                                                                     <%if(page>last-1){%><%} else {%>
-                                                                    href="/admin/m_notice/all?noticeId=<%= results[0].noticeId %>&page=<%= parseInt(page) + 1 %><%= keepSearch %>"
+                                                                    href="/admin/m_gallery/all?galleryId=<%= results[0].galleryId %>&page=<%= parseInt(page) + 1 %><%= keepSearch %>"
                                                                     class="num" <% } %>>></a></li>
-                                        <li><a href="/admin/m_notice/notice?page=<%= last%><%= keepSearch %>"
+                                        <li><a href="/admin/m_gallery/gallery?page=<%= last%><%= keepSearch %>"
                                                 class="num">>></a></li>
                                         <% } %>
                                     </ul>
@@ -128,11 +128,11 @@
 </main>
 
 <script>
-    const formObj = $("form[name='noticeForm']");
+    const formObj = $("form[name='galleryForm']");
     //등록 
     function enroll() {
         formObj.attr("method", "get");
-        formObj.attr("action", "writForm");
+        formObj.attr("action", "galleryWritForm");
         formObj.submit();
     }
     // 삭제
@@ -142,7 +142,7 @@
             chkArr.push($(this).val());
             alert(chkArr);
         });
-        $('#noticeId').val(chkArr);
+        $('#galleryId').val(chkArr);
         if (chkArr == "") {
             alert("삭제할 목록을 선택해주세요.");
             return false;
@@ -152,7 +152,7 @@
         //     chkImg.push($(this).attr('data-img'));
         // });
         // $('#userImg').val(chkImg);
-        formObj.attr("action", "noticesDelete");
+        formObj.attr("action", "gallerysDelete");
         formObj.attr("method", "get");
         if (confirm("삭제하시겠습니까?") == true) {
             formObj.submit();
@@ -184,7 +184,7 @@
             console.log(words);
             $.ajax({
                 type: 'get',
-                url: '/admin/m_notice/noticeSearch?noticeId=<%=results[0].noticeId%>&page=1',
+                url: '/admin/m_gallery/gallerySearch?galleryId=<%=results[0].galleryId%>&page=1',
                 data: {
                     searchText: words
                 },
@@ -201,23 +201,23 @@
                                 $("#tbody").empty();
                                 console.log(data.ajaxSearch.length - i);
                                 str +=
-                                    '<tr onclick="location.href=\'/admin/m_notice/noticeSelectOne?noticeId=' +
-                                    data.ajaxSearch[i].notice + '&page= ' + data
+                                    '<tr onclick="location.href=\'/admin/m_gallery/gallerySelectOne?galleryId=' +
+                                    data.ajaxSearch[i].gallery + '&page= ' + data
                                     .page +
                                     '\'"> <td onclick="event.cancelBubble=true;"><input type="checkbox" id="chk" name="chk" value="' +
-                                    data.ajaxSearch[i].notice + '" /> </td>';
+                                    data.ajaxSearch[i].gallery + '" /> </td>';
                                 str +=
                                     '<td>' +
                                     (data.ajaxSearch.length - i) + '</td>';
                                 str +=
                                     '<td>' +
-                                    data.ajaxSearch[i].noticeTitle + '</td>';
+                                    data.ajaxSearch[i].galleryTitle + '</td>';
                                 str +=
                                     '<td>' +
-                                    data.ajaxSearch[i].noticeHit + '</td>';
+                                    data.ajaxSearch[i].galleryHit + '</td>';
                                 str +=
                                     '<td>' +
-                                    data.ajaxSearch[i].noticeWritDateFmt + '</td></tr>'
+                                    data.ajaxSearch[i].galleryWritDateFmt + '</td></tr>'
                                 
                             }
                         }
@@ -255,19 +255,19 @@
         var datas = data;
         var dataLength = datas.length;
         var dataPage = datas.page_num
-        var noticeId = datas.ajaxSearch[0].noticeId
+        var galleryId = datas.ajaxSearch[0].galleryId
         var temp ='';
         temp = `<li>
-                <a href="/admin/m_notice/notice?page=1&searchText=${datas.searchText}"
+                <a href="/admin/m_gallery/gallery?page=1&searchText=${datas.searchText}"
                 class="num">
                 << </a> </li> <li>
                 <a <%if((page<last-1)||(page==1)){%><%} else {%>
-                href="/admin/m_notice/notice?page=<%= parseInt(page) - 1 %>&searchText=${datas.searchText}"
+                href="/admin/m_gallery/gallery?page=<%= parseInt(page) - 1 %>&searchText=${datas.searchText}"
                 class="num" <% } %>>
                 < </a> </li>`
         for(var i = 0; i <= dataLength/dataPage; i++){ 
             temp += `<li class="paging_on">
-                    <a href="/admin/m_notice/notice?page=${i + 1}&searchText=${datas.searchText}"`
+                    <a style="background-color:#FC8B5F; color:white;" href="/admin/m_gallery/gallery?page=${i + 1}&searchText=${datas.searchText}"`
         if(page==i + 1){
             temp += `class="selected"`
         }else{
@@ -275,9 +275,9 @@
         } 
     }
         temp +=`<li> <a <%if(page>last-1){%><%} else {%>
-                    href="/admin/m_noitce/notice?page=<%= parseInt(page) + 1 %>&searchText=${datas.searchText}"
+                    href="/admin/m_noitce/gallery?page=<%= parseInt(page) + 1 %>&searchText=${datas.searchText}"
                     class="num" <% } %>>></a></li>
-                    <li><a href="/admin/m_notice/notice?page=<%= last%>&searchText=${datas.searchText}"
+                    <li><a href="/admin/m_gallery/gallery?page=<%= last%>&searchText=${datas.searchText}"
                     class="num">>></a></li>
                     `
          $(".customPaging").html(temp);            
