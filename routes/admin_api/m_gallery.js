@@ -273,12 +273,10 @@ router.post('/galleryUpdate', upload.array('file'), (req, res) => {
     } catch (error) {
         res.send(error.message);
     }
-    console.log('test');
 });
 
 //공지사항 여러개 삭제
 router.get('/gallerysDelete', (req, res) => {
-    const galleryId = req.query.galleryId;
     const param = req.query.galleryId;
     const str = param.split(',');
     for (var i = 0; i < str.length; i++) {
@@ -341,7 +339,7 @@ router.get('/galleryDelete', async (req, res) => {
 });
 
 //첨부파일 삭제
-router.get('/fileDelete', async (req, res) => {
+router.get('/galleryFileDelete', async (req, res) => {
     const param = req.query.fileId;
     const fileRoute = req.query.fileRoute;
     console.log()

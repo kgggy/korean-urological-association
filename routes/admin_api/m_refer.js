@@ -11,7 +11,7 @@ var connection = require('../../config/db').conn;
 
 //파일업로드 모듈
 var upload = multer({ //multer안에 storage정보  
-    // dest: 'uploads/gallery',
+    // dest: 'uploads/refer',
     storage: multer.diskStorage({
         destination: (req, file, callback) => {
             fs.mkdir('uploads/reference', function (err) {
@@ -67,9 +67,9 @@ router.get('/referSearch', async (req, res) => {
     var page = req.query.page;
     var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
     var keepSearch = "&searchText=" + searchText;
-    var sql = "select *,  date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt from gallery";
+    var sql = "select *,  date_format(referWritDate, '%Y-%m-%d') as referWritDateFmt from reference";
     if (searchText != '') {
-        sql += " where galleryTitle like '%" + searchText + "%' or galleryContent like '%" + searchText + "%'";
+        sql += " where referTitle like '%" + searchText + "%' or referContent like '%" + searchText + "%'";
     }
     sql += " order by 1 desc";
     connection.query(sql, (err, results) => {
@@ -202,15 +202,18 @@ router.post('/referWrite', upload.array('file'), async (req, res, next) => {
 });
 
 //게시글 수정 폼 이동
-router.get('/galleryUdtForm', async (req, res) => {
+router.get('/referUdtForm', async (req, res) => {
     try {
-        const param = req.query.galleryId;
-        const sql = "select * from gallery where galleryId = ?";
+        const param = req.query.referId;
+        const sql = "select r.*, date_format(referWritDate, '%Y-%m-%d') as referWritDateFmt, f.fileRoute, f.fileOrgName, f.fileId\
+                        from reference r\
+                        left join file f on f.boardId = r.referId\
+                       where referId = ?";
         connection.query(sql, param, function (err, result) {
             if (err) {
                 console.log(err);
             }
-            let route = req.app.get('views') + '/m_gallery/gallery_udtForm';
+            let route = req.app.get('views') + '/m_refer/refer_udtForm';
             console.log(route);
             res.render(route, {
                 'result': result
@@ -223,54 +226,120 @@ router.get('/galleryUdtForm', async (req, res) => {
     }
 });
 
-//게시글 수정
-router.post('/galleryUpdate', (req, res) => {
+//자료실 수정
+router.post('/referUpdate', upload.array('file'), (req, res) => {
+    const paths = req.files.map(data => data.path);
+    const orgName = req.files.map(data => data.originalname);
     try {
-        const param = [req.body.galleryTitle, req.body.galleryContent, req.body.galleryId];
-        const sql = "update gallery set galleryTitle = ?, galleryContent = ?, galleryWritDate = sysdate() where galleryId = ?";
+        const param = [req.body.referTitle, req.body.referContent, req.body.referId];
+        const sql = "update refer set referTitle = ?, referContent = ?, referWritDate = sysdate() where referId = ?";
         connection.query(sql, param, (err) => {
             if (err) {
                 console.error(err);
             }
-            res.redirect('gallerySelectOne?galleryId=' + req.body.galleryId);
+            for (let i = 0; i < paths.length; i++) {
+                const sql2 = "insert into file(fileRoute, fileOrgName, boardId) values (?, ?, ?)";
+                const param2 = [paths[i], orgName[i], req.body.referId];
+                connection.query(sql2, param2, (err) => {
+                    if (err) {
+                        throw err;
+                    }
+                });
+            };
+            res.redirect('referSelectOne?referId=' + req.body.referId);
         });
     } catch (error) {
         res.send(error.message);
     }
 });
 
-//공지사항 여러개 삭제
+//자료실 여러개 삭제
 router.get('/refersDelete', (req, res) => {
-    const galleryId = req.query.galleryId;
-    const param = req.query.galleryId;
+    const param = req.query.referId;
     const str = param.split(',');
     console.log(param);
     for (var i = 0; i < str.length; i++) {
-        const sql = "delete from gallery where galleryId = ?";
+        let fileRoute = [];
+        const sql1 = "select fileRoute from file where boardId = ?";
+        connection.query(sql1, str[i], (err, result) => {
+            if (err) {
+                console.log(err)
+            }
+            fileRoute = result;
+            if (fileRoute != undefined) {
+                for (let j = 0; j < fileRoute.length; j++) {
+                    fs.unlinkSync(fileRoute[j].fileRoute, (err) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        return;
+                    });
+                }
+            }
+        });
+        const sql = "call deleteRefer(?)";
         connection.query(sql, str[i], (err) => {
             if (err) {
                 console.log(err)
             }
         });
     }
-    res.send('<script>alert("삭제되었습니다."); location.href="/admin/m_gallery/gallery?page=1";</script>');
+    res.send('<script>alert("삭제되었습니다."); location.href="/admin/m_refer/reference?page=1";</script>');
 });
 
-//공지사항 삭제
-router.get('/galleryDelete', async (req, res) => {
+//자료실 삭제
+router.get('/referDelete', async (req, res) => {
     try {
-        const param = req.query.galleryId;
-        // console.log(param);
-        const sql = "delete from gallery where galleryId = ?";
+        const param = req.query.referId;
+        const sql = "call deleteRefer(?)";
         connection.query(sql, param, (err) => {
             if (err) {
                 console.log(err);
             }
-            res.send('<script>alert("공지사항이 삭제되었습니다."); location.href="/admin/m_gallery/gallery?page=1";</script>');
+            if (req.query.fileRoute != undefined) {
+                if (Array.isArray(req.query.fileRoute) == false) {
+                    req.query.fileRoute = [req.query.fileRoute];
+                }
+                for (let i = 0; i < req.query.fileRoute.length; i++) {
+                    fs.unlinkSync(req.query.fileRoute[i], (err) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        return;
+                    });
+                }
+            }
+            res.send('<script>alert("자료실글이 삭제되었습니다."); location.href="/admin/m_refer/reference?page=1";</script>');
         });
     } catch (error) {
         res.send(error.message);
     }
 });
 
+//첨부파일 삭제
+router.get('/referFileDelete', async (req, res) => {
+    const param = req.query.fileId;
+    console.log(param);
+    const fileRoute = req.query.fileRoute;
+    console.log()
+    try {
+        const sql = "delete from file where fileId = ?";
+        connection.query(sql, param, (err, row) => {
+            if (err) {
+                console.log(err)
+            }
+            fs.unlinkSync(fileRoute.toString(), (err) => {
+                if (err) {
+                    console.log(err);
+                }
+                return;
+            });
+        })
+    } catch (error) {
+        if (error.code == "ENOENT") {
+            console.log("프로필 삭제 에러 발생");
+        }
+    }
+    res.redirect('referUdtForm?referId=' + req.query.referId);
+});
 module.exports = router;
