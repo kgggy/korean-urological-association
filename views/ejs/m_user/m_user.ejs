@@ -154,7 +154,7 @@
                                                                 href="/admin/m_user/page?page=<%= parseInt(page) - 1 %><%= keepSearch %>"
                                                                 class="num" <% } %>>
                                                                 <</a> </li>
-                                                                    <% for(var i = 0; i < results.length / page_num; i++){  %>
+                                                                    <% for(var i = startPage; i < endPage ; i++){  %>
                                                                     <li class="paging_on">
                                                                     <a href="/admin/m_user/page?page=<%= i + 1 %><%= keepSearch %>"
                                                                         <%if(page==i+1){%>class="selected"

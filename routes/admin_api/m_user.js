@@ -64,9 +64,14 @@ router.get('/page', async (req, res) => {
   try {
     connection.query(sql, function (err, results) {
       var last = Math.ceil((results.length) / 15);
+      var endPage = Math.ceil(page / 10) * 10;
       if (err) {
         console.log(err);
       }
+
+      if (last < endPage) {
+        endPage = last
+      };
       let route = req.app.get('views') + '/m_user/m_user';
       res.render(route, {
         searchType1: searchType1,
@@ -77,6 +82,9 @@ router.get('/page', async (req, res) => {
         page: page, //현재 페이지
         length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
         page_num: 15, //한 페이지에 보여줄 개수
+        countPage: 10, //하단에 표시될 페이지 개수
+        startPage: endPage - 10, //시작페이지(1)
+        endPage: endPage, //끝페이지(10)
         pass: true,
         last: last, //마지막 장
         keepSearch: keepSearch
@@ -320,7 +328,7 @@ router.get('/userExcel', async (req, res) => {
   var searchType1 = req.query.searchType1 == undefined ? "" : req.query.searchType1;
   var searchType2 = req.query.searchType2 == undefined ? "" : req.query.searchType2;
   var searchType3 = req.query.searchType3 == undefined ? "" : req.query.searchType3;
-  var searchType4 = req.query.searchType4 == undefined ? "" : req.query.searchType4;
+  // var searchType4 = req.query.searchType4 == undefined ? "" : req.query.searchType4;
   var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
   var conf = {};
 
@@ -329,110 +337,58 @@ router.get('/userExcel', async (req, res) => {
       type: 'number',
       width: 8
     }, {
-      caption: '이메일',
+      caption: '회원명',
       captionStyleIndex: 1,
       type: 'string',
       width: 50
     }, {
-      caption: '닉네임',
+      caption: '병원명',
       captionStyleIndex: 1,
       type: 'string',
       width: 30
     }, {
-      caption: '나이',
+      caption: '우편번호',
       captionStyleIndex: 1,
-      type: 'number',
+      type: 'string',
       width: 8
     },
     {
-      caption: '주소',
+      caption: '병원주소',
       captionStyleIndex: 1,
       type: 'string',
       width: 30
     },
     {
-      caption: '학교',
+      caption: '병원번호',
       captionStyleIndex: 1,
       type: 'string',
       width: 15
     }, {
-      caption: '포인트',
+      caption: '형태',
       captionStyleIndex: 1,
-      type: 'number',
+      type: 'string',
       width: 15
     }, {
-      caption: '계산점수',
-      captionStyleIndex: 1,
-      type: 'number',
-      width: 12
-    }, {
-      caption: '나무등급',
-      captionStyleIndex: 1,
-      type: 'string',
-      width: 12
-    },
-    {
-      caption: '작성한 게시글 수',
-      captionStyleIndex: 1,
-      type: 'string',
-      width: 12
-    },
-    {
-      caption: '가입일',
-      captionStyleIndex: 1,
-      type: 'string',
-      width: 12
-    },
-    {
-      caption: '로그인 경로',
-      captionStyleIndex: 1,
-      type: 'string',
-      width: 12
-    },
-    {
-      caption: '권한',
-      captionStyleIndex: 1,
-      type: 'string',
-      width: 12
-    }, {
-      caption: '상태',
-      captionStyleIndex: 1,
-      type: 'string',
-      width: 12
-    },
-    {
-      caption: '개인정보 동의여부',
+      caption: '역할',
       captionStyleIndex: 1,
       type: 'string',
       width: 12
     }
   ];
 
-  var sql = "select *,\
-                    date_format(userRegDate, '%Y-%m-%d') as userRegDatefmt,\
-                    case when userStatus = '0' then '활동중' when userStatus = '1' then '탈퇴' end as userStatusfmt,\
-                    case when userSocialDiv = 'b' then '일반 가입' when userSocialDiv = 'A' then '소셜로그인(애플)' when userSocialDiv = 'G' then '소셜로그인(구글)' when userSocialDiv = 'N' then '소셜로그인(네이버)' end as userSocialDivfmt,\
-                    case when userAgree = '0' then '동의' else '비동의' end as userAgreefmt\
-              from user\
-             where 1=1";
+  var sql = "select * from user where 1=1";
 
   if (searchType1 != '') {
-    sql += " and userStatus = '" + searchType1 + "' \n";
+    sql += " and userAdres2 = '" + searchType1 + "' \n";
   }
   if (searchType2 != '') {
-    sql += " and userAgree = '" + searchType2 + "' \n";
+    sql += " and userType = '" + searchType2 + "' \n";
   }
-  if (searchType3 != '' && searchType3 == '61') {
-    sql += " and userAge >= 60 \n";
-  } else if (searchType3 != '' && searchType3 == '20') {
-    sql += " and  userAge <> 0 and userAge <= 20 \n";
-  } else if (searchType3 != '' && searchType3 == '30' || searchType3 == '40' || searchType3 == '50' || searchType3 == '60')
-    sql += " and userAge between " + searchType3 + "-10 and " + searchType3 + " \n";
-  if (searchType4 != '') {
-    sql += " and userTree = '" + searchType4 + "' \n";
+  if (searchType3 != '') {
+    sql += " and userPosition = '" + searchType3 + "' \n";
   }
   if (searchText != '') {
-    sql += " and (userNick like '%" + searchText + "%' or userEmail like '%" + searchText + "%' or userSchool like '%" + searchText + "%') order by uid";
+    sql += " and (hosName like '%" + searchText + "%' or userName like '%" + searchText + "%') order by uid";
   }
 
   try {
@@ -444,26 +400,20 @@ router.get('/userExcel', async (req, res) => {
       for (var i = 0; i < results.length; i++) {
         var resultData = [
           results[i].uid,
-          results[i].userEmail,
-          results[i].userNick,
-          results[i].userAge,
-          results[i].userAdres1 + ' ' + results[i].userAdres2,
-          results[i].userSchool,
-          results[i].userPoint,
-          results[i].userScore,
-          results[i].userTree,
-          results[i].countAll,
-          results[i].userRegDatefmt,
-          results[i].userSocialDivfmt,
-          results[i].userStatusfmt,
-          results[i].userAgreefmt
+          results[i].userName,
+          results[i].hosName,
+          results[i].hosPost,
+          results[i].userAdres1 + ' ' + results[i].userAdres2 + results[i].userAdres3,
+          results[i].hosPhone1 + '-' + results[i].hosPhone2 + '-' + results[i].hosPhone3,
+          results[i].userType,
+          results[i].userPosition
         ];
         arr.push(resultData);
       }
       conf.rows = arr;
       var result = nodeExcel.execute(conf);
       res.setHeader('Content-Type', 'application/vnd.openxmlformats');
-      res.setHeader("Content-Disposition", "attachment; filename=" + "ecoce_user.xlsx");
+      res.setHeader("Content-Disposition", "attachment; filename=" + "user.xlsx");
       res.end(result, 'binary');
     });
   } catch (error) {

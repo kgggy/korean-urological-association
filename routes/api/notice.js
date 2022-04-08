@@ -68,7 +68,7 @@ router.get('/one/:noticeId', async (req, res) => {
         const sql1 = "update notice set noticeHit= noticeHit + 1 where noticeId = ?";
         const sql2 = "select *\
                         from notice n\
-                   left join file f on f.noticeId = n.noticeId\
+                   left join file f on f.boardId = n.noticeId\
                        where n.noticeId = ?";
         let notice;
         connection.query(sql1, param, (err, row) => {
