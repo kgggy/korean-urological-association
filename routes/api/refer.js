@@ -36,7 +36,7 @@ router.get('/one/:referId', async (req, res) => {
         const sql1 = "update reference set referHit= referHit + 1 where referId = ?";
         const sql2 = "select *\
                         from reference n\
-                   left join file f on f.referId = n.referId\
+                   left join file f on f.boardId = n.referId\
                        where n.referId = ?";
         let refer;
         connection.query(sql1, param, (err, row) => {
