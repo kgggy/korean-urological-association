@@ -1,0 +1,278 @@
+<style>
+
+    .userTable thead tr .sorting:first-child::before,
+    .userTable thead tr .sorting_asc:first-child::before,
+    .userTable thead tr .sorting_asc:first-child::after,
+    .userTable thead .sorting_desc:first-child:after,
+    .userTable thead .sorting:first-child:after,
+    .userTable thead .sorting:first-child {
+        content: none !important;
+        cursor: unset
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        searchajax();
+    });
+</script>
+<main class="main">
+    <!-- Breadcrumb-->
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">Home</li>
+        <li class="breadcrumb-item">
+            <a style="font-weight: bold;">행사관리</a>
+        </li>
+        <li class="breadcrumb-item active"> 행사관리 </li>
+    </ol>
+    <div class="container-fluid">
+        <div class="animated fadeIn">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fa fa-align-justify"></i> 행사관리
+                        </div>
+                        <div class="card-body">
+                            <form id="referForm" name="referForm" method="" action="">
+                                 <div style="display: flex; justify-content: end; gap: 5px;">
+                                    <input class="searchbox" type="text" name="searchText" id="searchText" placeholder="제목,내용">
+                                    <!-- <button class="btn btn-block btn-outline-success" type="submit" id="searchAction"  style="margin-bottom: 10px;">검색</button> -->
+                                </div>
+                                <table id="exampleTable" class="table userTable table-responsive-sm table-hover">
+                                    <colgroup>
+                                        <col width="5%" />
+                                        <col width="5%" />
+                                        <col width="60%" />
+                                        <col width="8%" />
+                                        <col width="22%" />
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th><input type="checkbox" name="chkAll" id="chkAll" /></th>
+                                            <th>번호</th>
+                                            <th>제목</th>
+                                            <th>위치</th>
+                                            <th>날짜</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody">
+                                        <% if(results.length > 0){ %>
+                                        <tr onclick="location.href=''">
+                                            <td onclick='event.cancelBubble=true;'><input type="checkbox" id="chk" name="chk"
+                                                    value="" /></td>
+                                            <td>
+                                                <%= results.length-i %></td>
+                                            <td>
+                                                <%=results[i].referTitle%></td>
+                                            <td>
+                                                <%=results[i].referHit%></td>
+                                            <td>
+                                                <%=results[i].referWritDateFmt %></td>
+                                        </tr>
+                                        <% } else { %>
+                                        <tr>
+                                            <td colspan="5">
+                                                데이터가 존재하지 않습니다.
+                                            </td>
+                                        </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                                <div>
+                                    <input type="hidden" id="referId" name="referId" value="" />
+                                    <button id="enrollAction" class="btn btn-block btn-outline-success"
+                                        onclick="enroll()">등록</button>
+                                    <button class="btn btn-block btn-outline-danger" type="button"
+                                        id="delete_btn">삭제</button>
+                                </div>
+                            </form>
+                            <div class="mt_20">
+                                <div class="paging" id="page_navi">
+                                    <ul class="pagination customPaging">
+                                        <% if(results.length > 0){ %>
+                                        <li>
+                                            <a href="/admin/m_refer/reference?page=1"
+                                                class="num">
+                                                << </a> </li> <li>
+                                                    <a <%if((page<last-1)||(page==1)){%><%} else {%>
+                                                        href="/admin/m_refer/reference?page=<%= parseInt(page) - 1 %>"
+                                                        class="num" <% } %>>
+                                                        < </a> </li>
+                                                            <% for(var i = 0; i < results.length / page_num; i++){  %>
+                                                            <li class="paging_on">
+                                                            <a href="/admin/m_refer/reference?page=<%= i + 1 %>"
+                                                                <%if(page==i+1){%>class="selected"
+                                                                <%}%> class="num"><%= i + 1 %></a> </li> <% } %> <li> <a
+                                                                    <%if(page>last-1){%><%} else {%>
+                                                                    href="/admin/m_refer/reference?&page=<%= parseInt(page) + 1 %>"
+                                                                    class="num" <% } %>>></a></li>
+                                        <li><a href="/admin/m_refer/reference?page=<%= last%>"
+                                                class="num">>></a></li>
+                                        <% } %>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    const formObj = $("form[name='referForm']");
+    //등록 
+    function enroll() {
+        formObj.attr("method", "get");
+        formObj.attr("action", "referWritForm");
+        formObj.submit();
+    }
+    // 삭제
+    $("#delete_btn").on("click", function () {
+        var chkArr = [];
+        $("input[name=chk]:checked").each(function () {
+            chkArr.push($(this).val());
+        });
+        $('#referId').val(chkArr);
+        if (chkArr == "") {
+            alert("삭제할 목록을 선택해주세요.");
+            return false;
+        }
+        // var chkImg = [];
+        // $("input[name=chk]:checked").each(function () {
+        //     chkImg.push($(this).attr('data-img'));
+        // });
+        // $('#userImg').val(chkImg);
+        formObj.attr("action", "refersDelete");
+        formObj.attr("method", "get");
+        if (confirm("삭제하시겠습니까?") == true) {
+            formObj.submit();
+        } else {
+            return false;
+        }
+    })
+
+    //체크박스
+    $("#chkAll").click(function () {
+        if ($("#chkAll").is(":checked"))
+            $("input[name=chk]").prop("checked", true);
+        else
+            $("input[name=chk]").prop("checked", false);
+    });
+    $("input[name=chk]").click(function () {
+        var total = $("input[name=chk]").length;
+        var checked = $("input[name=chk]:checked").length;
+        if (total != checked)
+            $("#chkAll").prop("checked", false);
+        else
+            $("#chkAll").prop("checked", true);
+    });
+
+        //검색
+    function searchajax() {
+        $("#searchText").keyup(function () {
+            var words = $("#searchText").val();
+            // console.log(words);
+            $.ajax({
+                type: 'get',
+                url: '/admin/m_refer/referSearch?referId=<%=results[0].referId%>&page=1',
+                data: {
+                    searchText: words
+                },
+                dataType: 'json',
+                success: function (data) {
+                    var str = ''
+                    $(".customPaging").empty();
+                    if (data.ajaxSearch.length > 0) {
+                        for (var i = (data.page * data.page_num) - data
+                                .page_num; i < (data.page * data.page_num); i++) {
+                            if (i > data.length) {
+                                i++;
+                            } else {
+                                $("#tbody").empty();
+                                console.log(data.ajaxSearch.length - i);
+                                str +=
+                                    '<tr onclick="location.href=\'/admin/m_gallery/gallerySelectOne?galleryId=' +
+                                    data.ajaxSearch[i].gallery + '&page= ' + data
+                                    .page +
+                                    '\'"> <td onclick="event.cancelBubble=true;"><input type="checkbox" id="chk" name="chk" value="' +
+                                    data.ajaxSearch[i].gallery + '" /> </td>';
+                                str +=
+                                    '<td>' +
+                                    (data.ajaxSearch.length - i) + '</td>';
+                                str +=
+                                    '<td>' +
+                                    data.ajaxSearch[i].galleryTitle + '</td>';
+                                str +=
+                                    '<td>' +
+                                    data.ajaxSearch[i].galleryHit + '</td>';
+                                str +=
+                                    '<td>' +
+                                    data.ajaxSearch[i].galleryWritDateFmt + '</td></tr>'
+                                
+                            }
+                        }
+                        // console.log("str = " + str)
+                        $("#tbody").append(str);
+                        paging(data);
+                    } else {
+                        var none = '<tr> <td colspan="8"> 데이터가 존재하지 않습니다. </td> </tr>'
+                        $("#tbody").empty();
+                        $("#tbody").append(none);
+                    }
+                },
+                error: function (e) {
+                    console.log('error:' + e.status);
+                }
+            });
+        });
+    }
+
+    //쿼리스트링 페이지
+    // function getUrlParams() {
+    //     var params = {};
+    //     window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (str, key, value) {
+    //         params[key] = value;
+    //     });
+    //     return params;
+    // }
+    // var param = getUrlParams();
+    // var page = document.getElementById("page");
+    // page.value = param.page;
+</script>
+
+<script language="javaScript">
+    function paging(data){
+        var datas = data;
+        var dataLength = datas.length;
+        var dataPage = datas.page_num
+        var galleryId = datas.ajaxSearch[0].galleryId
+        var temp ='';
+        temp = `<li>
+                <a href="/admin/m_gallery/gallery?page=1&searchText=${datas.searchText}"
+                class="num">
+                << </a> </li> <li>
+                <a <%if((page<last-1)||(page==1)){%><%} else {%>
+                href="/admin/m_gallery/gallery?page=<%= parseInt(page) - 1 %>&searchText=${datas.searchText}"
+                class="num" <% } %>>
+                < </a> </li>`
+        for(var i = 0; i <= dataLength/dataPage; i++){ 
+            temp += `<li class="paging_on">
+                    <a style="background-color:#FC8B5F; color:white;" href="/admin/m_gallery/gallery?page=${i + 1}&searchText=${datas.searchText}"`
+        if(page==i + 1){
+            temp += `class="selected"`
+        }else{
+            temp += `class="num">${i + 1}</a> </li>`
+        } 
+    }
+        temp +=`<li> <a <%if(page>last-1){%><%} else {%>
+                    href="/admin/m_noitce/gallery?page=<%= parseInt(page) + 1 %>&searchText=${datas.searchText}"
+                    class="num" <% } %>>></a></li>
+                    <li><a href="/admin/m_gallery/gallery?page=<%= last%>&searchText=${datas.searchText}"
+                    class="num">>></a></li>
+                    `
+         $(".customPaging").html(temp);            
+    }
+    
+</script>

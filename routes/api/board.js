@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const models = require("../../models");
 var connection = require('../../config/db').conn;
 
 //게시판 메인
@@ -7,6 +8,12 @@ router.get('/', async (req, res) => {
     let notices;
     let gallerys;
     let refers;
+    // let gallery = await models.gallery.findAndCountAll({
+    //     attributes: ["galleryId"],
+    //     group: "galleryId",
+    //     raw: true
+    // });
+    // console.log(gallery.count.length)
     try {
         const sql = "select noticeWritDate, noticeTitle from notice order by noticeWritDate desc limit 2";
         connection.query(sql, (err, results) => {
@@ -26,7 +33,8 @@ router.get('/', async (req, res) => {
                     });
                 }
                 refers = results;
-                const sql2 = "select boardId, fileRoute from file where left(boardId, 1) = 'g' order by fileId desc limit 15;";
+                // for (let i = 0; i < gallery.count.length; i++) {
+                const sql2 = "select * from file group by boardId; ";
                 connection.query(sql2, (err, results) => {
                     if (err) {
                         console.log(err);
@@ -41,6 +49,7 @@ router.get('/', async (req, res) => {
                         refers: refers
                     }]);
                 });
+                // }
             });
         });
     } catch (error) {

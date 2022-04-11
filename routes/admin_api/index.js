@@ -11,6 +11,7 @@ const m_company = require('./m_company.js');
 const m_notice = require('./m_notice.js');
 const m_gallery = require('./m_gallery.js');
 const m_refer = require('./m_refer.js');
+const m_event = require('./m_event.js');
 
 // router.use('/', (req,res,next) => {
 //     if(req.url == '/' || req.url == '/login') {
@@ -41,5 +42,6 @@ router.use('/m_company', m_company);
 router.use('/m_notice', m_notice);
 router.use('/m_gallery', m_gallery);
 router.use('/m_refer', m_refer);
+router.use('/m_event', m_event);
 
 module.exports = router;

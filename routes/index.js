@@ -12,6 +12,7 @@ const support = require('./api/support.js');
 const comment = require('./api/comment.js');
 const others = require('./api/others.js');
 const board = require('./api/board.js');
+const login = require('./api/login.js');
 
 router.use('/greeting', greeting);
 router.use('/user', user);
@@ -23,6 +24,7 @@ router.use('/support', support);
 router.use('/comment', comment);
 router.use('/others', others);
 router.use('/board', board);
+router.use('/login', login);
 
 
 module.exports = router;
