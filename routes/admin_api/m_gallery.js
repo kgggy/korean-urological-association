@@ -60,7 +60,9 @@ router.get('/gallery', async (req, res) => {
                        from gallery";
         sql += " order by 2 desc";
         connection.query(sql, (err, results) => {
-            var last = Math.ceil((results.length) / 10);
+            var last = Math.ceil((results.length) / 15);
+      var endPage = Math.ceil(page / 5) * 5;
+      var startPage = endPage - 5;
             if (err) {
                 console.log(err);
             }
@@ -95,8 +97,8 @@ router.get('/gallerySearch', async (req, res) => {
         if (err) {
             console.log(err)
         }
-         console.log("searchText = " + searchText)
-         console.log("results = " + results)
+        //  console.log("searchText = " + searchText)
+        //  console.log("results = " + results)
         var last = Math.ceil((results.length) / 10);
         // ajaxSearch = results;
         res.send({
@@ -108,7 +110,7 @@ router.get('/gallerySearch', async (req, res) => {
             last: last,
             searchText: searchText
         });
-        console.log("ajaxSearch = " + results.length);
+        // console.log("ajaxSearch = " + results.length);
         // console.log("page = " + page)
     });
 });

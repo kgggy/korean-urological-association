@@ -66,9 +66,11 @@ router.get('/page', async (req, res) => {
   sql += " order by uid desc;"
   try {
     connection.query(sql, function (err, results) {
-      var last = Math.ceil((results.length) / 15);
-      var endPage = Math.ceil(page / 5) * 5;
-      var startPage = endPage - 5;
+      var countPage = 10; //하단에 표시될 페이지 개수
+      var page_num = 10; //한 페이지에 보여줄 개수
+      var last = Math.ceil((results.length) / 10); //마지막 장
+      var endPage = Math.ceil(page / countPage) * countPage; //끝페이지(10)
+      var startPage = endPage - countPage; //시작페이지(1)
       if (err) {
         console.log(err);
       }
@@ -85,17 +87,18 @@ router.get('/page', async (req, res) => {
         results: results,
         page: page, //현재 페이지
         length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
-        page_num: 15, //한 페이지에 보여줄 개수
-        countPage: 5, //하단에 표시될 페이지 개수
-        startPage: startPage, //시작페이지(1)
-        endPage: endPage, //끝페이지(10)
+        page_num: page_num, 
+        countPage: countPage, 
+        startPage: startPage, 
+        endPage: endPage, 
         pass: true,
-        last: last, //마지막 장
+        last: last, 
         keepSearch: keepSearch
       });
-      // console.log("endPage = " + endPage)
-      // console.log("page = " + page)
-      // console.log("startPage = " + startPage)
+      console.log(last)
+      console.log("endPage = " + endPage)
+      console.log("page = " + page)
+      console.log("startPage = " + startPage)
     });
   } catch (error) {
     res.status(401).send(error.message);
