@@ -36,10 +36,10 @@
                                     <tbody>
                                         <% for(var i = 0; i < results.length; i++){ %>
                                         <tr>
-                                            <td><%= i + 1 %></td>
-                                            <td><img src="../../../<%= results[i].supportImg %>" alt="사진"
+                                            <td style="pointer-events:none"><%= i + 1 %></td>
+                                            <td style="pointer-events:none"><img src="../../../<%= results[i].supportImg %>" alt="사진"
                                                     style="padding:20px !important; width:250px" /></td>
-                                            <td><%=results[i].supporter %></td>
+                                            <td style="pointer-events:none"><%=results[i].supporter %></td>
                                             <td>
                                                 <input id="searchAction" type="button"
                                                     class="btn btn-block btn-outline-success"

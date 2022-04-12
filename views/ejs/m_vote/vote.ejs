@@ -1,0 +1,171 @@
+<style>
+    .userTable thead tr .sorting:first-child::before,
+    .userTable thead tr .sorting_asc:first-child::before,
+    .userTable thead tr .sorting_asc:first-child::after,
+    .userTable thead .sorting_desc:first-child:after,
+    .userTable thead .sorting:first-child:after,
+    .userTable thead .sorting:first-child {
+        content: none !important;
+        cursor: unset
+    }
+
+    #vote_popup {
+        width: 90px;
+        display: inline-block;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        searchajax();
+    });
+</script>
+<main class="main">
+    <!-- Breadcrumb-->
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">Home</li>
+        <li class="breadcrumb-item">
+            <a style="font-weight: bold;">행사관리</a>
+        </li>
+        <li class="breadcrumb-item active"> 투표현황 </li>
+    </ol>
+    <div class="container-fluid">
+        <div class="animated fadeIn">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fa fa-align-justify"></i> 투표현황
+                        </div>
+                        <div class="card-body">
+                            <form id="eventForm" name="eventForm" method="" action="">
+
+                                <table id="exampleTable" class="table userTable table-responsive-sm table-hover">
+                                    <colgroup>
+                                        <!-- <col width="5%" /> -->
+                                        <col width= "-1px" />
+                                        <col width="5%" />
+                                        <col width="35%" />
+                                        <col width="15%" />
+                                        <col width="15%" />
+                                        <col width="10%" />
+                                        <col width="10%" />
+                                        <col width="10%" />
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <!-- <th><input type="checkbox" name="chkAll" id="chkAll" /></th> -->
+                                            <th style="width:-1px;"></th>
+                                            <th>번호</th>
+                                            <th>제목</th>
+                                            <th>행사날짜</th>
+                                            <th>투표기간</th>
+                                            <th>미정</th>
+                                            <th>참여</th>
+                                            <th>불참</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody">
+                                        <% if(results.length > 0){ %> <% for(var i = 0; i < results.length; i++) {%>
+                                        <tr
+                                            onclick="location.href='/admin/m_event/eventSelectOne?eventId=<%=results[i].eventId%>&vote=y'">
+                                            <!-- <td onclick='event.cancelBubble=true;'><input type="checkbox" id="chk"
+                                                    name="chk" value=""/></td> -->
+                                            <td style="width:-1px;"></td>
+                                            <td>
+                                                <%= results.length-i %></td>
+                                            <td>
+                                                <%=results[i].eventTitle%></td>
+                                            <td>
+                                                <%=results[i].eventDateFmt%></td>
+                                            <td>
+                                                <%=results[i].startDateFmt %> - <%=results[i].endDateFmt %></td>
+                                            <td onclick='event.cancelBubble=true;'><button
+                                                    class="btn btn-block btn-outline-success" type="button"
+                                                    id="vote_popup"
+                                                    onclick="voteList('/admin/m_vote/voteList', '', 'resizable=0,width=640, height=700, scrollbars=1', '0', '<%= results[i].eventId %>')">미정자</button>
+                                            </td>
+                                            <td onclick='event.cancelBubble=true;'><button
+                                                    class="btn btn-block btn-outline-success" type="button"
+                                                    id="vote_popup"
+                                                    onclick="voteList('/admin/m_vote/voteList', '', 'resizable=0,width=640, height=700, scrollbars=1', '1', '<%= results[i].eventId %>')">참여자</button>
+                                            </td>
+                                            <td onclick='event.cancelBubble=true;'><button
+                                                    class="btn btn-block btn-outline-danger" type="button"
+                                                    id="vote_popup"
+                                                    onclick="voteList('/admin/m_vote/voteList', '', 'resizable=0,width=640, height=700, scrollbars=1', '2', '<%= results[i].eventId %>')">불참자</button>
+                                            </td>
+                                        </tr>
+                                        <% } %>
+                                        <% } else { %>
+                                        <tr>
+                                            <td colspan="7">
+                                                데이터가 존재하지 않습니다.
+                                            </td>
+                                        </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    const formObj = $("form[name='eventForm']");
+    //등록 
+    function enroll() {
+        formObj.attr("method", "get");
+        formObj.attr("action", "/admin/m_event/eventWritForm");
+        formObj.submit();
+    }
+    // 삭제
+    $("#delete_btn").on("click", function () {
+        var chkArr = [];
+        $("input[name=chk]:checked").each(function () {
+            chkArr.push($(this).val());
+        });
+        $('#eventId').val(chkArr);
+        if (chkArr == "") {
+            alert("삭제할 목록을 선택해주세요.");
+            return false;
+        }
+        var chkImg = [];
+        $("input[name=chk]:checked").each(function () {
+            chkImg.push($(this).attr('data-img'));
+        });
+        $('#eventFileRoute').val(chkImg);
+        formObj.attr("action", "/admin/m_event/eventsDelete");
+        formObj.attr("method", "get");
+        if (confirm("삭제하시겠습니까?") == true) {
+            formObj.submit();
+        } else {
+            return false;
+        }
+    })
+
+    //체크박스
+    $("#chkAll").click(function () {
+        if ($("#chkAll").is(":checked"))
+            $("input[name=chk]").prop("checked", true);
+        else
+            $("input[name=chk]").prop("checked", false);
+    });
+    $("input[name=chk]").click(function () {
+        var total = $("input[name=chk]").length;
+        var checked = $("input[name=chk]:checked").length;
+        if (total != checked)
+            $("#chkAll").prop("checked", false);
+        else
+            $("#chkAll").prop("checked", true);
+    });
+
+    //명단 확인
+    function voteList(theURL, winName, features, choose, eventId) {
+        theURL += '?choose=' + choose + '&eventId=' + eventId;
+        window.open(theURL, winName, features);
+    }
+</script>

@@ -3,17 +3,20 @@ var router = express.Router();
 const fs = require('fs');
 const sharp = require('sharp');
 const multer = require("multer");
-const path = require('path');             
+const path = require('path');
 var connection = require('../../config/db').conn;
 
 //파일업로드 모듈
 var upload = multer({ //multer안에 storage정보  
     storage: multer.diskStorage({
         destination: (req, file, callback) => {
-            //파일이 이미지 파일이면
-                // console.log("이미지 파일입니다.");
-                callback(null, 'uploads/gallery');
-                //텍스트 파일이면
+            fs.mkdir('uploads/event', function (err) {
+                if (err && err.code != 'EEXIST') {
+                    console.log("already exist")
+                } else {
+                    callback(null, 'uploads/event');
+                }
+            })
         },
         //파일이름 설정
         filename: (req, file, done) => {
@@ -33,9 +36,14 @@ var upload = multer({ //multer안에 storage정보
 router.get('/', async (req, res) => {
     try {
         var page = req.query.page;
-        // var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
-        // var keepSearch = "&searchText=" + searchText;
-        var sql = "select * from event";
+        var searchType1 = req.query.searchType1 == undefined ? "" : req.query.searchType1;
+        var keepSearch = "&searchType1=" + searchType1;
+        var sql = "select *, date_format(eventDate, '%Y-%m-%d') as eventDateFmt\
+                    from event where 1=1";
+        if (searchType1 != '') {
+            sql += " and eventStatus = '" + searchType1 + "'";
+        }
+        sql += " order by eventId desc";
         connection.query(sql, (err, results) => {
             var last = Math.ceil((results.length) / 15);
             if (err) {
@@ -44,13 +52,14 @@ router.get('/', async (req, res) => {
             let route = req.app.get('views') + '/m_event/event';
             res.render(route, {
                 // searchText: searchText,
+                searchType1: searchType1,
                 results: results,
                 page: page,
                 length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
                 page_num: 10, //한 페이지에 보여줄 개수
                 pass: true,
                 last: last,
-                // keepSearch: keepSearch
+                keepSearch: keepSearch
             });
         });
     } catch (error) {
@@ -58,46 +67,16 @@ router.get('/', async (req, res) => {
     }
 });
 
-//갤러리 검색(ajax)
-router.get('/gallerySearch', async (req, res) => {
-    var page = req.query.page;
-    var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
-    var keepSearch = "&searchText=" + searchText;
-    var sql = "select *,  date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt from gallery";
-    if (searchText != '') {
-        sql += " where galleryTitle like '%" + searchText + "%' or galleryContent like '%" + searchText + "%'";
-    }
-    sql += " order by 1 desc";
-    connection.query(sql, (err, results) => {
-        if (err) {
-            console.log(err)
-        }
-         console.log("searchText = " + searchText)
-         console.log("results = " + results)
-        var last = Math.ceil((results.length) / 10);
-        // ajaxSearch = results;
-        res.send({
-            ajaxSearch: results,
-            page: page,
-            length: results.length - 1,
-            page_num: 10,
-            pass: true,
-            last: last,
-            searchText: searchText
-        });
-        console.log("ajaxSearch = " + results.length);
-        // console.log("page = " + page)
-    });
-});
-
-//갤러리 글 상세조회
-router.get('/gallerySelectOne', async (req, res) => {
+//행사 상세조회
+router.get('/eventSelectOne', async (req, res) => {
     try {
-        const param = req.query.galleryId;
-        const sql = "select g.*, date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt, f.fileRoute\
-                        from gallery g\
-                        left join file f on f.boardId = g.galleryId\
-                        where g.galleryId = ?";
+        const vote = req.query.vote == undefined ? "" : req.query.vote;
+        const param = req.query.eventId;
+        const sql = "select *, date_format(startDate, '%Y-%m-%d') as startDateFmt,\
+                                date_format(endDate, '%Y-%m-%d') as endDateFmt,\
+                                date_format(eventDate, '%Y-%m-%d') as eventDateFmt\
+                        from event\
+                        where eventId = ?";
 
         connection.query(sql, param, (err, result) => {
             if (err) {
@@ -105,9 +84,18 @@ router.get('/gallerySelectOne', async (req, res) => {
                     msg: "select query error"
                 });
             }
-            let route = req.app.get('views') + '/m_gallery/gallery_viewForm';
+            var fileOrgName;
+            if (result[0].eventFileRoute != null && result[0].eventFileRoute != '') {
+                const str = result[0].eventFileRoute.split("\\");
+                fileOrgName = str[2];
+            } else {
+                fileOrgName = '';
+            }
+            let route = req.app.get('views') + '/m_event/event_viewForm';
             res.render(route, {
-                'result': result
+                result: result,
+                fileOrgName: fileOrgName,
+                vote: vote
             });
         });
     } catch (error) {
@@ -115,112 +103,101 @@ router.get('/gallerySelectOne', async (req, res) => {
     }
 });
 
-//갤러리 등록 폼 이동
-router.get('/galleryWritForm', async (req, res) => {
-    console.log(req.query.uid)
-    console.log(req.query.galleryId)
-    let route = req.app.get('views') + '/m_gallery/gallery_writForm.ejs';
-    res.render(route, {
-        uid: req.query.uid,
-        galleryId: req.query.galleryId
-    });
+//이벤트 등록 폼 이동
+router.get('/eventWritForm', async (req, res) => {
+    let route = req.app.get('views') + '/m_event/event_writForm.ejs';
+    res.render(route);
 });
 
-// 갤러리 등록
-router.post('/galleryWrite', upload.array('file'), async (req, res, next) => {
-    const paths = req.files.map(data => data.path);
-    const orgName = req.files.map(data => data.originalname);
-    console.log(paths);
-    console.log(orgName);
+//이벤트 등록
+router.post('/eventWrite', upload.single('file'), async (req, res, next) => {
     try {
-        for (let i = 0; i < paths.length; i++) {
-            if (req.files[i].size > 1000000) {
-                sharp(paths[i]).resize({
-                    width: 2000
-                }).withMetadata() //이미지 방향 유지
+        var param1 = [];
+        if (req.file != null) {
+            const path = req.file.path;
+            if (path.size > 1000000) {
+                sharp(path).resize({
+                        width: 2000
+                    }).withMetadata() //이미지 방향 유지
                     .toBuffer((err, buffer) => {
                         if (err) {
                             throw err;
                         }
-                        fs.writeFileSync(paths[i], buffer, (err) => {
+                        fs.writeFileSync(path, buffer, (err) => {
                             if (err) {
                                 throw err
                             }
                         });
                     });
             }
+            param1 = [req.body.eventTitle, req.body.eventContent, req.body.eventDate, req.body.eventPlace, req.body.eventPlaceDetail, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, path];
+        } else {
+            param1 = [req.body.eventTitle, req.body.eventContent, req.body.eventDate, req.body.eventPlace, req.body.eventPlaceDetail, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, req.body.eventFileRoute];
         }
-
-        const param1 = [req.body.galleryTitle, req.body.galleryContent];
-        const sql1 = "call insertgallery(?,?)";
+        const sql1 = "insert into event(eventTitle, eventContent, eventDate, eventPlace, eventPlaceDetail, startDate, endDate, eventFileRoute)\
+                                  values(?, ?, ?, ?, ?, if(? = '',null,?), if(? = '',null,?), ?)";
         connection.query(sql1, param1, (err) => {
             if (err) {
                 throw err;
             }
-            const sql2 = "SELECT * FROM gallery order by galleryWritDate desc limit 1"
-            connection.query(sql2, (err, result) => {
-                if (err) {
-                    throw err;
-                }
-                for (let i = 0; i < paths.length; i++) {
-                    console.log(result);
-                    const param3 = [paths[i], orgName[i], result[0].galleryId];
-                    const sql3 = "insert into file(fileRoute, fileOrgName, boardId) values (?, ?, ?)";
-                    connection.query(sql3, param3, (err) => {
-                        if (err) {
-                            throw err;
-                        }
-                    });
-                };
-            });
+            res.send('<script>alert("행사가 등록되었습니다."); location.href="/admin/m_event";</script>');
         });
-        //fcm
-        var firebaseToken;
-        const token = "select pushToken from user where pushToken is not null";
-        connection.query(token, (err, result) => {
-            if (err) {
-                throw err;
-            }
-            for (var i = 0; i < result.length; i++) {
-                firebaseToken = result[i].pushToken;
-                pushing.sendFcmMessage({
-                    "message": {
-                        "token": firebaseToken,
-                        "notification": {
-                            "body": "공지사항을 확인해주세요.",
-                            "title": "ECOCE 공지사항"
-                        },
-                        "data": {
-                            "action": "notice"
-                        }
-                    }
-                });
-            }
-            res.send('<script>alert("갤러리가 등록되었습니다."); location.href="/admin/m_gallery/gallery?&page=1";</script>');
-        });
+        // //fcm
+        // var firebaseToken;
+        // const token = "select pushToken from user where pushToken is not null";
+        // connection.query(token, (err, result) => {
+        //     if (err) {
+        //         throw err;
+        //     }
+        //     for (var i = 0; i < result.length; i++) {
+        //         firebaseToken = result[i].pushToken;
+        //         pushing.sendFcmMessage({
+        //             "message": {
+        //                 "token": firebaseToken,
+        //                 "notification": {
+        //                     "body": "이벤트를 확인해주세요.",
+        //                     "title": "대한비뇨의학회 행사"
+        //                 },
+        //                 "data": {
+        //                     "action": "event"
+        //                 }
+        //             }
+        //         });
+        //     }
+        //      res.send('<script>alert("행사가 등록되었습니다."); location.href="/admin/m_event";</script>');
+        // });
+
     } catch (error) {
         res.send(error.message);
     }
 });
 
-//게시글 수정 폼 이동
-router.get('/galleryUdtForm', async (req, res) => {
+//행사 수정 폼 이동
+router.get('/eventUdtForm', async (req, res) => {
     try {
-        const param = req.query.galleryId;
-        const sql = "select g.*, date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt, f.fileRoute, f.fileOrgName, f.fileId\
-                        from gallery g\
-                        left join file f on f.boardId = g.galleryId\
-                        where g.galleryId = ?";
+        const param = req.query.eventId;
+        const sql = "select *, date_format(startDate, '%Y-%m-%d') as startDateFmt,\
+                                date_format(endDate, '%Y-%m-%d') as endDateFmt,\
+                                date_format(eventDate, '%Y-%m-%d') as eventDateFmt\
+                       from event\
+                      where eventId = ?";
         connection.query(sql, param, function (err, result) {
             if (err) {
                 console.log(err);
             }
-            let route = req.app.get('views') + '/m_gallery/gallery_udtForm';
-            console.log(route);
+            console.log(result)
+            var fileOrgName;
+            if (result[0].eventFileRoute != null && result[0].eventFileRoute != '') {
+                const str = result[0].eventFileRoute.split("\\");
+                fileOrgName = str[2];
+            } else {
+                fileOrgName = '';
+            }
+            let route = req.app.get('views') + '/m_event/event_udtForm';
             res.render(route, {
-                'result': result
+                result: result,
+                fileOrgName: fileOrgName
             });
-            console.log(result);
         });
 
     } catch (error) {
@@ -228,48 +205,46 @@ router.get('/galleryUdtForm', async (req, res) => {
     }
 });
 
-//갤러리 수정
-router.post('/galleryUpdate', upload.array('file'), (req, res) => {
-    const paths = req.files.map(data => data.path);
-    const orgName = req.files.map(data => data.originalname);
+//행사 수정
+router.post('/eventUpdate', upload.single('file'), (req, res) => {
     try {
-        const param1 = [req.body.galleryTitle, req.body.galleryContent, req.body.galleryId];
-        const sql1 = "update gallery set galleryTitle = ?, galleryContent = ?, galleryWritDate = sysdate() where galleryId = ?";
-        connection.query(sql1, param1, (err) => {
+        const sql = "update event set eventTitle = ?, eventContent = ?, eventPlace = ?, eventPlaceDetail = ?,\
+        eventDate = ?, startDate = if(? = '',null,?), endDate = if(? = '',null,?), eventFileRoute = ?\
+        where eventId = ?";
+        var param = [];
+        if (req.file != null) {
+            const path = req.file.path;
+            param = [req.body.eventTitle, req.body.eventContent, req.body.eventPlace, req.body.eventPlaceDetail, req.body.eventDate, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, path, req.body.eventId];
+        } else {
+            param = [req.body.eventTitle, req.body.eventContent, req.body.eventPlace, req.body.eventPlaceDetail, req.body.eventDate, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, req.body.eventFileRoute, req.body.eventId];
+        }
+        connection.query(sql, param, (err) => {
             if (err) {
                 console.error(err);
             }
-            for (let i = 0; i < paths.length; i++) {
-                const sql2 = "insert into file(fileRoute, fileOrgName, boardId) values (?, ?, ?)";
-                const param2 = [paths[i], orgName[i], req.body.galleryId];
-                connection.query(sql2, param2, (err) => {
-                    if (err) {
-                        throw err;
-                    }
-                });
-            };
-            res.redirect('gallerySelectOne?galleryId=' + req.body.galleryId);
+            res.redirect('eventSelectOne?eventId=' + req.body.eventId);
         });
     } catch (error) {
         res.send(error.message);
     }
 });
 
-//공지사항 여러개 삭제
-router.get('/gallerysDelete', (req, res) => {
-    const param = req.query.galleryId;
-    const str = param.split(',');
+//이벤트 여러개 삭제
+router.get('/eventsDelete', (req, res) => {
+    const eventId = req.query.eventId;
+    const str = eventId.split(',');
     for (var i = 0; i < str.length; i++) {
         let fileRoute = [];
-        const sql1 = "select fileRoute from file where boardId = ?";
+        const sql1 = "select eventFileRoute from event where eventId = ?";
         connection.query(sql1, str[i], (err, result) => {
             if (err) {
                 console.log(err)
             }
             fileRoute = result;
+            console.log(fileRoute[0].eventFileRoute)
             if (fileRoute != undefined) {
                 for (let j = 0; j < fileRoute.length; j++) {
-                    fs.unlinkSync(fileRoute[j].fileRoute, (err) => {
+                    fs.unlinkSync(fileRoute[j].eventFileRoute, (err) => {
                         if (err) {
                             console.log(err);
                         }
@@ -278,44 +253,64 @@ router.get('/gallerysDelete', (req, res) => {
                 }
             }
         });
-        const sql = "call deleteGallery(?)";
+        const sql = "delete from event where eventId = ?";
         connection.query(sql, str[i], (err) => {
             if (err) {
                 console.log(err)
             }
         });
     }
-    res.send('<script>alert("삭제되었습니다."); location.href="/admin/m_gallery/gallery?page=1";</script>');
+    res.send('<script>alert("삭제되었습니다."); location.href="/admin/m_event";</script>');
 });
 
-//갤러리 삭제
-router.get('/galleryDelete', async (req, res) => {
+//행사 삭제
+router.get('/eventDelete', async (req, res) => {
     try {
-        const param = req.query.galleryId;
-        // console.log(param);
-        const sql = "call deleteGallery(?)";
+        const param = req.query.eventId;
+        const eventFileRoute = req.query.eventFileRoute;
+        const sql = "delete from event where eventId = ?";
         connection.query(sql, param, (err) => {
             if (err) {
                 console.log(err);
             }
-            if (req.query.fileRoute != undefined) {
-                if (Array.isArray(req.query.fileRoute) == false) {
-                    req.query.fileRoute = [req.query.fileRoute];
-                }
-                for (let i = 0; i < req.query.fileRoute.length; i++) {
-                    fs.unlinkSync(req.query.fileRoute[i], (err) => {
-                        if (err) {
-                            console.log(err);
-                        }
-                        return;
-                    });
-                }
+            if (eventFileRoute != undefined && eventFileRoute != '') {
+                fs.unlinkSync(eventFileRoute, (err) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                    return;
+                });
             }
-            res.send('<script>alert("갤러리가 삭제되었습니다."); location.href="/admin/m_gallery/gallery?page=1";</script>');
+            res.send('<script>alert("행사가 삭제되었습니다."); location.href="/admin/m_event";</script>');
         });
     } catch (error) {
         res.send(error.message);
     }
+});
+
+//첨부파일 삭제
+router.get('/eventFileDelete', async (req, res) => {
+    const eventFileRoute = req.query.eventFileRoute;
+    const param = [req.query.eventId];
+    try {
+        const sql = "update event set eventFileRoute = null where eventId = ?";
+        connection.query(sql, param, (err) => {
+            if (err) {
+                console.log(err)
+            }
+            fs.unlinkSync(eventFileRoute.toString(), (err) => {
+                if (err) {
+                    console.log(err);
+                }
+                return;
+            });
+        })
+    } catch (error) {
+        if (error.code == "ENOENT") {
+            console.log("프로필 삭제 에러 발생");
+        }
+    }
+    res.redirect('eventUdtForm?eventId=' + req.query.eventId);
 });
 
 module.exports = router;

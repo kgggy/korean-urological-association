@@ -28,17 +28,18 @@
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">회원번호</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="uid" type="text" name="uid" value="<%=result.uid%>" readonly> 
+                              <input class="form-control" id="uid" type="text" name="uid" value="<%=result.uid%>"
+                                 readonly>
                            </div>
                         </div>
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">프로필사진</label>
                            <div class="col-md-9">
-                              <% if(result.userImg != null && result.userImg != '') {%>
-                              <img src="../../../<%= result.userImg %>" alt="사진" width="40%" />
+                              <% if(userImg != null && userImg != '') {%>
+                              <img src="../../../<%= userImg %>" alt="사진" width="40%" />
                               <button id="searchAction" class="btn btn-block btn-outline-danger" type="button"
                                  onclick="javascript:file_del();">삭제</button>
-                              <input type="hidden" id="userImg" name="userImg" value="<%=result.userImg%>">
+                              <input type="hidden" id="userImg" name="userImg" value="<%=userImg%>">
                               </td>
                               <% }else{ %>
                               <input type="file" id="file" name="file" />
@@ -81,9 +82,9 @@
                            <div class="col-md-9" style="display: flex;text-align: center;align-items: center;">
                               <input class="form-control phone" id="hosPhone1" type="text" name="hosPhone1"
                                  value="<%=result.hosPhone1%>">&nbsp;&nbsp;-&nbsp;&nbsp;
-                                 <input class="form-control phone" id="hosPhone2" type="text" name="hosPhone2"
+                              <input class="form-control phone" id="hosPhone2" type="text" name="hosPhone2"
                                  value="<%=result.hosPhone2%>">&nbsp;&nbsp;-&nbsp;&nbsp;
-                                 <input class="form-control phone" id="hosPhone3" type="text" name="hosPhone3"
+                              <input class="form-control phone" id="hosPhone3" type="text" name="hosPhone3"
                                  value="<%=result.hosPhone3%>">
                            </div>
                         </div>
@@ -118,7 +119,8 @@
                         </div>
                         <div>
                            <button class="btn btn-block btn-outline-danger" type="button"
-                              onclick="location.href='/admin/m_user/selectOne?uid=<%=result.uid%>&page=<%=page%>'">취소</button>
+                              onclick="location.href='/admin/m_user/selectOne?uid=<%=result.uid%>&page=<%=page%>'">
+                                    취소</button>
                            </div>
                         </div>
                   </div>
@@ -130,6 +132,24 @@
 </main>
 
 <script type="text/javascript">
+   $(document).ready(function () {
+      //확장자 체크
+      $("input:file[name='file']").change(function () {
+         var str = $(this).val();
+         var fileName = str.split('\\').pop().toLowerCase();
+         // alert(fileName);
+         checkFileName(fileName);
+      });
+   });
+   //확장자 체크
+   function checkFileName(str) {
+      var ext = str.split('.').pop().toLowerCase();
+      // alert(ext);
+      if ($.inArray(ext, ['jpg', 'png', 'jpeg', 'gif']) == -1) {
+         alert(ext + '파일은 업로드 하실 수 없습니다.');
+         $("input:file[name='file']").val("");
+      }
+   }
    //수정
    function userUpdate() {
       if (confirm("수정하시겠습니까?")) {

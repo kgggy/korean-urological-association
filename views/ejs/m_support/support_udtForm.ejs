@@ -24,8 +24,8 @@
 								<div class="form-group row">
 									<label class="col-md-2 col-form-label">이미지</label>
 									<% if(result.length > 0 && result[0].supportImg != null && result[0].supportImg != '') { %>
-									<div style="display: flex; flex-direction: column; gap: 25px; padding-left: 15px">
-										<img src="../../../<%=result[0].supportImg%>" width="100%">&nbsp;
+									<div style="display: flex; flex-direction: column; padding-left: 15px">
+										<img src="../../../<%=result[0].supportImg%>" width="500px">&nbsp;
 										<button class="btn btn-block btn-outline-danger" name="fileDelete"
 											data-supportImg="<%=result[0].supportImg%>">삭제</button>
 									</div>

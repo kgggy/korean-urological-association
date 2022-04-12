@@ -1,0 +1,302 @@
+var express = require('express');
+var router = express.Router();
+const fs = require('fs');
+const sharp = require('sharp');
+const multer = require("multer");
+const path = require('path');
+var connection = require('../../config/db').conn;
+
+//파일업로드 모듈
+var upload = multer({ //multer안에 storage정보  
+    storage: multer.diskStorage({
+        destination: (req, file, callback) => {
+            fs.mkdir('uploads/event', function (err) {
+                if (err && err.code != 'EEXIST') {
+                    console.log("already exist")
+                } else {
+                    callback(null, 'uploads/event');
+                }
+            })
+        },
+        //파일이름 설정
+        filename: (req, file, done) => {
+            const ext = path.extname(file.originalname);
+            done(null, path.basename(file.originalname, ext) + Date.now() + ext);
+        },
+    }),
+    //파일 개수, 파일사이즈 제한
+    limits: {
+        files: 5,
+        fileSize: 1024 * 1024 * 1024 //1기가
+    },
+
+});
+
+//투표현황 전체조회
+router.get('/', async (req, res) => {
+    try {
+        // var searchType1 = req.query.searchType1 == undefined ? "" : req.query.searchType1;
+        // var keepSearch = "&searchType1=" + searchType1;
+        var sql = "select *, date_format(startDate, '%Y-%m-%d') as startDateFmt,\
+                            date_format(endDate, '%Y-%m-%d') as endDateFmt,\
+                            date_format(eventDate, '%Y-%m-%d') as eventDateFmt\
+                     from event";
+        // if (searchType1 != '') {
+        //     sql += " and eventStatus = '" + searchType1 + "'";
+        // }
+        sql += " order by eventId desc";
+        connection.query(sql, (err, results) => {
+            // var last = Math.ceil((results.length) / 15);
+            if (err) {
+                console.log(err);
+            }
+            let route = req.app.get('views') + '/m_vote/vote';
+            res.render(route, {
+                // searchText: searchText,
+                // searchType1: searchType1,
+                results: results,
+                // page: page,
+                // length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
+                // page_num: 10, //한 페이지에 보여줄 개수
+                // pass: true,
+                // last: last,
+                // keepSearch: keepSearch
+            });
+        });
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
+//투표명단 확인
+router.get('/voteList', async (req, res) => {
+    try {
+        const choose = [req.query.choose];
+        const param = [req.query.eventId, req.query.choose];
+        const sql = "select u.userName from vote v left join user u on u.uid = v.uid where eventId = ? and choose = ?";
+        connection.query(sql, param, (err, results) => {
+            if (err) {
+                console.log(err);
+            }
+            let route = req.app.get('views') + '/m_vote/voteList';
+            res.render(route, {
+                results: results,
+                choose: choose
+            });
+        })
+    } catch (error) {
+        res.send(error.message);
+    }
+});
+
+//이벤트 등록 폼 이동
+router.get('/eventWritForm', async (req, res) => {
+    let route = req.app.get('views') + '/m_event/event_writForm.ejs';
+    res.render(route);
+});
+
+//이벤트 등록
+router.post('/eventWrite', upload.single('file'), async (req, res, next) => {
+    try {
+        var param1 = [];
+        if (req.file != null) {
+            const path = req.file.path;
+            if (path.size > 1000000) {
+                sharp(path).resize({
+                        width: 2000
+                    }).withMetadata() //이미지 방향 유지
+                    .toBuffer((err, buffer) => {
+                        if (err) {
+                            throw err;
+                        }
+                        fs.writeFileSync(path, buffer, (err) => {
+                            if (err) {
+                                throw err
+                            }
+                        });
+                    });
+            }
+            param1 = [req.body.eventTitle, req.body.eventContent, req.body.eventDate, req.body.eventPlace, req.body.eventPlaceDetail, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, path];
+        } else {
+            param1 = [req.body.eventTitle, req.body.eventContent, req.body.eventDate, req.body.eventPlace, req.body.eventPlaceDetail, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, req.body.eventFileRoute];
+        }
+        const sql1 = "insert into event(eventTitle, eventContent, eventDate, eventPlace, eventPlaceDetail, startDate, endDate, eventFileRoute)\
+                                  values(?, ?, ?, ?, ?, if(? = '',null,?), if(? = '',null,?), ?)";
+        connection.query(sql1, param1, (err) => {
+            if (err) {
+                throw err;
+            }
+            res.send('<script>alert("행사가 등록되었습니다."); location.href="/admin/m_event";</script>');
+        });
+        // //fcm
+        // var firebaseToken;
+        // const token = "select pushToken from user where pushToken is not null";
+        // connection.query(token, (err, result) => {
+        //     if (err) {
+        //         throw err;
+        //     }
+        //     for (var i = 0; i < result.length; i++) {
+        //         firebaseToken = result[i].pushToken;
+        //         pushing.sendFcmMessage({
+        //             "message": {
+        //                 "token": firebaseToken,
+        //                 "notification": {
+        //                     "body": "이벤트를 확인해주세요.",
+        //                     "title": "대한비뇨의학회 행사"
+        //                 },
+        //                 "data": {
+        //                     "action": "event"
+        //                 }
+        //             }
+        //         });
+        //     }
+        //      res.send('<script>alert("행사가 등록되었습니다."); location.href="/admin/m_event";</script>');
+        // });
+
+    } catch (error) {
+        res.send(error.message);
+    }
+});
+
+//행사 수정 폼 이동
+router.get('/eventUdtForm', async (req, res) => {
+    try {
+        const param = req.query.eventId;
+        const sql = "select *, date_format(startDate, '%Y-%m-%d') as startDateFmt,\
+                                date_format(endDate, '%Y-%m-%d') as endDateFmt,\
+                                date_format(eventDate, '%Y-%m-%d') as eventDateFmt\
+                       from event\
+                      where eventId = ?";
+        connection.query(sql, param, function (err, result) {
+            if (err) {
+                console.log(err);
+            }
+            console.log(result)
+            var fileOrgName;
+            if (result[0].eventFileRoute != null && result[0].eventFileRoute != '') {
+                const str = result[0].eventFileRoute.split("\\");
+                fileOrgName = str[2];
+            } else {
+                fileOrgName = '';
+            }
+            let route = req.app.get('views') + '/m_event/event_udtForm';
+            res.render(route, {
+                result: result,
+                fileOrgName: fileOrgName
+            });
+        });
+
+    } catch (error) {
+        res.status(401).send(error.message);
+    }
+});
+
+//행사 수정
+router.post('/eventUpdate', upload.single('file'), (req, res) => {
+    try {
+        const sql = "update event set eventTitle = ?, eventContent = ?, eventPlace = ?, eventPlaceDetail = ?,\
+        eventDate = ?, startDate = if(? = '',null,?), endDate = if(? = '',null,?), eventFileRoute = ?\
+        where eventId = ?";
+        var param = [];
+        if (req.file != null) {
+            const path = req.file.path;
+            param = [req.body.eventTitle, req.body.eventContent, req.body.eventPlace, req.body.eventPlaceDetail, req.body.eventDate, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, path, req.body.eventId];
+        } else {
+            param = [req.body.eventTitle, req.body.eventContent, req.body.eventPlace, req.body.eventPlaceDetail, req.body.eventDate, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, req.body.eventFileRoute, req.body.eventId];
+        }
+        connection.query(sql, param, (err) => {
+            if (err) {
+                console.error(err);
+            }
+            res.redirect('eventSelectOne?eventId=' + req.body.eventId);
+        });
+    } catch (error) {
+        res.send(error.message);
+    }
+});
+
+//이벤트 여러개 삭제
+router.get('/eventsDelete', (req, res) => {
+    const eventId = req.query.eventId;
+    const str = eventId.split(',');
+    for (var i = 0; i < str.length; i++) {
+        let fileRoute = [];
+        const sql1 = "select eventFileRoute from event where eventId = ?";
+        connection.query(sql1, str[i], (err, result) => {
+            if (err) {
+                console.log(err)
+            }
+            fileRoute = result;
+            console.log(fileRoute[0].eventFileRoute)
+            if (fileRoute != undefined) {
+                for (let j = 0; j < fileRoute.length; j++) {
+                    fs.unlinkSync(fileRoute[j].eventFileRoute, (err) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        return;
+                    });
+                }
+            }
+        });
+        const sql = "delete from event where eventId = ?";
+        connection.query(sql, str[i], (err) => {
+            if (err) {
+                console.log(err)
+            }
+        });
+    }
+    res.send('<script>alert("삭제되었습니다."); location.href="/admin/m_event";</script>');
+});
+
+//행사 삭제
+router.get('/eventDelete', async (req, res) => {
+    try {
+        const param = req.query.eventId;
+        const eventFileRoute = req.query.eventFileRoute;
+        const sql = "delete from event where eventId = ?";
+        connection.query(sql, param, (err) => {
+            if (err) {
+                console.log(err);
+            }
+            if (eventFileRoute != undefined && eventFileRoute != '') {
+                fs.unlinkSync(eventFileRoute, (err) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                    return;
+                });
+            }
+            res.send('<script>alert("행사가 삭제되었습니다."); location.href="/admin/m_event";</script>');
+        });
+    } catch (error) {
+        res.send(error.message);
+    }
+});
+
+//첨부파일 삭제
+router.get('/eventFileDelete', async (req, res) => {
+    const eventFileRoute = req.query.eventFileRoute;
+    const param = [req.query.eventId];
+    try {
+        const sql = "update event set eventFileRoute = null where eventId = ?";
+        connection.query(sql, param, (err) => {
+            if (err) {
+                console.log(err)
+            }
+            fs.unlinkSync(eventFileRoute.toString(), (err) => {
+                if (err) {
+                    console.log(err);
+                }
+                return;
+            });
+        })
+    } catch (error) {
+        if (error.code == "ENOENT") {
+            console.log("프로필 삭제 에러 발생");
+        }
+    }
+    res.redirect('eventUdtForm?eventId=' + req.query.eventId);
+});
+
+module.exports = router;

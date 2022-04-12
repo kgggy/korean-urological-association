@@ -43,7 +43,7 @@ router.get('/reference', async (req, res) => {
         var sql = "select *,  date_format(referWritDate, '%Y-%m-%d') as referWritDateFmt\
                        from reference order by 2 desc";
         connection.query(sql, (err, results) => {
-            var last = Math.ceil((results.length) / 15);
+            var last = Math.ceil((results.length) / 10);
             if (err) {
                 console.log(err);
             }
@@ -52,7 +52,7 @@ router.get('/reference', async (req, res) => {
                 results: results,
                 page: page,
                 length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
-                page_num: 15, //한 페이지에 보여줄 개수
+                page_num: 10, //한 페이지에 보여줄 개수
                 pass: true,
                 last: last
             });
@@ -99,7 +99,7 @@ router.get('/referSelectOne', async (req, res) => {
     try {
         const param = req.query.referId;
         const page = req.query.page;
-        const sql = "select r.*, date_format(referWritDate, '%Y-%m-%d') as referWritDateFmt, f.fileRoute\
+        const sql = "select r.*, date_format(referWritDate, '%Y-%m-%d') as referWritDateFmt, f.fileRoute, f.fileOrgName\
                         from reference r\
                         left join file f on f.boardId = r.referId\
                        where referId = ?";
@@ -257,7 +257,6 @@ router.post('/referUpdate', upload.array('file'), (req, res) => {
 router.get('/refersDelete', (req, res) => {
     const param = req.query.referId;
     const str = param.split(',');
-    console.log(param);
     for (var i = 0; i < str.length; i++) {
         let fileRoute = [];
         const sql1 = "select fileRoute from file where boardId = ?";
@@ -342,4 +341,5 @@ router.get('/referFileDelete', async (req, res) => {
     }
     res.redirect('referUdtForm?referId=' + req.query.referId);
 });
+
 module.exports = router;
