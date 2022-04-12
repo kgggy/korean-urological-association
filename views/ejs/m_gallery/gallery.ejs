@@ -44,9 +44,10 @@
                                     <colgroup>
                                         <col width="5%" />
                                         <col width="5%" />
-                                        <col width="60%" />
+                                        <col width="52%" />
                                         <col width="8%" />
                                         <col width="22%" />
+                                        <col width="8%" />
                                     </colgroup>
                                     <thead>
                                         <tr>
@@ -55,6 +56,7 @@
                                             <th>제목</th>
                                             <th>조회수</th>
                                             <th>작성일</th>
+                                            <th>비고</th>
                                         </tr>
                                     </thead>
                                     <tbody id="tbody">
@@ -73,6 +75,10 @@
                                                 <%=results[i].galleryHit%></td>
                                             <td>
                                                 <%=results[i].galleryWritDateFmt %></td>
+                                            <td onclick='event.cancelBubble=true;'>
+                                                <button id="comment_btn" type="button"
+                                                    class="btn btn-block btn-outline-success" onclick="comment('/admin/m_comment/select', '', 
+                                                    'resizable=0,width=640, height=700, scrollbars=1', '<%= results[i].galleryId %>')">댓글(<%=results[i].mcount %>)</button></td>
                                         </tr>
                                         <% } %>
                                         <% } %>
@@ -129,12 +135,14 @@
 
 <script>
     const formObj = $("form[name='galleryForm']");
+
     //등록 
     function enroll() {
         formObj.attr("method", "get");
         formObj.attr("action", "galleryWritForm");
         formObj.submit();
     }
+
     // 삭제
     $("#delete_btn").on("click", function () {
         var chkArr = [];
@@ -159,6 +167,13 @@
             return false;
         }
     })
+
+    //댓글
+    function comment(theURL, winName, features, galleryId) {
+        theURL += '?boardId=' + galleryId;
+        window.open(theURL, winName, features);
+
+    }
 
     //체크박스
     $("#chkAll").click(function () {
@@ -216,7 +231,13 @@
                                     data.ajaxSearch[i].galleryHit + '</td>';
                                 str +=
                                     '<td>' +
-                                    data.ajaxSearch[i].galleryWritDateFmt + '</td></tr>'
+                                    data.ajaxSearch[i].galleryWritDateFmt + '</td>';
+                                  if(data.ajaxSearch[i].mcount != 0){  
+                                str +=
+                                   '<td onclick="event.cancelBubble=true;"><button id="comment_btn" type="button" class="btn btn-block btn-outline-success"\
+                                     onclick="comment("/admin/m_comment/select", "", "resizable=0,width=640, height=700, scrollbars=1",'+ 
+                                     data.ajaxSearch[i].gallery + ')">댓글(' + data.ajaxSearch[i].mcount + ')</button></td></tr>';
+                                        }
                                 
                             }
                         }

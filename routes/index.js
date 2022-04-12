@@ -13,6 +13,7 @@ const comment = require('./api/comment.js');
 const others = require('./api/others.js');
 const board = require('./api/board.js');
 const login = require('./api/login.js');
+const like = require('./api/like.js');
 
 router.use('/greeting', greeting);
 router.use('/user', user);
@@ -25,6 +26,6 @@ router.use('/comment', comment);
 router.use('/others', others);
 router.use('/board', board);
 router.use('/login', login);
-
+router.use('/like', like);
 
 module.exports = router;

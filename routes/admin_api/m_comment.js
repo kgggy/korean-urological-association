@@ -10,24 +10,25 @@ const connt = require("../../config/db")
 var connection = require('../../config/db').conn;
 
 //탄소실천, 챌린지 게시글 별 댓글 전체조회
-router.get('/certiComment', async (req, res) => {
+router.get('/select', async (req, res) => {
     try {
-        const param = [req.query.certiContentId, req.query.certiContentId];
-        const division = req.query.certiDivision;
-        const sql = "select c.*, u.userNick, date_format(cmtDate, '%Y-%m-%d') as cmtDatefmt,\
-                            (select count(*) from comment where certiContentId = ? group by certiContentId) as cmtCount\
+        const param = [req.query.boardId, req.query.boardId];
+        const sql = "select c.*, u.userName as userNick, date_format(cmtWritDate, '%Y-%m-%d') as cmtDatefmt,\
+                            (select count(*) from comment where boardId = ? group by boardId) as cmtCount\
                        from comment c\
                   left join user u on u.uid = c.uid\
-                      where certiContentId = ?";
+                      where c.boardId = ?";
+        
         connection.query(sql, param, (err, results) => {
             if (err) {
                 console.log(err);
             }
+            //cmtviewForm 폼 바꾸기
+            const boardId = req.query.boardId.substring(0, 1);
             let route = req.app.get('views') + '/m_comment/certiCont_cmtViewForm';
-            res.render(route, {
+                res.render(route, {
                 results: results,
-                division: division,
-                certiContentId: req.query.certiContentId
+                subboardId: boardId
             });
         })
     } catch (error) {
@@ -43,7 +44,7 @@ router.get('/cmtDelete', async (req, res) => {
             if (err) {
                 console.log(err);
             }
-            res.redirect('certiComment?certiContentId=' + req.query.certiContentId + '&certiDivision=' + req.query.certiDivision);
+            res.redirect('select?boardId=' + req.query.boardId);
         })
     } catch (error) {
         res.send(error.message);

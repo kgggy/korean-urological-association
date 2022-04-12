@@ -53,8 +53,8 @@ router.get('/gallery', async (req, res) => {
         var page = req.query.page;
         var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
         var keepSearch = "&searchText=" + searchText;
-        var sql = "select *,  date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt\
-                       from gallery";
+        var sql = "select g.*, date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt, (select count(*) from comment\
+        where c.boardId = g.galleryId) as mcount from gallery g left join comment c on g.galleryId = c.boardId";
         sql += " order by 2 desc";
         connection.query(sql, (err, results) => {
             var last = Math.ceil((results.length) / 15);
@@ -83,7 +83,7 @@ router.get('/gallerySearch', async (req, res) => {
     var page = req.query.page;
     var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
     var keepSearch = "&searchText=" + searchText;
-    var sql = "select *,  date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt from gallery";
+    var sql = "select g.*, date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt, (select count(*) from comment where c.boardId = g.galleryId) as mcount from gallery g left join comment c on g.galleryId = c.boardId";
     if (searchText != '') {
         sql += " where galleryTitle like '%" + searchText + "%' or galleryContent like '%" + searchText + "%'";
     }
