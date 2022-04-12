@@ -107,7 +107,7 @@
                                             <a href="/admin/m_gallery/gallery?page=1<%= keepSearch %>"
                                                 class="num">
                                                 << </a> </li> <li>
-                                                    <a <%if((page<last-1)||(page==1)){%><%} else {%>
+                                                    <a <%if((page==1)){%><%} else {%>
                                                         href="/admin/m_gallery/gallery?page=<%= parseInt(page) - 1 %><%= keepSearch %>"
                                                         class="num" <% } %>>
                                                         < </a> </li>
@@ -233,11 +233,13 @@
                                     '<td>' +
                                     data.ajaxSearch[i].galleryWritDateFmt + '</td>';
                                   if(data.ajaxSearch[i].mcount != 0){  
-                                str +=
-                                   '<td onclick="event.cancelBubble=true;"><button id="comment_btn" type="button" class="btn btn-block btn-outline-success"\
-                                     onclick="comment("/admin/m_comment/select", "", "resizable=0,width=640, height=700, scrollbars=1",'+ 
-                                     data.ajaxSearch[i].gallery + ')">댓글(' + data.ajaxSearch[i].mcount + ')</button></td></tr>';
-                                        }
+                                    str +=
+                                    '<td onclick="event.cancelBubble=true;"><button id="comment_btn" type="button" class="btn btn-block btn-outline-success"\
+                                        onclick="comment("/admin/m_comment/select", "", "resizable=0,width=640, height=700, scrollbars=1",'+ 
+                                        data.ajaxSearch[i].gallery + ')">댓글(' + data.ajaxSearch[i].mcount + ')</button></td></tr>';
+                                    }else{
+                                    str += '<td></td>';
+                                    }
                                 
                             }
                         }
@@ -288,8 +290,8 @@
         for(var i = 0; i <= dataLength/dataPage; i++){ 
             temp += `<li class="paging_on">
                     <a style="background-color:#FC8B5F; color:white;" href="/admin/m_gallery/gallery?page=${i + 1}&searchText=${datas.searchText}"`
-        if(page==i + 1){
-            temp += `class="selected"`
+        if(i=0){
+            temp += `class="selected" style="background-color:#FC8B5F; color:white;"`
         }else{
             temp += `class="num">${i + 1}</a> </li>`
         } 
