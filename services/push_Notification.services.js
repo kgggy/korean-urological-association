@@ -30,7 +30,7 @@ const sendNotification = async (data,callback) => {
      })
  })
 
- req.write(json.stringify(data))
+ req.write(JSON.stringify(data))
  req.end();
 }
 

@@ -34,7 +34,7 @@
                 <div class="col-lg-6">
                     <div class="card">
                         <div class="card-header">
-                            <i class="fa fa-align-justify"></i>
+                            <i class="fa fa-align-justify"></i>갤러리관리
                         </div>
                         <div class="card-body">
                             <form id="galleryForm" name="galleryForm" method="" action="">
@@ -231,7 +231,7 @@
                                         if (data.ajaxSearch[i].mcount != 0) {
                                             str +=
                                                 '<button id="comment_btn" type="button" class="btn btn-block btn-outline-success"'
-                                            str += 'onclick = "comment(\'/ admin/m_gallery/certiComment ','', 'resizable=0,width=640, height=700, scrollbars=1', + data.ajaxSearch[i].galleryWritDateFmt + ')">'
+                                            str += 'onclick = "comment(\'/admin/m_gallery/certiComment\',\'\', \'resizable=0,width=640, height=700, scrollbars=1\',' + data.ajaxSearch[i].galleryId + ')">'
                                             str += '댓글(' + data.ajaxSearch[i].mcount + ')</button></td>'
                                         } else {
                                             str += '<td></td>'

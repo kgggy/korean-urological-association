@@ -72,7 +72,7 @@ router.get('/gallerySearch', async (req, res) => {
     var page = req.query.page;
     var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
     var keepSearch = "&searchText=" + searchText;
-    var sql = "select *,  date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt from gallery";
+    var sql = "select *, (select count(*) from comment where comment.boardId = gallery.galleryId) as mcount, date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt from gallery";
     if (searchText != '') {
         sql += " where galleryTitle like '%" + searchText + "%' or galleryContent like '%" + searchText + "%'";
     }
@@ -92,7 +92,8 @@ router.get('/gallerySearch', async (req, res) => {
             page_num: 10,
             pass: true,
             last: last,
-            searchText: searchText
+            searchText: searchText,
+            keepSearch: keepSearch
         });
         // console.log("ajaxSearch = " + results.length);
         // console.log("page = " + page)
