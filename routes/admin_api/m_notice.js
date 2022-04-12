@@ -1,26 +1,11 @@
 var express = require('express');
 var router = express.Router();
-const mysql = require('mysql');
 const fs = require('fs');
 
 const multer = require("multer");
 const path = require('path');
 
-
-const connt = require("../../config/db")
-
-const {
-    v4: uuidv4
-} = require('uuid');
-
-const uuid = () => {
-    const tokens = uuidv4().split('-');
-    return tokens[2] + tokens[1] + tokens[0] + tokens[3] + tokens[4]
-}
-
-// DB 커넥션 생성
-//var connection = mysql.createConnection(connt);
-//connection.connect();                    
+// DB 커넥션 생성\              
 var connection = require('../../config/db').conn;
 
 //파일업로드 모듈
