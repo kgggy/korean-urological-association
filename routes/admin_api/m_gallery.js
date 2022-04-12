@@ -1,27 +1,10 @@
 var express = require('express');
 var router = express.Router();
-const mysql = require('mysql');
 const fs = require('fs');
 const sharp = require('sharp');
 
 const multer = require("multer");
-const path = require('path');
-
-
-const connt = require("../../config/db")
-
-const {
-    v4: uuidv4
-} = require('uuid');
-
-const uuid = () => {
-    const tokens = uuidv4().split('-');
-    return tokens[2] + tokens[1] + tokens[0] + tokens[3] + tokens[4]
-}
-
-// DB 커넥션 생성
-//var connection = mysql.createConnection(connt);
-//connection.connect();                    
+const path = require('path');               
 var connection = require('../../config/db').conn;
 
 //파일업로드 모듈
@@ -55,9 +38,9 @@ router.get('/gallery', async (req, res) => {
     try {
         var page = req.query.page;
         var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
-        var keepSearch = "&searchText=" + searchText;
         var sql = "select g.*, date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt, (select count(*) from comment\
-        where c.boardId = g.galleryId) as mcount from gallery g left join comment c on g.galleryId = c.boardId";
+            where c.boardId = g.galleryId) as mcount from gallery g left join comment c on g.galleryId = c.boardId";
+
         sql += " order by 2 desc";
         connection.query(sql, (err, results) => {
             var last = Math.ceil((results.length) / 15);
@@ -75,7 +58,7 @@ router.get('/gallery', async (req, res) => {
                 page_num: 10, //한 페이지에 보여줄 개수
                 pass: true,
                 last: last,
-                keepSearch: keepSearch
+                // keepSearch: keepSearch
             });
         });
     } catch (error) {
@@ -108,7 +91,8 @@ router.get('/gallerySearch', async (req, res) => {
             page_num: 10,
             pass: true,
             last: last,
-            searchText: searchText
+            searchText: searchText,
+            keepSearch: keepSearch
         });
         // console.log("ajaxSearch = " + results.length);
         // console.log("page = " + page)

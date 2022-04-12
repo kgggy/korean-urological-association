@@ -1,3 +1,7 @@
+
+//push 알림
+const pushNotificationController = require('../controllers/push-notification.controller');
+
 const express = require('express');
 const router = express.Router();
 
@@ -27,5 +31,8 @@ router.use('/others', others);
 router.use('/board', board);
 router.use('/login', login);
 router.use('/like', like);
+
+router.get('/SendNotification',pushNotificationController.SendNotification);
+router.post('/SendNotificationToDevice',pushNotificationController.SendNotificationToDevice)
 
 module.exports = router;

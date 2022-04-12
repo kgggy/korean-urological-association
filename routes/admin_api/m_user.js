@@ -1,13 +1,9 @@
 var express = require('express');
 var router = express.Router();
 const fs = require('fs');
-
 const multer = require("multer");
 const path = require('path');
-const crypto = require('crypto');
 const models = require('../../models');
-const sequelize = require('sequelize');
-const Op = sequelize.Op;
 //엑셀파일 생성
 var nodeExcel = require('excel-export');
 // DB 커넥션 생성                
@@ -95,10 +91,10 @@ router.get('/page', async (req, res) => {
         last: last, 
         keepSearch: keepSearch
       });
-      console.log(last)
-      console.log("endPage = " + endPage)
-      console.log("page = " + page)
-      console.log("startPage = " + startPage)
+      // console.log(last)
+      // console.log("endPage = " + endPage)
+      // console.log("page = " + page)
+      // console.log("startPage = " + startPage)
     });
   } catch (error) {
     res.status(401).send(error.message);
