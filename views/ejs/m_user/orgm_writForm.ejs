@@ -28,29 +28,25 @@
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">회원명</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="userName" type="text" name="userName"
-                                 value="">
+                              <input class="form-control" id="userName" type="text" name="userName" value="">
                            </div>
                         </div>
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">병원명</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="hosName" type="text" name="hosName"
-                                 value="">
+                              <input class="form-control" id="hosName" type="text" name="hosName" value="">
                            </div>
                         </div>
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">우편번호</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="hosPost" type="text" name="hosPost"
-                                 value="">
+                              <input class="form-control" id="hosPost" type="text" name="hosPost" value="">
                            </div>
                         </div>
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">병원주소</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="ucmtitle" type="text" name="ucmtitle"
-                                 value="">
+                              <input class="form-control" id="ucmtitle" type="text" name="ucmtitle" value="">
                               <input type="hidden" id="userAdres1" name="userAdres1" value="">
                               <input type="hidden" id="userAdres2" name="userAdres2" value="">
                               <input type="hidden" id="userAdres3" name="userAdres3" value="">
@@ -61,24 +57,21 @@
                            <div class="col-md-9" style="display: flex;text-align: center;align-items: center;">
                               <input class="form-control phone" id="hosPhone1" type="text" name="hosPhone1"
                                  value="">&nbsp;&nbsp;-&nbsp;&nbsp;
-                                 <input class="form-control phone" id="hosPhone2" type="text" name="hosPhone2"
+                              <input class="form-control phone" id="hosPhone2" type="text" name="hosPhone2"
                                  value="">&nbsp;&nbsp;-&nbsp;&nbsp;
-                                 <input class="form-control phone" id="hosPhone3" type="text" name="hosPhone3"
-                                 value="">
+                              <input class="form-control phone" id="hosPhone3" type="text" name="hosPhone3" value="">
                            </div>
                         </div>
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">형태</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="userType" type="text" name="userType"
-                                 value="">
+                              <input class="form-control" id="userType" type="text" name="userType" value="">
                            </div>
                         </div>
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">역할</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="userPosition" type="text" name="userPosition"
-                                 value="">
+                              <input class="form-control" id="userPosition" type="text" name="userPosition" value="">
                            </div>
                         </div>
                         <div class="form-group row">
@@ -87,9 +80,9 @@
                               <select class="dropdown" name="pushYn">
                                  <option value="0">동의</option>
                                  <option value="1">비동의</option>
-                             </select>
+                              </select>
                            </div>
-                        </div> 
+                        </div>
                         <!--option 버튼  -->
                         <div class="option_button">
                            <div>
@@ -112,6 +105,25 @@
 </main>
 
 <script type="text/javascript">
+   $(document).ready(function () {
+      //확장자 체크
+      $("input:file[name='file']").change(function () {
+         var str = $(this).val();
+         var fileName = str.split('\\').pop().toLowerCase();
+         // alert(fileName);
+         checkFileName(fileName);
+      });
+   });
+   //확장자 체크
+   function checkFileName(str) {
+      var ext = str.split('.').pop().toLowerCase();
+      // alert(ext);
+      if ($.inArray(ext, ['jpg', 'png', 'jpeg', 'gif']) == -1) {
+         alert(ext + '파일은 업로드 하실 수 없습니다.');
+         $("input:file[name='file']").val("");
+      }
+   }
+
    $("#update_btn").click(function () {
       var userName = $("#userName").val();
       var hosName = $("#hosName").val();

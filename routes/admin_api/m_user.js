@@ -17,12 +17,14 @@ var connection = require('../../config/db').conn;
 var upload = multer({ //multer안에 storage정보  
   storage: multer.diskStorage({
     destination: (req, file, callback) => {
-      //파일이 이미지 파일이면
-      if (file.mimetype == "image/jpeg" || file.mimetype == "image/jpg" || file.mimetype == "image/png" || file.mimetype == "application/octet-stream") {
-        // console.log("이미지 파일입니다.");
-        callback(null, 'uploads/userProfile');
-      }
-    },
+      fs.mkdir('uploads/userProfile', function (err) {
+          if (err && err.code != 'EEXIST') {
+              console.log("already exist")
+          } else {
+              callback(null, 'uploads/userProfile');
+          }
+      })
+  },
     //파일이름 설정
     filename: (req, file, done) => {
       const ext = path.extname(file.originalname);
@@ -59,13 +61,16 @@ router.get('/page', async (req, res) => {
     sql += " and userPosition = '" + searchType3 + "' \n";
   }
   if (searchText != '') {
-    sql += " and (hosName like '%" + searchText + "%' or userName like '%" + searchText + "%') order by uid";
+    sql += " and (hosName like '%" + searchText + "%' or userName like '%" + searchText + "%')";
   }
+  sql += " order by uid desc;"
   try {
     connection.query(sql, function (err, results) {
-      var last = Math.ceil((results.length) / 15);
-      var endPage = Math.ceil(page / 5) * 5;
-      var startPage = endPage - 5;
+      var countPage = 10; //하단에 표시될 페이지 개수
+      var page_num = 10; //한 페이지에 보여줄 개수
+      var last = Math.ceil((results.length) / 10); //마지막 장
+      var endPage = Math.ceil(page / countPage) * countPage; //끝페이지(10)
+      var startPage = endPage - countPage; //시작페이지(1)
       if (err) {
         console.log(err);
       }
@@ -82,17 +87,18 @@ router.get('/page', async (req, res) => {
         results: results,
         page: page, //현재 페이지
         length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
-        page_num: 15, //한 페이지에 보여줄 개수
-        countPage: 5, //하단에 표시될 페이지 개수
-        startPage: startPage, //시작페이지(1)
-        endPage: endPage, //끝페이지(10)
+        page_num: page_num, 
+        countPage: countPage, 
+        startPage: startPage, 
+        endPage: endPage, 
         pass: true,
-        last: last, //마지막 장
+        last: last, 
         keepSearch: keepSearch
       });
-      // console.log("endPage = " + endPage)
-      // console.log("page = " + page)
-      // console.log("startPage = " + startPage)
+      console.log(last)
+      console.log("endPage = " + endPage)
+      console.log("page = " + page)
+      console.log("startPage = " + startPage)
     });
   } catch (error) {
     res.status(401).send(error.message);
@@ -140,7 +146,6 @@ router.get('/userInsertForm', (req, res) => {
 
 //사용자 등록
 router.post('/userInsert', upload.single('file'), async (req, res) => {
-  console.log(req.body)
   const {
     file,
     userName,
@@ -198,6 +203,7 @@ router.post('/userUdtForm', async (req, res) => {
   let route = req.app.get('views') + '/m_user/orgm_udtForm';
   res.render(route, {
     result: req.body,
+    userImg : req.body.userImg,
     page: req.body.page
   });
 });
@@ -253,7 +259,7 @@ router.get('/userDelete', (req, res) => {
   //서버에서 프로필 이미지 삭제
   for (var i = 0; i < img.length; i++) {
     if (img[i] !== '') {
-      console.log("프로필 이미지 존재함.")
+      // console.log("프로필 이미지 존재함.")
       fs.unlinkSync(img[i], (err) => {
         if (err) {
           console.log(err);
@@ -261,21 +267,9 @@ router.get('/userDelete', (req, res) => {
         return;
       });
     } else {
-      console.log("프로필 이미지 존재하지않음.")
+      // console.log("프로필 이미지 존재하지않음.")
     }
   }
-  // for (var i = 0; i < img.length; i++) {
-  //   // console.log(img[i] + "if문 밖의 콘솔");
-  //   if (img[i] !== '' || img[i] !== undefined || img[i] !== null) {
-  //     // console.log(img[i] + "if문 안의 콘솔");
-  //     fs.unlinkSync(img[i], (err) => {
-  //       if (err) {
-  //         console.log(err);
-  //       }
-  //       return;
-  //     });
-  //   }
-  // }
   res.send('<script>alert("삭제되었습니다."); location.href="/admin/m_user/page?page=1";</script>');
 });
 
@@ -303,6 +297,8 @@ router.get('/oneUserDelete', (req, res) => {
 //프로필 삭제
 router.get('/imgDelete', async (req, res) => {
   const param = req.query.userImg;
+  const page = req.query.page;
+  console.log(req.query)
   try {
     const sql = "update user set userImg = null where uid = ?";
     connection.query(sql, req.query.uid, (err) => {
@@ -323,7 +319,9 @@ router.get('/imgDelete', async (req, res) => {
   }
   let route = req.app.get('views') + '/m_user/orgm_udtForm';
   res.render(route, {
-    result: req.query
+    result: req.query,
+    userImg: '',
+    page: page
   });
 });
 

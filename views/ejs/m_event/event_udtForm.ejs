@@ -1,0 +1,196 @@
+<!-- ckeditor -->
+<script src="../../../public/build/ckeditor.js"></script>
+<!--주소api-->
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+   window.onload = function () {
+      document.getElementById("address_kakao").addEventListener("click", function () {
+         new daum.Postcode({
+            oncomplete: function (data) {
+               // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분입니다.
+               // 예제를 참고하여 다양한 활용법을 확인해 보세요.
+               document.getElementById("address_kakao").value = data.address; // 주소 넣기
+               document.querySelector("input[id=address_detail]").focus(); //상세입력 포커싱
+            }
+         }).open();
+      });
+   }
+</script>
+<style>
+   .ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
+      border-color: var(--ck-color-base-border);
+      height: 40%;
+   }
+
+   .ck.ck-editor__editable:not(.ck-editor__nested-editable).ck-focused {
+      height: 400px;
+   }
+
+   .ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
+      height: 400px;
+   }
+</style>
+<main class="main">
+   <!-- Breadcrumb-->
+   <ol class="breadcrumb">
+      <li class="breadcrumb-item">Home</li>
+      <li class="breadcrumb-item">
+         <a style="font-weight: bold;">행사관리</a>
+      </li>
+      <li class="breadcrumb-item active">행사 수정</li>
+      <!-- Breadcrumb Menu-->
+   </ol>
+
+   <div class="container-fluid">
+      <div class="animated fadeIn">
+         <div class="row">
+            <div class="col-lg-6">
+               <div class="card">
+                  <div class="card-header">
+                     <i class="fa fa-align-justify"></i> 행사 수정
+                  </div>
+                  <div class="card-body">
+                     <!-- 컨텐츠 -->
+                     <form name="udtForm" role="form">
+                        <input type="hidden" id="eventContent" name="eventContent" value="">
+                        <input type="hidden" name="eventFileRoute" value="">
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">글번호</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="eventId" type="text" name="eventId" readonly
+                                 value="<%=result[0].eventId%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">제목</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="eventTitle" type="text" name="eventTitle"
+                                 value="<%=result[0].eventTitle%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">내용</label>
+                           <div class="col-md-9">
+                              <textarea name="editor" class="editor" id="editor"><%-result[0].eventContent %></textarea>
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">장소</label>
+                           <div class="col-md-9">
+                              <input class="form-control" type="text" id="address_kakao" name="eventPlace"
+                                 class="signup-input" value="<%=result[0].eventPlace%>" />
+                              <input class="form-control" type="text" id="address_detail" name="eventPlaceDetail"
+                                 class="inputName signup-input" value="<%=result[0].eventPlaceDetail%>" placeholder="상세주소를 입력해주세요" />
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">행사일</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="eventDate" type="date" name="eventDate"
+                                 value="<%=result[0].eventDateFmt%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">투표 시작일</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="startDate" type="date" name="startDate"
+                                 value="<%=result[0].startDateFmt%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">투표 마감일</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="endDate" type="date" name="endDate"
+                                 value="<%=result[0].endDateFmt%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label">첨부파일</label>
+                           <div class="file-wrap banner_img_wrap">
+                              <% if(result[0].eventFileRoute != null && result[0].eventFileRoute != '') { %>
+                              <p><span><%=fileOrgName%></span>
+                                 <button name="fileDelete" data-fileRoute="<%=result[0].eventFileRoute%>"
+                                    class="btn btn-block btn-outline-danger fileDelete">삭제</button>
+                              <% } else {%>
+                              <div style="display: flex; flex-direction: column; gap: 25px; padding-left: 15px">
+                                 <input type="file" id="file" name="file">
+                              </div>
+                              <% } %>
+                           </div>
+                        </div>
+                        <!--option 버튼  -->
+                        <div class="option_button" style="padding-left: 1.25rem; margin-bottom: 15px;">
+                           <div>
+                              <button class="btn btn-block btn-outline-success" type="button"
+                                 id="update_btn">수정</button>
+                           </div>
+                           <div>
+                              <button class="btn btn-block btn-outline-danger" type="button"
+                                 onclick="location.href='/admin/m_event'">취소</button>
+                           </div>
+                     </form>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</main>
+
+<script type="text/javascript">
+   $(document).ready(function () {
+      //ckeditor
+      ClassicEditor
+         .create(document.querySelector('#editor'), {
+            language: 'ko'
+         })
+         .then(newEditor => {
+            editor = newEditor;
+         })
+         .catch(error => {
+            console.error(error);
+         });
+
+      var formObj = $("form[name='udtForm']");
+      // 수정 폼 연결
+      $("#update_btn").on("click", function () {
+         var galleryTitle = $("#galleryTitle").val();
+         var content = editor.getData();
+
+         if (galleryTitle == "") {
+            alert("제목을 입력하세요.");
+            $("#galleryTitle").focus();
+            return false;
+         }
+
+         if (content == "") {
+            alert("내용을 입력하세요.");
+            $("#editor").focus();
+            return false;
+         }
+
+         if (confirm("수정하시겠습니까?") == true) {
+            $('input[name=eventContent]').attr('value', content);
+            formObj.attr("action", "eventUpdate");
+            formObj.attr("enctype", "multipart/form-data");
+            formObj.attr("method", "post");
+            formObj.submit();
+            alert("수정되었습니다.");
+         } else {
+            return;
+         }
+      });
+      //첨부파일 삭제
+      $("[name=fileDelete]").on("click", function () {
+         $('input[name=eventFileRoute').val($(this).attr('data-fileRoute'));
+         if (confirm("실제 파일이 삭제됩니다. 정말 삭제하시겠습니까?") == true) {
+            formObj.attr("action", "eventFileDelete");
+            formObj.attr("method", "get");
+            alert("삭제되었습니다.");
+            formObj.submit();
+         } else {
+            return;
+         }
+      });
+   })
+</script>

@@ -28,10 +28,13 @@ var connection = require('../../config/db').conn;
 var upload = multer({ //multer안에 storage정보  
     storage: multer.diskStorage({
         destination: (req, file, callback) => {
-            //파일이 이미지 파일이면
-                // console.log("이미지 파일입니다.");
-                callback(null, 'uploads/gallery');
-                //텍스트 파일이면
+            fs.mkdir('uploads/gallery', function (err) {
+                if (err && err.code != 'EEXIST') {
+                    console.log("already exist")
+                } else {
+                    callback(null, 'uploads/gallery');
+                }
+            })
         },
         //파일이름 설정
         filename: (req, file, done) => {
@@ -58,6 +61,8 @@ router.get('/gallery', async (req, res) => {
         sql += " order by 2 desc";
         connection.query(sql, (err, results) => {
             var last = Math.ceil((results.length) / 15);
+      var endPage = Math.ceil(page / 5) * 5;
+      var startPage = endPage - 5;
             if (err) {
                 console.log(err);
             }
@@ -67,7 +72,7 @@ router.get('/gallery', async (req, res) => {
                 results: results,
                 page: page,
                 length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
-                page_num: 15, //한 페이지에 보여줄 개수
+                page_num: 10, //한 페이지에 보여줄 개수
                 pass: true,
                 last: last,
                 keepSearch: keepSearch
@@ -92,8 +97,8 @@ router.get('/gallerySearch', async (req, res) => {
         if (err) {
             console.log(err)
         }
-         console.log("searchText = " + searchText)
-         console.log("results = " + results)
+        //  console.log("searchText = " + searchText)
+        //  console.log("results = " + results)
         var last = Math.ceil((results.length) / 10);
         // ajaxSearch = results;
         res.send({
@@ -105,7 +110,7 @@ router.get('/gallerySearch', async (req, res) => {
             last: last,
             searchText: searchText
         });
-        console.log("ajaxSearch = " + results.length);
+        // console.log("ajaxSearch = " + results.length);
         // console.log("page = " + page)
     });
 });

@@ -1,0 +1,139 @@
+    <main class="main">
+       <!-- Breadcrumb-->
+       <ol class="breadcrumb">
+          <li class="breadcrumb-item">Home</li>
+          <li class="breadcrumb-item">
+             <a style="font-weight: bold;">행사관리</a>
+          </li>
+          <li class="breadcrumb-item active">행사 상세</li>
+          <!-- Breadcrumb Menu-->
+       </ol>
+
+       <div class="container-fluid">
+          <div class="animated fadeIn">
+             <div class="row">
+                <div class="col-lg-6">
+                   <div class="card">
+                      <form name="udtForm" role="form">
+                         <input type="hidden" id="eventFileRoute" name="eventFileRoute"
+                            value="<%=result[0].eventFileRoute%>">
+                         <div class="card-header">
+                            <i class="fa fa-align-justify"></i> 행사 상세</div>
+                         <div class="card-body">
+                            <!-- 컨텐츠 -->
+                            <div class="form-group row">
+                               <label class="col-md-2 col-form-label" for="text-input">글번호</label>
+                               <div class="col-md-9">
+                                  <input class="form-control" id="eventId" type="text" name="eventId" readonly
+                                     value="<%=result[0].eventId%>">
+                               </div>
+                            </div>
+                            <div class="form-group row">
+                               <label class="col-md-2 col-form-label" for="text-input">제목</label>
+                               <div class="col-md-9">
+                                  <input class="form-control" id="eventTitle" type="text" name="eventTitle"
+                                     disabled="disabled" value="<%=result[0].eventTitle%>">
+                               </div>
+                            </div>
+                            <div class="form-group row">
+                               <label class="col-md-2 col-form-label" for="text-input">내용</label>
+                               <div class="col-md-9">
+                                  <%-result[0].eventContent%>
+                               </div>
+                            </div>
+                            <div class="form-group row">
+                               <label class="col-md-2 col-form-label" for="text-input">장소</label>
+                               <div class="col-md-9">
+                                  <input class="form-control" disabled type="text" id="eventPlace"
+                                     value="<%=result[0].eventPlace%> <%=result[0].eventPlaceDetail%>" />
+                                  <!-- <input type="hidden" id="eventPlace" name="eventPlace"
+                                     value="<%=result[0].eventPlace%>" />
+                                  <input type="hidden" id="eventPlaceDetail" name="eventPlaceDetail"
+                                     value="<%=result[0].eventPlaceDetail%>" /> -->
+                               </div>
+                            </div>
+                            <div class="form-group row">
+                               <label class="col-md-2 col-form-label" for="text-input">행사일</label>
+                               <div class="col-md-9">
+                                  <input class="form-control" disabled id="eventDate" type="date" name="eventDate"
+                                     value="<%=result[0].eventDateFmt%>">
+                               </div>
+                            </div>
+                            <div class="form-group row">
+                               <label class="col-md-2 col-form-label" for="text-input">투표 시작일</label>
+                               <div class="col-md-9">
+                                  <input class="form-control" disabled id="startDate" type="date" name="startDate"
+                                     value="<%=result[0].startDateFmt%>">
+                               </div>
+                            </div>
+                            <div class="form-group row">
+                               <label class="col-md-2 col-form-label" for="text-input">투표 마감일</label>
+                               <div class="col-md-9">
+                                  <input class="form-control" disabled id="endDate" type="date" name="endDate"
+                                     value="<%=result[0].endDateFmt%>">
+                               </div>
+                            </div>
+                            <div class="form-group row">
+                               <label class="col-md-2 col-form-label" for="text-input">첨부파일</label>
+                               <div class="col-md-9">
+                                  <% if(result[0].eventFileRoute != null && result[0].eventFileRoute != '') {%>
+                                  <p><span><%=fileOrgName%></span></p>
+                                     <a href="../../../<%= result[0].eventFileRoute %>"
+                                        class="btn btn-block btn-outline-success" type="button" style="width:30%;"
+                                        download>파일 다운로드</a>
+                                  </p>
+                                  <% }else{ %>
+                                  이미지가 존재하지 않습니다.
+                                  <% } %>
+                               </div>
+                            </div>
+                            <!--option 버튼  -->
+                            <div class="option_button">
+                               <div>
+                                  <button class="btn btn-block btn-outline-success" type="button"
+                                     id="update_btn">수정</button>
+                               </div>
+                               <div>
+                                  <button class="btn btn-block btn-outline-danger" type="button"
+                                     id="delete_btn">삭제</button>
+                               </div>
+                               <div>
+                                  <% if(vote == '') {%>
+                                  <button class="btn btn-block btn-outline-success" type="button"
+                                     onclick="location.href='/admin/m_event'">목록</button>
+                                  <% } else if(vote == 'y') { %>
+                                  <button class="btn btn-block btn-outline-success" type="button"
+                                     onclick="location.href='/admin/m_vote'">목록</button>
+                                  <% } %>
+                               </div>
+                            </div>
+                         </div>
+                      </form>
+                   </div>
+                </div>
+             </div>
+          </div>
+       </div>
+    </main>
+
+    <script type="text/javascript">
+       var formObj = $("form[name='udtForm']");
+       $(document).ready(function () {
+          // 수정 폼 연결
+          $("#update_btn").on("click", function () {
+             formObj.attr("action", "eventUdtForm");
+             formObj.attr("method", "get");
+             formObj.submit();
+          });
+          // 삭제
+          $("#delete_btn").on("click", function () {
+             formObj.attr("action", "eventDelete");
+             formObj.attr("method", "get");
+             if (confirm("행사를 삭제하시겠습니까?") == true) {
+                formObj.submit();
+             } else {
+                return;
+             }
+          });
+       })
+    </script>
