@@ -1,5 +1,4 @@
 <style>
-
     .userTable thead tr .sorting:first-child::before,
     .userTable thead tr .sorting_asc:first-child::before,
     .userTable thead tr .sorting_asc:first-child::after,
@@ -30,11 +29,11 @@
                 <div class="col-lg-6">
                     <div class="card">
                         <div class="card-header">
-                            <i class="fa fa-align-justify"> 공지사항</i> 
+                            <i class="fa fa-align-justify"> 공지사항</i>
                         </div>
                         <div class="card-body">
                             <form id="noticeForm" name="noticeForm" method="" action="">
-                                 <div style="display: flex; justify-content: end; gap: 5px;">
+                                <div style="display: flex; justify-content: end; gap: 5px;">
                                     <input type="hidden" id="page" name="page" value="<%=results[0].page%>">
                                     <input class="searchbox" type="text" name="searchText" id="searchText"
                                         <%if(searchText!=null){%>value="<%=searchText%>" <%}%> placeholder=" 제목, 내용">
@@ -47,6 +46,7 @@
                                         <col width="60%" />
                                         <col width="8%" />
                                         <col width="22%" />
+                                        <col width="12%" />
                                     </colgroup>
                                     <thead>
                                         <tr>
@@ -55,63 +55,67 @@
                                             <th>제목</th>
                                             <th>조회수</th>
                                             <th>작성일</th>
+                                            <th>댓글</th>
                                         </tr>
                                     </thead>
                                     <tbody id="tbody">
                                         <% if(results.length > 0){ %> <% for(var i = (page * page_num) - page_num; i < (page * page_num); i++) { 
                                             if(i > length){
                                                 i++;
-                                            } else { %>
-                                        <tr onclick="location.href='/admin/m_notice/noticeSelectOne?noticeId=<%=results[i].noticeId%>'">
-                                            <td onclick='event.cancelBubble=true;'><input type="checkbox" id="chk" name="chk"
-                                                    value="<%=results[i].noticeId %>" /></td>
-                                            <td>
-                                                <%= results.length-i %></td>
-                                            <td>
-                                                <%=results[i].noticeTitle%></td>
-                                            <td>
-                                                <%=results[i].noticeHit%></td>
-                                            <td>
-                                                <%=results[i].noticeWritDateFmt %></td>
-                                        </tr>
-                                        <% } %>
-                                        <% } %>
-                                        <% } else { %>
-                                        <tr>
-                                            <td colspan="8">
-                                                데이터가 존재하지 않습니다.
-                                            </td>
-                                        </tr>
-                                        <% } %>
+                                            } else { %> <tr
+                                        onclick="location.href='/admin/m_notice/noticeSelectOne?noticeId=<%=results[i].noticeId%>'">
+                                    <td onclick='event.cancelBubble=true;'><input type="checkbox" id="chk" name="chk"
+                                            value="<%=results[i].noticeId %>" /></td>
+                                    <td>
+                                        <%= results.length-i %></td>
+                                    <td>
+                                        <%=results[i].noticeTitle%></td>
+                                    <td>
+                                        <%=results[i].noticeHit%></td>
+                                    <td>
+                                        <%=results[i].noticeWritDateFmt %></td>
+                                    <td onclick='event.cancelBubble=true;'>
+                                        <% if(results[i].mcount != 0) { %>
+                                        <button id="comment_btn" type="button" class="btn btn-block btn-outline-success"
+                                            onclick="comment('/admin/m_comment', '', 'resizable=0,width=640, height=700, scrollbars=1', '<%= results[i].noticeId %>')">댓글(<%=results[i].mcount %>)</button>
+                                        <% } %></td>
+                                    </tr>
+                                    <% } %>
+                                    <% } %>
+                                    <% } else { %>
+                                    <tr>
+                                        <td colspan="8">
+                                            데이터가 존재하지 않습니다.
+                                        </td>
+                                    </tr>
+                                    <% } %>
                                     </tbody>
-                                </table>
-                                <div>
-                                    <input type="hidden" id="noticeId" name="noticeId" value="" />
-                                    <button id="enrollAction" class="btn btn-block btn-outline-success"
-                                        onclick="enroll()">등록</button>
-                                    <button class="btn btn-block btn-outline-danger" type="button"
-                                        id="delete_btn">삭제</button>
-                                </div>
+                                    </table>
+                                    <div>
+                                        <input type="hidden" id="noticeId" name="noticeId" value="" />
+                                        <button id="enrollAction" class="btn btn-block btn-outline-success"
+                                            onclick="enroll()">등록</button>
+                                        <button class="btn btn-block btn-outline-danger" type="button"
+                                            id="delete_btn">삭제</button>
+                                    </div>
                             </form>
                             <div class="mt_20">
                                 <div class="paging" id="page_navi">
                                     <ul class="pagination customPaging">
                                         <% if(results.length > 0){ %>
                                         <li>
-                                            <a href="/admin/m_notice/notice?page=1<%= keepSearch %>"
-                                                class="num">
+                                            <a href="/admin/m_notice/notice?page=1<%= keepSearch %>" class="num">
                                                 << </a> </li> <li>
                                                     <a <%if((page==1)){%><%} else {%>
                                                         href="/admin/m_notice/notice?page=<%= parseInt(page) - 1 %><%= keepSearch %>"
                                                         class="num" <% } %>>
-                                                        < </a> </li>
-                                                            <% for(var i = startPage; i < endPage; i++){  %>
+                                                        < </a> </li> <% for(var i = startPage; i < endPage; i++){  %>
                                                             <li class="paging_on">
                                                             <a href="/admin/m_notice/notice?page=<%= i + 1 %><%= keepSearch %>"
                                                                 <%if(page==i+1){%>class="selected"
                                                                 <%}%> class="num"><%= i + 1 %></a> </li> <% } %> <li> <a
                                                                     <%if(page>last-1){%><%} else {%>
-                                                                    href="/admin/m_notice/all?noticeId=<%= results[0].noticeId %>&page=<%= parseInt(page) + 1 %><%= keepSearch %>"
+                                                                    href="/admin/m_notice/notice?page=<%= parseInt(page) + 1 %><%= keepSearch %>"
                                                                     class="num" <% } %>>></a></li>
                                         <li><a href="/admin/m_notice/notice?page=<%= last%><%= keepSearch %>"
                                                 class="num">>></a></li>
@@ -160,6 +164,12 @@
         }
     })
 
+    //댓글 확인
+    function comment(theURL, winName, features, noticeId) {
+        theURL += '?boardId=' + noticeId;
+        window.open(theURL, winName, features);
+    }
+
     //체크박스
     $("#chkAll").click(function () {
         if ($("#chkAll").is(":checked"))
@@ -176,7 +186,7 @@
             $("#chkAll").prop("checked", true);
     });
 
-        //검색
+    //검색
     function searchajax() {
         $("#searchText").keyup(function () {
             var words = $("#searchText").val();
@@ -201,10 +211,10 @@
                                 console.log(data.ajaxSearch.length - i);
                                 str +=
                                     '<tr onclick="location.href=\'/admin/m_notice/noticeSelectOne?noticeId=' +
-                                    data.ajaxSearch[i].notice + '&page= ' + data
+                                    data.ajaxSearch[i].noticeId + '&page= ' + data
                                     .page +
                                     '\'"> <td onclick="event.cancelBubble=true;"><input type="checkbox" id="chk" name="chk" value="' +
-                                    data.ajaxSearch[i].notice + '" /> </td>';
+                                    data.ajaxSearch[i].noticeId + '" /> </td>';
                                 str +=
                                     '<td>' +
                                     (data.ajaxSearch.length - i) + '</td>';
@@ -216,18 +226,28 @@
                                     data.ajaxSearch[i].noticeHit + '</td>';
                                 str +=
                                     '<td>' +
-                                    data.ajaxSearch[i].noticeWritDateFmt + '</td></tr>'
-                                
+                                    data.ajaxSearch[i].noticeWritDateFmt + '</td>'
+                                if (data.ajaxSearch[i].mcount != 0) {
+                                    str +=
+                                        '<td onclick="event.cancelBubble=true;"><button id="comment_btn" type="button" class="btn btn-block btn-outline-success"'
+                                    str +=
+                                        'onclick = "comment(\'/admin/m_comment\',\'\', \'resizable=0,width=640, height=700, scrollbars=1\',\'' +
+                                        data.ajaxSearch[i].noticeId + '\')">'
+                                    str += '댓글(' + data.ajaxSearch[i].mcount + ')</button></td>'
+                                } else {
+                                    str += '<td></td>'
+                                }
+                                str += '</tr>'
                             }
                         }
                         // console.log("str = " + str)
                         $("#tbody").append(str);
                     } else {
-                        var none = '<tr> <td colspan="8"> 데이터가 존재하지 않습니다. </td> </tr>'
+                        var none = '<tr> <td colspan="6"> 데이터가 존재하지 않습니다. </td> </tr>'
                         $("#tbody").empty();
                         $("#tbody").append(none);
-                    } 
-                        paging(data);
+                    }
+                    paging(data);
                 },
                 error: function (e) {
                     console.log('error:' + e.status);
@@ -250,34 +270,34 @@
 </script>
 
 <script language="javaScript">
-    function paging(data){
+    function paging(data) {
         var datas = data;
         var noticeId = datas.ajaxSearch[0].noticeId
-        var temp ='';
+        var temp = '';
         temp = `<li>
                 <a href="/admin/m_notice/notice?page=1&searchText=${datas.searchText}"
                 class="num">
                 << </a> </li> <li>
-                <a <%if((page<last-1)||(page==1)){%><%} else {%>
+                <a <%if(page==1){%><%} else {%>
                 href="/admin/m_notice/notice?page=<%= parseInt(page) - 1 %>&searchText=${datas.searchText}"
                 class="num" <% } %>>
                 < </a> </li>`
-        for(var i = datas.startPage; i < datas.endPage; i++){ 
+        for (var i = datas.startPage; i < datas.endPage; i++) {
             temp += `<li class="paging_on">
                     <a href="/admin/m_notice/notice?page=${i + 1}&searchText=${datas.searchText}"`
-        if(i!=0){
-            temp += `class="num">${i + 1}</a> </li>`
-        }else{
-            temp += `class="selected" style="background-color:#FC8B5F;><span style="color:white;">${i + 1}</span></a> </li>"`
-        } 
-    }
-        temp +=`<li> <a <%if(page>last-1){%><%} else {%>
+            if (i != 0) {
+                temp += `class="num">${i + 1}</a> </li>`
+            } else {
+                temp +=
+                    `class="selected" style="background-color:#FC8B5F;><span style="color:white;">${i + 1}</span></a> </li>"`
+            }
+        }
+        temp += `<li> <a <%if(page>last-1){%><%} else {%>
                     href="/admin/m_noitce/notice?page=<%= parseInt(page) + 1 %>&searchText=${datas.searchText}"
                     class="num" <% } %>>></a></li>
                     <li><a href="/admin/m_notice/notice?page=<%= last%>&searchText=${datas.searchText}"
                     class="num">>></a></li>
                     `
-         $(".customPaging").html(temp);            
+        $(".customPaging").html(temp);
     }
-    
 </script>

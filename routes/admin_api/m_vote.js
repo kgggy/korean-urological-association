@@ -35,33 +35,48 @@ var upload = multer({ //multer안에 storage정보
 //투표현황 전체조회
 router.get('/', async (req, res) => {
     try {
-        // var searchType1 = req.query.searchType1 == undefined ? "" : req.query.searchType1;
-        // var keepSearch = "&searchType1=" + searchType1;
+        var page = req.query.page;
+        var searchType1 = req.query.searchType1 == undefined ? "" : req.query.searchType1;
+        var keepSearch = "&searchType1=" + searchType1;
         var sql = "select *, date_format(startDate, '%Y-%m-%d') as startDateFmt,\
                             date_format(endDate, '%Y-%m-%d') as endDateFmt,\
                             date_format(eventDate, '%Y-%m-%d') as eventDateFmt\
-                     from event";
-        // if (searchType1 != '') {
-        //     sql += " and eventStatus = '" + searchType1 + "'";
-        // }
+                     from event where 1=1";
+        if (searchType1 != '') {
+            sql += " and eventStatus = '" + searchType1 + "'";
+        }
         sql += " order by eventId desc";
         connection.query(sql, (err, results) => {
-            // var last = Math.ceil((results.length) / 15);
+            var countPage = 10; //하단에 표시될 페이지 개수
+            var page_num = 10; //한 페이지에 보여줄 개수
+            var last = Math.ceil((results.length) / page_num); //마지막 장
+            var endPage = Math.ceil(page / countPage) * countPage; //끝페이지(10)
+            var startPage = endPage - countPage; //시작페이지(1)
+            if (last < endPage) {
+                endPage = last
+            };
             if (err) {
                 console.log(err);
             }
             let route = req.app.get('views') + '/m_vote/vote';
             res.render(route, {
-                // searchText: searchText,
-                // searchType1: searchType1,
+                searchType1: searchType1,
                 results: results,
-                // page: page,
-                // length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
-                // page_num: 10, //한 페이지에 보여줄 개수
-                // pass: true,
-                // last: last,
-                // keepSearch: keepSearch
+                page: page, //현재 페이지
+                length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
+                page_num: page_num,
+                countPage: countPage,
+                startPage: startPage,
+                endPage: endPage,
+                pass: true,
+                last: last,
+                keepSearch: keepSearch
             });
+            console.log(startPage)
+            console.log(page_num);
+            console.log(endPage);
+            console.log(last)
+            console.log(page)
         });
     } catch (error) {
         res.status(500).send(error.message);

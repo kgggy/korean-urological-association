@@ -54,6 +54,7 @@
                      <form name="udtForm" role="form">
                         <input type="hidden" id="eventContent" name="eventContent" value="">
                         <input type="hidden" name="eventFileRoute" value="">
+                        <input type="hidden" name="page" value="<%=page%>">
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">글번호</label>
                            <div class="col-md-9">
@@ -126,7 +127,7 @@
                            </div>
                            <div>
                               <button class="btn btn-block btn-outline-danger" type="button"
-                                 onclick="location.href='/admin/m_event'">취소</button>
+                                 onclick="history.go(-1)">취소</button>
                            </div>
                      </form>
                   </div>

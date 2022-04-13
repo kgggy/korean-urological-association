@@ -55,7 +55,7 @@
 											<span><%= results[i].userNick %></span>
 											<span><%= results[i].cmtDatefmt %></span>
 										</div>
-										<input class="btn btn-block btn-outline-danger cmtDelBtn" type="submit" id="delete_btn"
+										<input type="submit" class="btn btn-block btn-outline-danger cmtDelBtn" id="delete_btn" name="delete_btn"
 											value="삭제" data-cmtId="<%= results[i].cmtId %>">
 									</div>
 										<div class="form-control" id="writTitle" type="text" name="writTitle"
@@ -86,12 +86,13 @@
 </main>
 <script>
 	// 삭제
-	$("#delete_btn").on("click", function () {
+	$("input[name=delete_btn]").on("click", function () {
 		$('input[name=cmtId]').val($(this).attr('data-cmtId'));
-		$("#commentForm").attr("action", "cmtDelete");
+		$("#commentForm").attr("action", "/admin/m_comment/cmtDelete");
 		$("#commentForm").attr("method", "get");
 		if (confirm("댓글을 삭제하시겠습니까?") == true) {
 			$("#commentForm").submit();
+			alert("삭제되었습니다.")
 		} else {
 			return;
 		}

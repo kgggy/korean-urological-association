@@ -15,6 +15,7 @@
                 <div class="col-lg-6">
                    <div class="card">
                       <form name="udtForm" role="form">
+                         <input type="hidden" id="page" name="page" value="<%=page%>">
                          <input type="hidden" id="eventFileRoute" name="eventFileRoute"
                             value="<%=result[0].eventFileRoute%>">
                          <div class="card-header">
@@ -78,9 +79,9 @@
                                <div class="col-md-9">
                                   <% if(result[0].eventFileRoute != null && result[0].eventFileRoute != '') {%>
                                   <p><span><%=fileOrgName%></span></p>
-                                     <a href="../../../<%= result[0].eventFileRoute %>"
-                                        class="btn btn-block btn-outline-success" type="button" style="width:30%;"
-                                        download>파일 다운로드</a>
+                                  <a href="../../../<%= result[0].eventFileRoute %>"
+                                     class="btn btn-block btn-outline-success" type="button" style="width:30%;"
+                                     download>파일 다운로드</a>
                                   </p>
                                   <% }else{ %>
                                   이미지가 존재하지 않습니다.
@@ -100,10 +101,10 @@
                                <div>
                                   <% if(vote == '') {%>
                                   <button class="btn btn-block btn-outline-success" type="button"
-                                     onclick="location.href='/admin/m_event'">목록</button>
+                                     onclick="location.href='/admin/m_event?page=<%=page%>'">목록</button>
                                   <% } else if(vote == 'y') { %>
                                   <button class="btn btn-block btn-outline-success" type="button"
-                                     onclick="location.href='/admin/m_vote'">목록</button>
+                                     onclick="location.href='/admin/m_vote?page=<%=page%>'">목록</button>
                                   <% } %>
                                </div>
                             </div>

@@ -14,11 +14,6 @@
         display: inline-block;
     }
 </style>
-<script>
-    $(document).ready(function () {
-        searchajax();
-    });
-</script>
 <main class="main">
     <!-- Breadcrumb-->
     <ol class="breadcrumb">
@@ -38,7 +33,16 @@
                         </div>
                         <div class="card-body">
                             <form id="eventForm" name="eventForm" method="" action="">
-
+                                <input type="hidden" id="page" name="page" value="<%= page %>">
+                                <div align="right" style="display: flex; justify-content: end; gap: 5px;">
+                                    <select name="searchType1" class="dropdown">
+                                        <option value="">상태</option>
+                                        <option value="0" <%if(searchType1=="0"){%> selected="selected" <%}%>>진행중</option>
+                                        <option value="1" <%if(searchType1=="1"){%> selected="selected" <%}%>>마감</option>
+                                    </select>
+                                        <button class="btn btn-block btn-outline-success" type="submit"
+                                            id="searchAction" style="margin-bottom: 10px;">검색</button>
+                                </div>
                                 <table id="exampleTable" class="table userTable table-responsive-sm table-hover">
                                     <colgroup>
                                         <!-- <col width="5%" /> -->
@@ -65,8 +69,10 @@
                                         </tr>
                                     </thead>
                                     <tbody id="tbody">
-                                        <% if(results.length > 0){ %> <% for(var i = 0; i < results.length; i++) {%>
-                                        <tr
+                                        <% if(results.length > 0){ %> <% for(var i = (page * page_num) - page_num; i < (page * page_num); i++) { 
+                                            if(i > length){
+                                                i++;
+                                            } else { %> <tr
                                             onclick="location.href='/admin/m_event/eventSelectOne?eventId=<%=results[i].eventId%>&vote=y'">
                                             <!-- <td onclick='event.cancelBubble=true;'><input type="checkbox" id="chk"
                                                     name="chk" value=""/></td> -->
@@ -94,18 +100,42 @@
                                                     id="vote_popup"
                                                     onclick="voteList('/admin/m_vote/voteList', '', 'resizable=0,width=640, height=700, scrollbars=1', '2', '<%= results[i].eventId %>')">불참자</button>
                                             </td>
-                                        </tr>
-                                        <% } %>
-                                        <% } else { %>
-                                        <tr>
-                                            <td colspan="7">
-                                                데이터가 존재하지 않습니다.
-                                            </td>
-                                        </tr>
-                                        <% } %>
-                                    </tbody>
-                                </table>
+                                            </tr>
+                                            <% } %>
+                                            <% } %>
+                                            <% } else { %>
+                                            <tr>
+                                                <td colspan="7">
+                                                    데이터가 존재하지 않습니다.
+                                                </td>
+                                            </tr>
+                                            <% } %>
+                                            </tbody>
+                                            </table>
                             </form>
+                            <div class="mt_20">
+                                <div class="paging" id="page_navi">
+                                    <ul class="pagination customPaging">
+                                        <% if(results.length > 0){ %>
+                                        <li>
+                                            <a href="/admin/m_vote?page=1" class="num">
+                                                << </a> </li> <li>
+                                                    <a <%if(page==1){%><%} else {%>
+                                                        href="/admin/m_vote?page=<%= parseInt(page) - 1 %>" class="num"
+                                                        <% } %>>
+                                                        < </a> </li> <% for(var i = startPage; i < endPage; i++){  %>
+                                                            <li class="paging_on">
+                                                            <a href="/admin/m_vote?page=<%= i + 1 %>"
+                                                                <%if(page==i+1){%>class="selected"
+                                                                <%}%> class="num"><%= i + 1 %></a> </li> <% } %> <li> <a
+                                                                    <%if(page>last-1){%><%} else {%>
+                                                                    href="/admin/m_vote?page=<%= parseInt(page) + 1 %>"
+                                                                    class="num" <% } %>>></a></li>
+                                        <li><a href="/admin/m_vote?page=<%= last%>" class="num">>></a></li>
+                                        <% } %>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
