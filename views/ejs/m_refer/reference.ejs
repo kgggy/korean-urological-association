@@ -100,11 +100,11 @@
                                             <a href="/admin/m_refer/reference?page=1"
                                                 class="num">
                                                 << </a> </li> <li>
-                                                    <a <%if((page<last-1)||(page==1)){%><%} else {%>
+                                                    <a <%if((page==1)){%><%} else {%>
                                                         href="/admin/m_refer/reference?page=<%= parseInt(page) - 1 %>"
                                                         class="num" <% } %>>
                                                         < </a> </li>
-                                                            <% for(var i = 0; i < results.length / page_num; i++){  %>
+                                                            <% for(var i = startPage; i < endPage; i++){  %>
                                                             <li class="paging_on">
                                                             <a href="/admin/m_refer/reference?page=<%= i + 1 %>"
                                                                 <%if(page==i+1){%>class="selected"
@@ -199,34 +199,34 @@
                                 $("#tbody").empty();
                                 console.log(data.ajaxSearch.length - i);
                                 str +=
-                                    '<tr onclick="location.href=\'/admin/m_gallery/gallerySelectOne?galleryId=' +
-                                    data.ajaxSearch[i].gallery + '&page= ' + data
+                                    '<tr onclick="location.href=\'/admin/m_refer/referSelectOne?referId=' +
+                                    data.ajaxSearch[i].refer + '&page= ' + data
                                     .page +
                                     '\'"> <td onclick="event.cancelBubble=true;"><input type="checkbox" id="chk" name="chk" value="' +
-                                    data.ajaxSearch[i].gallery + '" /> </td>';
+                                    data.ajaxSearch[i].refer + '" /> </td>';
                                 str +=
                                     '<td>' +
                                     (data.ajaxSearch.length - i) + '</td>';
                                 str +=
                                     '<td>' +
-                                    data.ajaxSearch[i].galleryTitle + '</td>';
+                                    data.ajaxSearch[i].referTitle + '</td>';
                                 str +=
                                     '<td>' +
-                                    data.ajaxSearch[i].galleryHit + '</td>';
+                                    data.ajaxSearch[i].referHit + '</td>';
                                 str +=
                                     '<td>' +
-                                    data.ajaxSearch[i].galleryWritDateFmt + '</td></tr>'
+                                    data.ajaxSearch[i].referWritDateFmt + '</td></tr>'
                                 
                             }
                         }
                         // console.log("str = " + str)
-                        $("#tbody").append(str);
-                        paging(data);
+                        $("#tbody").append(str);             
                     } else {
                         var none = '<tr> <td colspan="8"> 데이터가 존재하지 않습니다. </td> </tr>'
                         $("#tbody").empty();
                         $("#tbody").append(none);
-                    }
+                    } 
+                        paging(data);
                 },
                 error: function (e) {
                     console.log('error:' + e.status);
@@ -251,31 +251,28 @@
 <script language="javaScript">
     function paging(data){
         var datas = data;
-        var dataLength = datas.length;
-        var dataPage = datas.page_num
-        var galleryId = datas.ajaxSearch[0].galleryId
         var temp ='';
         temp = `<li>
-                <a href="/admin/m_gallery/gallery?page=1&searchText=${datas.searchText}"
+                <a href="/admin/m_refer/reference?page=1&searchText=${datas.searchText}"
                 class="num">
                 << </a> </li> <li>
                 <a <%if((page<last-1)||(page==1)){%><%} else {%>
-                href="/admin/m_gallery/gallery?page=<%= parseInt(page) - 1 %>&searchText=${datas.searchText}"
+                href="/admin/m_refer/reference?page=<%= parseInt(page) - 1 %>&searchText=${datas.searchText}"
                 class="num" <% } %>>
                 < </a> </li>`
-        for(var i = 0; i <= dataLength/dataPage; i++){ 
+        for(var i = datas.startPage; i < datas.endPage; i++){ 
             temp += `<li class="paging_on">
-                    <a style="background-color:#FC8B5F; color:white;" href="/admin/m_gallery/gallery?page=${i + 1}&searchText=${datas.searchText}"`
-        if(page==i + 1){
-            temp += `class="selected"`
-        }else{
+                    <a style="background-color:#FC8B5F; color:white;" href="/admin/m_refer/reference?page=${i + 1}&searchText=${datas.searchText}"`
+        if(i!=0){
             temp += `class="num">${i + 1}</a> </li>`
+        }else{
+            temp += `class="selected" style="background-color:#FC8B5F;><span style="color:white;">${i + 1}</span></a> </li>"`
         } 
     }
         temp +=`<li> <a <%if(page>last-1){%><%} else {%>
-                    href="/admin/m_noitce/gallery?page=<%= parseInt(page) + 1 %>&searchText=${datas.searchText}"
+                    href="/admin/m_noitce/reference?page=<%= parseInt(page) + 1 %>&searchText=${datas.searchText}"
                     class="num" <% } %>>></a></li>
-                    <li><a href="/admin/m_gallery/gallery?page=<%= last%>&searchText=${datas.searchText}"
+                    <li><a href="/admin/reference/reference?page=<%= last%>&searchText=${datas.searchText}"
                     class="num">>></a></li>
                     `
          $(".customPaging").html(temp);            

@@ -43,16 +43,26 @@ router.get('/reference', async (req, res) => {
         var sql = "select *,  date_format(referWritDate, '%Y-%m-%d') as referWritDateFmt\
                        from reference order by 2 desc";
         connection.query(sql, (err, results) => {
-            var last = Math.ceil((results.length) / 10);
+            var countPage = 10; //하단에 표시될 페이지 개수
+            var page_num = 10; //한 페이지에 보여줄 개수
+            var last = Math.ceil((results.length) / 10); //마지막 장
+            var endPage = Math.ceil(page / countPage) * countPage; //끝페이지(10)
+            var startPage = endPage - countPage; //시작페이지(1)
             if (err) {
                 console.log(err);
             }
+            if (last < endPage) {
+                endPage = last
+            };
             let route = req.app.get('views') + '/m_refer/reference';
             res.render(route, {
                 results: results,
                 page: page,
                 length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
-                page_num: 10, //한 페이지에 보여줄 개수
+                page_num: page_num,
+                countPage: countPage,
+                startPage: startPage,
+                endPage: endPage,
                 pass: true,
                 last: last
             });
@@ -76,20 +86,27 @@ router.get('/referSearch', async (req, res) => {
         if (err) {
             console.log(err)
         }
-        console.log("searchText = " + searchText)
-        console.log("results = " + results)
-        var last = Math.ceil((results.length) / 10);
+        var countPage = 10; //하단에 표시될 페이지 개수
+        var page_num = 10; //한 페이지에 보여줄 개수
+        var last = Math.ceil((results.length) / 10); //마지막 장
+        var endPage = Math.ceil(page / countPage) * countPage; //끝페이지(10)
+        var startPage = endPage - countPage; //시작페이지(1)
         // ajaxSearch = results;
+        if (last < endPage) {
+            endPage = last
+        };
         res.send({
             ajaxSearch: results,
             page: page,
-            length: results.length - 1,
-            page_num: 10,
+            length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
+            page_num: page_num,
+            countPage: countPage,
+            startPage: startPage,
+            endPage: endPage,
             pass: true,
-            last: last,
+            last: last, 
             searchText: searchText
         });
-        console.log("ajaxSearch = " + results.length);
         // console.log("page = " + page)
     });
 });
