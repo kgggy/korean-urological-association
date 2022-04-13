@@ -38,13 +38,17 @@ router.get('/gallery', async (req, res) => {
     try {
         var page = req.query.page;
         var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
-        // var keepSearch = "&searchText=" + searchText;
+        var keepSearch = "&searchText=" + searchText;
         var sql = "select *, (select count(*) from comment where comment.boardId = g.galleryId) as mcount,\
                              date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt\
-                       from gallery g order by 2 desc";
+                       from gallery g"
+        if (searchText != '') {
+            sql += " where galleryTitle like '%" + searchText + "%' or galleryContent like '%" + searchText + "%'";
+        }
+            sql += " order by 2 desc";
         connection.query(sql, (err, results) => {
             var countPage = 10; //하단에 표시될 페이지 개수
-            var page_num = 5; //한 페이지에 보여줄 개수
+            var page_num = 10; //한 페이지에 보여줄 개수
             var last = Math.ceil((results.length) / countPage); //마지막 장
             var endPage = Math.ceil(page / countPage) * countPage; //끝페이지(10)
             var startPage = endPage - countPage; //시작페이지(1)
@@ -65,8 +69,8 @@ router.get('/gallery', async (req, res) => {
                 startPage: startPage,
                 endPage: endPage,
                 pass: true,
-                last: last
-                // keepSearch: keepSearch
+                last: last,
+                keepSearch: keepSearch
             });
         });
     } catch (error) {
@@ -115,9 +119,43 @@ router.get('/gallerySearch', async (req, res) => {
     });
 });
 
+//각 커뮤니티별 글 상세조회
+router.get('/selectOne', async (req, res) => {
+    try {
+        var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
+        var keepSearch = "&searchText=" + searchText;
+        const page = req.query.page;
+        const param = req.query.writId;
+        const sql = "select p.*, c.comNick, f.fileRoute, f.fileOrgName, f.fileNo, u.userNick, date_format(writDate, '%Y-%m-%d') as writDatefmt, date_format(writUpdDate, '%Y-%m-%d') as writUpdDatefmt\
+                        from post p\
+                   left join file f on f.writId = p.writId\
+                   left join user u on u.uid = p.uid\
+                   left join company c on c.comId = p.comId\
+                       where p.writId = ?";
+
+        connection.query(sql, param, (err, result) => {
+            if (err) {
+                res.json({
+                    msg: "select query error"
+                });
+            }
+            let route = req.app.get('views') + '/m_board/brd_viewForm';
+            res.render(route, {
+                result: result,
+                page: page,
+                keepSearch : keepSearch
+            });
+        });
+    } catch (error) {
+        res.status(401).send(error.message);
+    }
+});
+
 //갤러리 글 상세조회
 router.get('/gallerySelectOne', async (req, res) => {
     var page = req.query.page;
+    var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
+    var keepSearch = "&searchText=" + searchText;
     try {
         const param = req.query.galleryId;
         const sql = "select g.*, date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt, f.fileRoute\
@@ -134,7 +172,8 @@ router.get('/gallerySelectOne', async (req, res) => {
             let route = req.app.get('views') + '/m_gallery/gallery_viewForm';
             res.render(route, {
                 'result': result,
-                page: page
+                page: page,
+                keepSearch : keepSearch
             });
         });
     } catch (error) {
@@ -146,10 +185,13 @@ router.get('/gallerySelectOne', async (req, res) => {
 router.get('/galleryWritForm', async (req, res) => {
     console.log(req.query.uid)
     console.log(req.query.galleryId)
+    var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
+    var keepSearch = "&searchText=" + searchText;
     let route = req.app.get('views') + '/m_gallery/gallery_writForm.ejs';
     res.render(route, {
         uid: req.query.uid,
-        galleryId: req.query.galleryId
+        galleryId: req.query.galleryId,
+        keepSearch: keepSearch
     });
 });
 
@@ -231,6 +273,8 @@ router.post('/galleryWrite', upload.array('file'), async (req, res, next) => {
 //게시글 수정 폼 이동
 router.get('/galleryUdtForm', async (req, res) => {
     try {
+        var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
+        var keepSearch = "&searchText=" + searchText;
         const param = req.query.galleryId;
         const sql = "select g.*, date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt, f.fileRoute, f.fileOrgName, f.fileId\
                         from gallery g\
@@ -243,7 +287,8 @@ router.get('/galleryUdtForm', async (req, res) => {
             let route = req.app.get('views') + '/m_gallery/gallery_udtForm';
             console.log(route);
             res.render(route, {
-                'result': result
+                'result': result,
+                keepSearch: keepSearch
             });
             console.log(result);
         });
@@ -257,6 +302,8 @@ router.get('/galleryUdtForm', async (req, res) => {
 router.post('/galleryUpdate', upload.array('file'), (req, res) => {
     const paths = req.files.map(data => data.path);
     const orgName = req.files.map(data => data.originalname);
+    var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
+    var keepSearch = "&searchText=" + searchText;
     try {
         const param1 = [req.body.galleryTitle, req.body.galleryContent, req.body.galleryId];
         const sql1 = "update gallery set galleryTitle = ?, galleryContent = ?, galleryWritDate = sysdate() where galleryId = ?";
@@ -273,7 +320,7 @@ router.post('/galleryUpdate', upload.array('file'), (req, res) => {
                     }
                 });
             };
-            res.redirect('gallerySelectOne?galleryId=' + req.body.galleryId);
+            res.redirect('gallerySelectOne?galleryId=' + req.body.galleryId + keepSearch);
         });
     } catch (error) {
         res.send(error.message);
