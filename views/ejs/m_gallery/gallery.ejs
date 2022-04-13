@@ -82,7 +82,7 @@
                                     <td onclick='event.cancelBubble=true;'>
                                         <% if(results[i].mcount != 0) { %>
                                         <button id="comment_btn" type="button" class="btn btn-block btn-outline-success"
-                                            onclick="comment('/admin/m_gallery/certiComment', '', 'resizable=0,width=640, height=700, scrollbars=1', '<%= results[i].certiContentId %>')">댓글(<%=results[i].mcount %>)</button>
+                                            onclick="comment('/admin/m_comment', '', 'resizable=0,width=640, height=700, scrollbars=1', '<%= results[i].galleryId %>')">댓글(<%=results[i].mcount %>)</button>
                                         <% } %></td>
                                     </tr>
                                     <% } %>
@@ -168,6 +168,12 @@
             return false;
         }
     })
+
+    //댓글 확인
+    function comment(theURL, winName, features, galleryId) {
+        theURL += '?boardId=' + galleryId + '&eventId=' + eventId;
+        window.open(theURL, winName, features);
+    }
 
     //체크박스
     $("#chkAll").click(function () {

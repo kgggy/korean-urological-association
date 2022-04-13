@@ -1,16 +1,9 @@
 var express = require('express');
-var router = express.Router();
-const mysql = require('mysql');
-
-const connt = require("../../config/db")
-
-// DB 커넥션 생성
-//var connection = mysql.createConnection(connt);
-//connection.connect();                    
+var router = express.Router();                
 var connection = require('../../config/db').conn;
 
-//탄소실천, 챌린지 게시글 별 댓글 전체조회
-router.get('/select', async (req, res) => {
+//댓글 전체조회
+router.get('/', async (req, res) => {
     try {
         const param = [req.query.boardId, req.query.boardId];
         const sql = "select c.*, u.userName as userNick, date_format(cmtWritDate, '%Y-%m-%d') as cmtDatefmt,\
