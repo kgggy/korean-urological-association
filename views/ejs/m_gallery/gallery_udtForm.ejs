@@ -39,6 +39,7 @@
                         <input type="hidden" id="galleryContent" name="galleryContent" value="">
                         <input type="hidden" name="fileId" value="">
                         <input type="hidden" name="fileRoute" value="">
+                        <input type="hidden" name="page" value="<%=page%>">
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">글번호</label>
                            <div class="col-md-9">
@@ -93,7 +94,7 @@
                            </div>
                            <div>
                               <button class="btn btn-block btn-outline-danger" type="button"
-                                 onclick="location.href='/admin/m_gallery/gallery?page=1'">취소</button>
+                                 onclick="history.go(-1)">취소</button>
                            </div>
                      </form>
                   </div>

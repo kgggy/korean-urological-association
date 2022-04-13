@@ -112,7 +112,7 @@
                                             <a href="/admin/m_gallery/gallery?page=1<%=keepSearch%>" class="num">
                                                 << </a> </li> <li>
                                                     <a <%if(page==1){%><%} else {%>
-                                                        href="/admin/m_gallery/gallery?page=<%= parseInt(page) - 1 %>"
+                                                        href="/admin/m_gallery/gallery?page=<%= parseInt(page) - 1 %><%=keepSearch%>"
                                                         class="num" <% } %>>
                                                         < </a> </li>
                                                             <% for(var i = startPage; i < endPage; i++){  %>
@@ -121,7 +121,7 @@
                                                                 <%if(page==i+1){%>class="selected"
                                                                 <%}%> class="num"><%= i + 1 %></a> </li> <% } %> <li> <a
                                                                     <%if(page==last){%><%} else {%>
-                                                                    href="/admin/m_gallery/gallery?page=<%= parseInt(page) + 1 %>"
+                                                                    href="/admin/m_gallery/gallery?page=<%= parseInt(page) + 1 %><%=keepSearch%>"
                                                                     class="num" <% } %>>></a></li>
                                         <li><a href="/admin/m_gallery/gallery?page=<%= last%><%=keepSearch%>" class="num">>></a></li>
                                         <% } %>

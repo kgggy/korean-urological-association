@@ -49,7 +49,7 @@ router.get('/gallery', async (req, res) => {
         connection.query(sql, (err, results) => {
             var countPage = 10; //하단에 표시될 페이지 개수
             var page_num = 10; //한 페이지에 보여줄 개수
-            var last = Math.ceil((results.length) / countPage); //마지막 장
+            var last = Math.ceil((results.length) / page_num); //마지막 장
             var endPage = Math.ceil(page / countPage) * countPage; //끝페이지(10)
             var startPage = endPage - countPage; //시작페이지(1)
             if (err) {
@@ -94,10 +94,9 @@ router.get('/gallerySearch', async (req, res) => {
         }
         var countPage = 10; //하단에 표시될 페이지 개수
         var page_num = 10; //한 페이지에 보여줄 개수
-        var last = Math.ceil((results.length) / countPage); //마지막 장
+        var last = Math.ceil((results.length) / page_num); //마지막 장
         var endPage = Math.ceil(page / countPage) * countPage; //끝페이지(10)
         var startPage = endPage - countPage; //시작페이지(1)
-
         if (last < endPage) {
             endPage = last
         };
@@ -274,6 +273,7 @@ router.post('/galleryWrite', upload.array('file'), async (req, res, next) => {
 router.get('/galleryUdtForm', async (req, res) => {
     try {
         var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
+        console.log(searchText)
         var keepSearch = "&searchText=" + searchText;
         const param = req.query.galleryId;
         const sql = "select g.*, date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt, f.fileRoute, f.fileOrgName, f.fileId\
@@ -290,7 +290,6 @@ router.get('/galleryUdtForm', async (req, res) => {
                 'result': result,
                 keepSearch: keepSearch
             });
-            console.log(result);
         });
 
     } catch (error) {
@@ -302,6 +301,7 @@ router.get('/galleryUdtForm', async (req, res) => {
 router.post('/galleryUpdate', upload.array('file'), (req, res) => {
     const paths = req.files.map(data => data.path);
     const orgName = req.files.map(data => data.originalname);
+    const page = req.body.page;
     var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
     var keepSearch = "&searchText=" + searchText;
     try {
@@ -320,7 +320,7 @@ router.post('/galleryUpdate', upload.array('file'), (req, res) => {
                     }
                 });
             };
-            res.redirect('gallerySelectOne?galleryId=' + req.body.galleryId + keepSearch);
+            res.redirect('gallerySelectOne?galleryId=' + req.body.galleryId + '&page=' + page + keepSearch);
         });
     } catch (error) {
         res.send(error.message);

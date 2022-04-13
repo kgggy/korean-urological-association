@@ -1,7 +1,5 @@
 var express = require('express');
 var router = express.Router();
-const mysql = require('mysql');
-const connt = require("../../config/db")
 const models = require('../../models');
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
@@ -9,11 +7,6 @@ const Op = sequelize.Op;
 const multer = require("multer");
 const path = require('path');
 const fs = require('fs');
-
-
-// DB 커넥션 생성
-// var connection = mysql.createConnection(connt);
-// connection.connect();
 var connection = require('../../config/db').conn;
 
 //파일업로드 모듈
@@ -60,58 +53,57 @@ router.get('/:uid', async (req, res) => {
 });
 
 // 회원정보수정
-// router.patch('/', upload.single('file'), async (req, res) => {
-//     var param;
-//     var pathe = "";
+router.patch('/', upload.single('file'), async (req, res) => {
+    var param;
+    var pathe = "";
+    // const {
+    //     userNick,
+    //     uid,
+    //     userImg
+    // } = req.body;
 
-//     const {
-//         userNick,
-//         uid,
-//         userImg
-//     } = req.body;
+    // // console.log(uid);
+    // // console.log(userImg);
 
-//     // console.log(uid);
-//     // console.log(userImg);
+    // const sameNickNameUser = await models.user.findOne({
+    //     where: {
+    //         userNick,
+    //         uid: {
+    //             [Op.notIn]: [uid],
+    //         },
+    //     }
+    // });
 
-//     const sameNickNameUser = await models.user.findOne({
-//         where: {
-//             userNick,
-//             uid: {
-//                 [Op.notIn]: [uid],
-//             },
-//         }
-//     });
+    // if (sameNickNameUser !== null) {
+    //     return res.json({
+    //         registerSuccess: false,
+    //         message: "이미 존재하는 닉네임입니다.",
+    //     });
+    // }
 
-//     if (sameNickNameUser !== null) {
-//         return res.json({
-//             registerSuccess: false,
-//             message: "이미 존재하는 닉네임입니다.",
-//         });
-//     }
+    if (req.file != null) {
+        pathe = req.file.path;
+        param = [req.body.userName, req.body.userPosition, req.body.userType, req.body.userAdres1, req.body.userAdres2, pathe, req.body.uid];
+    } else {
+        param = [req.body.userName, req.body.userPosition, req.body.userType, req.body.userAdres1, req.body.userAdres2, req.body.userImg, req.body.uid];
+    }
 
-//     if (req.file != null) {
-//         pathe = req.file.path;
-//         param = [req.body.userNick, req.body.userAge, req.body.userSchool, req.body.userAdres1, req.body.userAdres2, pathe, req.body.uid];
-//     } else {
-//         param = [req.body.userNick, req.body.userAge, req.body.userSchool, req.body.userAdres1, req.body.userAdres2, req.body.userImg, req.body.uid];
-//     }
-
-//     const sql = "update user set userNick = ?,  userAge = ?, userSchool = ?,userAdres1 = ?, userAdres2 = ?, userImg = ? where uid = ?";
-//     connection.query(sql, param, (err) => {
-//         if (err) {
-//             console.error(err);
-//         }
-//         if (req.file != null || userImg != undefined) {
-//             fs.unlinkSync(userImg, (err) => {
-//                 if (err) {
-//                     console.log(err);
-//                 }
-//             });
-//         }
-//         return res.json({
-//             msg: "success"
-//         });
-//     });
-// });
+    const sql = "update user set userName = ?, userPosition = ?, userType = ?,userAdres1 = ?, userAdres2 = ?, userImg = ? where uid = ?";
+    connection.query(sql, param, (err) => {
+        if (err) {
+            console.error(err);
+        }
+        if (req.file != null || userImg != undefined) {
+            fs.unlinkSync(userImg, (err) => {
+                if (err) {
+                    console.log(err);
+                }
+            });
+        }
+        return res.json({
+            msg: "success"
+        });
+    });
+});
 
 module.exports = router;

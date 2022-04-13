@@ -152,6 +152,14 @@
    }
    //수정
    function userUpdate() {
+      var userName = $("#userName").val();
+
+      if (userName == '') {
+         alert("회원명을 입력해주세요.");
+         $("#userName").focus();
+         return false;
+      }
+
       if (confirm("수정하시겠습니까?")) {
          $("#userForm").attr("action", "userUpdate");
          $("#userForm").attr("method", "post");

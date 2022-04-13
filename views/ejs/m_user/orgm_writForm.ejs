@@ -126,17 +126,10 @@
 
    $("#update_btn").click(function () {
       var userName = $("#userName").val();
-      var hosName = $("#hosName").val();
 
       if (userName == '') {
          alert("회원명을 입력해주세요.");
          $("#userName").focus();
-         return false;
-      }
-
-      if (hosName == '') {
-         alert("병원명을 입력해주세요.");
-         $("#hosName").focus();
          return false;
       }
 

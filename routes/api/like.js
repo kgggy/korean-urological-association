@@ -28,7 +28,7 @@ router.get('/add/board', async (req, res) => {
 router.get('/likeUserList', async (req, res) => {
     const param = req.query.boardId;
     try {
-        const sql = "select r.recommendId, r.boardId, u.userName, u.uid\
+        const sql = "select r.recommendId, r.boardId, u.userName, u.uid, u.userPosition, u.userImg\
                        from recommend r\
                   left join user u on r.uid = u.uid\
                       where boardId = ?";
