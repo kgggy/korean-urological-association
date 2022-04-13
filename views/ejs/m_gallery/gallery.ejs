@@ -48,17 +48,10 @@
                                     <colgroup>
                                         <col width="5%" />
                                         <col width="5%" />
-<<<<<<< HEAD
-                                        <col width="52%" />
-                                        <col width="8%" />
-                                        <col width="22%" />
-                                        <col width="8%" />
-=======
                                         <col width="58%" />
                                         <col width="8%" />
                                         <col width="12%" />
                                         <col width="12%" />
->>>>>>> d4bb919234ce49938c178043fd831494cf00a3c1
                                     </colgroup>
                                     <thead>
                                         <tr>
@@ -67,45 +60,13 @@
                                             <th>제목</th>
                                             <th>조회수</th>
                                             <th>작성일</th>
-<<<<<<< HEAD
-                                            <th>비고</th>
-=======
                                             <th></th>
->>>>>>> d4bb919234ce49938c178043fd831494cf00a3c1
                                         </tr>
                                     </thead>
                                     <tbody id="tbody">
                                         <% if(results.length > 0){ %> <% for(var i = (page * page_num) - page_num; i < (page * page_num); i++) { 
                                             if(i > length){
                                                 i++;
-<<<<<<< HEAD
-                                            } else { %>
-                                        <tr onclick="location.href='/admin/m_gallery/gallerySelectOne?galleryId=<%=results[i].galleryId%>'">
-                                            <td onclick='event.cancelBubble=true;'><input type="checkbox" id="chk" name="chk"
-                                                    value="<%=results[i].galleryId %>" /></td>
-                                            <td>
-                                                <%= results.length-i %></td>
-                                            <td>
-                                                <%=results[i].galleryTitle%></td>
-                                            <td>
-                                                <%=results[i].galleryHit%></td>
-                                            <td>
-                                                <%=results[i].galleryWritDateFmt %></td>
-                                            <td onclick='event.cancelBubble=true;'>
-                                                <button id="comment_btn" type="button"
-                                                    class="btn btn-block btn-outline-success" onclick="comment('/admin/m_comment/select', '', 
-                                                    'resizable=0,width=640, height=700, scrollbars=1', '<%= results[i].galleryId %>')">댓글(<%=results[i].mcount %>)</button></td>
-                                        </tr>
-                                        <% } %>
-                                        <% } %>
-                                        <% } else { %>
-                                        <tr>
-                                            <td colspan="8">
-                                                데이터가 존재하지 않습니다.
-                                            </td>
-                                        </tr>
-                                        <% } %>
-=======
                                             } else { %> <tr
                                         onclick="location.href='/admin/m_gallery/gallerySelectOne?galleryId=<%=results[i].galleryId%>'">
                                     <td onclick='event.cancelBubble=true;'><input type="checkbox" id="chk" name="chk"
@@ -133,7 +94,6 @@
                                         </td>
                                     </tr>
                                     <% } %>
->>>>>>> d4bb919234ce49938c178043fd831494cf00a3c1
                                     </tbody>
                                     </table>
                                     <div>
@@ -151,16 +111,11 @@
                                         <li>
                                             <a href="/admin/m_gallery/gallery?page=1" class="num">
                                                 << </a> </li> <li>
-<<<<<<< HEAD
-                                                    <a <%if((page==1)){%><%} else {%>
-                                                        href="/admin/m_gallery/gallery?page=<%= parseInt(page) - 1 %><%= keepSearch %>"
-=======
                                                     <a <%if((page<last-1)||(page==1)){%><%} else {%>
                                                         href="/admin/m_gallery/gallery?page=<%= parseInt(page) - 1 %>"
->>>>>>> d4bb919234ce49938c178043fd831494cf00a3c1
                                                         class="num" <% } %>>
                                                         < </a> </li>
-                                                            <% for(var i = 0; i < results.length / page_num; i++){  %>
+                                                            <% for(var i = startPage; i < endPage; i++){  %>
                                                             <li class="paging_on">
                                                             <a href="/admin/m_gallery/gallery?page=<%= i + 1 %>"
                                                                 <%if(page==i+1){%>class="selected"
@@ -183,14 +138,12 @@
 
 <script>
     const formObj = $("form[name='galleryForm']");
-
     //등록 
     function enroll() {
         formObj.attr("method", "get");
         formObj.attr("action", "galleryWritForm");
         formObj.submit();
     }
-
     // 삭제
     $("#delete_btn").on("click", function () {
         var chkArr = [];
@@ -215,13 +168,6 @@
             return false;
         }
     })
-
-    //댓글
-    function comment(theURL, winName, features, galleryId) {
-        theURL += '?boardId=' + galleryId;
-        window.open(theURL, winName, features);
-
-    }
 
     //체크박스
     $("#chkAll").click(function () {
@@ -341,13 +287,13 @@
             temp +=
                 `<li class="paging_on">
                     <a style="background-color:#FC8B5F; color:white;" href="/admin/m_gallery/gallery?page=${i + 1}&searchText=${datas.searchText}"`
-        if(i=0){
-            temp += `class="selected" style="background-color:#FC8B5F; color:white;"`
-        }else{
-            temp += `class="num">${i + 1}</a> </li>`
-        } 
-    }
-        temp +=`<li> <a <%if(page>last-1){%><%} else {%>
+            if (page == i + 1) {
+                temp += `class="selected"`
+            } else {
+                temp += `class="num">${i + 1}</a> </li>`
+            }
+        }
+        temp += `<li> <a <%if(page>last-1){%><%} else {%>
                     href="/admin/m_noitce/gallery?page=<%= parseInt(page) + 1 %>&searchText=${datas.searchText}"
                     class="num" <% } %>>></a></li>
                     <li><a href="/admin/m_gallery/gallery?page=<%= last%>&searchText=${datas.searchText}"
