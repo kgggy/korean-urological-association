@@ -41,11 +41,15 @@ router.get('/gallery', async (req, res) => {
         // var keepSearch = "&searchText=" + searchText;
         var sql = "select *, (select count(*) from comment where comment.boardId = g.galleryId) as mcount,\
                              date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt\
-                       from gallery g order by 2 desc";
+                       from gallery g"
+        if (searchText != '') {
+            sql += " where galleryTitle like '%" + searchText + "%' or galleryContent like '%" + searchText + "%'";
+        }
+            sql += " order by 2 desc";
         connection.query(sql, (err, results) => {
             var countPage = 10; //하단에 표시될 페이지 개수
             var page_num = 10; //한 페이지에 보여줄 개수
-            var last = Math.ceil((results.length) / 10); //마지막 장
+            var last = Math.ceil((results.length) / countPage); //마지막 장
             var endPage = Math.ceil(page / countPage) * countPage; //끝페이지(10)
             var startPage = endPage - countPage; //시작페이지(1)
             if (err) {
@@ -89,8 +93,8 @@ router.get('/gallerySearch', async (req, res) => {
             console.log(err)
         }
         var countPage = 10; //하단에 표시될 페이지 개수
-        var page_num = 10; //한 페이지에 보여줄 개수
-        var last = Math.ceil((results.length) / 10); //마지막 장
+        var page_num = 5; //한 페이지에 보여줄 개수
+        var last = Math.ceil((results.length) / countPage); //마지막 장
         var endPage = Math.ceil(page / countPage) * countPage; //끝페이지(10)
         var startPage = endPage - countPage; //시작페이지(1)
 
@@ -113,6 +117,35 @@ router.get('/gallerySearch', async (req, res) => {
         // console.log("ajaxSearch = " + results.length);
         // console.log("page = " + page)
     });
+});
+
+//각 커뮤니티별 글 상세조회
+router.get('/selectOne', async (req, res) => {
+    try {
+        const page = req.query.page;
+        const param = req.query.writId;
+        const sql = "select p.*, c.comNick, f.fileRoute, f.fileOrgName, f.fileNo, u.userNick, date_format(writDate, '%Y-%m-%d') as writDatefmt, date_format(writUpdDate, '%Y-%m-%d') as writUpdDatefmt\
+                        from post p\
+                   left join file f on f.writId = p.writId\
+                   left join user u on u.uid = p.uid\
+                   left join company c on c.comId = p.comId\
+                       where p.writId = ?";
+
+        connection.query(sql, param, (err, result) => {
+            if (err) {
+                res.json({
+                    msg: "select query error"
+                });
+            }
+            let route = req.app.get('views') + '/m_board/brd_viewForm';
+            res.render(route, {
+                result: result,
+                page: page
+            });
+        });
+    } catch (error) {
+        res.status(401).send(error.message);
+    }
 });
 
 //갤러리 글 상세조회
