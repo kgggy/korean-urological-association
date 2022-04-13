@@ -1,5 +1,4 @@
 <style>
-
     .userTable thead tr .sorting:first-child::before,
     .userTable thead tr .sorting_asc:first-child::before,
     .userTable thead tr .sorting_asc:first-child::after,
@@ -34,18 +33,20 @@
                         </div>
                         <div class="card-body">
                             <form id="referForm" name="referForm" method="" action="">
-                                 <div style="display: flex; justify-content: end; gap: 5px;">
+                                <div style="display: flex; justify-content: end; gap: 5px;">
                                     <input type="hidden" id="page" name="page" value="<%=page%>">
-                                    <input class="searchbox" type="text" name="searchText" id="searchText" placeholder=" 제목, 내용">
+                                    <input class="searchbox" type="text" name="searchText" id="searchText"
+                                        placeholder=" 제목, 내용">
                                     <!-- <button class="btn btn-block btn-outline-success" type="submit" id="searchAction"  style="margin-bottom: 10px;">검색</button> -->
                                 </div>
                                 <table id="exampleTable" class="table userTable table-responsive-sm table-hover">
                                     <colgroup>
                                         <col width="5%" />
                                         <col width="5%" />
-                                        <col width="60%" />
+                                        <col width="48%" />
                                         <col width="8%" />
                                         <col width="22%" />
+                                        <col width="12%" />
                                     </colgroup>
                                     <thead>
                                         <tr>
@@ -54,6 +55,7 @@
                                             <th>제목</th>
                                             <th>조회수</th>
                                             <th>작성일</th>
+                                            <th>댓글</th>
                                         </tr>
                                     </thead>
                                     <tbody id="tbody">
@@ -61,9 +63,10 @@
                                             if(i > length){
                                                 i++;
                                             } else { %>
-                                        <tr onclick="location.href='/admin/m_refer/referSelectOne?referId=<%=results[i].referId%>&page=<%=page%>'">
-                                            <td onclick='event.cancelBubble=true;'><input type="checkbox" id="chk" name="chk"
-                                                    value="<%=results[i].referId %>" /></td>
+                                        <tr
+                                            onclick="location.href='/admin/m_refer/referSelectOne?referId=<%=results[i].referId%>&page=<%=page%>'">
+                                            <td onclick='event.cancelBubble=true;'><input type="checkbox" id="chk"
+                                                    name="chk" value="<%=results[i].referId %>" /></td>
                                             <td>
                                                 <%= results.length-i %></td>
                                             <td>
@@ -72,6 +75,12 @@
                                                 <%=results[i].referHit%></td>
                                             <td>
                                                 <%=results[i].referWritDateFmt %></td>
+                                            <td onclick='event.cancelBubble=true;'>
+                                                <% if(results[i].mcount != 0) { %>
+                                                <button id="comment_btn" type="button"
+                                                    class="btn btn-block btn-outline-success"
+                                                    onclick="comment('/admin/m_comment', '', 'resizable=0,width=640, height=700, scrollbars=1', '<%= results[i].referId %>')">댓글(<%=results[i].mcount %>)</button>
+                                                <% } %></td>
                                         </tr>
                                         <% } %>
                                         <% } %>
@@ -97,14 +106,12 @@
                                     <ul class="pagination customPaging">
                                         <% if(results.length > 0){ %>
                                         <li>
-                                            <a href="/admin/m_refer/reference?page=1"
-                                                class="num">
+                                            <a href="/admin/m_refer/reference?page=1" class="num">
                                                 << </a> </li> <li>
                                                     <a <%if((page==1)){%><%} else {%>
                                                         href="/admin/m_refer/reference?page=<%= parseInt(page) - 1 %>"
                                                         class="num" <% } %>>
-                                                        < </a> </li>
-                                                            <% for(var i = startPage; i < endPage; i++){  %>
+                                                        < </a> </li> <% for(var i = startPage; i < endPage; i++){  %>
                                                             <li class="paging_on">
                                                             <a href="/admin/m_refer/reference?page=<%= i + 1 %>"
                                                                 <%if(page==i+1){%>class="selected"
@@ -112,8 +119,7 @@
                                                                     <%if(page>last-1){%><%} else {%>
                                                                     href="/admin/m_refer/reference?&page=<%= parseInt(page) + 1 %>"
                                                                     class="num" <% } %>>></a></li>
-                                        <li><a href="/admin/m_refer/reference?page=<%= last%>"
-                                                class="num">>></a></li>
+                                        <li><a href="/admin/m_refer/reference?page=<%= last%>" class="num">>></a></li>
                                         <% } %>
                                     </ul>
                                 </div>
@@ -175,7 +181,13 @@
             $("#chkAll").prop("checked", true);
     });
 
-        //검색
+    //댓글 확인
+    function comment(theURL, winName, features, referId) {
+        theURL += '?boardId=' + referId;
+        window.open(theURL, winName, features);
+    }
+
+    //검색
     function searchajax() {
         $("#searchText").keyup(function () {
             var words = $("#searchText").val();
@@ -200,10 +212,10 @@
                                 console.log(data.ajaxSearch.length - i);
                                 str +=
                                     '<tr onclick="location.href=\'/admin/m_refer/referSelectOne?referId=' +
-                                    data.ajaxSearch[i].refer + '&page= ' + data
+                                    data.ajaxSearch[i].referId + '&page= ' + data
                                     .page +
                                     '\'"> <td onclick="event.cancelBubble=true;"><input type="checkbox" id="chk" name="chk" value="' +
-                                    data.ajaxSearch[i].refer + '" /> </td>';
+                                    data.ajaxSearch[i].referId + '" /> </td>';
                                 str +=
                                     '<td>' +
                                     (data.ajaxSearch.length - i) + '</td>';
@@ -215,18 +227,30 @@
                                     data.ajaxSearch[i].referHit + '</td>';
                                 str +=
                                     '<td>' +
-                                    data.ajaxSearch[i].referWritDateFmt + '</td></tr>'
-                                
+                                    data.ajaxSearch[i].referWritDateFmt + '</td>'
+                                str += '<td onclick="event.cancelBubble=true;">'
+                                if (data.ajaxSearch[i].mcount != 0) {
+                                    str +=
+                                        '<button id="comment_btn" type="button" class="btn btn-block btn-outline-success"'
+                                    str +=
+                                        'onclick = "comment(\'/admin/m_comment\',\'\', \'resizable=0,width=640, height=700, scrollbars=1\',\'' +
+                                        data.ajaxSearch[i].referId + '\')">'
+                                    str += '댓글(' + data.ajaxSearch[i].mcount + ')</button></td>'
+                                } else {
+                                    str += '<td></td>'
+                                }
+                                str += '</tr>'
+
                             }
                         }
                         // console.log("str = " + str)
-                        $("#tbody").append(str);             
+                        $("#tbody").append(str);
                     } else {
                         var none = '<tr> <td colspan="8"> 데이터가 존재하지 않습니다. </td> </tr>'
                         $("#tbody").empty();
                         $("#tbody").append(none);
-                    } 
-                        paging(data);
+                    }
+                    paging(data);
                 },
                 error: function (e) {
                     console.log('error:' + e.status);
@@ -249,9 +273,9 @@
 </script>
 
 <script language="javaScript">
-    function paging(data){
+    function paging(data) {
         var datas = data;
-        var temp ='';
+        var temp = '';
         temp = `<li>
                 <a href="/admin/m_refer/reference?page=1&searchText=${datas.searchText}"
                 class="num">
@@ -260,22 +284,23 @@
                 href="/admin/m_refer/reference?page=<%= parseInt(page) - 1 %>&searchText=${datas.searchText}"
                 class="num" <% } %>>
                 < </a> </li>`
-        for(var i = datas.startPage; i < datas.endPage; i++){ 
-            temp += `<li class="paging_on">
+        for (var i = datas.startPage; i < datas.endPage; i++) {
+            temp +=
+                `<li class="paging_on">
                     <a style="background-color:#FC8B5F; color:white;" href="/admin/m_refer/reference?page=${i + 1}&searchText=${datas.searchText}"`
-        if(i!=0){
-            temp += `class="num">${i + 1}</a> </li>`
-        }else{
-            temp += `class="selected" style="background-color:#FC8B5F;><span style="color:white;">${i + 1}</span></a> </li>"`
-        } 
-    }
-        temp +=`<li> <a <%if(page>last-1){%><%} else {%>
+            if (i != 0) {
+                temp += `class="num">${i + 1}</a> </li>`
+            } else {
+                temp +=
+                    `class="selected" style="background-color:#FC8B5F;><span style="color:white;">${i + 1}</span></a> </li>"`
+            }
+        }
+        temp += `<li> <a <%if(page>last-1){%><%} else {%>
                     href="/admin/m_noitce/reference?page=<%= parseInt(page) + 1 %>&searchText=${datas.searchText}"
                     class="num" <% } %>>></a></li>
                     <li><a href="/admin/reference/reference?page=<%= last%>&searchText=${datas.searchText}"
                     class="num">>></a></li>
                     `
-         $(".customPaging").html(temp);            
+        $(".customPaging").html(temp);
     }
-    
 </script>

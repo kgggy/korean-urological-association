@@ -39,7 +39,7 @@
                         <div class="card-body">
                             <form id="galleryForm" name="galleryForm" method="" action="">
                                 <div style="display: flex; justify-content: end; gap: 5px;">
-                                    <input type="hidden" id="page" name="page" value="<%page%>">
+                                    <input type="hidden" id="page" name="page" value="<%=page%>">
                                     <input class="searchbox" type="text" name="searchText" id="searchText"
                                         <%if(searchText!=null){%>value="<%=searchText%>" <%}%> placeholder=" 제목, 내용">
                                     <!-- <button class="btn btn-block btn-outline-success" type="submit" id="searchAction"  style="margin-bottom: 10px;">검색</button> -->
@@ -60,7 +60,7 @@
                                             <th>제목</th>
                                             <th>조회수</th>
                                             <th>작성일</th>
-                                            <th></th>
+                                            <th>댓글</th>
                                         </tr>
                                     </thead>
                                     <tbody id="tbody">
@@ -68,7 +68,7 @@
                                             if(i > length){
                                                 i++;
                                             } else { %> <tr
-                                        onclick="location.href='/admin/m_gallery/gallerySelectOne?galleryId=<%=results[i].galleryId%>'">
+                                        onclick="location.href='/admin/m_gallery/gallerySelectOne?galleryId=<%=results[i].galleryId%>&page=<%=page%>'">
                                     <td onclick='event.cancelBubble=true;'><input type="checkbox" id="chk" name="chk"
                                             value="<%=results[i].galleryId %>" /></td>
                                     <td>
@@ -111,7 +111,7 @@
                                         <li>
                                             <a href="/admin/m_gallery/gallery?page=1" class="num">
                                                 << </a> </li> <li>
-                                                    <a <%if((page<last-1)||(page==1)){%><%} else {%>
+                                                    <a <%if(page==1){%><%} else {%>
                                                         href="/admin/m_gallery/gallery?page=<%= parseInt(page) - 1 %>"
                                                         class="num" <% } %>>
                                                         < </a> </li>
@@ -120,8 +120,8 @@
                                                             <a href="/admin/m_gallery/gallery?page=<%= i + 1 %>"
                                                                 <%if(page==i+1){%>class="selected"
                                                                 <%}%> class="num"><%= i + 1 %></a> </li> <% } %> <li> <a
-                                                                    <%if(page>last-1){%><%} else {%>
-                                                                    href="/admin/m_gallery/all?galleryId=<%= results[0].galleryId %>&page=<%= parseInt(page) + 1 %>"
+                                                                    <%if(page==last){%><%} else {%>
+                                                                    href="/admin/m_gallery/gallery?page=<%= parseInt(page) + 1 %>"
                                                                     class="num" <% } %>>></a></li>
                                         <li><a href="/admin/m_gallery/gallery?page=<%= last%>" class="num">>></a></li>
                                         <% } %>
@@ -171,7 +171,7 @@
 
     //댓글 확인
     function comment(theURL, winName, features, galleryId) {
-        theURL += '?boardId=' + galleryId + '&eventId=' + eventId;
+        theURL += '?boardId=' + galleryId;
         window.open(theURL, winName, features);
     }
 
@@ -237,7 +237,7 @@
                                         if (data.ajaxSearch[i].mcount != 0) {
                                             str +=
                                                 '<button id="comment_btn" type="button" class="btn btn-block btn-outline-success"'
-                                            str += 'onclick = "comment(\'/admin/m_gallery/certiComment\',\'\', \'resizable=0,width=640, height=700, scrollbars=1\',' + data.ajaxSearch[i].galleryId + ')">'
+                                            str += 'onclick = "comment(\'/admin/m_comment\',\'\', \'resizable=0,width=640, height=700, scrollbars=1\',\'' + data.ajaxSearch[i].galleryId + '\')">'
                                             str += '댓글(' + data.ajaxSearch[i].mcount + ')</button></td>'
                                         } else {
                                             str += '<td></td>'
@@ -277,6 +277,7 @@
 <script language="javaScript">
     function paging(data) {
         var datas = data;
+        console.log(datas);
         var dataLength = datas.length;
         var dataPage = datas.page_num
         var galleryId = datas.ajaxSearch[0].galleryId
@@ -285,7 +286,7 @@
                 <a href="/admin/m_gallery/gallery?page=1&searchText=${datas.searchText}"
                 class="num">
                 << </a> </li> <li>
-                <a <%if((page<last-1)||(page==1)){%><%} else {%>
+                <a <%if(page==1){%><%} else {%>
                 href="/admin/m_gallery/gallery?page=<%= parseInt(page) - 1 %>&searchText=${datas.searchText}"
                 class="num" <% } %>>
                 < </a> </li>`
@@ -299,11 +300,11 @@
                 temp += `class="selected" style="background-color:#FC8B5F;><span style="color:white;">${i + 1}</span></a> </li>"`
             } 
         }
-        temp += `<li> <a <%if(page>last-1){%><%} else {%>
-                    href="/admin/m_noitce/gallery?page=<%= parseInt(page) + 1 %>&searchText=${datas.searchText}"
+        temp += `<li> <a <%if(page==1 ){%><%} else {%>
+                    href="/admin/m_gallery/gallery?page=<%= parseInt(page) + 1 %>&searchText=${datas.searchText}"
                     class="num" <% } %>>></a></li>
-                    <li><a href="/admin/m_gallery/gallery?page=<%= last%>&searchText=${datas.searchText}"
-                    class="num">>></a></li>
+                    <li><a href="/admin/m_gallery/gallery?page=${datas.last}&searchText=${datas.searchText}"
+                    class="num">>><%`+ 1 + ` %></a></li>
                     `
         $(".customPaging").html(temp);
     }

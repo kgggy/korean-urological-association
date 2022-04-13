@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
                             (select count(*) from comment where boardId = ? group by boardId) as cmtCount\
                        from comment c\
                   left join user u on u.uid = c.uid\
-                      where c.boardId = ?";
+                      where c.boardId = ? order by cmtWritDate desc";
         
         connection.query(sql, param, (err, results) => {
             if (err) {
@@ -32,12 +32,13 @@ router.get('/', async (req, res) => {
 //댓글 삭제
 router.get('/cmtDelete', async (req, res) => {
     try {
+        const param = req.query.cmtId;
         const sql = "delete from comment where cmtId = ?";
-        connection.query(sql, req.query.cmtId, (err) => {
+        connection.query(sql, param, (err) => {
             if (err) {
                 console.log(err);
             }
-            res.redirect('select?boardId=' + req.query.boardId);
+            res.redirect('/admin/m_comment?boardId=' + req.query.boardId);
         })
     } catch (error) {
         res.send(error.message);

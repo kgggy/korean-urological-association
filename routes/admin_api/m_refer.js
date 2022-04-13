@@ -40,8 +40,9 @@ var upload = multer({ //multer안에 storage정보
 router.get('/reference', async (req, res) => {
     try {
         var page = req.query.page;
-        var sql = "select *,  date_format(referWritDate, '%Y-%m-%d') as referWritDateFmt\
-                       from reference order by 2 desc";
+        var sql = "select *, (select count(*) from comment where comment.boardId = reference.referId) as mcount,\
+                          date_format(referWritDate, '%Y-%m-%d') as referWritDateFmt\
+                    from reference order by 2 desc";
         connection.query(sql, (err, results) => {
             var countPage = 10; //하단에 표시될 페이지 개수
             var page_num = 10; //한 페이지에 보여줄 개수
@@ -77,7 +78,9 @@ router.get('/referSearch', async (req, res) => {
     var page = req.query.page;
     var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
     var keepSearch = "&searchText=" + searchText;
-    var sql = "select *,  date_format(referWritDate, '%Y-%m-%d') as referWritDateFmt from reference";
+    var sql = "select *, (select count(*) from comment where comment.boardId = reference.referId) as mcount,\
+                      date_format(referWritDate, '%Y-%m-%d') as referWritDateFmt\
+                from reference";
     if (searchText != '') {
         sql += " where referTitle like '%" + searchText + "%' or referContent like '%" + searchText + "%'";
     }

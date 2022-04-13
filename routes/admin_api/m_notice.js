@@ -40,7 +40,8 @@ router.get('/notice', async (req, res) => {
         var page = req.query.page;
         var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
         var keepSearch = "&searchText=" + searchText;
-        var sql = "select *,  date_format(noticeWritDate, '%Y-%m-%d') as noticeWritDateFmt\
+        var sql = "select *, (select count(*) from comment where comment.boardId = notice.noticeId) as mcount,\
+                           date_format(noticeWritDate, '%Y-%m-%d') as noticeWritDateFmt\
                        from notice";
         if (searchText != '') {
             sql += "where noticeTitle like '%"+searchText+"%' or noticeContent like '%"+searchText+"%'";
@@ -83,7 +84,9 @@ router.get('/noticeSearch', async (req, res) => {
     var page = req.query.page;
     var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
     var keepSearch = "&searchText=" + searchText;
-    var sql = "select *,  date_format(noticeWritDate, '%Y-%m-%d') as noticeWritDateFmt from notice";
+    var sql = "select *, (select count(*) from comment where comment.boardId = notice.noticeId) as mcount,\
+                        date_format(noticeWritDate, '%Y-%m-%d') as noticeWritDateFmt\
+                 from notice";
     if (searchText != '') {
         sql += " where noticeTitle like '%" + searchText + "%' or noticeContent like '%" + searchText + "%'";
     }
@@ -111,7 +114,8 @@ router.get('/noticeSearch', async (req, res) => {
             endPage: endPage,
             pass: true,
             last: last, 
-            searchText: searchText
+            searchText: searchText,
+            keepSearch: keepSearch
         });
         console.log("ajaxSearch = " + results.length);
         // console.log("page = " + page)

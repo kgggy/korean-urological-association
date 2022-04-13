@@ -44,8 +44,8 @@ router.get('/gallery', async (req, res) => {
                        from gallery g order by 2 desc";
         connection.query(sql, (err, results) => {
             var countPage = 10; //하단에 표시될 페이지 개수
-            var page_num = 10; //한 페이지에 보여줄 개수
-            var last = Math.ceil((results.length) / 10); //마지막 장
+            var page_num = 5; //한 페이지에 보여줄 개수
+            var last = Math.ceil((results.length) / countPage); //마지막 장
             var endPage = Math.ceil(page / countPage) * countPage; //끝페이지(10)
             var startPage = endPage - countPage; //시작페이지(1)
             if (err) {
@@ -90,7 +90,7 @@ router.get('/gallerySearch', async (req, res) => {
         }
         var countPage = 10; //하단에 표시될 페이지 개수
         var page_num = 10; //한 페이지에 보여줄 개수
-        var last = Math.ceil((results.length) / 10); //마지막 장
+        var last = Math.ceil((results.length) / countPage); //마지막 장
         var endPage = Math.ceil(page / countPage) * countPage; //끝페이지(10)
         var startPage = endPage - countPage; //시작페이지(1)
 
@@ -117,6 +117,7 @@ router.get('/gallerySearch', async (req, res) => {
 
 //갤러리 글 상세조회
 router.get('/gallerySelectOne', async (req, res) => {
+    var page = req.query.page;
     try {
         const param = req.query.galleryId;
         const sql = "select g.*, date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt, f.fileRoute\
@@ -132,7 +133,8 @@ router.get('/gallerySelectOne', async (req, res) => {
             }
             let route = req.app.get('views') + '/m_gallery/gallery_viewForm';
             res.render(route, {
-                'result': result
+                'result': result,
+                page: page
             });
         });
     } catch (error) {
@@ -155,8 +157,6 @@ router.get('/galleryWritForm', async (req, res) => {
 router.post('/galleryWrite', upload.array('file'), async (req, res, next) => {
     const paths = req.files.map(data => data.path);
     const orgName = req.files.map(data => data.originalname);
-    console.log(paths);
-    console.log(orgName);
     try {
         for (let i = 0; i < paths.length; i++) {
             if (req.files[i].size > 1000000) {
