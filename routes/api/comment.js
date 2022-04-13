@@ -6,7 +6,7 @@ var connection = require('../../config/db').conn;
 router.get('/notice/:noticeId', async (req, res) => {
     try {
         const param = [req.params.noticeId];
-        const sql = "select c.*, u.userName from comment c left join user u on u.uid = c.uid where noticeId = ?";
+        const sql = "select c.*, u.userName from comment c left join user u on u.uid = c.uid where boardId = ?";
         let comment;
         connection.query(sql, param, (err, results) => {
             if (err) {
@@ -26,7 +26,7 @@ router.get('/notice/:noticeId', async (req, res) => {
 router.get('/gallery/:galleryId', async (req, res) => {
     try {
         const param = [req.params.galleryId];
-        const sql = "select * from comment where galleryId = ?";
+        const sql = "select * from comment where boardId = ?";
         let comment;
         connection.query(sql, param, (err, results) => {
             if (err) {
@@ -46,7 +46,7 @@ router.get('/gallery/:galleryId', async (req, res) => {
 router.get('/refer/:referId', async (req, res) => {
     try {
         const param = [req.params.referId];
-        const sql = "select * from comment where referId = ?";
+        const sql = "select * from comment where boardId = ?";
         let comment;
         connection.query(sql, param, (err, results) => {
             if (err) {
@@ -66,7 +66,7 @@ router.get('/refer/:referId', async (req, res) => {
 router.post('/notice/insert', async (req, res) => {
     try {
         const param = [req.body.noticeId, req.body.uid, req.body.cmtContent];
-        const sql = "insert into comment(noticeId, uid, cmtContent) values(?, ?, ?)";
+        const sql = "insert into comment(boardId, uid, cmtContent) values(?, ?, ?)";
         connection.query(sql, param, (err, row) => {
             if (err) {
                 console.log(err);
@@ -87,7 +87,7 @@ router.post('/notice/insert', async (req, res) => {
 router.post('/gallery/insert', async (req, res) => {
     try {
         const param = [req.body.galleryId, req.body.uid, req.body.cmtContent];
-        const sql = "insert into comment(galleryId, uid, cmtContent) values(?, ?, ?)";
+        const sql = "insert into comment(boardId, uid, cmtContent) values(?, ?, ?)";
         connection.query(sql, param, (err, row) => {
             if (err) {
                 console.log(err);
@@ -108,7 +108,7 @@ router.post('/gallery/insert', async (req, res) => {
 router.post('/refer/insert', async (req, res) => {
     try {
         const param = [req.body.referId, req.body.uid, req.body.cmtContent];
-        const sql = "insert into comment(referId, uid, cmtContent) values(?, ?, ?)";
+        const sql = "insert into comment(boardId, uid, cmtContent) values(?, ?, ?)";
         connection.query(sql, param, (err, row) => {
             if (err) {
                 console.log(err);

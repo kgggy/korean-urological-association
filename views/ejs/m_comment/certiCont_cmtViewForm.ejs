@@ -14,16 +14,21 @@
 	<!-- Breadcrumb-->
 	<ol class="breadcrumb">
 		<li class="breadcrumb-item">Home</li>
-		<%if(division == 0){%>
+		<%if (subboardId == 'n'){%>
 		<li class="breadcrumb-item">
-			<a style="font-weight: bold;">탄소 실천 관리</a>
+			<a style="font-weight: bold;">공지사항 관리</a>
 		</li>
-		<li class="breadcrumb-item active">탄소 실천 댓글 관리</li>
+		<li class="breadcrumb-item active">공지사항 댓글 관리</li>
+		<% } else if(subboardId == 'g'){%>
+		<li class="breadcrumb-item">
+			<a style="font-weight: bold;">갤러리 관리</a>
+		</li>
+		<li class="breadcrumb-item active">갤러리 댓글 관리</li>
 		<% } else {%>
 		<li class="breadcrumb-item">
-			<a style="font-weight: bold;">챌린지 관리</a>
+			<a style="font-weight: bold;">자료실 관리</a>
 		</li>
-		<li class="breadcrumb-item active">챌린지 댓글 관리</li>
+		<li class="breadcrumb-item active">자료실 댓글 관리</li>
 		<% } %>
 		<!-- Breadcrumb Menu-->
 	</ol>
@@ -40,10 +45,8 @@
 						<div class="card-body">
 							<!-- 컨텐츠 -->
 							<form action="" id="commentForm" method="get" class="cmtFrm">
-								<input type="hidden" id="certiContentId" name="certiContentId"
-									value="<%= certiContentId %>">
-								<input type="hidden" id="certiDivision" name="certiDivision" value="<%= division %>">
 								<input type="hidden" id="cmtId" name="cmtId" value="">
+								<input type="hidden" id="boardId" name="boardId" value="<%= results[0].boardId %>">
 								<% for(var i = 0; i < results.length; i++) {%>
 								<div class="form-group row col-md-9">
 									<div class="cmtInfo-wrap">
@@ -78,6 +81,8 @@
 				</div>
 			</div>
 		</div>
+		</div>
+		
 </main>
 <script>
 	// 삭제
