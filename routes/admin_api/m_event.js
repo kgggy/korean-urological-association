@@ -253,6 +253,7 @@ router.post('/eventUpdate', upload.single('file'), (req, res) => {
 router.get('/eventsDelete', (req, res) => {
     const eventId = req.query.eventId;
     const str = eventId.split(',');
+    console.log(str)
     for (var i = 0; i < str.length; i++) {
         let fileRoute = [];
         const sql1 = "select eventFileRoute from event where eventId = ?";
@@ -261,35 +262,29 @@ router.get('/eventsDelete', (req, res) => {
                 console.log(err)
             }
             fileRoute = result;
+            console.log(fileRoute)
             // console.log(Object.values(JSON.parse(JSON.stringify(fileRoute[0].eventFileRoute))))
             // console.log(Object.values(JSON.parse(JSON.stringify(fileRoute.eventFileRoute))))
-            if (fileRoute == undefined) {
-                console.log("first");
+            if (fileRoute != undefined) {
+                console.log("삭제한다!!!")
+                for (let j = 0; j < fileRoute.length; j++) {
+                    if (fileRoute[j].eventFileRoute != null) {
+                        fs.unlinkSync(fileRoute[j].eventFileRoute, (err) => {
+                            if (err) {
+                                console.log(err);
+                            }
+                            return;
+                        });
+                    }
+                }
             }
-            if (fileRoute = undefined) {
-                console.log("second");
-            }
-            if (fileRoute = null) {
-                console.log("33");
-            }
-            // if (fileRoute !== undefined) {
-            //     console.log("삭제한다!!!")
-            //     for (let j = 0; j < fileRoute.length; j++) {
-            //         fs.unlinkSync(fileRoute[j].fileRoute, (err) => {
-            //             if (err) {
-            //                 console.log(err);
-            //             }
-            //             return;
-            //         });
-            //     }
-            // }
         });
-        // const sql = "delete from event where eventId = ?";
-        // connection.query(sql, str[i], (err) => {
-        //     if (err) {
-        //         console.log(err)
-        //     }
-        // });
+        const sql = "delete from event where eventId = ?";
+        connection.query(sql, str[i], (err) => {
+            if (err) {
+                console.log(err)
+            }
+        });
     }
     res.send('<script>alert("삭제되었습니다."); location.href="/admin/m_event?page=1";</script>');
 });
