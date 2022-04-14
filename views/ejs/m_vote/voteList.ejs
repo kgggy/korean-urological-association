@@ -8,6 +8,17 @@
 	[type="reset"]:not(:disabled) {
 		pointer-events: none;
 	}
+	.cmtFrm .cmtInfo img {
+    width: 25px;
+    height: 30px;
+	}
+	.cmtFrm .cmtInfo {
+		font-size: 25px;
+		font-family: Apple SD Gothic Neo;
+		font-weight: bold ;
+		color: black;
+	}
+
 </style>
 
 <main class="main">
@@ -40,7 +51,7 @@
 							<!-- 컨텐츠 -->
 							<form action="" id="commentForm" method="get" class="cmtFrm">
 								<% for(var i = 0; i < results.length; i++) {%>
-								<div class="form-group row col-md-3">
+								<div class="form-group row">
 									<div class="cmtInfo-wrap">
 										<div class="cmtInfo">
 											<img src="../../../public/images/icon_admin.gif">
@@ -58,16 +69,16 @@
 							<div class="card-body">
 								<!-- 컨텐츠 -->
 								<form action="" id="commentForm" method="get" class="cmtFrm">
+									<div class="form-group row col-sm-12">
 									<% for(var i = 0; i < noChoose.length; i++) {%>
-									<div class="form-group row col-md-1" style="width: 50px;">
-										<div class="cmtInfo-wrap">
+										<div class="cmtInfo-wrap col-sm-4" style="margin-bottom: 30px;">
 											<div class="cmtInfo">
 												<img src="../../../public/images/icon_admin.gif">
-												<span><%= noChoose[i].userName %></span>
+												<span>&nbsp;<%= noChoose[i].userName %></span>
 											</div>
 										</div>
+										<% } %>
 									</div>
-									<% } %>
 								</form>
 							</div>
 						<% } else { %>
