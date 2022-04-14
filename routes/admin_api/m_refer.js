@@ -114,7 +114,6 @@ router.get('/referSearch', async (req, res) => {
             last: last, 
             searchText: searchText
         });
-        // console.log("page = " + page)
     });
 });
 
@@ -134,7 +133,6 @@ router.get('/referSelectOne', async (req, res) => {
                     msg: "select query error"
                 });
             }
-            console.log(result)
             let route = req.app.get('views') + '/m_refer/refer_viewForm';
             res.render(route, {
                 'result': result,
@@ -242,13 +240,11 @@ router.get('/referUdtForm', async (req, res) => {
                 console.log(err);
             }
             let route = req.app.get('views') + '/m_refer/refer_udtForm';
-            console.log(route);
             res.render(route, {
                 'result': result,
                 page: page,
                 searchText: searchText
             });
-            console.log(result);
         });
 
     } catch (error) {
@@ -350,9 +346,7 @@ router.get('/referDelete', async (req, res) => {
 //첨부파일 삭제
 router.get('/referFileDelete', async (req, res) => {
     const param = req.query.fileId;
-    console.log(param);
     const fileRoute = req.query.fileRoute;
-    console.log()
     try {
         const sql = "delete from file where fileId = ?";
         connection.query(sql, param, (err, row) => {

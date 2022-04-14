@@ -66,7 +66,7 @@
                                             } else { %> 
                                         <% if(results[i].noticeFix == 1){ %>
                                         <tr onclick="location.href='/admin/m_notice/noticeSelectOne?noticeId=<%=results[i].noticeId%>&page=<%=page%>&searchText=<%=searchText%>'" 
-                                            style = "background-color: beige;">      
+                                            style = "background-color: rgb(223, 236, 248);">      
                                         <% }else{ %>
                                         <tr onclick="location.href='/admin/m_notice/noticeSelectOne?noticeId=<%=results[i].noticeId%>&page=<%=page%>&searchText=<%=searchText%>'">
                                         <% } %>
@@ -196,7 +196,7 @@
     function searchajax() {
         $("#searchText").keyup(function () {
             var words = $("#searchText").val();
-            console.log(words);
+            // console.log(words);
             $.ajax({
                 type: 'get',
                 url: '/admin/m_notice/noticeSearch?noticeId=<%=results[0].noticeId%>&page=1',
@@ -214,7 +214,7 @@
                                 i++;
                             } else {
                                 $("#tbody").empty();
-                                console.log(data.ajaxSearch.length - i);
+                                // console.log(data.ajaxSearch.length - i);
                                 str +=
                                     '<tr onclick="location.href=\'/admin/m_notice/noticeSelectOne?noticeId=' +
                                     data.ajaxSearch[i].noticeId + '&page=' + data
@@ -261,18 +261,6 @@
             });
         });
     }
-
-    //쿼리스트링 페이지
-    // function getUrlParams() {
-    //     var params = {};
-    //     window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (str, key, value) {
-    //         params[key] = value;
-    //     });
-    //     return params;
-    // }
-    // var param = getUrlParams();
-    // var page = document.getElementById("page");
-    // page.value = param.page;
 </script>
 
 <script language="javaScript">
@@ -305,7 +293,7 @@
                 temp += `class="num">${i + 1}</a> </li>`
             } else {
                 temp +=
-                    `class="selected" style="background-color:#FC8B5F;><span style="color:white;">${i + 1}</span></a> </li>"`
+                    `class="selected" style="background-color:#0b9ad9;><span style="color:white;">${i + 1}</span></a> </li>"`
             }
         }
         temp += `<li> <a `

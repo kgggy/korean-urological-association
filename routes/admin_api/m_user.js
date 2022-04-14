@@ -237,12 +237,8 @@ router.post('/userUpdate', upload.single('file'), async (req, res) => {
 router.get('/userDelete', (req, res) => {
   const param = req.query.uid;
   const route = req.query.userImg;
-  // console.log(param)
-  // console.log(route);
   const str = param.split(',');
   const img = route.split(',');
-  // console.log(str);
-  // console.log(img);
   // DB 글삭제
   for (var i = 0; i < str.length; i++) {
     const sql = "delete from user where uid = ?";
@@ -294,7 +290,6 @@ router.get('/oneUserDelete', (req, res) => {
 router.get('/imgDelete', async (req, res) => {
   const param = req.query.userImg;
   const page = req.query.page;
-  console.log(req.query)
   try {
     const sql = "update user set userImg = null where uid = ?";
     connection.query(sql, req.query.uid, (err) => {

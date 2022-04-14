@@ -13,7 +13,6 @@ router.get('/all', async (req, res) => {
       user = results;
       res.status(200).json(user);
     });
-    console.log(user)
   } catch (error) {
     res.status(401).send(error.message);
   }

@@ -199,7 +199,6 @@ router.get('/eventUdtForm', async (req, res) => {
             if (err) {
                 console.log(err);
             }
-            console.log(result)
             var fileOrgName;
             if (result[0].eventFileRoute != null && result[0].eventFileRoute != '') {
                 const str = result[0].eventFileRoute.split("\\");
@@ -237,7 +236,6 @@ router.post('/eventUpdate', upload.single('file'), (req, res) => {
         } else {
             param = [req.body.eventTitle, req.body.eventContent, req.body.eventPlace, req.body.eventPlaceDetail, req.body.eventDate, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, req.body.eventFileRoute, req.body.eventId];
         }
-        console.log(param)
         connection.query(sql, param, (err) => {
             if (err) {
                 console.error(err);
@@ -253,7 +251,6 @@ router.post('/eventUpdate', upload.single('file'), (req, res) => {
 router.get('/eventsDelete', (req, res) => {
     const eventId = req.query.eventId;
     const str = eventId.split(',');
-    console.log(str)
     for (var i = 0; i < str.length; i++) {
         let fileRoute = [];
         const sql1 = "select eventFileRoute from event where eventId = ?";
@@ -262,11 +259,7 @@ router.get('/eventsDelete', (req, res) => {
                 console.log(err)
             }
             fileRoute = result;
-            console.log(fileRoute)
-            // console.log(Object.values(JSON.parse(JSON.stringify(fileRoute[0].eventFileRoute))))
-            // console.log(Object.values(JSON.parse(JSON.stringify(fileRoute.eventFileRoute))))
             if (fileRoute != undefined) {
-                console.log("삭제한다!!!")
                 for (let j = 0; j < fileRoute.length; j++) {
                     if (fileRoute[j].eventFileRoute != null) {
                         fs.unlinkSync(fileRoute[j].eventFileRoute, (err) => {
