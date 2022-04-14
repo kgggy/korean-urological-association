@@ -18,11 +18,11 @@
 			<a style="font-weight: bold;">투표현황</a>
 		</li>
 		<%if(choose == 0){%>
-		<li class="breadcrumb-item active">미정자 명단</li>
-		<% } else if(choose == 1) { %>
 		<li class="breadcrumb-item active">참여자 명단</li>
-		<% } else { %>
+		<% } else if(choose == 1) { %>
 		<li class="breadcrumb-item active">불참자 명단</li>
+		<% } else { %>
+		<li class="breadcrumb-item active">미정자 명단</li>
 		<% } %>
 
 	</ol>
@@ -40,7 +40,7 @@
 							<!-- 컨텐츠 -->
 							<form action="" id="commentForm" method="get" class="cmtFrm">
 								<% for(var i = 0; i < results.length; i++) {%>
-								<div class="form-group row col-md-9">
+								<div class="form-group row col-md-3">
 									<div class="cmtInfo-wrap">
 										<div class="cmtInfo">
 											<img src="../../../public/images/icon_admin.gif">
@@ -51,6 +51,25 @@
 								<% } %>
 							</form>
 						</div>
+						<% } else if(noChoose.length > 0) { %>
+							<div class="card-header">
+								<i class="fa fa-align-justify"></i> 총 <%= noChoose.length %>명
+							</div>
+							<div class="card-body">
+								<!-- 컨텐츠 -->
+								<form action="" id="commentForm" method="get" class="cmtFrm">
+									<% for(var i = 0; i < noChoose.length; i++) {%>
+									<div class="form-group row col-md-1" style="width: 50px;">
+										<div class="cmtInfo-wrap">
+											<div class="cmtInfo">
+												<img src="../../../public/images/icon_admin.gif">
+												<span><%= noChoose[i].userName %></span>
+											</div>
+										</div>
+									</div>
+									<% } %>
+								</form>
+							</div>
 						<% } else { %>
 						<div class="card-header">
 							<i class="fa fa-align-justify"></i> 총 0명
@@ -58,7 +77,7 @@
 						<div class="card-body">
 							<!-- 컨텐츠 -->
 							<div class="form-group row">
-								<div class="col-md-9">
+								<div class="col-md-3">
 									<label class="col-md-2 col-form-label" for="text-input">투표 참여자가 존재하지 않습니다.</label>
 								</div>
 							</div>

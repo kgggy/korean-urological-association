@@ -327,7 +327,7 @@ router.post('/galleryUpdate', upload.array('file'), (req, res) => {
     }
 });
 
-//공지사항 여러개 삭제
+//갤러리 여러개 삭제
 router.get('/gallerysDelete', (req, res) => {
     const param = req.query.galleryId;
     const str = param.split(',');

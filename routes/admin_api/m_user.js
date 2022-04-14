@@ -64,7 +64,7 @@ router.get('/page', async (req, res) => {
     connection.query(sql, function (err, results) {
       var countPage = 10; //하단에 표시될 페이지 개수
       var page_num = 10; //한 페이지에 보여줄 개수
-      var last = Math.ceil((results.length) / 10); //마지막 장
+      var last = Math.ceil((results.length) / page_num); //마지막 장
       var endPage = Math.ceil(page / countPage) * countPage; //끝페이지(10)
       var startPage = endPage - countPage; //시작페이지(1)
       if (err) {

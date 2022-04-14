@@ -2,10 +2,10 @@ var express = require('express');
 var router = express.Router();
 var connection = require('../../config/db').conn;
 
-//공지사항 글 전체 목록 조회
+//갤러리 글 전체 목록 조회
 router.get('/', async (req, res) => {
     try {
-        const sql = "select * from file group by boardId;";
+        const sql = "select * from file group by boardId having substring(boardId, 1, 1) = 'g' order by 2 desc;";
         let gallerys;
         connection.query(sql, (err, results) => {
             if (err) {

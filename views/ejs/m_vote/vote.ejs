@@ -32,8 +32,8 @@
                             <i class="fa fa-align-justify"></i> 투표현황
                         </div>
                         <div class="card-body">
-                            <form id="eventForm" name="eventForm" method="" action="">
-                                <input type="hidden" id="page" name="page" value="<%= page %>">
+                            <form id="searchForm" name="searchForm" method="" action="">
+                                <input type="hidden" id="page" name="page" value="1">
                                 <div align="right" style="display: flex; justify-content: end; gap: 5px;">
                                     <select name="searchType1" class="dropdown">
                                         <option value="">상태</option>
@@ -43,6 +43,9 @@
                                         <button class="btn btn-block btn-outline-success" type="submit"
                                             id="searchAction" style="margin-bottom: 10px;">검색</button>
                                 </div>
+                            </form>
+                            <form id="eventForm" name="eventForm" method="" action="">
+                                <input type="hidden" id="page" name="page" value="<%= page %>">
                                 <table id="exampleTable" class="table userTable table-responsive-sm table-hover">
                                     <colgroup>
                                         <!-- <col width="5%" /> -->
@@ -88,17 +91,17 @@
                                             <td onclick='event.cancelBubble=true;'><button
                                                     class="btn btn-block btn-outline-success" type="button"
                                                     id="vote_popup"
-                                                    onclick="voteList('/admin/m_vote/voteList', '', 'resizable=0,width=640, height=700, scrollbars=1', '0', '<%= results[i].eventId %>')">미정자</button>
+                                                    onclick="voteList('/admin/m_vote/voteList', '', 'resizable=0,width=640, height=700, scrollbars=1', '99', '<%= results[i].eventId %>')">미정자</button>
                                             </td>
                                             <td onclick='event.cancelBubble=true;'><button
                                                     class="btn btn-block btn-outline-success" type="button"
                                                     id="vote_popup"
-                                                    onclick="voteList('/admin/m_vote/voteList', '', 'resizable=0,width=640, height=700, scrollbars=1', '1', '<%= results[i].eventId %>')">참여자</button>
+                                                    onclick="voteList('/admin/m_vote/voteList', '', 'resizable=0,width=640, height=700, scrollbars=1', '0', '<%= results[i].eventId %>')">참여자</button>
                                             </td>
                                             <td onclick='event.cancelBubble=true;'><button
                                                     class="btn btn-block btn-outline-danger" type="button"
                                                     id="vote_popup"
-                                                    onclick="voteList('/admin/m_vote/voteList', '', 'resizable=0,width=640, height=700, scrollbars=1', '2', '<%= results[i].eventId %>')">불참자</button>
+                                                    onclick="voteList('/admin/m_vote/voteList', '', 'resizable=0,width=640, height=700, scrollbars=1', '1', '<%= results[i].eventId %>')">불참자</button>
                                             </td>
                                             </tr>
                                             <% } %>

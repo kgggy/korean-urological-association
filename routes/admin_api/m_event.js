@@ -37,8 +37,7 @@ router.get('/', async (req, res) => {
     try {
         var page = req.query.page;
         var searchType1 = req.query.searchType1 == undefined ? "" : req.query.searchType1;
-        var keepSearch = "&searchType1=" + searchType1;
-        var sql = "select *, date_format(eventDate, '%Y-%m-%d') as eventDateFmt\
+        var sql = "select *, date_format(eventDate, '%Y-%m-%d %H:%i') as eventDateFmt\
                     from event where 1=1";
         if (searchType1 != '') {
             sql += " and eventStatus = '" + searchType1 + "'";
@@ -46,7 +45,7 @@ router.get('/', async (req, res) => {
         sql += " order by eventId desc";
         connection.query(sql, (err, results) => {
             var countPage = 10; //하단에 표시될 페이지 개수
-            var page_num = 5; //한 페이지에 보여줄 개수
+            var page_num = 10; //한 페이지에 보여줄 개수
             var last = Math.ceil((results.length) / page_num); //마지막 장
             var endPage = Math.ceil(page / countPage) * countPage; //끝페이지(10)
             var startPage = endPage - countPage; //시작페이지(1)
@@ -68,8 +67,7 @@ router.get('/', async (req, res) => {
                 startPage: startPage,
                 endPage: endPage,
                 pass: true,
-                last: last,
-                keepSearch: keepSearch
+                last: last
             });
         });
     } catch (error) {
@@ -81,11 +79,12 @@ router.get('/', async (req, res) => {
 router.get('/eventSelectOne', async (req, res) => {
     try {
         const page = req.query.page
+        const searchType1 = req.query.searchType1;
         const vote = req.query.vote == undefined ? "" : req.query.vote;
         const param = req.query.eventId;
         const sql = "select *, date_format(startDate, '%Y-%m-%d') as startDateFmt,\
                                 date_format(endDate, '%Y-%m-%d') as endDateFmt,\
-                                date_format(eventDate, '%Y-%m-%d') as eventDateFmt\
+                                date_format(eventDate, '%Y-%m-%d %H:%i') as eventDateFmt\
                         from event\
                         where eventId = ?";
 
@@ -107,7 +106,8 @@ router.get('/eventSelectOne', async (req, res) => {
                 result: result,
                 fileOrgName: fileOrgName,
                 vote: vote,
-                page: page
+                page: page,
+                searchType1: searchType1
             });
         });
     } catch (error) {
@@ -188,16 +188,18 @@ router.post('/eventWrite', upload.single('file'), async (req, res, next) => {
 router.get('/eventUdtForm', async (req, res) => {
     try {
         const page = req.query.page;
+        const searchType1 = req.query.searchType1;
         const param = req.query.eventId;
         const sql = "select *, date_format(startDate, '%Y-%m-%d') as startDateFmt,\
                                 date_format(endDate, '%Y-%m-%d') as endDateFmt,\
-                                date_format(eventDate, '%Y-%m-%d') as eventDateFmt\
+                                date_format(eventDate, '%Y-%m-%dT%H:%i') as eventDateFmt\
                        from event\
                       where eventId = ?";
         connection.query(sql, param, function (err, result) {
             if (err) {
                 console.log(err);
             }
+            console.log(result)
             var fileOrgName;
             if (result[0].eventFileRoute != null && result[0].eventFileRoute != '') {
                 const str = result[0].eventFileRoute.split("\\");
@@ -209,7 +211,8 @@ router.get('/eventUdtForm', async (req, res) => {
             res.render(route, {
                 result: result,
                 fileOrgName: fileOrgName,
-                page: page
+                page: page,
+                searchType1: searchType1
             });
         });
 
@@ -222,21 +225,24 @@ router.get('/eventUdtForm', async (req, res) => {
 router.post('/eventUpdate', upload.single('file'), (req, res) => {
     try {
         const page = req.body.page;
+        const searchType1 = req.body.searchType1;
         const sql = "update event set eventTitle = ?, eventContent = ?, eventPlace = ?, eventPlaceDetail = ?,\
         eventDate = ?, startDate = if(? = '',null,?), endDate = if(? = '',null,?), eventFileRoute = ?\
         where eventId = ?";
         var param = [];
+
         if (req.file != null) {
             const path = req.file.path;
             param = [req.body.eventTitle, req.body.eventContent, req.body.eventPlace, req.body.eventPlaceDetail, req.body.eventDate, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, path, req.body.eventId];
         } else {
             param = [req.body.eventTitle, req.body.eventContent, req.body.eventPlace, req.body.eventPlaceDetail, req.body.eventDate, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, req.body.eventFileRoute, req.body.eventId];
         }
+        console.log(param)
         connection.query(sql, param, (err) => {
             if (err) {
                 console.error(err);
             }
-            res.redirect('eventSelectOne?eventId=' + req.body.eventId + '&page=' + page);
+            res.redirect('eventSelectOne?eventId=' + req.body.eventId + '&page=' + page + '&searchType1=' + searchType1);
         });
     } catch (error) {
         res.send(error.message);
@@ -255,12 +261,21 @@ router.get('/eventsDelete', (req, res) => {
                 console.log(err)
             }
             fileRoute = result;
+            // console.log(Object.values(JSON.parse(JSON.stringify(fileRoute[0].eventFileRoute))))
             // console.log(Object.values(JSON.parse(JSON.stringify(fileRoute.eventFileRoute))))
-            console.log(Object.values(JSON.parse(JSON.stringify(fileRoute[0].eventFileRoute))))
-            // for (let j = 0; j < str.length; j++) {
-            //     if (fileRoute.eventFileRoute != undefined && fileRoute[j].eventFileRoute != null) {
-            //         console.log(fileRoute[j].eventFileRoute)
-            //         fs.unlinkSync(fileRoute[j].eventFileRoute, (err) => {
+            if (fileRoute == undefined) {
+                console.log("first");
+            }
+            if (fileRoute = undefined) {
+                console.log("second");
+            }
+            if (fileRoute = null) {
+                console.log("33");
+            }
+            // if (fileRoute !== undefined) {
+            //     console.log("삭제한다!!!")
+            //     for (let j = 0; j < fileRoute.length; j++) {
+            //         fs.unlinkSync(fileRoute[j].fileRoute, (err) => {
             //             if (err) {
             //                 console.log(err);
             //             }
@@ -309,6 +324,7 @@ router.get('/eventFileDelete', async (req, res) => {
     const page = req.query.page;
     const eventFileRoute = req.query.eventFileRoute;
     const param = [req.query.eventId];
+    const searchType1 = req.query.searchType1;
     try {
         const sql = "update event set eventFileRoute = null where eventId = ?";
         connection.query(sql, param, (err) => {
@@ -327,7 +343,7 @@ router.get('/eventFileDelete', async (req, res) => {
             console.log("프로필 삭제 에러 발생");
         }
     }
-    res.redirect('eventUdtForm?eventId=' + req.query.eventId + '&page=' + page);
+    res.redirect('eventUdtForm?eventId=' + req.query.eventId + '&page=' + page + '&searchType1=' + searchType1);
 });
 
 module.exports = router;

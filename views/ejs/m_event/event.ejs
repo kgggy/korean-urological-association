@@ -32,7 +32,8 @@
                             <i class="fa fa-align-justify"></i> 행사관리
                         </div>
                         <div class="card-body">
-                            <form id="eventForm" name="eventForm" method="" action="">
+                            <form id="searchForm" name="searchForm" method="" action="">
+                                <input type="hidden" name="page" value="1">
                                 <!-- <div style="display: flex; justify-content: end; gap: 5px;">
                                     <input class="searchbox" type="text" name="searchText" id="searchText"
                                         placeholder="제목,내용">
@@ -48,6 +49,9 @@
                                             id="searchAction" style="margin-bottom: 10px;">검색</button>
 
                                 </div>
+                            </form>
+                            <form id="eventForm" name="eventForm" method="" action="">
+                                <input type="hidden" name="page" value="<%=page%>">
                                 <table id="exampleTable" class="table userTable table-responsive-sm table-hover">
                                     <colgroup>
                                         <col width="5%" />
@@ -63,7 +67,7 @@
                                             <th>번호</th>
                                             <th>제목</th>
                                             <th>위치</th>
-                                            <th>날짜</th>
+                                            <th>행사일시</th>
                                             <th>상태</th>
                                         </tr>
                                     </thead>
@@ -71,9 +75,8 @@
                                         <% if(results.length > 0){ %> <% for(var i = (page * page_num) - page_num; i < (page * page_num); i++) { 
                                             if(i > length){
                                                 i++;
-                                            } else { %>
-                                            <tr
-                                            onclick="location.href='/admin/m_event/eventSelectOne?eventId=<%=results[i].eventId%>&page=<%=page%>'">
+                                            } else { %> <tr
+                                            onclick="location.href='/admin/m_event/eventSelectOne?eventId=<%=results[i].eventId%>&page=<%=page%>&searchType1=<%=searchType1%>'">
                                             <td onclick='event.cancelBubble=true;'><input type="checkbox" id="chk"
                                                     name="chk" value="<%=results[i].eventId%>"
                                                     data-img="<%=results[i].eventFileRoute%>" /></td>
@@ -119,20 +122,21 @@
                                     <ul class="pagination customPaging">
                                         <% if(results.length > 0){ %>
                                         <li>
-                                            <a href="/admin/m_event?page=1" class="num">
+                                            <a href="/admin/m_event?page=1&searchType1=<%=searchType1%>" class="num">
                                                 << </a> </li> <li>
                                                     <a <%if(page==1){%><%} else {%>
-                                                        href="/admin/m_event?page=<%= parseInt(page) - 1 %>" class="num"
-                                                        <% } %>>
+                                                        href="/admin/m_event?page=<%= parseInt(page) - 1 %>&searchType1=<%=searchType1%>"
+                                                        class="num" <% } %>>
                                                         < </a> </li> <% for(var i = startPage; i < endPage; i++){  %>
                                                             <li class="paging_on">
-                                                            <a href="/admin/m_event?page=<%= i + 1 %>"
+                                                            <a href="/admin/m_event?page=<%= i + 1 %>&searchType1=<%=searchType1%>"
                                                                 <%if(page==i+1){%>class="selected"
                                                                 <%}%> class="num"><%= i + 1 %></a> </li> <% } %> <li> <a
                                                                     <%if(page>last-1){%><%} else {%>
-                                                                    href="/admin/m_event?page=<%= parseInt(page) + 1 %>"
+                                                                    href="/admin/m_event?page=<%= parseInt(page) + 1 %>&searchType1=<%=searchType1%>"
                                                                     class="num" <% } %>>></a></li>
-                                        <li><a href="/admin/m_event?page=<%= last%>" class="num">>></a></li>
+                                        <li><a href="/admin/m_event?page=<%= last%>&searchType1=<%=searchType1%>"
+                                                class="num">>></a></li>
                                         <% } %>
                                     </ul>
                                 </div>

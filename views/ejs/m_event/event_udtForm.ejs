@@ -55,6 +55,7 @@
                         <input type="hidden" id="eventContent" name="eventContent" value="">
                         <input type="hidden" name="eventFileRoute" value="">
                         <input type="hidden" name="page" value="<%=page%>">
+                        <input type="hidden" name="searchType1" value="<%=searchType1%>">
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">글번호</label>
                            <div class="col-md-9">
@@ -87,7 +88,7 @@
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">행사일</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="eventDate" type="date" name="eventDate"
+                              <input class="form-control" id="eventDate" type="datetime-local" name="eventDate"
                                  value="<%=result[0].eventDateFmt%>">
                            </div>
                         </div>
@@ -155,18 +156,28 @@
       var formObj = $("form[name='udtForm']");
       // 수정 폼 연결
       $("#update_btn").on("click", function () {
-         var galleryTitle = $("#galleryTitle").val();
-         var content = editor.getData();
+         const eventTitle = $("#eventTitle").val();
+         const content = editor.getData();
+         const eventPlace = $("#address_kakao").val();
+         const eventDate = $("#eventDate").val();
 
-         if (galleryTitle == "") {
+         if (eventTitle == "") {
             alert("제목을 입력하세요.");
-            $("#galleryTitle").focus();
+            $("#referTitle").focus();
             return false;
          }
-
          if (content == "") {
             alert("내용을 입력하세요.");
             $("#editor").focus();
+            return false;
+         }
+         if (eventPlace == "") {
+            alert("장소를 입력하세요.");
+            return false;
+         }
+         if (eventDate == "") {
+            alert("행사일을 입력하세요.");
+            $("#eventDate").focus();
             return false;
          }
 

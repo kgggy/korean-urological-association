@@ -18,6 +18,7 @@ const others = require('./api/others.js');
 const board = require('./api/board.js');
 const login = require('./api/login.js');
 const like = require('./api/like.js');
+const event = require('./api/event.js');
 
 router.use('/greeting', greeting);
 router.use('/user', user);
@@ -31,6 +32,7 @@ router.use('/others', others);
 router.use('/board', board);
 router.use('/login', login);
 router.use('/like', like);
+router.use('/event', event);
 
 router.get('/SendNotification',pushNotificationController.SendNotification);
 router.post('/SendNotificationToDevice',pushNotificationController.SendNotificationToDevice)

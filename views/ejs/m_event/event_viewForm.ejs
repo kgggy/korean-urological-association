@@ -16,6 +16,7 @@
                    <div class="card">
                       <form name="udtForm" role="form">
                          <input type="hidden" id="page" name="page" value="<%=page%>">
+                         <input type="hidden" id="searchType1" name="searchType1" value="<%=searchType1%>">
                          <input type="hidden" id="eventFileRoute" name="eventFileRoute"
                             value="<%=result[0].eventFileRoute%>">
                          <div class="card-header">
@@ -54,23 +55,23 @@
                                </div>
                             </div>
                             <div class="form-group row">
-                               <label class="col-md-2 col-form-label" for="text-input">행사일</label>
+                               <label class="col-md-2 col-form-label" for="text-input">행사일시</label>
                                <div class="col-md-9">
-                                  <input class="form-control" disabled id="eventDate" type="date" name="eventDate"
+                                  <input class="form-control" disabled id="eventDate" type="text" name="eventDate"
                                      value="<%=result[0].eventDateFmt%>">
                                </div>
                             </div>
                             <div class="form-group row">
                                <label class="col-md-2 col-form-label" for="text-input">투표 시작일</label>
                                <div class="col-md-9">
-                                  <input class="form-control" disabled id="startDate" type="date" name="startDate"
+                                  <input class="form-control" disabled id="startDate" type="text" name="startDate"
                                      value="<%=result[0].startDateFmt%>">
                                </div>
                             </div>
                             <div class="form-group row">
                                <label class="col-md-2 col-form-label" for="text-input">투표 마감일</label>
                                <div class="col-md-9">
-                                  <input class="form-control" disabled id="endDate" type="date" name="endDate"
+                                  <input class="form-control" disabled id="endDate" type="text" name="endDate"
                                      value="<%=result[0].endDateFmt%>">
                                </div>
                             </div>
@@ -101,7 +102,7 @@
                                <div>
                                   <% if(vote == '') {%>
                                   <button class="btn btn-block btn-outline-success" type="button"
-                                     onclick="location.href='/admin/m_event?page=<%=page%>'">목록</button>
+                                     onclick="location.href='/admin/m_event?page=<%=page%>&searchType1=<%=searchType1%>'">목록</button>
                                   <% } else if(vote == 'y') { %>
                                   <button class="btn btn-block btn-outline-success" type="button"
                                      onclick="location.href='/admin/m_vote?page=<%=page%>'">목록</button>

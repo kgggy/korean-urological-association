@@ -68,13 +68,24 @@
                            </div>
                         </div>
                         <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">병원주소</label>
+                           <label class="col-md-2 col-form-label" for="text-input">병원주소(시)</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="ucmtitle" type="text" name="ucmtitle"
-                                 value="<%=result.userAdres1%> <%=result.userAdres2%> <%=result.userAdres3%>">
-                              <input type="hidden" id="userAdres1" name="userAdres1" value="<%=result.userAdres1%>">
-                              <input type="hidden" id="userAdres2" name="userAdres2" value="<%=result.userAdres2%>">
-                              <input type="hidden" id="userAdres3" name="userAdres3" value="<%=result.userAdres3%>">
+                              <input class="form-control" id="userAdres1" type="text" name="userAdres1"
+                                 value="<%=result.userAdres1%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">병원주소(구/군)</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="userAdres2" type="text" name="userAdres2"
+                                 value="<%=result.userAdres2%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">병원주소(상세주소)</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="userAdres3" type="text" name="userAdres3"
+                                 value="<%=result.userAdres3%>">
                            </div>
                         </div>
                         <div class="form-group row">
