@@ -33,8 +33,9 @@
                         </div>
                         <div class="card-body">
                             <form id="noticeForm" name="noticeForm" method="" action="">
+                                <span><strong style="font-size : 1.5em;">*배경색이 들어가있는 글은 상단고정 설정이 된 게시물입니다.*</strong></span>
                                 <div style="display: flex; justify-content: end; gap: 5px;">
-                                    <input type="hidden" id="page" name="page" value="<%=results[0].page%>">
+                                    <input type="hidden" id="page" name="page" value="<%=page%>">
                                     <input class="searchbox" type="text" name="searchText" id="searchText"
                                         <%if(searchText!=null){%>value="<%=searchText%>" <%}%> placeholder=" 제목, 내용">
                                     <!-- <button class="btn btn-block btn-outline-success" type="submit" id="searchAction"  style="margin-bottom: 10px;">검색</button> -->
@@ -62,8 +63,13 @@
                                         <% if(results.length > 0){ %> <% for(var i = (page * page_num) - page_num; i < (page * page_num); i++) { 
                                             if(i > length){
                                                 i++;
-                                            } else { %> <tr
-                                        onclick="location.href='/admin/m_notice/noticeSelectOne?noticeId=<%=results[i].noticeId%>'">
+                                            } else { %> 
+                                        <% if(results[i].noticeFix == 1){ %>
+                                        <tr onclick="location.href='/admin/m_notice/noticeSelectOne?noticeId=<%=results[i].noticeId%>&page=<%=page%>&searchText=<%=searchText%>'" 
+                                            style = "background-color: beige;">      
+                                        <% }else{ %>
+                                        <tr onclick="location.href='/admin/m_notice/noticeSelectOne?noticeId=<%=results[i].noticeId%>&page=<%=page%>&searchText=<%=searchText%>'">
+                                        <% } %>
                                     <td onclick='event.cancelBubble=true;'><input type="checkbox" id="chk" name="chk"
                                             value="<%=results[i].noticeId %>" /></td>
                                     <td>
@@ -104,20 +110,20 @@
                                     <ul class="pagination customPaging">
                                         <% if(results.length > 0){ %>
                                         <li>
-                                            <a href="/admin/m_notice/notice?page=1<%= keepSearch %>" class="num">
+                                            <a href="/admin/m_notice/notice?page=1&searchText=<%= searchText %>" class="num">
                                                 << </a> </li> <li>
                                                     <a <%if((page==1)){%><%} else {%>
-                                                        href="/admin/m_notice/notice?page=<%= parseInt(page) - 1 %><%= keepSearch %>"
+                                                        href="/admin/m_notice/notice?page=<%= parseInt(page) - 1 %>&searchText=<%= searchText %>"
                                                         class="num" <% } %>>
                                                         < </a> </li> <% for(var i = startPage; i < endPage; i++){  %>
                                                             <li class="paging_on">
-                                                            <a href="/admin/m_notice/notice?page=<%= i + 1 %><%= keepSearch %>"
+                                                            <a href="/admin/m_notice/notice?page=<%= i + 1 %>&searchText=<%= searchText %>"
                                                                 <%if(page==i+1){%>class="selected"
                                                                 <%}%> class="num"><%= i + 1 %></a> </li> <% } %> <li> <a
                                                                     <%if(page>last-1){%><%} else {%>
-                                                                    href="/admin/m_notice/notice?page=<%= parseInt(page) + 1 %><%= keepSearch %>"
+                                                                    href="/admin/m_notice/notice?page=<%= parseInt(page) + 1 %>&searchText=<%= searchText %>"
                                                                     class="num" <% } %>>></a></li>
-                                        <li><a href="/admin/m_notice/notice?page=<%= last%><%= keepSearch %>"
+                                        <li><a href="/admin/m_notice/notice?page=<%= last%>&searchText=<%= searchText %>"
                                                 class="num">>></a></li>
                                         <% } %>
                                     </ul>
@@ -211,8 +217,8 @@
                                 console.log(data.ajaxSearch.length - i);
                                 str +=
                                     '<tr onclick="location.href=\'/admin/m_notice/noticeSelectOne?noticeId=' +
-                                    data.ajaxSearch[i].noticeId + '&page= ' + data
-                                    .page +
+                                    data.ajaxSearch[i].noticeId + '&page=' + data
+                                    .page +'&searchText='+ data.searchText +
                                     '\'"> <td onclick="event.cancelBubble=true;"><input type="checkbox" id="chk" name="chk" value="' +
                                     data.ajaxSearch[i].noticeId + '" /> </td>';
                                 str +=
@@ -272,16 +278,26 @@
 <script language="javaScript">
     function paging(data) {
         var datas = data;
+        var dataLength = datas.length;
+        var dataPageNum = datas.page_num;
         var noticeId = datas.ajaxSearch[0].noticeId
+        var datasPage = Number(datas.page);
+        var datasLast = Number(datas.last);
+        var startPage = Number(datas.startPage);
+        var endPage = Number(datas.endPage);
         var temp = '';
         temp = `<li>
-                <a href="/admin/m_notice/notice?page=1&searchText=${datas.searchText}"
+                <a href="/admin/m_gallery/gallery?page=1&searchText=${datas.searchText}"
                 class="num">
                 << </a> </li> <li>
-                <a <%if(page==1){%><%} else {%>
-                href="/admin/m_notice/notice?page=<%= parseInt(page) - 1 %>&searchText=${datas.searchText}"
-                class="num" <% } %>>
+                <a `
+        if(datasPage==1){
+            temp += `><</a></li>`
+        } else{
+            temp += `href="/admin/m_notice/notice?page=${datasPage - 1}&searchText=${datas.searchText}"
+                class="num" >
                 < </a> </li>`
+        }
         for (var i = datas.startPage; i < datas.endPage; i++) {
             temp += `<li class="paging_on">
                     <a href="/admin/m_notice/notice?page=${i + 1}&searchText=${datas.searchText}"`
@@ -292,12 +308,18 @@
                     `class="selected" style="background-color:#FC8B5F;><span style="color:white;">${i + 1}</span></a> </li>"`
             }
         }
-        temp += `<li> <a <%if(page>last-1){%><%} else {%>
-                    href="/admin/m_noitce/notice?page=<%= parseInt(page) + 1 %>&searchText=${datas.searchText}"
-                    class="num" <% } %>>></a></li>
-                    <li><a href="/admin/m_notice/notice?page=<%= last%>&searchText=${datas.searchText}"
+        temp += `<li> <a `
+        if(datasPage==datasLast){
+            temp += `> > </a></li> <li><a href="/admin/m_notice/notice?page=${datasPage}&searchText=${datas.searchText}"
+                    class="num">>></a></li>`
+            } else {
+                temp += `
+                    href="/admin/m_notice/notice?page=<${datasPage - 1}&searchText=${datas.searchText}"
+                    class="num">></a></li>
+                    <li><a href="/admin/m_notice/notice?page=${datasLast}&searchText=${datas.searchText}"
                     class="num">>></a></li>
                     `
+            }
         $(".customPaging").html(temp);
     }
 </script>
