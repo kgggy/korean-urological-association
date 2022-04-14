@@ -40,13 +40,18 @@ var upload = multer({ //multer안에 storage정보
 router.get('/reference', async (req, res) => {
     try {
         var page = req.query.page;
+        var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
         var sql = "select *, (select count(*) from comment where comment.boardId = reference.referId) as mcount,\
                           date_format(referWritDate, '%Y-%m-%d') as referWritDateFmt\
-                    from reference order by 2 desc";
+                    from reference";
+        if (searchText != '') {
+            sql += " where referTitle like '%" + searchText + "%' or referContent like '%" + searchText + "%'";
+        }
+            sql += " order by 2 desc";
         connection.query(sql, (err, results) => {
             var countPage = 10; //하단에 표시될 페이지 개수
             var page_num = 10; //한 페이지에 보여줄 개수
-            var last = Math.ceil((results.length) / 10); //마지막 장
+            var last = Math.ceil((results.length) / page_num); //마지막 장
             var endPage = Math.ceil(page / countPage) * countPage; //끝페이지(10)
             var startPage = endPage - countPage; //시작페이지(1)
             if (err) {
@@ -58,14 +63,15 @@ router.get('/reference', async (req, res) => {
             let route = req.app.get('views') + '/m_refer/reference';
             res.render(route, {
                 results: results,
-                page: page,
+                page: page, //현재 페이지
                 length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
                 page_num: page_num,
                 countPage: countPage,
                 startPage: startPage,
                 endPage: endPage,
                 pass: true,
-                last: last
+                last: last,
+                searchText: searchText
             });
         });
     } catch (error) {
@@ -77,24 +83,22 @@ router.get('/reference', async (req, res) => {
 router.get('/referSearch', async (req, res) => {
     var page = req.query.page;
     var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
-    var keepSearch = "&searchText=" + searchText;
     var sql = "select *, (select count(*) from comment where comment.boardId = reference.referId) as mcount,\
                       date_format(referWritDate, '%Y-%m-%d') as referWritDateFmt\
                 from reference";
     if (searchText != '') {
         sql += " where referTitle like '%" + searchText + "%' or referContent like '%" + searchText + "%'";
     }
-    sql += " order by 1 desc";
+    sql += " order by 2 desc";
     connection.query(sql, (err, results) => {
         if (err) {
             console.log(err)
         }
         var countPage = 10; //하단에 표시될 페이지 개수
         var page_num = 10; //한 페이지에 보여줄 개수
-        var last = Math.ceil((results.length) / 10); //마지막 장
+        var last = Math.ceil((results.length) / page_num); //마지막 장
         var endPage = Math.ceil(page / countPage) * countPage; //끝페이지(10)
         var startPage = endPage - countPage; //시작페이지(1)
-        // ajaxSearch = results;
         if (last < endPage) {
             endPage = last
         };
@@ -116,9 +120,10 @@ router.get('/referSearch', async (req, res) => {
 
 //자료실 글 상세조회
 router.get('/referSelectOne', async (req, res) => {
+    var page = req.query.page;
+    var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
     try {
         const param = req.query.referId;
-        const page = req.query.page;
         const sql = "select r.*, date_format(referWritDate, '%Y-%m-%d') as referWritDateFmt, f.fileRoute, f.fileOrgName\
                         from reference r\
                         left join file f on f.boardId = r.referId\
@@ -133,7 +138,8 @@ router.get('/referSelectOne', async (req, res) => {
             let route = req.app.get('views') + '/m_refer/refer_viewForm';
             res.render(route, {
                 'result': result,
-                page: page
+                page: page,
+                searchText: searchText
             });
         });
     } catch (error) {
@@ -224,7 +230,9 @@ router.post('/referWrite', upload.array('file'), async (req, res, next) => {
 //게시글 수정 폼 이동
 router.get('/referUdtForm', async (req, res) => {
     try {
+        var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
         const param = req.query.referId;
+        const page = req.query.page;
         const sql = "select r.*, date_format(referWritDate, '%Y-%m-%d') as referWritDateFmt, f.fileRoute, f.fileOrgName, f.fileId\
                         from reference r\
                         left join file f on f.boardId = r.referId\
@@ -236,7 +244,9 @@ router.get('/referUdtForm', async (req, res) => {
             let route = req.app.get('views') + '/m_refer/refer_udtForm';
             console.log(route);
             res.render(route, {
-                'result': result
+                'result': result,
+                page: page,
+                searchText: searchText
             });
             console.log(result);
         });
@@ -250,6 +260,8 @@ router.get('/referUdtForm', async (req, res) => {
 router.post('/referUpdate', upload.array('file'), (req, res) => {
     const paths = req.files.map(data => data.path);
     const orgName = req.files.map(data => data.originalname);
+    const page = req.body.page;
+    var searchText = req.body.searchText == undefined ? "" : req.body.searchText;
     try {
         const param = [req.body.referTitle, req.body.referContent, req.body.referId];
         const sql = "update refer set referTitle = ?, referContent = ?, referWritDate = sysdate() where referId = ?";
@@ -266,7 +278,7 @@ router.post('/referUpdate', upload.array('file'), (req, res) => {
                     }
                 });
             };
-            res.redirect('referSelectOne?referId=' + req.body.referId);
+            res.redirect('referSelectOne?referId=' + req.body.referId + '&page=' + page + '&searchText=' + searchText);
         });
     } catch (error) {
         res.send(error.message);

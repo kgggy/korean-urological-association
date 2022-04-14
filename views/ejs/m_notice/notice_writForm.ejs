@@ -36,7 +36,6 @@
                   <div class="card-body">
                      <!-- 컨텐츠 -->
                      <form action="" id="noticeWrite" method="post" autocomplete="off">
-                        <input type="hidden" id="noticeId" name="noticeId" value="<%= noticeId %>">
                         <input type="hidden" id="noticeContent" name="noticeContent" value="">
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">제목</label>
@@ -45,15 +44,15 @@
                            </div>
                         </div>
                         <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">우선순위</label>
-                           <div class="col-md-9">
-                              <input class="form-control" id="noticeRank" type="number" name="noticeRank" value="">
-                           </div>
-                        </div>
-                        <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">내용</label>
                            <div class="col-md-9">
                               <textarea name="editor" class="editor" id="editor"></textarea>
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">상단고정여부</label>
+                           <div class="col-md-9">
+                              <input type="checkbox" style='zoom:3.0;' name="noticeFix" value="1">
                            </div>
                         </div>
                   </div>

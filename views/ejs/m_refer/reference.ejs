@@ -29,14 +29,14 @@
                 <div class="col-lg-6">
                     <div class="card">
                         <div class="card-header">
-                            <i class="fa fa-align-justify"></i> 자료실
+                            <i class="fa fa-align-justify"></i> 자료실관리 
                         </div>
                         <div class="card-body">
                             <form id="referForm" name="referForm" method="" action="">
                                 <div style="display: flex; justify-content: end; gap: 5px;">
                                     <input type="hidden" id="page" name="page" value="<%=page%>">
                                     <input class="searchbox" type="text" name="searchText" id="searchText"
-                                        placeholder=" 제목, 내용">
+                                        <%if(searchText!=null){%>value="<%=searchText%>" <%}%> placeholder=" 제목, 내용">
                                     <!-- <button class="btn btn-block btn-outline-success" type="submit" id="searchAction"  style="margin-bottom: 10px;">검색</button> -->
                                 </div>
                                 <table id="exampleTable" class="table userTable table-responsive-sm table-hover">
@@ -64,7 +64,7 @@
                                                 i++;
                                             } else { %>
                                         <tr
-                                            onclick="location.href='/admin/m_refer/referSelectOne?referId=<%=results[i].referId%>&page=<%=page%>'">
+                                            onclick="location.href='/admin/m_refer/referSelectOne?referId=<%=results[i].referId%>&page=<%=page%>&searchText=<%= searchText %>'">
                                             <td onclick='event.cancelBubble=true;'><input type="checkbox" id="chk"
                                                     name="chk" value="<%=results[i].referId %>" /></td>
                                             <td>
@@ -106,20 +106,20 @@
                                     <ul class="pagination customPaging">
                                         <% if(results.length > 0){ %>
                                         <li>
-                                            <a href="/admin/m_refer/reference?page=1" class="num">
+                                            <a href="/admin/m_refer/reference?page=1&searchText=<%= searchText %>" class="num">
                                                 << </a> </li> <li>
                                                     <a <%if((page==1)){%><%} else {%>
-                                                        href="/admin/m_refer/reference?page=<%= parseInt(page) - 1 %>"
+                                                        href="/admin/m_refer/reference?page=<%= parseInt(page) - 1 %>&searchText=<%= searchText %>"
                                                         class="num" <% } %>>
                                                         < </a> </li> <% for(var i = startPage; i < endPage; i++){  %>
                                                             <li class="paging_on">
-                                                            <a href="/admin/m_refer/reference?page=<%= i + 1 %>"
+                                                            <a href="/admin/m_refer/reference?page=<%= i + 1 %>&searchText=<%= searchText %>"
                                                                 <%if(page==i+1){%>class="selected"
                                                                 <%}%> class="num"><%= i + 1 %></a> </li> <% } %> <li> <a
                                                                     <%if(page>last-1){%><%} else {%>
-                                                                    href="/admin/m_refer/reference?&page=<%= parseInt(page) + 1 %>"
+                                                                    href="/admin/m_refer/reference?&page=<%= parseInt(page) + 1 %>&searchText=<%= searchText %>"
                                                                     class="num" <% } %>>></a></li>
-                                        <li><a href="/admin/m_refer/reference?page=<%= last%>" class="num">>></a></li>
+                                        <li><a href="/admin/m_refer/reference?page=<%= last%>&searchText=<%= searchText %>" class="num">>></a></li>
                                         <% } %>
                                     </ul>
                                 </div>
@@ -209,11 +209,10 @@
                                 i++;
                             } else {
                                 $("#tbody").empty();
-                                console.log(data.ajaxSearch.length - i);
                                 str +=
                                     '<tr onclick="location.href=\'/admin/m_refer/referSelectOne?referId=' +
-                                    data.ajaxSearch[i].referId + '&page= ' + data
-                                    .page +
+                                    data.ajaxSearch[i].referId + '&page=' + data
+                                    .page +'&searchText=' + data.searchText +
                                     '\'"> <td onclick="event.cancelBubble=true;"><input type="checkbox" id="chk" name="chk" value="' +
                                     data.ajaxSearch[i].referId + '" /> </td>';
                                 str +=
@@ -259,35 +258,36 @@
         });
     }
 
-    //쿼리스트링 페이지
-    // function getUrlParams() {
-    //     var params = {};
-    //     window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (str, key, value) {
-    //         params[key] = value;
-    //     });
-    //     return params;
-    // }
-    // var param = getUrlParams();
-    // var page = document.getElementById("page");
-    // page.value = param.page;
 </script>
 
 <script language="javaScript">
     function paging(data) {
         var datas = data;
+        var dataLength = datas.length;
+        var dataPageNum = datas.page_num;
+        var referId = datas.ajaxSearch[0].referId;
         var temp = '';
+        var datasPage = Number(datas.page);
+        var datasLast = Number(datas.last);
+        var startPage = Number(datas.startPage);
+        var endPage = Number(datas.endPage);
         temp = `<li>
                 <a href="/admin/m_refer/reference?page=1&searchText=${datas.searchText}"
                 class="num">
                 << </a> </li> <li>
-                <a <%if((page<last-1)||(page==1)){%><%} else {%>
-                href="/admin/m_refer/reference?page=<%= parseInt(page) - 1 %>&searchText=${datas.searchText}"
-                class="num" <% } %>>
-                < </a> </li>`
-        for (var i = datas.startPage; i < datas.endPage; i++) {
+                <a `
+        
+        if(datasPage==1){
+            temp += `> < </a></li>`
+        } else { 
+            temp += `href="/admin/m_refer/reference?page=${datasPage - 1}>&searchText=${datas.searchText}"
+            class="num" >
+            < </a> </li>`
+        }       
+        for (var i = startPage; i < endPage; i++) {
             temp +=
                 `<li class="paging_on">
-                    <a style="background-color:#FC8B5F; color:white;" href="/admin/m_refer/reference?page=${i + 1}&searchText=${datas.searchText}"`
+                    <a href="/admin/m_refer/reference?page=${i + 1}&searchText=${datas.searchText}"`
             if (i != 0) {
                 temp += `class="num">${i + 1}</a> </li>`
             } else {
@@ -295,12 +295,18 @@
                     `class="selected" style="background-color:#FC8B5F;><span style="color:white;">${i + 1}</span></a> </li>"`
             }
         }
-        temp += `<li> <a <%if(page>last-1){%><%} else {%>
-                    href="/admin/m_noitce/reference?page=<%= parseInt(page) + 1 %>&searchText=${datas.searchText}"
-                    class="num" <% } %>>></a></li>
-                    <li><a href="/admin/reference/reference?page=<%= last%>&searchText=${datas.searchText}"
+        temp += `<li> <a`
+            if(datasPage==datasLast){
+                temp += `> > </a></li> <li><a href="/admin/m_refer/reference?page=${datasPage}&searchText=${datas.searchText}"
+                    class="num">>></a></li>`
+            }else {
+                temp += `
+                    href="/admin/m_refer/reference?page=<${datasPage - 1}&searchText=${datas.searchText}"
+                    class="num">></a></li>
+                    <li><a href="/admin/m_refer/reference?page=${datasLast}&searchText=${datas.searchText}"
                     class="num">>></a></li>
                     `
+            }
         $(".customPaging").html(temp);
     }
 </script>

@@ -15,6 +15,8 @@
                 <div class="col-lg-6">
                    <div class="card">
                       <form name="udtForm" role="form">
+                         <input type="hidden" id="page" name="page" value="<%=page%>">
+                         <input type="hidden" id="searchText" name="searchText" value="<%=searchText%>">
                          <input type="hidden" id="referId" name="referId" value="<%=result[0].referId%>">
                          <div class="card-header">
                             <i class="fa fa-align-justify"></i> 자료실 상세</div>
@@ -85,7 +87,7 @@
                                </div>
                                <div>
                                   <button class="btn btn-block btn-outline-success" type="button"
-                                     onclick="location.href='/admin/m_refer/reference?page=<%=page%>'">목록</button>
+                                     onclick="location.href='/admin/m_refer/reference?page=<%=page%>&searchText=<%=searchText%>'">목록</button>
                                </div>
                             </div>
                          </div>
