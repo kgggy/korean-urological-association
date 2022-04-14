@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
     // });
     // console.log(gallery.count.length)
     try {
-        const sql = "select noticeWritDate, noticeTitle from notice order by noticeWritDate desc limit 2";
+        const sql = "select noticeWritDate, noticeTitle from notice order by noticeFix desc, noticeWritDate desc limit 2";
         connection.query(sql, (err, results) => {
             if (err) {
                 console.log(err);
