@@ -272,7 +272,7 @@ router.get('/eventsDelete', (req, res) => {
                 }
             }
         });
-        const sql = "delete from event where eventId = ?";
+        const sql = "call deleteEvent(?)";
         connection.query(sql, str[i], (err) => {
             if (err) {
                 console.log(err)
@@ -287,7 +287,7 @@ router.get('/eventDelete', async (req, res) => {
     try {
         const param = req.query.eventId;
         const eventFileRoute = req.query.eventFileRoute;
-        const sql = "delete from event where eventId = ?";
+        const sql = "call deleteEvent(?)";
         connection.query(sql, param, (err) => {
             if (err) {
                 console.log(err);
