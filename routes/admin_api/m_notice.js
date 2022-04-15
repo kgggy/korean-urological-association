@@ -113,7 +113,6 @@ router.get('/noticeSearch', async (req, res) => {
             last: last, 
             searchText: searchText
         });
-        // console.log("page = " + page)
     });
 });
 
@@ -161,7 +160,6 @@ router.post('/noticewrite', async (req, res, next) => {
     try {
         const param = [req.body.noticeTitle, req.body.noticeContent];
         const noticeFix = req.body.noticeFix;
-        console.log(noticeFix);
         const sql = "call insertNotice(?,?)";
         connection.query(sql, param, (err) => {
             if (err) {
@@ -194,13 +192,11 @@ router.get('/noticeUdtForm', async (req, res) => {
                 console.log(err);
             }
             let route = req.app.get('views') + '/m_notice/notice_udtForm';
-            console.log(route);
             res.render(route, {
                 'result': result,
                 searchText: searchText,
                 page : page
             });
-            console.log(result);
         });
 
     } catch (error) {
@@ -247,7 +243,6 @@ router.get('/noticesDelete', (req, res) => {
 router.get('/noticeDelete', async (req, res) => {
     try {
         const param = req.query.noticeId;
-        // console.log(param);
         const sql = "delete from notice where noticeId = ?";
         connection.query(sql, param, (err) => {
             if (err) {

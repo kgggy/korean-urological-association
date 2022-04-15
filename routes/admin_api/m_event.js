@@ -199,7 +199,6 @@ router.get('/eventUdtForm', async (req, res) => {
             if (err) {
                 console.log(err);
             }
-            console.log(result)
             var fileOrgName;
             if (result[0].eventFileRoute != null && result[0].eventFileRoute != '') {
                 const str = result[0].eventFileRoute.split("\\");
@@ -237,7 +236,6 @@ router.post('/eventUpdate', upload.single('file'), (req, res) => {
         } else {
             param = [req.body.eventTitle, req.body.eventContent, req.body.eventPlace, req.body.eventPlaceDetail, req.body.eventDate, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, req.body.eventFileRoute, req.body.eventId];
         }
-        console.log(param)
         connection.query(sql, param, (err) => {
             if (err) {
                 console.error(err);
@@ -261,35 +259,25 @@ router.get('/eventsDelete', (req, res) => {
                 console.log(err)
             }
             fileRoute = result;
-            // console.log(Object.values(JSON.parse(JSON.stringify(fileRoute[0].eventFileRoute))))
-            // console.log(Object.values(JSON.parse(JSON.stringify(fileRoute.eventFileRoute))))
-            if (fileRoute == undefined) {
-                console.log("first");
+            if (fileRoute != undefined) {
+                for (let j = 0; j < fileRoute.length; j++) {
+                    if (fileRoute[j].eventFileRoute != null) {
+                        fs.unlinkSync(fileRoute[j].eventFileRoute, (err) => {
+                            if (err) {
+                                console.log(err);
+                            }
+                            return;
+                        });
+                    }
+                }
             }
-            if (fileRoute = undefined) {
-                console.log("second");
-            }
-            if (fileRoute = null) {
-                console.log("33");
-            }
-            // if (fileRoute !== undefined) {
-            //     console.log("삭제한다!!!")
-            //     for (let j = 0; j < fileRoute.length; j++) {
-            //         fs.unlinkSync(fileRoute[j].fileRoute, (err) => {
-            //             if (err) {
-            //                 console.log(err);
-            //             }
-            //             return;
-            //         });
-            //     }
-            // }
         });
-        // const sql = "delete from event where eventId = ?";
-        // connection.query(sql, str[i], (err) => {
-        //     if (err) {
-        //         console.log(err)
-        //     }
-        // });
+        const sql = "delete from event where eventId = ?";
+        connection.query(sql, str[i], (err) => {
+            if (err) {
+                console.log(err)
+            }
+        });
     }
     res.send('<script>alert("삭제되었습니다."); location.href="/admin/m_event?page=1";</script>');
 });

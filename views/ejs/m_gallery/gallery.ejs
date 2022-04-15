@@ -196,7 +196,7 @@
     function searchajax() {
         $("#searchText").keyup(function () {
                 var words = $("#searchText").val();
-                console.log(words);
+                // console.log(words);
                 $.ajax({
                         type: 'get',
                         url: '/admin/m_gallery/gallerySearch?galleryId=<%=results[0].galleryId%>&page=1',
@@ -244,7 +244,7 @@
                                         str += '</tr>'
                                 }
                             }
-                            console.log("str = " + str)
+                            // console.log("str = " + str)
                             $("#tbody").append(str);
                         } else {
                             var none = '<tr> <td colspan="6"> 데이터가 존재하지 않습니다. </td> </tr>'
@@ -259,18 +259,6 @@
                 });
         });
     }
-
-    //쿼리스트링 페이지
-    // function getUrlParams() {
-    //     var params = {};
-    //     window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (str, key, value) {
-    //         params[key] = value;
-    //     });
-    //     return params;
-    // }
-    // var param = getUrlParams();
-    // var page = document.getElementById("page");
-    // page.value = param.page;
 </script>
 
 <script language="javaScript">
@@ -305,7 +293,7 @@
             if(i!=0){
                 temp += `class="num">${i + 1}</a> </li>`
             }else{
-                temp += `class="selected" style="background-color:#FC8B5F;><span style="color:white;">${i + 1}</span></a> </li>`
+                temp += `class="selected" style="background-color:#0b9ad9;><span style="color:white;">${i + 1}</span></a> </li>`
             } 
         }
         temp += `<li> <a`
