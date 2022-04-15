@@ -23,58 +23,34 @@ router.get('/', async (req, res) => {
 });
 
 //각 커뮤니티별 글 상세조회
-router.get('/one/:noticeId', async (req, res) => {
+router.get('/one', async (req, res) => {
     try {
-        const param = req.params.noticeId;
-        const sql1 = "update notice set noticeHit= noticeHit + 1 where noticeId = ?";
-        const sql2 = "select *\
+        const param = [req.query.noticeId, req.query.noticeId, req.query.uid];
+        const sql = "select *\
                         from notice n\
                    left join file f on f.boardId = n.noticeId\
-                       where n.noticeId = ?";
+                       where n.noticeId = ?;\
+                       call selectOneBoard(?, ?, @hitAll);\
+                       select @hitAll";
         let notice;
-        connection.query(sql1, param, (err, row) => {
+        let hitAll;
+        connection.query(sql, param, (err, result) => {
             if (err) {
-                console.error(err);
+                console.log(err);
                 res.json({
-                    msg: "hit query error"
+                    msg: "select query error"
                 });
             }
-            connection.query(sql2, param, (err, result) => {
-                if (err) {
-                    console.log(err);
-                    res.json({
-                        msg: "select query error"
-                    });
-                }
-                notice = result;
-                res.status(200).json(notice);
+            notice = result[0];
+            hitAll = result[2];
+            res.status(200).json({
+                notice: notice,
+                hitAll: hitAll
             });
         });
     } catch (error) {
         res.status(401).send(error.message);
     }
 });
-
-//파일 다운로드
-// router.get('/download/:noticeId/:fileNo', async (req, res) => {
-//     try {
-//         const param = [req.params.noticeId, req.params.fileId];
-//         const sql = "select fileRoute from file where noticeId = ? and fileId = ?";
-//         let route;
-//         connection.query(sql, param, (err, result) => {
-//             if (err) {
-//                 console.error(err);
-//                 res.json({
-//                     msg: "query error"
-//                 });
-//             }
-//             route = result;
-//             console.log(result);
-//             res.status(200).json(route);
-//         });
-//     } catch (error) {
-//         res.status(401).send(error.message);
-//     }
-// });
 
 module.exports = router;

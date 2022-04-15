@@ -196,10 +196,9 @@
     function searchajax() {
         $("#searchText").keyup(function () {
             var words = $("#searchText").val();
-            // console.log(words);
             $.ajax({
                 type: 'get',
-                url: '/admin/m_notice/noticeSearch?noticeId=<%=results[0].noticeId%>&page=1',
+                url: '/admin/m_notice/noticeSearch?page=1',
                 data: {
                     searchText: words
                 },

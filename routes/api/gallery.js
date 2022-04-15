@@ -23,58 +23,43 @@ router.get('/', async (req, res) => {
 });
 
 //각 커뮤니티별 글 상세조회
-router.get('/one/:galleryId', async (req, res) => {
+router.get('/one', async (req, res) => {
     try {
-        const param = req.params.galleryId;
-        const sql1 = "update gallery set galleryHit= galleryHit + 1 where galleryId = ?";
+        const param = [req.query.galleryId, req.query.galleryId, req.query.uid];
+        // const sql1 = "update gallery set galleryHit= galleryHit + 1 where galleryId = ?";
         const sql2 = "select *\
                         from gallery n\
                    left join file f on f.boardId = n.galleryId\
-                       where n.galleryId = ?";
+                       where n.galleryId = ?;\
+                       call selectOneBoard(?, ?, @hitAll);\
+                       select @hitAll";
         let gallery;
-        connection.query(sql1, param, (err, row) => {
+        let hitAll;
+        // connection.query(sql1, param, (err, row) => {
+        //     if (err) {
+        //         console.error(err);
+        //         res.json({
+        //             msg: "hit query error"
+        //         });
+        //     }
+        connection.query(sql2, param, (err, result) => {
             if (err) {
-                console.error(err);
+                console.log(err);
                 res.json({
-                    msg: "hit query error"
+                    msg: "select query error"
                 });
             }
-            connection.query(sql2, param, (err, result) => {
-                if (err) {
-                    console.log(err);
-                    res.json({
-                        msg: "select query error"
-                    });
-                }
-                gallery = result;
-                res.status(200).json(gallery);
+            gallery = result[0];
+            hitAll = result[2];
+            res.status(200).json({
+                gallery: gallery,
+                hitAll: hitAll
             });
         });
+        // });
     } catch (error) {
         res.status(401).send(error.message);
     }
 });
-
-//파일 다운로드
-// router.get('/download/:galleryId/:fileNo', async (req, res) => {
-//     try {
-//         const param = [req.params.galleryId, req.params.fileId];
-//         const sql = "select fileRoute from file where galleryId = ? and fileId = ?";
-//         let route;
-//         connection.query(sql, param, (err, result) => {
-//             if (err) {
-//                 console.error(err);
-//                 res.json({
-//                     msg: "query error"
-//                 });
-//             }
-//             route = result;
-//             console.log(result);
-//             res.status(200).json(route);
-//         });
-//     } catch (error) {
-//         res.status(401).send(error.message);
-//     }
-// });
 
 module.exports = router;

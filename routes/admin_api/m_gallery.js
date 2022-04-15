@@ -283,7 +283,6 @@ router.post('/galleryUpdate', upload.array('file'), (req, res) => {
 router.get('/gallerysDelete', (req, res) => {
     const param = req.query.galleryId;
     const str = param.split(',');
-    console.log(str)
     for (var i = 0; i < str.length; i++) {
         let fileRoute = [];
         const sql1 = "select fileRoute from file where boardId = ?";
@@ -292,9 +291,7 @@ router.get('/gallerysDelete', (req, res) => {
                 console.log(err)
             }
             fileRoute = result;
-            console.log(fileRoute)
             if (fileRoute != undefined) {
-                console.log("삭제한다!!!")
                 for (let j = 0; j < fileRoute.length; j++) {
                     fs.unlinkSync(fileRoute[j].fileRoute, (err) => {
                         if (err) {
