@@ -14,11 +14,6 @@
         display: inline-block;
     }
 </style>
-<script>
-    $(document).ready(function () {
-        searchajax();
-    });
-</script>
 <main class="main">
     <!-- Breadcrumb-->
     <ol class="breadcrumb">
@@ -67,8 +62,7 @@
                                         <% if(results.length > 0){ %> <% for(var i = (page * page_num) - page_num; i < (page * page_num); i++) { 
                                             if(i > length){
                                                 i++;
-                                            } else { %> 
-                                    <tr
+                                            } else { %> <tr
                                         onclick="location.href='/admin/m_gallery/gallerySelectOne?galleryId=<%=results[i].galleryId%>&page=<%=page%>&searchText=<%= searchText %>'">
                                     <td onclick='event.cancelBubble=true;'><input type="checkbox" id="chk" name="chk"
                                             value="<%=results[i].galleryId %>" /></td>
@@ -110,13 +104,13 @@
                                     <ul class="pagination customPaging">
                                         <% if(results.length > 0){ %>
                                         <li>
-                                            <a href="/admin/m_gallery/gallery?page=1&searchText=<%= searchText %>" class="num">
+                                            <a href="/admin/m_gallery/gallery?page=1&searchText=<%= searchText %>"
+                                                class="num">
                                                 << </a> </li> <li>
                                                     <a <%if(page==1){%><%} else {%>
                                                         href="/admin/m_gallery/gallery?page=<%= parseInt(page) - 1 %>&searchText=<%= searchText %>"
                                                         class="num" <% } %>>
-                                                        < </a> </li>
-                                                            <% for(var i = startPage; i < endPage; i++){  %>
+                                                        < </a> </li> <% for(var i = startPage; i < endPage; i++){  %>
                                                             <li class="paging_on">
                                                             <a href="/admin/m_gallery/gallery?page=<%= i + 1 %>&searchText=<%= searchText %>"
                                                                 <%if(page==i+1){%>class="selected"
@@ -124,7 +118,8 @@
                                                                     <%if(page==last){%><%} else {%>
                                                                     href="/admin/m_gallery/gallery?page=<%= parseInt(page) + 1 %>&searchText=<%= searchText %>"
                                                                     class="num" <% } %>>></a></li>
-                                        <li><a href="/admin/m_gallery/gallery?page=<%= last%>&searchText=<%= searchText %>" class="num">>></a></li>
+                                        <li><a href="/admin/m_gallery/gallery?page=<%= last%>&searchText=<%= searchText %>"
+                                                class="num">>></a></li>
                                         <% } %>
                                     </ul>
                                 </div>
@@ -195,68 +190,70 @@
     //검색
     function searchajax() {
         $("#searchText").keyup(function () {
-                var words = $("#searchText").val();
-                // console.log(words);
-                $.ajax({
-                        type: 'get',
-                        url: '/admin/m_gallery/gallerySearch?galleryId=<%=results[0].galleryId%>&page=1',
-                        data: {
-                            searchText: words
-                        },
-                        dataType: 'json',
-                        success: function (data) {
-                            var str = ''
-                            $(".customPaging").empty();
-                            if (data.ajaxSearch.length > 0) {
-                                for (var i = (data.page * data.page_num) - data
-                                        .page_num; i < (data.page * data.page_num); i++) {
-                                    if (i > data.length) {
-                                        i++;
-                                    } else {
-                                        $("#tbody").empty();
-                                        str +=
-                                            '<tr onclick="location.href=\'/admin/m_gallery/gallerySelectOne?galleryId=' +
-                                            data.ajaxSearch[i].galleryId + '&page=' + data
-                                            .page +'&searchText=' + data.searchText +
-                                            '\'"> <td onclick="event.cancelBubble=true;"><input type="checkbox" id="chk" name="chk" value="' +
-                                            data.ajaxSearch[i].galleryId + '" /> </td>';
-                                        str +=
-                                            '<td>' +
-                                            (data.ajaxSearch.length - i) + '</td>';
-                                        str +=
-                                            '<td>' +
-                                            data.ajaxSearch[i].galleryTitle + '</td>';
-                                        str +=
-                                            '<td>' +
-                                            data.ajaxSearch[i].galleryHit + '</td>';
-                                        str +=
-                                            '<td>' +
-                                            data.ajaxSearch[i].galleryWritDateFmt + '</td>'
-                                        str += '<td onclick="event.cancelBubble=true;">'
-                                        if (data.ajaxSearch[i].mcount != 0) {
-                                            str +=
-                                                '<button id="comment_btn" type="button" class="btn btn-block btn-outline-success"'
-                                            str += 'onclick = "comment(\'/admin/m_comment\',\'\', \'resizable=0,width=640, height=700, scrollbars=1\',\'' + data.ajaxSearch[i].galleryId + '\')">'
-                                            str += '댓글(' + data.ajaxSearch[i].mcount + ')</button></td>'
-                                        } else {
-                                            str += '<td></td>'
-                                        }
-                                        str += '</tr>'
+            var words = $("#searchText").val();
+            // console.log(words);
+            $.ajax({
+                type: 'get',
+                url: '/admin/m_gallery/gallerySearch?page=1',
+                data: {
+                    searchText: words
+                },
+                dataType: 'json',
+                success: function (data) {
+                    var str = ''
+                    $(".customPaging").empty();
+                    if (data.ajaxSearch.length > 0) {
+                        for (var i = (data.page * data.page_num) - data
+                                .page_num; i < (data.page * data.page_num); i++) {
+                            if (i > data.length) {
+                                i++;
+                            } else {
+                                $("#tbody").empty();
+                                str +=
+                                    '<tr onclick="location.href=\'/admin/m_gallery/gallerySelectOne?galleryId=' +
+                                    data.ajaxSearch[i].galleryId + '&page=' + data
+                                    .page + '&searchText=' + data.searchText +
+                                    '\'"> <td onclick="event.cancelBubble=true;"><input type="checkbox" id="chk" name="chk" value="' +
+                                    data.ajaxSearch[i].galleryId + '" /> </td>';
+                                str +=
+                                    '<td>' +
+                                    (data.ajaxSearch.length - i) + '</td>';
+                                str +=
+                                    '<td>' +
+                                    data.ajaxSearch[i].galleryTitle + '</td>';
+                                str +=
+                                    '<td>' +
+                                    data.ajaxSearch[i].galleryHit + '</td>';
+                                str +=
+                                    '<td>' +
+                                    data.ajaxSearch[i].galleryWritDateFmt + '</td>'
+                                str += '<td onclick="event.cancelBubble=true;">'
+                                if (data.ajaxSearch[i].mcount != 0) {
+                                    str +=
+                                        '<button id="comment_btn" type="button" class="btn btn-block btn-outline-success"'
+                                    str +=
+                                        'onclick = "comment(\'/admin/m_comment\',\'\', \'resizable=0,width=640, height=700, scrollbars=1\',\'' +
+                                        data.ajaxSearch[i].galleryId + '\')">'
+                                    str += '댓글(' + data.ajaxSearch[i].mcount + ')</button></td>'
+                                } else {
+                                    str += '<td></td>'
                                 }
+                                str += '</tr>'
                             }
-                            // console.log("str = " + str)
-                            $("#tbody").append(str);
-                        } else {
-                            var none = '<tr> <td colspan="6"> 데이터가 존재하지 않습니다. </td> </tr>'
-                            $("#tbody").empty();
-                            $("#tbody").append(none);
                         }
-                        paging(data);
-                    },
-                    error: function (e) {
-                        console.log('error:' + e.status);
+                        // console.log("str = " + str)
+                        $("#tbody").append(str);
+                    } else {
+                        var none = '<tr> <td colspan="6"> 데이터가 존재하지 않습니다. </td> </tr>'
+                        $("#tbody").empty();
+                        $("#tbody").append(none);
                     }
-                });
+                    paging(data);
+                },
+                error: function (e) {
+                    console.log('error:' + e.status);
+                }
+            });
         });
     }
 </script>
@@ -278,7 +275,7 @@
                 << </a> </li> <li>
                 <a `
 
-        if(datasPage==1){
+        if (datasPage == 1) {
             temp += `> < </a></li>`
         } else {
             temp += `href="/admin/m_gallery/gallery?page=${datasPage - 1}&searchText=${datas.searchText}"
@@ -290,15 +287,16 @@
             temp +=
                 `<li class="paging_on">
                     <a href="/admin/m_gallery/gallery?page=${i + 1}&searchText=${datas.searchText}"`
-            if(i!=0){
+            if (i != 0) {
                 temp += `class="num">${i + 1}</a> </li>`
-            }else{
-                temp += `class="selected" style="background-color:#0b9ad9;><span style="color:white;">${i + 1}</span></a> </li>`
-            } 
+            } else {
+                temp +=
+                    `class="selected" style="background-color:#0b9ad9;><span style="color:white;">${i + 1}</span></a> </li>`
+            }
         }
         temp += `<li> <a`
-            if(datasPage==datasLast){
-                temp += `> > </a></li> <li><a href="/admin/m_gallery/gallery?page=${datasPage}&searchText=${datas.searchText}"
+        if (datasPage == datasLast) {
+            temp += `> > </a></li> <li><a href="/admin/m_gallery/gallery?page=${datasPage}&searchText=${datas.searchText}"
                     class="num">>></a></li>`
             }else {
                 temp += `
@@ -307,8 +305,7 @@
                     <li><a href="/admin/m_gallery/gallery?page=${datasLast}&searchText=${datas.searchText}"
                     class="num">>></a></li>
                     `
-            }
+        }
         $(".customPaging").html(temp);
     }
 </script>
-

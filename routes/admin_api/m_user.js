@@ -112,7 +112,8 @@ router.get('/selectOne', async (req, res) => {
       "&searchType2=" + searchType2 + "&searchType3=" + searchType3 + "&searchText=" + searchText;
     var page = req.query.page;
     const param = [req.query.uid, req.query.uid, req.query.uid];
-    const sql = "select * from user where uid = ?";
+    const sql = "select *, concat(substr(userPhone, 1, 3),'-',substr(userPhone,4,4),'-',substr(userPhone,8,4)) as userPhoneFmt\
+                   from user where uid = ?";
     connection.query(sql, param, function (err, result) {
       if (err) {
         console.log(err);
@@ -153,10 +154,15 @@ router.post('/userInsert', upload.single('file'), async (req, res) => {
     hosPhone1,
     hosPhone2,
     hosPhone3,
+    userPhone1,
+    userPhone2,
+    userPhone3,
     userType,
     userPosition,
     pushYn
   } = req.body;
+
+  const userPhone = userPhone1 + userPhone2 + userPhone3;
 
   if (req.file != null) {
     const userImg = req.file.path;
@@ -171,6 +177,7 @@ router.post('/userInsert', upload.single('file'), async (req, res) => {
       hosPhone1,
       hosPhone2,
       hosPhone3,
+      userPhone,
       userType,
       userPosition,
       pushYn
@@ -186,6 +193,7 @@ router.post('/userInsert', upload.single('file'), async (req, res) => {
       hosPhone1,
       hosPhone2,
       hosPhone3,
+      userPhone,
       userType,
       userPosition,
       pushYn

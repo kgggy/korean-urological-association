@@ -6,7 +6,7 @@ var connection = require('../../config/db').conn;
 router.get('/', async (req, res) => {
     try {
         const sql = "select *,\
-                           (select choose from vote v where e.eventId = v.eventId and uid = 1) as voteyn\
+                           (select choose from vote v where e.eventId = v.eventId and uid = ?) as voteyn\
                        from event e\
                    order by eventId desc"
         connection.query(sql, req.query.uid, (err, result) => {
@@ -44,10 +44,10 @@ router.get('/vote', async (req, res) => {
     }
 });
 
-//투표 명단
+//투표(참석, 불참석) 명단
 router.get('/voteList', async (req, res) => {
     try {
-        const sql = "select u.* from vote v left join user u on u.uid = v.uid where choose = ? and eventId = ?"
+        const sql = "select  u.uid, u.userName, u.userPhone1, u.userPhone2, u.userPhone3 from vote v left join user u on u.uid = v.uid where choose = ? and eventId = ?"
         const param = [req.query.choose, req.query.eventId];
         connection.query(sql, param, (err, result) => {
             if (err) {
@@ -63,5 +63,19 @@ router.get('/voteList', async (req, res) => {
     }
 });
 
+//투표(미정자) 명단
+router.get('/nVoteList', async (req, res) => {
+    try {
+        const nChooseSql = "select u.uid, u.userName, u.userPhone1, u.userPhone2, u.userPhone3 from user u left join (select uid from vote v where v.eventId = ?) AS B on u.uid = B.uid WHERE B.uid IS NULL;";
+        connection.query(nChooseSql, req.query.eventId, (err, results) => {
+            if (err) {
+                console.log(err);
+            }
+            res.json(results);
+        })
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
 
 module.exports = router;

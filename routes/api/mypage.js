@@ -117,4 +117,18 @@ router.patch('/:uid', upload.single('file'), async (req, res) => {
     });
 });
 
+//푸쉬알람 동의여부
+router.patch('/pushyn', async (req, res) => {
+    const param = [req.query.uid, req.query.pushYn];
+    const sql = "update user set pushYn = ? where uid = ?";
+    connection.query(sql, param, (err) => {
+        if (err) {
+            console.error(err);
+        }
+        return res.json({
+            msg: "success"
+        });
+    });
+});
+
 module.exports = router;

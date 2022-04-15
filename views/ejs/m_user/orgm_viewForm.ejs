@@ -62,7 +62,7 @@
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">병원주소</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="ucmtitle" type="text" name="ucmtitle" readonly
+                              <input class="form-control" id="ucmtitle" type="text" readonly
                                  value="<%=result[0].userAdres1%> <%=result[0].userAdres2%> <%=result[0].userAdres3%>">
                               <input type="hidden" id="userAdres1" name="userAdres1" value="<%=result[0].userAdres1%>">
                               <input type="hidden" id="userAdres2" name="userAdres2" value="<%=result[0].userAdres2%>">
@@ -70,9 +70,17 @@
                            </div>
                         </div>
                         <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">휴대번호</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="userPhone" type="text" readonly
+                                 value="<%=result[0].userPhoneFmt%>">
+                              <input type="hidden" id="userPhone" name="userPhone" value="<%=result[0].userPhone%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">병원번호</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="ucmtitle" type="text" name="ucmtitle" readonly
+                              <input class="form-control" id="ucmtitle" type="text" readonly
                                  value="<%=result[0].hosPhone1%>-<%=result[0].hosPhone2%>-<%=result[0].hosPhone3%>">
                               <input type="hidden" id="hosPhone1" name="hosPhone1" value="<%=result[0].hosPhone1%>">
                               <input type="hidden" id="hosPhone2" name="hosPhone2" value="<%=result[0].hosPhone2%>">

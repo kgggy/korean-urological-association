@@ -4,7 +4,7 @@ const pushNotificationService = require("../services/push_Notification.services"
 exports.SendNotification = (req,res,next) =>{
     var message = {
         app_id: ONE_SIGNAL_CONFIG.APP_ID,
-        contents:{"en":"test push"},
+        contents:{"en":"비뇨기과 공지사항!!!!"},
         included_segments:["All"],
         content_avaliable:true,
         small_icon:"ic_notification_icon",

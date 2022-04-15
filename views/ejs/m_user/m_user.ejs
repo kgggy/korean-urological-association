@@ -74,9 +74,10 @@
                                     <colgroup>
                                         <col width="5%" />
                                         <col width="5%" />
-                                        <col width="15%" />
+                                        <col width="10%" />
                                         <col width="30%" />
-                                        <col width="20%" />
+                                        <col width="15%" />
+                                        <col width="15%" />
                                         <col width="10%" />
                                         <col width="10%" />
                                     </colgroup>
@@ -86,6 +87,7 @@
                                             <th>번호</th>
                                             <th>회원명</th>
                                             <th>병원명</th>
+                                            <th>휴대번호</th>
                                             <th>병원번호</th>
                                             <th>형태</th>
                                             <th>역할</th>
@@ -111,6 +113,9 @@
                                             </td>
                                             <td>
                                                 <%= results[i].hosName %>
+                                            </td>
+                                            <td>
+                                                <%=results[i].userPhone%>
                                             </td>
                                             <td>
                                                 <%= results[i].hosPhone1 %>-<%= results[i].hosPhone2 %>-<%= results[i].hosPhone3 %>
