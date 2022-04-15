@@ -45,7 +45,7 @@ router.get('/page', async (req, res) => {
   var keepSearch = "&searchType1=" + searchType1 +
     "&searchType2=" + searchType2 + "&searchType3=" + searchType3 + "&searchText=" + searchText;
 
-  var sql = "select *, concat(substr(userPhone, 1, 3),'-',substr(userPhone,4,4),'-',substr(userPhone,8,4)) as userPhone from user where 1=1";
+  var sql = "select * from user where 1=1";
 
   if (searchType1 != '') {
     sql += " and userAdres2 = '" + searchType1 + "' \n";
