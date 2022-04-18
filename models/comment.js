@@ -19,22 +19,14 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
       comment: "작성일자"
     },
-    noticeId: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    },
-    galleryId: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    },
-    referId: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    },
     uid: {
       type: DataTypes.INTEGER,
       allowNull: false,
       comment: "작성자"
+    },
+    boardId: {
+      type: DataTypes.STRING(5),
+      allowNull: false
     }
   }, {
     sequelize,

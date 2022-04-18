@@ -5,7 +5,7 @@ var connection = require('../../config/db').conn;
 //갤러리 글 전체 목록 조회
 router.get('/', async (req, res) => {
     try {
-        const sql = "select * from file group by boardId having substring(boardId, 1, 1) = 'g' order by 2 desc;";
+        const sql = "select boardId, fileRoute from file group by boardId, fileRoute having substring(boardId, 1, 1) = 'g';";
         let gallerys;
         connection.query(sql, (err, results) => {
             if (err) {

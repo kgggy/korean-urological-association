@@ -1,32 +1,26 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('vote', {
-    voteId: {
+  return sequelize.define('recommend', {
+    recommendId: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
-      comment: "일련번호"
+      comment: "좋아요번호\\n"
     },
-    eventId: {
-      type: DataTypes.INTEGER,
+    boardId: {
+      type: DataTypes.STRING(5),
       allowNull: false,
-      comment: "행사번호"
-    },
-    choose: {
-      type: DataTypes.STRING(1),
-      allowNull: false,
-      defaultValue: "0",
-      comment: "선택결과(0이면 참여, 1이면 불참)"
+      comment: "게시판번호"
     },
     uid: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(45),
       allowNull: false,
-      comment: "회원번호"
+      comment: "유저일련번호\n"
     }
   }, {
     sequelize,
-    tableName: 'vote',
+    tableName: 'recommend',
     timestamps: false,
     indexes: [
       {
@@ -34,7 +28,7 @@ module.exports = function(sequelize, DataTypes) {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "voteId" },
+          { name: "recommendId" },
         ]
       },
     ]

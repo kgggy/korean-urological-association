@@ -18,17 +18,10 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true,
       comment: "원본명"
     },
-    galleryId: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    },
-    referId: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    },
-    noticeId: {
-      type: DataTypes.INTEGER,
-      allowNull: true
+    boardId: {
+      type: DataTypes.STRING(5),
+      allowNull: false,
+      comment: "공지사항, 자료실, 갤러리 pk"
     }
   }, {
     sequelize,

@@ -6,7 +6,10 @@ var _file = require("./file");
 var _gallery = require("./gallery");
 var _greeting = require("./greeting");
 var _history = require("./history");
+var _hitCount = require("./hitCount");
 var _notice = require("./notice");
+var _president = require("./president");
+var _recommend = require("./recommend");
 var _reference = require("./reference");
 var _support = require("./support");
 var _user = require("./user");
@@ -20,7 +23,10 @@ function initModels(sequelize) {
   var gallery = _gallery(sequelize, DataTypes);
   var greeting = _greeting(sequelize, DataTypes);
   var history = _history(sequelize, DataTypes);
+  var hitCount = _hitCount(sequelize, DataTypes);
   var notice = _notice(sequelize, DataTypes);
+  var president = _president(sequelize, DataTypes);
+  var recommend = _recommend(sequelize, DataTypes);
   var reference = _reference(sequelize, DataTypes);
   var support = _support(sequelize, DataTypes);
   var user = _user(sequelize, DataTypes);
@@ -35,7 +41,10 @@ function initModels(sequelize) {
     gallery,
     greeting,
     history,
+    hitCount,
     notice,
+    president,
+    recommend,
     reference,
     support,
     user,

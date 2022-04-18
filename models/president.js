@@ -1,36 +1,41 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('greeting', {
-    id: {
+  return sequelize.define('president', {
+    psdId: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       comment: "일련번호"
     },
-    title: {
-      type: DataTypes.STRING(45),
-      allowNull: true,
-      comment: "제목"
+    psd: {
+      type: DataTypes.STRING(10),
+      allowNull: false,
+      comment: "1대, 23대.."
     },
-    writer: {
-      type: DataTypes.STRING(45),
-      allowNull: true,
-      comment: "작성자"
+    psdName: {
+      type: DataTypes.STRING(7),
+      allowNull: false,
+      comment: "이름"
     },
-    content: {
-      type: DataTypes.STRING(3000),
+    psdDetail: {
+      type: DataTypes.STRING(50),
       allowNull: true,
-      comment: "내용"
+      comment: "세부내용"
     },
-    img: {
+    psdDate: {
+      type: DataTypes.STRING(15),
+      allowNull: true,
+      comment: "취임기간"
+    },
+    psdImg: {
       type: DataTypes.STRING(500),
       allowNull: true,
-      comment: "이미지"
+      comment: "프로필이미지"
     }
   }, {
     sequelize,
-    tableName: 'greeting',
+    tableName: 'president',
     timestamps: false,
     indexes: [
       {
@@ -38,7 +43,7 @@ module.exports = function(sequelize, DataTypes) {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "id" },
+          { name: "psdId" },
         ]
       },
     ]

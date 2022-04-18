@@ -76,8 +76,29 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true,
       comment: "팩스"
     },
+    userUrl: {
+      type: DataTypes.STRING(300),
+      allowNull: true,
+      comment: "홈페이지주소"
+    },
+    oneSignalId: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+      comment: "푸쉬토큰값"
+    },
+    pushYn: {
+      type: DataTypes.STRING(1),
+      allowNull: false,
+      defaultValue: "0",
+      comment: "0이면 받음, 1이면 안받음"
+    },
+    userAuth: {
+      type: DataTypes.STRING(13),
+      allowNull: true,
+      comment: "회장, 부회장, 학술이사..."
+    },
     userPhone1: {
-      type: DataTypes.STRING(3),
+      type: DataTypes.STRING(12),
       allowNull: true,
       comment: "휴대전화"
     },
@@ -89,26 +110,20 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(4),
       allowNull: true
     },
+    userSocialDiv: {
+      type: DataTypes.STRING(1),
+      allowNull: true,
+      comment: "소셜로그인 종류"
+    },
     hosImg: {
       type: DataTypes.STRING(200),
       allowNull: true,
       comment: "병원사진"
     },
-    userUrl: {
-      type: DataTypes.STRING(300),
+    infoImg: {
+      type: DataTypes.STRING(200),
       allowNull: true,
-      comment: "홈페이지주소"
-    },
-    pushToken: {
-      type: DataTypes.STRING(100),
-      allowNull: true,
-      comment: "푸쉬토큰값"
-    },
-    pushYn: {
-      type: DataTypes.STRING(1),
-      allowNull: false,
-      defaultValue: "0",
-      comment: "0이면 받음, 1이면 안받음"
+      comment: "명함사진"
     }
   }, {
     sequelize,

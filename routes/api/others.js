@@ -64,7 +64,7 @@ router.get('/companyAdres', async (req, res) => {
 //역대회장 조회
 router.get('/president', async (req, res) => {
   try {
-    const sql = "select * from president";
+    const sql = "select * from president p left join user u on p.uid = u.uid;";
     let route;
     connection.query(sql, (err, result) => {
       if (err) {

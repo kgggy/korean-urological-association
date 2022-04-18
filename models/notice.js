@@ -23,16 +23,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       comment: "내용"
     },
-    noticeHit: {
-      type: DataTypes.INTEGER,
+    noticeFix: {
+      type: DataTypes.STRING(1),
       allowNull: false,
-      defaultValue: 0,
-      comment: "조회수"
-    },
-    noticeRank: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      comment: "공지사항 우선순위"
+      defaultValue: "0",
+      comment: "0이면 고정안함, 1이면 고정함"
     }
   }, {
     sequelize,
