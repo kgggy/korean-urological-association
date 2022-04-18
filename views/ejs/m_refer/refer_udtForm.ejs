@@ -140,7 +140,7 @@
 
          if (confirm("수정하시겠습니까?") == true) {
             $('input[name=referContent]').attr('value', content);
-            formObj.attr("action", "referUpdate");
+            formObj.attr("action", "/admin/m_refer/referUpdate");
             formObj.attr("enctype", "multipart/form-data");
             formObj.attr("method", "post");
             formObj.submit();

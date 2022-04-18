@@ -72,7 +72,7 @@
                                             <td>
                                                 <%=results[i].referTitle%></td>
                                             <td>
-                                                <%=results[i].referHit%></td>
+                                                <%=results[i].hitCount%></td>
                                             <td>
                                                 <%=results[i].referWritDateFmt %></td>
                                             <td onclick='event.cancelBubble=true;'>
@@ -223,7 +223,7 @@
                                     data.ajaxSearch[i].referTitle + '</td>';
                                 str +=
                                     '<td>' +
-                                    data.ajaxSearch[i].referHit + '</td>';
+                                    data.ajaxSearch[i].hitCount + '</td>';
                                 str +=
                                     '<td>' +
                                     data.ajaxSearch[i].referWritDateFmt + '</td>'

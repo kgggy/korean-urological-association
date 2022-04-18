@@ -112,7 +112,7 @@ router.get('/selectOne', async (req, res) => {
       "&searchType2=" + searchType2 + "&searchType3=" + searchType3 + "&searchText=" + searchText;
     var page = req.query.page;
     const param = [req.query.uid, req.query.uid, req.query.uid];
-    const sql = "select *, concat(substr(userPhone, 1, 3),'-',substr(userPhone,4,4),'-',substr(userPhone,8,4)) as userPhoneFmt\
+    const sql = "select *\
                    from user where uid = ?";
     connection.query(sql, param, function (err, result) {
       if (err) {
@@ -162,8 +162,6 @@ router.post('/userInsert', upload.single('file'), async (req, res) => {
     pushYn
   } = req.body;
 
-  const userPhone = userPhone1 + userPhone2 + userPhone3;
-
   if (req.file != null) {
     const userImg = req.file.path;
     await models.user.create({
@@ -177,7 +175,9 @@ router.post('/userInsert', upload.single('file'), async (req, res) => {
       hosPhone1,
       hosPhone2,
       hosPhone3,
-      userPhone,
+      userPhone1,
+      userPhone2,
+      userPhone3,
       userType,
       userPosition,
       pushYn
@@ -193,7 +193,9 @@ router.post('/userInsert', upload.single('file'), async (req, res) => {
       hosPhone1,
       hosPhone2,
       hosPhone3,
-      userPhone,
+      userPhone1,
+      userPhone2,
+      userPhone3,
       userType,
       userPosition,
       pushYn
@@ -221,17 +223,20 @@ router.post('/userUpdate', upload.single('file'), async (req, res) => {
     param = [path, req.body.userName, req.body.hosName,
       req.body.hosPost, req.body.userAdres1, req.body.userAdres2, req.body.userAdres3,
       req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3,
+      req.body.userPhone1, req.body.userPhone2, req.body.userPhone3,
       req.body.userType, req.body.userPosition, req.body.uid
     ];
   } else {
     param = [req.body.userImg, req.body.userName, req.body.hosName,
       req.body.hosPost, req.body.userAdres1, req.body.userAdres2, req.body.userAdres3,
       req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3,
+      req.body.userPhone1, req.body.userPhone2, req.body.userPhone3,
       req.body.userType, req.body.userPosition, req.body.uid
     ];
   }
   const sql = "update user set userImg = ?, userName = ?, hosName = ?, hosPost = ?, userAdres1 = ?, userAdres2 = ?, \
-                               userAdres3 = ?, hosPhone1 = ?, hosPhone2 = ?, hosPhone3 = ?, userType = ? , userPosition = ?\
+                               userAdres3 = ?, hosPhone1 = ?, hosPhone2 = ?, hosPhone3 = ?,\
+                               userPhone1 = ?, userPhone2 = ?, userPhone3 = ?, userType = ? , userPosition = ?\
                 where uid = ?";
   connection.query(sql, param, (err) => {
     if (err) {

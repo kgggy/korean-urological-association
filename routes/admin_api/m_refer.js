@@ -42,7 +42,8 @@ router.get('/reference', async (req, res) => {
         var page = req.query.page;
         var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
         var sql = "select *, (select count(*) from comment where comment.boardId = reference.referId) as mcount,\
-                          date_format(referWritDate, '%Y-%m-%d') as referWritDateFmt\
+                          (select count(*) from hitCount where hitCount.boardId = reference.referId) as hitCount,\
+                           date_format(referWritDate, '%Y-%m-%d') as referWritDateFmt\
                     from reference";
         if (searchText != '') {
             sql += " where referTitle like '%" + searchText + "%' or referContent like '%" + searchText + "%'";
@@ -84,6 +85,7 @@ router.get('/referSearch', async (req, res) => {
     var page = req.query.page;
     var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
     var sql = "select *, (select count(*) from comment where comment.boardId = reference.referId) as mcount,\
+                      (select count(*) from hitCount where hitCount.boardId = reference.referId) as hitCount,\
                       date_format(referWritDate, '%Y-%m-%d') as referWritDateFmt\
                 from reference";
     if (searchText != '') {
@@ -123,15 +125,14 @@ router.get('/referSelectOne', async (req, res) => {
     var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
     try {
         const param = req.query.referId;
-        const sql = "select r.*, date_format(referWritDate, '%Y-%m-%d') as referWritDateFmt, f.fileRoute, f.fileOrgName\
+        const sql = "select r.*, date_format(referWritDate, '%Y-%m-%d') as referWritDateFmt, f.fileRoute, f.fileOrgName,\
+                            (select count(*) from hitCount where hitCount.boardId = r.referId) as hitCount\
                         from reference r\
                         left join file f on f.boardId = r.referId\
                        where referId = ?";
         connection.query(sql, param, (err, result) => {
             if (err) {
-                res.json({
-                    msg: "select query error"
-                });
+                res.send("<script>alert('query error');</script>");
             }
             let route = req.app.get('views') + '/m_refer/refer_viewForm';
             res.render(route, {
@@ -259,8 +260,9 @@ router.post('/referUpdate', upload.array('file'), (req, res) => {
     const page = req.body.page;
     var searchText = req.body.searchText == undefined ? "" : req.body.searchText;
     try {
+        console.log(req.body)
         const param = [req.body.referTitle, req.body.referContent, req.body.referId];
-        const sql = "update refer set referTitle = ?, referContent = ?, referWritDate = sysdate() where referId = ?";
+        const sql = "update reference set referTitle = ?, referContent = ?, referWritDate = sysdate() where referId = ?";
         connection.query(sql, param, (err) => {
             if (err) {
                 console.error(err);
@@ -347,6 +349,8 @@ router.get('/referDelete', async (req, res) => {
 router.get('/referFileDelete', async (req, res) => {
     const param = req.query.fileId;
     const fileRoute = req.query.fileRoute;
+    const page = req.query.page;
+    var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
     try {
         const sql = "delete from file where fileId = ?";
         connection.query(sql, param, (err, row) => {
@@ -365,7 +369,7 @@ router.get('/referFileDelete', async (req, res) => {
             console.log("프로필 삭제 에러 발생");
         }
     }
-    res.redirect('referUdtForm?referId=' + req.query.referId);
+    res.redirect('referUdtForm?referId=' + req.query.referId + '&page=' + page + '&searchText=' + searchText);
 });
 
 module.exports = router;

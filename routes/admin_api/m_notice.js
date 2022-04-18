@@ -40,6 +40,7 @@ router.get('/notice', async (req, res) => {
         var page = req.query.page;
         var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
         var sql = "select *, (select count(*) from comment where comment.boardId = notice.noticeId) as mcount,\
+                          (select count(*) from hitCount where hitCount.boardId = notice.noticeId) as hitCount,\
                            date_format(noticeWritDate, '%Y-%m-%d') as noticeWritDateFmt\
                        from notice";
         if (searchText != '') {
@@ -82,6 +83,7 @@ router.get('/noticeSearch', async (req, res) => {
     var page = req.query.page;
     var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
     var sql = "select *, (select count(*) from comment where comment.boardId = notice.noticeId) as mcount,\
+                        (select count(*) from hitCount where hitCount.boardId = notice.noticeId) as hitCount,\
                         date_format(noticeWritDate, '%Y-%m-%d') as noticeWritDateFmt\
                  from notice";
     if (searchText != '') {
@@ -123,7 +125,8 @@ router.get('/noticeSelectOne', async (req, res) => {
         var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
         const page = req.query.page;
         const param = req.query.noticeId;
-        const sql = "select *,date_format(noticeWritDate, '%Y-%m-%d') as noticeWritDateFmt\
+        const sql = "select *,date_format(noticeWritDate, '%Y-%m-%d') as noticeWritDateFmt,\
+                            (select count(*) from hitCount where hitCount.boardId = notice.noticeId) as hitCount\
                         from notice\
                        where noticeId = ?";
 

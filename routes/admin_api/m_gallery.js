@@ -39,7 +39,8 @@ router.get('/gallery', async (req, res) => {
         var page = req.query.page;
         var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
         var sql = "select *, (select count(*) from comment where comment.boardId = g.galleryId) as mcount,\
-                             date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt\
+                             date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt,\
+                             (select count(*) from hitCount where hitCount.boardId = g.galleryId) as hitCount\
                        from gallery g"
         if (searchText != '') {
             sql += " where galleryTitle like '%" + searchText + "%' or galleryContent like '%" + searchText + "%'";
@@ -80,7 +81,9 @@ router.get('/gallery', async (req, res) => {
 router.get('/gallerySearch', async (req, res) => {
     var page = req.query.page;
     var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
-    var sql = "select *, (select count(*) from comment where comment.boardId = gallery.galleryId) as mcount, date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt from gallery";
+    var sql = "select *, (select count(*) from comment where comment.boardId = gallery.galleryId) as mcount,\
+                      (select count(*) from hitCount where hitCount.boardId = gallery.galleryId) as hitCount,\
+                      date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt from gallery";
     if (searchText != '') {
         sql += " where galleryTitle like '%" + searchText + "%' or galleryContent like '%" + searchText + "%'";
     }
@@ -120,7 +123,8 @@ router.get('/gallerySelectOne', async (req, res) => {
     var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
     try {
         const param = req.query.galleryId;
-        const sql = "select g.*, date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt, f.fileRoute\
+        const sql = "select g.*, date_format(galleryWritDate, '%Y-%m-%d') as galleryWritDateFmt, f.fileRoute,\
+                           (select count(*) from hitCount where hitCount.boardId = g.galleryId) as hitCount\
                         from gallery g\
                         left join file f on f.boardId = g.galleryId\
                         where g.galleryId = ?";
@@ -346,6 +350,8 @@ router.get('/galleryDelete', async (req, res) => {
 router.get('/galleryFileDelete', async (req, res) => {
     const param = req.query.fileId;
     const fileRoute = req.query.fileRoute;
+    const page = req.query.page;
+    var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
     try {
         const sql = "delete from file where fileId = ?";
         connection.query(sql, param, (err, row) => {
@@ -364,6 +370,6 @@ router.get('/galleryFileDelete', async (req, res) => {
             console.log("프로필 삭제 에러 발생");
         }
     }
-    res.redirect('galleryUdtForm?galleryId=' + req.query.galleryId );
+    res.redirect('galleryUdtForm?galleryId=' + req.query.galleryId + '&page=' + page + '&searchText=' + searchText);
 });
 module.exports = router;

@@ -14,6 +14,11 @@
         display: inline-block;
     }
 </style>
+<script>
+    $(document).ready(function () {
+        searchajax();
+    });
+</script>
 <main class="main">
     <!-- Breadcrumb-->
     <ol class="breadcrumb">
@@ -71,7 +76,7 @@
                                     <td>
                                         <%=results[i].galleryTitle%></td>
                                     <td>
-                                        <%=results[i].galleryHit%></td>
+                                        <%=results[i].hitCount%></td>
                                     <td>
                                         <%=results[i].galleryWritDateFmt %></td>
                                     <td onclick='event.cancelBubble=true;'>
@@ -151,11 +156,6 @@
             alert("삭제할 목록을 선택해주세요.");
             return false;
         }
-        // var chkImg = [];
-        // $("input[name=chk]:checked").each(function () {
-        //     chkImg.push($(this).attr('data-img'));
-        // });
-        // $('#userImg').val(chkImg);
         formObj.attr("action", "gallerysDelete");
         formObj.attr("method", "get");
         if (confirm("삭제하시겠습니까?") == true) {
@@ -223,7 +223,7 @@
                                     data.ajaxSearch[i].galleryTitle + '</td>';
                                 str +=
                                     '<td>' +
-                                    data.ajaxSearch[i].galleryHit + '</td>';
+                                    data.ajaxSearch[i].hitCount + '</td>';
                                 str +=
                                     '<td>' +
                                     data.ajaxSearch[i].galleryWritDateFmt + '</td>'

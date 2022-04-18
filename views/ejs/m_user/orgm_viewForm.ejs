@@ -72,9 +72,11 @@
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">휴대번호</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="userPhone" type="text" readonly
-                                 value="<%=result[0].userPhoneFmt%>">
-                              <input type="hidden" id="userPhone" name="userPhone" value="<%=result[0].userPhone%>">
+                              <input class="form-control" id="ucmtitle" type="text" readonly
+                                 value="<%=result[0].userPhone1%>-<%=result[0].userPhone2%>-<%=result[0].userPhone3%>">
+                              <input type="hidden" id="userPhone1" name="userPhone1" value="<%=result[0].userPhone1%>">
+                              <input type="hidden" id="userPhone2" name="userPhone2" value="<%=result[0].userPhone2%>">
+                              <input type="hidden" id="userPhone3" name="userPhone3" value="<%=result[0].userPhone3%>">
                            </div>
                         </div>
                         <div class="form-group row">

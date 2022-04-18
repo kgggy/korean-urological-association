@@ -77,7 +77,7 @@
                                     <td>
                                         <%=results[i].noticeTitle%></td>
                                     <td>
-                                        <%=results[i].noticeHit%></td>
+                                        <%=results[i].hitCount%></td>
                                     <td>
                                         <%=results[i].noticeWritDateFmt %></td>
                                     <td onclick='event.cancelBubble=true;'>
@@ -228,7 +228,7 @@
                                     data.ajaxSearch[i].noticeTitle + '</td>';
                                 str +=
                                     '<td>' +
-                                    data.ajaxSearch[i].noticeHit + '</td>';
+                                    data.ajaxSearch[i].hitCount + '</td>';
                                 str +=
                                     '<td>' +
                                     data.ajaxSearch[i].noticeWritDateFmt + '</td>'

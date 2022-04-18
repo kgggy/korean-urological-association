@@ -76,7 +76,7 @@ router.patch('/:uid', upload.single('file'), async (req, res) => {
         // console.log("프로필 변경함 => userImg 최초만 공백이고 나머지는 원래경로 들어옴")
         param = [req.body.userName, req.body.userPosition, req.body.userType,
             req.body.userAdres1, req.body.userAdres2, req.body.userAdres3,
-            req.body.hosName, req.body.userUrl, req.body.userEmail,
+            req.body.hosName, req.body.userUrl, req.body.userEmail, req.body.hosPost,
             req.body.userPhone1, req.body.userPhone2, req.body.userPhone3,
             req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3,
             pathe, req.params.uid
@@ -85,7 +85,7 @@ router.patch('/:uid', upload.single('file'), async (req, res) => {
         // console.log("프로필 변경 안함 => userImg 원래 경로임")
         param = [req.body.userName, req.body.userPosition, req.body.userType,
             req.body.userAdres1, req.body.userAdres2, req.body.userAdres3,
-            req.body.hosName, req.body.userUrl, req.body.userEmail,
+            req.body.hosName, req.body.userUrl, req.body.userEmail, req.body.hosPost,
             req.body.userPhone1, req.body.userPhone2, req.body.userPhone3,
             req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3,
             userImg, req.params.uid
@@ -93,7 +93,7 @@ router.patch('/:uid', upload.single('file'), async (req, res) => {
     }
     const sql = "update user set userName = ?, userPosition = ?, userType = ?,\
                                  userAdres1 = ?, userAdres2 = ?, userAdres3 = ?,\
-                                 hosName = ?, userUrl = ?, userEmail = ?,\
+                                 hosName = ?, userUrl = ?, userEmail = ?, hosPost = ?,\
                                  userPhone1 = ?, userPhone2 = ?, userPhone3 = ?,\
                                  hosPhone1 = ?, hosPhone2 = ?, hosPhone3 = ?, userImg = ?\
                   where uid = ?";

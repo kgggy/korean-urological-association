@@ -5,6 +5,7 @@ const sharp = require('sharp');
 const multer = require("multer");
 const path = require('path');
 var connection = require('../../config/db').conn;
+const pushing = require('../../controllers/push-notification.controller')
 
 //파일업로드 모듈
 var upload = multer({ //multer안에 storage정보  
@@ -96,11 +97,16 @@ router.get('/eventSelectOne', async (req, res) => {
             }
             var fileOrgName;
             if (result[0].eventFileRoute != null && result[0].eventFileRoute != '') {
-                const str = result[0].eventFileRoute.split("\\");
+                const str = result[0].eventFileRoute.split("/");
                 fileOrgName = str[2];
+                if (fileOrgName == undefined) {
+                    const str = result[0].eventFileRoute.split("\\");
+                    fileOrgName = str[2];
+                }
             } else {
                 fileOrgName = '';
             }
+
             let route = req.app.get('views') + '/m_event/event_viewForm';
             res.render(route, {
                 result: result,
@@ -152,9 +158,10 @@ router.post('/eventWrite', upload.single('file'), async (req, res, next) => {
             if (err) {
                 throw err;
             }
+            pushing.SendNotification();
             res.send('<script>alert("행사가 등록되었습니다."); location.href="/admin/m_event?page=1";</script>');
         });
-        // //fcm
+        //fcm
         // var firebaseToken;
         // const token = "select pushToken from user where pushToken is not null";
         // connection.query(token, (err, result) => {
@@ -176,7 +183,7 @@ router.post('/eventWrite', upload.single('file'), async (req, res, next) => {
         //             }
         //         });
         //     }
-        //      res.send('<script>alert("행사가 등록되었습니다."); location.href="/admin/m_event";</script>');
+            // res.send('<script>alert("행사가 등록되었습니다."); location.href="/admin/m_event";</script>');
         // });
 
     } catch (error) {

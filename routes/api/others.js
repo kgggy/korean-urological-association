@@ -61,4 +61,24 @@ router.get('/companyAdres', async (req, res) => {
   }
 });
 
+//역대회장 조회
+router.get('/president', async (req, res) => {
+  try {
+    const sql = "select * from president";
+    let route;
+    connection.query(sql, (err, result) => {
+      if (err) {
+        console.error(err);
+        res.json({
+          msg: "query error"
+        });
+      }
+      route = result;
+      res.status(200).json(route);
+    });
+  } catch (error) {
+    res.status(401).send(error.message);
+  }
+});
+
 module.exports = router;
