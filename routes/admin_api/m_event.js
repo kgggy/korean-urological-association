@@ -148,6 +148,7 @@ router.post('/eventWrite', upload.single('file'), async (req, res, next) => {
                             }
                         });
                     });
+                    
             }
             param1 = [req.body.eventTitle, req.body.eventContent, req.body.eventDate, req.body.eventPlace, req.body.eventPlaceDetail, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, path];
         } else {
