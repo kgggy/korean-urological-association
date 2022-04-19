@@ -134,7 +134,7 @@ router.post('/eventWrite', upload.single('file'), async (req, res, next) => {
         var param1 = [];
         if (req.file != null) {
             const path = req.file.path;
-            if (path.size > 1000000) {
+            if (req.file.size > 1000000) {
                 sharp(path).resize({
                         width: 2000
                     }).withMetadata() //이미지 방향 유지
@@ -142,7 +142,9 @@ router.post('/eventWrite', upload.single('file'), async (req, res, next) => {
                         if (err) {
                             throw err;
                         }
-                        fs.writeFileSync(path, buffer, (err) => {
+                        console.log(path)
+                        fs.writeFile(path, buffer, (err) => {
+                            console.log("삭제한 path ==============" + path)
                             if (err) {
                                 throw err
                             }
