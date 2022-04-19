@@ -82,7 +82,7 @@ router.get('/', async (req, res) => {
                     });
                 }
                 refers = results;
-                const sql2 = "select fileRoute, boardId from file where substring(boardId, 1, 1) = 'g' group by boardId, fileRoute limit 3";
+                const sql2 = "select fileRoute, boardId from file where substring(boardId, 1, 1) = 'g' group by boardId limit 3";
                 connection.query(sql2, (err, results) => {
                     if (err) {
                         console.log(err);
