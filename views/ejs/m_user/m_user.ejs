@@ -103,7 +103,7 @@
                                             onclick="location.href='/admin/m_user/selectOne?uid=<%=results[i].uid%>&page=<%=page%><%=keepSearch%>'">
                                             <td onclick="event.cancelBubble=true;"><input type="checkbox" id="chk"
                                                     name="chk" value="<%=results[i].uid %>"
-                                                    data-img="<%=results[i].userImg%>" />
+                                                    data-img1="<%=results[i].userImg%>" data-img2="<%=results[i].hosImg%>" data-img3="<%=results[i].infoImg%>" />
                                             </td>
                                             <td>
                                                 <%=results[i].uid%>
@@ -196,7 +196,9 @@
             }
             var chkImg = [];
             $("input[name=chk]:checked").each(function () {
-                chkImg.push($(this).attr('data-img'));
+                chkImg.push($(this).attr('data-img1'));
+                chkImg.push($(this).attr('data-img2'));
+                chkImg.push($(this).attr('data-img3'));
             });
             $('#userImg').val(chkImg);
             formObj.attr("action", "userDelete");
