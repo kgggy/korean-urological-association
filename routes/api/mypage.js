@@ -12,20 +12,12 @@ var connection = require('../../config/db').conn;
 //파일업로드 모듈
 var upload = multer({ //multer안에 storage정보  
     storage: multer.diskStorage({
-        // destination: (req, file, callback) => {
-        //     //파일이 이미지 파일이면
-        //     if (file.mimetype == "image/jpeg" || file.mimetype == "image/jpg" || file.mimetype == "image/png" || file.mimetype == "application/octet-stream") {
-        //         // console.log("이미지 파일입니다.");
-        //         callback(null, 'uploads/userProfile');
-        //         //텍스트 파일이면
-        //     }
-        // },
         destination: (req, file, callback) => {
-            fs.mkdir('uploads/test', function (err) {
+            fs.mkdir('uploads/userProfile', function (err) {
                 if (err && err.code != 'EEXIST') {
                     console.log("already exist")
                 } else {
-                    callback(null, 'uploads/test');
+                    callback(null, 'uploads/userProfile');
                 }
             })
         },
@@ -131,236 +123,109 @@ router.get('/:uid', async (req, res) => {
 // 회원정보수정
 router.patch('/:uid', upload.fields([{ name: 'userImg' }, { name: 'hosImg' }, { name: 'infoImg' }]), async (req, res) => {
     try {
-    var {deteleFileRoute} = req.body; //바꾼 파일(바뀌기 전 경로)
-    const uid = req.params.uid;
-    // console.log("===11111==" + req.body)
-    // console.log(req.files[0])
-    // // console.log("===22222==" + req.files.userImg[0].path)
+        var deleteFileRoute = req.body.deleteFileRoute; //바꾼 파일(바뀌기 전 경로)
+        const uid = req.params.uid;
 
-
-    //for of???
-    // if (req.files != null) {
-    //     pathe = req.files.path;
-    //     console.log(pathe)
-    //     for (let i = 0; i < pathe.length; i++) {
-    //         if (req.files[i].size > 1000000) {
-    //             sharp(pathe[i]).resize({
-    //                 width: 2000
-    //             }).withMetadata() //이미지 방향 유지
-    //                 .toBuffer((err, buffer) => {
-    //                     if (err) {
-    //                         throw err;
-    //                     }
-    //                     fs.writeFileSync(pathe[i], buffer, (err) => {
-    //                         if (err) {
-    //                             throw err
-    //                         }
-    //                     });
-    //                 });
-    //         }
-    //     }
-    // }
-
-    
-    //(최초의 경우)파일이 있으면 경로 업데이트하기
-    if (req.files['userImg'] != null && req.files['userImg'] != undefined) {
-        const paths = req.files['userImg'].map(data => data.path);
-        // console.log(paths[0])
-        await models.user.update({ userImg: paths[0] }, { where: { uid: uid } })
-    }
-    if (req.files['hosImg'] != null && req.files['hosImg'] != undefined) {
-        const paths = req.files['hosImg'].map(data => data.path);
-        await models.user.update({ hosImg: paths[0] }, { where: { uid: uid } })
-    }
-    if (req.files['infoImg'] != null && req.files['infoImg'] != undefined) {
-        const paths = req.files['infoImg'].map(data => data.path);
-        await models.user.update({ infoImg: paths[0] }, { where: { uid: uid } })
-    }
-
-    const param = [req.body.userName, req.body.userPosition, req.body.userType,
-        req.body.userAdres1, req.body.userAdres2, req.body.userAdres3,
-        req.body.hosName, req.body.userUrl, req.body.userEmail, req.body.hosPost,
-        req.body.userPhone1, req.body.userPhone2, req.body.userPhone3,
-        req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3, req.params.uid
-    ];
-    const sql = "update user set userName = ?, userPosition = ?, userType = ?,\
-                                 userAdres1 = ?, userAdres2 = ?, userAdres3 = ?,\
-                                 hosName = ?, userUrl = ?, userEmail = ?, hosPost = ?,\
-                                 userPhone1 = ?, userPhone2 = ?, userPhone3 = ?,\
-                                 hosPhone1 = ?, hosPhone2 = ?, hosPhone3 = ?\
-                  where uid = ?";
-    connection.query(sql, param, async (err) => {
-        if (err) {
-            console.error(err);
-        }
-        //바뀐 이미지 있는경우
-        if (deteleFileRoute != null) {
-            if (!Array.isArray(deteleFileRoute)) {
-                deteleFileRoute = [deteleFileRoute]
-            }
-            console.log(deteleFileRoute);
-            var fileRoutes = await models.user.findOne({
-                where: { uid: uid },
-                attributes: ['userImg', 'hosImg', 'infoImg'],
-                raw: true
-            })
-            var arr = [];
-            arr.push(fileRoutes['userImg'], fileRoutes['hosImg'], fileRoutes['infoImg'])
-    
-            for (var i = 0; i < arr.length; i++) {
-                for (var j = 0; j < deteleFileRoute.length; j++) {
-                    if (arr[i] == deteleFileRoute[j]) { //바뀐 파일 기존경로와 현재 파일 경로가 같으면 null로 하고 나머지는 업데이트시키기
-                        arr[i] = null;
-                        if (i == 0) {
-                            await models.user.update({ userImg: arr[0] }, { where: { uid: uid } })
-                        } if (i == 1) {
-                            await models.user.update({ hosImg: arr[1] }, { where: { uid: uid } })
-                        } if (i == 2) {
-                            await models.user.update({ infoImg: arr[2] }, { where: { uid: uid } })
-                        }
-                    }
-                }
-            }
-            for (var i = 0; i < deteleFileRoute.length; i++) {
-                fs.unlinkSync(deteleFileRoute[i], (err) => {
-                    if (err) {
-                        console.log(err);
-                    }
-                    return;
-                });
-            }
-        }
-        res.json({
-            msg: "success"
-        });
-    });
-    } catch (error) {
-        res.send(error.message);
-    }
-});
-
-// 회원정보수정
-router.patch('/test/:uid', upload.fields([{ name: 'userImg' }, { name: 'hosImg' }, { name: 'infoImg' }]), async (req, res) => {
-    // try {
-    var {deteleFileRoute} = req.body; //바꾼 파일(바뀌기 전 경로)
-    const uid = req.params.uid;
-    // console.log("===11111==" + req.body)
-    // console.log(req.files[0])
-    // console.log("===22222==" + req.files.userImg[0].path)
-    var obj = req.files;
-    // var aa = 'userImg'
-    // console.log("aaa ====" + aa)
-    // console.log(obj[aa][0].size)
-    // console.log(obj.length)
-    // console.log(Object.keys(arr).length)
-    // for(value in arr) {
-    //     var i = value;
-        
-    //     console.log("i ======= " + i)
-    //     console.log(obj[i][0].size)
-    //     console.log(arr.length)
-        
-    // }
+        if (req.files != null) {
+            var obj = req.files;
             for (value in obj) {
-                var i = value;
+                async function test() {
+                    var i = value;
                     if (obj[i][0]['size'] > 1000000) {
-                        console.log(i)
-                        // console.log(obj[i][0]['size'])
-                        // console.log("path ==============" + obj[i][0]['path'])
                         sharp(obj[i][0]['path']).resize({
-                                width: 2000
-                            }).withMetadata() //이미지 방향 유지
+                            width: 2000
+                        }).withMetadata() //이미지 방향 유지
                             .toBuffer((err, buffer) => {
                                 if (err) {
                                     throw err;
                                 }
-                                fs.writeFile(obj[i][0]['path'], buffer, function(err) {
-                                    console.log("삭제함 +++++++++ " + i)
-                                    console.log("삭제한 path ==============" + obj[i][0]['path'])
+                                fs.writeFile(obj[i][0]['path'], buffer, (err) => {
                                     if (err) {
                                         throw err
                                     }
                                 });
                             });
                     }
-            }
-        
-    
-    // //(최초의 경우)파일이 있으면 경로 업데이트하기
-    // if (req.files['userImg'] != null && req.files['userImg'] != undefined) {
-    //     const paths = req.files['userImg'].map(data => data.path);
-    //     // console.log(paths[0])
-    //     await models.user.update({ userImg: paths[0] }, { where: { uid: uid } })
-    // }
-    // if (req.files['hosImg'] != null && req.files['hosImg'] != undefined) {
-    //     const paths = req.files['hosImg'].map(data => data.path);
-    //     await models.user.update({ hosImg: paths[0] }, { where: { uid: uid } })
-    // }
-    // if (req.files['infoImg'] != null && req.files['infoImg'] != undefined) {
-    //     const paths = req.files['infoImg'].map(data => data.path);
-    //     await models.user.update({ infoImg: paths[0] }, { where: { uid: uid } })
-    // }
 
-    // const param = [req.body.userName, req.body.userPosition, req.body.userType,
-    //     req.body.userAdres1, req.body.userAdres2, req.body.userAdres3,
-    //     req.body.hosName, req.body.userUrl, req.body.userEmail, req.body.hosPost,
-    //     req.body.userPhone1, req.body.userPhone2, req.body.userPhone3,
-    //     req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3, req.params.uid
-    // ];
-    // const sql = "update user set userName = ?, userPosition = ?, userType = ?,\
-    //                              userAdres1 = ?, userAdres2 = ?, userAdres3 = ?,\
-    //                              hosName = ?, userUrl = ?, userEmail = ?, hosPost = ?,\
-    //                              userPhone1 = ?, userPhone2 = ?, userPhone3 = ?,\
-    //                              hosPhone1 = ?, hosPhone2 = ?, hosPhone3 = ?\
-    //               where uid = ?";
-    // connection.query(sql, param, async (err) => {
-    //     if (err) {
-    //         console.error(err);
-    //     }
-    //     //바뀐 이미지 있는경우
-    //     if (deteleFileRoute != null) {
-    //         if (!Array.isArray(deteleFileRoute)) {
-    //             deteleFileRoute = [deteleFileRoute]
-    //         }
-    //         console.log(deteleFileRoute);
-    //         var fileRoutes = await models.user.findOne({
-    //             where: { uid: uid },
-    //             attributes: ['userImg', 'hosImg', 'infoImg'],
-    //             raw: true
-    //         })
-    //         var arr = [];
-    //         arr.push(fileRoutes['userImg'], fileRoutes['hosImg'], fileRoutes['infoImg'])
-    
-    //         for (var i = 0; i < arr.length; i++) {
-    //             for (var j = 0; j < deteleFileRoute.length; j++) {
-    //                 if (arr[i] == deteleFileRoute[j]) { //바뀐 파일 기존경로와 현재 파일 경로가 같으면 null로 하고 나머지는 업데이트시키기
-    //                     arr[i] = null;
-    //                     if (i == 0) {
-    //                         await models.user.update({ userImg: arr[0] }, { where: { uid: uid } })
-    //                     } if (i == 1) {
-    //                         await models.user.update({ hosImg: arr[1] }, { where: { uid: uid } })
-    //                     } if (i == 2) {
-    //                         await models.user.update({ infoImg: arr[2] }, { where: { uid: uid } })
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //         for (var i = 0; i < deteleFileRoute.length; i++) {
-    //             fs.unlinkSync(deteleFileRoute[i], (err) => {
-    //                 if (err) {
-    //                     console.log(err);
-    //                 }
-    //                 return;
-    //             });
-    //         }
-    //     }
-    //     res.json({
-    //         msg: "success"
-    //     });
-    // });
-    // } catch (error) {
-    //     res.send(error.message);
-    // }
+                }
+                await test();
+            }
+        }
+
+        //(최초의 경우)파일이 있으면 경로 업데이트하기
+        if (req.files['userImg'] != null && req.files['userImg'] != undefined) {
+            const paths = req.files['userImg'].map(data => data.path);
+            await models.user.update({ userImg: paths[0] }, { where: { uid: uid } })
+        }
+        if (req.files['hosImg'] != null && req.files['hosImg'] != undefined) {
+            const paths = req.files['hosImg'].map(data => data.path);
+            await models.user.update({ hosImg: paths[0] }, { where: { uid: uid } })
+        }
+        if (req.files['infoImg'] != null && req.files['infoImg'] != undefined) {
+            const paths = req.files['infoImg'].map(data => data.path);
+            await models.user.update({ infoImg: paths[0] }, { where: { uid: uid } })
+        }
+
+        const param = [req.body.userName, req.body.userPosition, req.body.userType,
+        req.body.userAdres1, req.body.userAdres2, req.body.userAdres3,
+        req.body.hosName, req.body.userUrl, req.body.userEmail, req.body.hosPost,
+        req.body.userPhone1, req.body.userPhone2, req.body.userPhone3,
+        req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3, req.params.uid
+        ];
+        const sql = "update user set userName = ?, userPosition = ?, userType = ?,\
+                                 userAdres1 = ?, userAdres2 = ?, userAdres3 = ?,\
+                                 hosName = ?, userUrl = ?, userEmail = ?, hosPost = ?,\
+                                 userPhone1 = ?, userPhone2 = ?, userPhone3 = ?,\
+                                 hosPhone1 = ?, hosPhone2 = ?, hosPhone3 = ?\
+                  where uid = ?";
+        connection.query(sql, param, async (err) => {
+            if (err) {
+                console.error(err);
+            }
+            //바뀐 이미지 있는경우
+            if (deleteFileRoute != '') {
+                // if (!Array.isArray(deleteFileRoute)) {
+                //     deleteFileRoute = [deleteFileRoute]
+                // }
+                var deleteFilerouteArr = deleteFileRoute.split(',');
+                var fileRoutes = await models.user.findOne({
+                    where: { uid: uid },
+                    attributes: ['userImg', 'hosImg', 'infoImg'],
+                    raw: true
+                })
+                var arr = [];
+                arr.push(fileRoutes['userImg'], fileRoutes['hosImg'], fileRoutes['infoImg'])
+                for (var i = 0; i < arr.length; i++) {
+                    for (var j = 0; j < deleteFilerouteArr.length; j++) {
+                        if (arr[i] == deleteFilerouteArr[j]) { //바뀐 파일 기존경로와 현재 파일 경로가 같으면 null로 하고 나머지는 업데이트시키기
+                            arr[i] = null;
+                            if (i == 0) {
+                                await models.user.update({ userImg: arr[0] }, { where: { uid: uid } })
+                            } if (i == 1) {
+                                await models.user.update({ hosImg: arr[1] }, { where: { uid: uid } })
+                            } if (i == 2) {
+                                await models.user.update({ infoImg: arr[2] }, { where: { uid: uid } })
+                            }
+                        }
+                    }
+                }
+
+                for (var i = 0; i < deleteFilerouteArr.length; i++) {
+                    fs.unlinkSync(deleteFilerouteArr[i], (err) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        return;
+                    });
+                }
+            }
+            res.json({
+                msg: "success"
+            });
+        });
+    } catch (error) {
+        res.send(error.message);
+    }
 });
 
 //푸쉬알람 동의여부
