@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const fs = require('fs');
 const multer = require("multer");
+const sharp = require('sharp');
 const path = require('path');
 const models = require('../../models');
 //엑셀파일 생성
@@ -14,13 +15,13 @@ var upload = multer({ //multer안에 storage정보
   storage: multer.diskStorage({
     destination: (req, file, callback) => {
       fs.mkdir('uploads/userProfile', function (err) {
-          if (err && err.code != 'EEXIST') {
-              console.log("already exist")
-          } else {
-              callback(null, 'uploads/userProfile');
-          }
+        if (err && err.code != 'EEXIST') {
+          console.log("already exist")
+        } else {
+          callback(null, 'uploads/userProfile');
+        }
       })
-  },
+    },
     //파일이름 설정
     filename: (req, file, done) => {
       const ext = path.extname(file.originalname);
@@ -83,12 +84,12 @@ router.get('/page', async (req, res) => {
         results: results,
         page: page, //현재 페이지
         length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
-        page_num: page_num, 
-        countPage: countPage, 
-        startPage: startPage, 
-        endPage: endPage, 
+        page_num: page_num,
+        countPage: countPage,
+        startPage: startPage,
+        endPage: endPage,
         pass: true,
-        last: last, 
+        last: last,
         keepSearch: keepSearch
       });
       // console.log(last)
@@ -142,63 +143,59 @@ router.get('/userInsertForm', (req, res) => {
 });
 
 //사용자 등록
-router.post('/userInsert', upload.single('file'), async (req, res) => {
+router.post('/userInsert', upload.fields([{ name: 'userImg' }, { name: 'hosImg' }, { name: 'infoImg' }]), async (req, res) => {
   const {
-    file,
-    userName,
-    hosName,
-    hosPost,
-    userAdres1,
-    userAdres2,
-    userAdres3,
-    hosPhone1,
-    hosPhone2,
-    hosPhone3,
-    userPhone1,
-    userPhone2,
-    userPhone3,
-    userType,
-    userPosition,
-    pushYn
+    userName, hosName, hosPost, userAdres1, userAdres2, userAdres3, hosPhone1, hosPhone2, hosPhone3, userPhone1, userPhone2, userPhone3, userType, userPosition, pushYn
   } = req.body;
+  if (req.files != null) {
+    var obj = req.files;
+    for (value in obj) {
+      async function test() {
+        var i = value;
+        if (obj[i][0]['size'] > 1000000) {
+          sharp(obj[i][0]['path']).resize({
+            width: 2000
+          }).withMetadata() //이미지 방향 유지
+            .toBuffer((err, buffer) => {
+              if (err) {
+                throw err;
+              }
+              fs.writeFile(obj[i][0]['path'], buffer, (err) => {
+                if (err) {
+                  throw err
+                }
+              });
+            });
+        }
 
-  if (req.file != null) {
-    const userImg = req.file.path;
+      }
+      await test();
+    }
+
+    let userImg;
+    let hosImg;
+    let infoImg;
+    // for (value in obj) {
+    //   if(value == 'userImg') {
+    //     userImg = req.files.userImg[0].path
+    //   }
+
+    // }
+    if (req.files.userImg != null) {
+      userImg = req.files.userImg[0].path;
+    }
+    if (req.files.hosImg != null) {
+      hosImg = req.files.hosImg[0].path;
+    }
+    if (req.files.infoImg != null) {
+      infoImg = req.files.infoImg[0].path;
+    }
     await models.user.create({
-      userImg,
-      userName,
-      hosName,
-      hosPost,
-      userAdres1,
-      userAdres2,
-      userAdres3,
-      hosPhone1,
-      hosPhone2,
-      hosPhone3,
-      userPhone1,
-      userPhone2,
-      userPhone3,
-      userType,
-      userPosition,
-      pushYn
+      userName, hosName, hosPost, userAdres1, userAdres2, userAdres3, hosPhone1, hosPhone2, hosPhone3, userPhone1, userPhone2, userPhone3, userType, userPosition, pushYn, userImg, hosImg, infoImg
     });
   } else {
     await models.user.create({
-      userName,
-      hosName,
-      hosPost,
-      userAdres1,
-      userAdres2,
-      userAdres3,
-      hosPhone1,
-      hosPhone2,
-      hosPhone3,
-      userPhone1,
-      userPhone2,
-      userPhone3,
-      userType,
-      userPosition,
-      pushYn
+      userName, hosName, hosPost, userAdres1, userAdres2, userAdres3, hosPhone1, hosPhone2, hosPhone3, userPhone1, userPhone2, userPhone3, userType, userPosition, pushYn
     });
   }
   res.send('<script>alert("회원 등록이 완료되었습니다."); location.href="/admin/m_user/page?page=1";</script>');
@@ -209,41 +206,138 @@ router.post('/userUdtForm', async (req, res) => {
   let route = req.app.get('views') + '/m_user/orgm_udtForm';
   res.render(route, {
     result: req.body,
-    userImg : req.body.userImg,
+    userImg: req.body.userImg,
+    hosImg: req.body.hosImg,
+    infoImg: req.body.infoImg,
     page: req.body.page
   });
 });
 
+// //사용자 정보 수정
+// router.post('/userUpdate', upload.fields([{ name: 'userImg' }, { name: 'hosImg' }, { name: 'infoImg' }]), async (req, res) => {
+//   var path = "";
+//   var param = "";
+//   if (req.file != null) {
+//     path = req.file.path;
+//     param = [path, req.body.userName, req.body.hosName,
+//       req.body.hosPost, req.body.userAdres1, req.body.userAdres2, req.body.userAdres3,
+//       req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3,
+//       req.body.userPhone1, req.body.userPhone2, req.body.userPhone3,
+//       req.body.userType, req.body.userPosition, req.body.uid
+//     ];
+//   } else {
+//     param = [req.body.userImg, req.body.userName, req.body.hosName,
+//       req.body.hosPost, req.body.userAdres1, req.body.userAdres2, req.body.userAdres3,
+//       req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3,
+//       req.body.userPhone1, req.body.userPhone2, req.body.userPhone3,
+//       req.body.userType, req.body.userPosition, req.body.uid
+//     ];
+//   }
+//   const sql = "update user set userImg = ?, userName = ?, hosName = ?, hosPost = ?, userAdres1 = ?, userAdres2 = ?,\
+//                                userAdres3 = ?, hosPhone1 = ?, hosPhone2 = ?, hosPhone3 = ?,\
+//                                userPhone1 = ?, userPhone2 = ?, userPhone3 = ?, userType = ? , userPosition = ?\
+//                 where uid = ?";
+//   connection.query(sql, param, (err) => {
+//     if (err) {
+//       console.error(err);
+//     }
+//     res.redirect('selectOne?uid=' + req.body.uid + '&page=' + req.body.page);
+//   });
+// });
+
 //사용자 정보 수정
-router.post('/userUpdate', upload.single('file'), async (req, res) => {
-  var path = "";
-  var param = "";
-  if (req.file != null) {
-    path = req.file.path;
-    param = [path, req.body.userName, req.body.hosName,
-      req.body.hosPost, req.body.userAdres1, req.body.userAdres2, req.body.userAdres3,
-      req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3,
-      req.body.userPhone1, req.body.userPhone2, req.body.userPhone3,
-      req.body.userType, req.body.userPosition, req.body.uid
-    ];
-  } else {
-    param = [req.body.userImg, req.body.userName, req.body.hosName,
-      req.body.hosPost, req.body.userAdres1, req.body.userAdres2, req.body.userAdres3,
-      req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3,
-      req.body.userPhone1, req.body.userPhone2, req.body.userPhone3,
-      req.body.userType, req.body.userPosition, req.body.uid
-    ];
-  }
-  const sql = "update user set userImg = ?, userName = ?, hosName = ?, hosPost = ?, userAdres1 = ?, userAdres2 = ?, \
-                               userAdres3 = ?, hosPhone1 = ?, hosPhone2 = ?, hosPhone3 = ?,\
-                               userPhone1 = ?, userPhone2 = ?, userPhone3 = ?, userType = ? , userPosition = ?\
-                where uid = ?";
-  connection.query(sql, param, (err) => {
-    if (err) {
-      console.error(err);
+router.post('/userUpdate', upload.fields([{ name: 'userImg' }, { name: 'hosImg' }, { name: 'infoImg' }]), async (req, res) => {
+  var { deleteFileId } = req.body;
+  var obj = req.files;
+  for (value in obj) {
+    async function test() {
+      var i = value;
+      if (obj[i][0]['size'] > 1000000) {
+        sharp(obj[i][0]['path']).resize({
+          width: 2000
+        }).withMetadata() //이미지 방향 유지
+          .toBuffer((err, buffer) => {
+            if (err) {
+              throw err;
+            }
+            fs.writeFile(obj[i][0]['path'], buffer, (err) => {
+              if (err) {
+                throw err
+              }
+            });
+          });
+      }
+
     }
-    res.redirect('selectOne?uid=' + req.body.uid + '&page=' + req.body.page);
-  });
+    await test();
+  }
+  var { userName, hosName, hosPost, userAdres1, userAdres2, userAdres3, hosPhone1, hosPhone2,
+    hosPhone3, userPhone1, userPhone2, userPhone3, userType, userPosition, uid } = req.body;
+
+  if (req.files['userImg'] != null) {
+    const paths = req.files['userImg'].map(data => data.path);
+    await models.user.update({ userImg: paths[0] }, { where: { uid: uid } })
+  }
+  if (req.files['hosImg'] != null) {
+    const paths = req.files['hosImg'].map(data => data.path);
+    await models.user.update({ hosImg: paths[0] }, { where: { uid: uid } })
+  }
+  if (req.files['infoImg'] != null) {
+    const paths = req.files['infoImg'].map(data => data.path);
+    await models.user.update({ infoImg: paths[0] }, { where: { uid: uid } })
+  }
+
+  await models.user.update({
+    userName: userName, hosName: hosName, hosPost: hosPost, userAdres1: userAdres1, userAdres2: userAdres2,
+    userAdres3: userAdres3, hosPhone1: hosPhone1, hosPhone2: hosPhone2,
+    hosPhone3: hosPhone3, userPhone1: userPhone1,
+    userPhone2: userPhone2, userPhone3: userPhone3, userType: userType, userPosition: userPosition
+  }, {
+    where: { uid: uid }
+  })
+
+  if (deleteFileId != null) {
+    if (!Array.isArray(deleteFileId)) {
+      deleteFileId = [deleteFileId]
+    }
+
+    var fileRoutes = await models.user.findOne({
+      where: { uid: uid },
+      attributes: ['userImg', 'hosImg', 'infoImg'],
+      raw: true
+    })
+
+    var arr = [];
+    arr.push(fileRoutes['userImg'], fileRoutes['hosImg'], fileRoutes['infoImg'])
+
+    for (var i = 0; i < arr.length; i++) {
+      // console.log("arr ============== " + arr)
+      for (var j = 0; j < deleteFileId.length; j++) {
+        // console.log("deleteFileId ================ " + deleteFileId)
+        if (arr[i] == deleteFileId[j]) {
+          arr[i] = null;
+          // console.log("삭제될 번호는???? == " + i)
+          if (i == 0) {
+            await models.user.update({ userImg: arr[0] }, { where: { uid: uid } })
+          } if (i == 1) {
+            await models.user.update({ hosImg: arr[1] }, { where: { uid: uid } })
+          } if (i == 2) {
+            await models.user.update({ infoImg: arr[2] }, { where: { uid: uid } })
+          }
+        }
+      }
+    }
+
+    for (var i = 0; i < deleteFileId.length; i++) {
+      fs.unlinkSync(deleteFileId[i], (err) => {
+        if (err) {
+          console.log(err);
+        }
+        return;
+      });
+    }
+  }
+  res.redirect('selectOne?uid=' + req.body.uid + '&page=' + req.body.page);
 });
 
 //사용자 여러명 삭제
@@ -291,8 +385,8 @@ router.get('/oneUserDelete', (req, res) => {
     if (err) {
       console.log(err)
     }
-    for(var i = 0; i < img.length ; i++) {
-      if(img[i] != '') {
+    for (var i = 0; i < img.length; i++) {
+      if (img[i] != '') {
         fs.unlinkSync(img[i], (err) => {
           if (err) {
             console.log(err);
@@ -345,47 +439,47 @@ router.get('/userExcel', async (req, res) => {
   var conf = {};
 
   conf.cols = [{
-      caption: '번호',
-      type: 'number',
-      width: 8
-    }, {
-      caption: '회원명',
-      captionStyleIndex: 1,
-      type: 'string',
-      width: 50
-    }, {
-      caption: '병원명',
-      captionStyleIndex: 1,
-      type: 'string',
-      width: 30
-    }, {
-      caption: '우편번호',
-      captionStyleIndex: 1,
-      type: 'string',
-      width: 8
-    },
-    {
-      caption: '병원주소',
-      captionStyleIndex: 1,
-      type: 'string',
-      width: 30
-    },
-    {
-      caption: '병원번호',
-      captionStyleIndex: 1,
-      type: 'string',
-      width: 15
-    }, {
-      caption: '형태',
-      captionStyleIndex: 1,
-      type: 'string',
-      width: 15
-    }, {
-      caption: '역할',
-      captionStyleIndex: 1,
-      type: 'string',
-      width: 12
-    }
+    caption: '번호',
+    type: 'number',
+    width: 8
+  }, {
+    caption: '회원명',
+    captionStyleIndex: 1,
+    type: 'string',
+    width: 50
+  }, {
+    caption: '병원명',
+    captionStyleIndex: 1,
+    type: 'string',
+    width: 30
+  }, {
+    caption: '우편번호',
+    captionStyleIndex: 1,
+    type: 'string',
+    width: 8
+  },
+  {
+    caption: '병원주소',
+    captionStyleIndex: 1,
+    type: 'string',
+    width: 30
+  },
+  {
+    caption: '병원번호',
+    captionStyleIndex: 1,
+    type: 'string',
+    width: 15
+  }, {
+    caption: '형태',
+    captionStyleIndex: 1,
+    type: 'string',
+    width: 15
+  }, {
+    caption: '역할',
+    captionStyleIndex: 1,
+    type: 'string',
+    width: 12
+  }
   ];
 
   var sql = "select * from user where 1=1";
