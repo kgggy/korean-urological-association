@@ -28,17 +28,6 @@
                            </div>
                         </div>
                         <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">프로필사진</label>
-                           <div class="col-md-9">
-                              <input type="hidden" name="userImg" value="<%=result[0].userImg%>">
-                              <% if(result.length > 0 && result[0].userImg != null && result[0].userImg != '') {%>
-                              <img src="../../../<%= result[0].userImg %>" alt="사진" width="40%" />
-                              <% }else{ %>
-                              등록된 프로필 사진이 없습니다.
-                              <% } %>
-                           </div>
-                        </div>
-                        <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">회원명</label>
                            <div class="col-md-9">
                               <input class="form-control" id="userName" type="text" name="userName" readonly
@@ -112,7 +101,41 @@
                               <input class="form-control" id="pushYn" type="text" name="pushYn" readonly value="비동의">
                               <%}%>   
                         </div>
-                     <!-- <div class="form-group row">
+                     </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">프로필사진</label>
+                           <div class="col-md-9">
+                              <input type="hidden" name="userImg" value="<%=result[0].userImg%>">
+                              <% if(result.length > 0 && result[0].userImg != null && result[0].userImg != '') {%>
+                              <img src="../../../<%= result[0].userImg %>" alt="사진" width="40%" />
+                              <% }else{ %>
+                                 등록된 프로필 사진이 없습니다.
+                              <% } %>
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">병원사진</label>
+                           <div class="col-md-9">
+                              <input type="hidden" name="hosImg" value="<%=result[0].hosImg%>">
+                              <% if(result.length > 0 && result[0].hosImg != null && result[0].hosImg != '') {%>
+                              <img src="../../../<%= result[0].hosImg %>" alt="사진" width="40%" />
+                              <% }else{ %>
+                              등록된 병원 사진이 없습니다.
+                              <% } %>
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">명함사진</label>
+                           <div class="col-md-9">
+                              <input type="hidden" name="infoImg" value="<%=result[0].infoImg%>">
+                              <% if(result.length > 0 && result[0].infoImg != null && result[0].infoImg != '') {%>
+                              <img src="../../../<%= result[0].infoImg %>" alt="사진" width="40%" />
+                              <% }else{ %>
+                              등록된 명함 사진이 없습니다.
+                              <% } %>
+                           </div>
+                        </div>
+                        <!-- <div class="form-group row">
                         <label class="col-md-2 col-form-label" for="text-input">이메일</label>
                         <div class="col-md-9">
                            <input class="form-control" id="userPosition" type="text" name="userPosition" readonly
@@ -148,15 +171,14 @@
                         </div>
                      </div>-->
 
-                     <!--option 버튼  -->
+                        <!--option 버튼  -->
                         <div class="option_button">
                            <div>
                               <button class="btn btn-block btn-outline-success" type="button"
                                  id="update_btn">수정</button>
                            </div>
                            <div>
-                              <button class="btn btn-block btn-outline-danger" type="button"
-                                 id="delete_btn">삭제</button>
+                              <button class="btn btn-block btn-outline-danger" type="button" id="delete_btn">삭제</button>
                            </div>
                            <div>
                               <button class="btn btn-block btn-outline-success" type="button"

@@ -33,20 +33,6 @@
                            </div>
                         </div>
                         <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">프로필사진</label>
-                           <div class="col-md-9">
-                              <% if(userImg != null && userImg != '') {%>
-                              <img src="../../../<%= userImg %>" alt="사진" width="40%" />
-                              <button id="searchAction" class="btn btn-block btn-outline-danger" type="button"
-                                 onclick="javascript:file_del();">삭제</button>
-                              <input type="hidden" id="userImg" name="userImg" value="<%=userImg%>">
-                              </td>
-                              <% }else{ %>
-                              <input type="file" id="file" name="file" />
-                              <% } %>
-                           </div>
-                        </div>
-                        <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">회원명</label>
                            <div class="col-md-9">
                               <input class="form-control" id="userName" type="text" name="userName"
@@ -133,18 +119,70 @@
                              </select>
                            </div>
                         </div> 
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">프로필사진</label>
+                           <div class="col-md-9">
+                              <% if(userImg != null && userImg != '') {%> <img src="../../../<%= userImg %>" alt="사진"
+                                    width="40%" />
+                                 <!-- <button id="searchAction" class="btn btn-block btn-outline-danger" type="button"
+                                 onclick="javascript:file_del();">삭제</button> -->
+                                 <button name="searchAction" class="btn btn-block btn-outline-danger fileDelete"
+                                    type="button" data-route="<%=userImg%>" data-img="userImg"
+                                    data-inputReset="userImg">삭제</button>
+                                 </td>
+                                 <% }else{ %>
+                                 <input type="file" id="file" name="userImg" />
+                                 <% } %>
+                                 <input type="hidden" id="userImg" name="userImg" value="<%=userImg%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">병원사진</label>
+                           <div class="col-md-9">
+                              <% if(hosImg != null && hosImg != '') {%>
+                              <img src="../../../<%= hosImg %>" alt="사진" width="40%" />
+                              <!-- <button id="searchAction" class="btn btn-block btn-outline-danger" type="button"
+                                 onclick="javascript:file_del();">삭제</button> -->
+                                 <button name="searchAction" class="btn btn-block btn-outline-danger fileDelete"
+                                 type="button" data-route="<%=hosImg%>" data-img="hosImg"
+                                 data-inputReset="hosImg">삭제</button>
+                              </td>
+                              <% }else{ %>
+                              <input type="file" id="file" name="hosImg" />
+                              <% } %>
+                              <input type="hidden" id="hosImg" name="hosImg" value="<%=hosImg%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">명함사진</label>
+                           <div class="col-md-9">
+                              <% if(infoImg != null && infoImg != '') {%>
+                              <img src="../../../<%= infoImg %>" alt="사진" width="40%" />
+                              <!-- <button id="searchAction" class="btn btn-block btn-outline-danger" type="button"
+                                 onclick="javascript:file_del();">삭제</button> -->
+                              <button name="searchAction" class="btn btn-block btn-outline-danger fileDelete"
+                                 type="button" data-route="<%=infoImg%>" data-img="infoImg"
+                                 data-inputReset="infoImg">삭제</button>
+                              </td>
+                              <% }else{ %>
+                              <input type="file" id="file" name="infoImg" />
+                              <% } %>
+                              <input type="hidden" id="infoImg" name="infoImg" value="<%=infoImg%>">
+                           </div>
+                        </div>
                      </form>
                      <!--option 버튼  -->
                      <div class="option_button">
                         <div>
-                           <button class="btn btn-block btn-outline-success" type="button" id="update_btn" onclick="userUpdate()">수정</button>
+                           <button class="btn btn-block btn-outline-success" type="button" id="update_btn"
+                              onclick="userUpdate()">수정</button>
                         </div>
                         <div>
                            <button class="btn btn-block btn-outline-danger" type="button"
                               onclick="location.href='/admin/m_user/selectOne?uid=<%=result.uid%>&page=<%=page%>'">
-                                    취소</button>
-                           </div>
+                              취소</button>
                         </div>
+                     </div>
                   </div>
                </div>
             </div>
@@ -198,4 +236,21 @@
          $("#userForm").submit();
       }
    }
+
+   $('button[name="searchAction"]').on('click', function (e) {
+      parent = this.parentNode;
+      parent.innerHTML = "";
+      const input = document.createElement('input');
+      parent.append(input);
+      input.setAttribute('type', 'hidden');
+      input.setAttribute('name', 'deleteFileId');
+      input.value = this.dataset['route'];
+      const inputReset = document.createElement('input');
+      const resetName = this.dataset['inputreset']
+      inputReset.setAttribute('type', 'file');
+      inputReset.setAttribute('id', 'file');
+      inputReset.setAttribute('name', resetName);
+      inputReset.className += 'certiImg'
+      parent.append(inputReset);
+   })
 </script>
