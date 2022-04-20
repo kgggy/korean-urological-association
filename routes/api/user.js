@@ -57,7 +57,7 @@ router.get('/search', async (req, res) => {
 
 //푸시토큰, os종류 업데이트
 router.post('/infoUpdate', async (req, res) => {
-  const sql = "update user set oneSignalId = ? and userSocialDiv = ? where uid = ?";
+  const sql = "update user set oneSignalId = ?, userSocialDiv = ? where uid = ?";
   const param = [req.body.oneSignalId, req.body.userSocialDiv, req.body.uid];
   try {
     connection.query(sql, param, function (err, results) {

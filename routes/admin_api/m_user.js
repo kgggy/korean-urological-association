@@ -249,7 +249,7 @@ router.post('/userUpdate', upload.single('file'), async (req, res) => {
 //사용자 여러명 삭제
 router.get('/userDelete', (req, res) => {
   const param = req.query.uid;
-  const route = req.query.userImg;
+  const route = req.query.userImg + ',' + req.query.hosImg + ',' + req.query.infoImg;
   const str = param.split(',');
   const img = route.split(',');
   // DB 글삭제
