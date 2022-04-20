@@ -15,13 +15,13 @@ var upload = multer({ //multer안에 storage정보
   storage: multer.diskStorage({
     destination: (req, file, callback) => {
       fs.mkdir('uploads/userProfile', function (err) {
-          if (err && err.code != 'EEXIST') {
-              console.log("already exist")
-          } else {
-              callback(null, 'uploads/userProfile');
-          }
+        if (err && err.code != 'EEXIST') {
+          console.log("already exist")
+        } else {
+          callback(null, 'uploads/userProfile');
+        }
       })
-  },
+    },
     //파일이름 설정
     filename: (req, file, done) => {
       const ext = path.extname(file.originalname);
@@ -46,7 +46,7 @@ router.get('/page', async (req, res) => {
   var keepSearch = "&searchType1=" + searchType1 +
     "&searchType2=" + searchType2 + "&searchType3=" + searchType3 + "&searchText=" + searchText;
 
-  var sql = "select * from user where 1=1";
+  var sql = "select * from user where uid <= 10000";
 
   if (searchType1 != '') {
     sql += " and userAdres2 = '" + searchType1 + "' \n";
@@ -84,12 +84,12 @@ router.get('/page', async (req, res) => {
         results: results,
         page: page, //현재 페이지
         length: results.length - 1, //데이터 전체길이(0부터이므로 -1해줌)
-        page_num: page_num, 
-        countPage: countPage, 
-        startPage: startPage, 
-        endPage: endPage, 
+        page_num: page_num,
+        countPage: countPage,
+        startPage: startPage,
+        endPage: endPage,
         pass: true,
-        last: last, 
+        last: last,
         keepSearch: keepSearch
       });
       // console.log(last)
@@ -154,8 +154,8 @@ router.post('/userInsert', upload.fields([{ name: 'userImg' }, { name: 'hosImg' 
         var i = value;
         if (obj[i][0]['size'] > 1000000) {
           sharp(obj[i][0]['path']).resize({
-              width: 2000
-            }).withMetadata() //이미지 방향 유지
+            width: 2000
+          }).withMetadata() //이미지 방향 유지
             .toBuffer((err, buffer) => {
               if (err) {
                 throw err;
@@ -171,29 +171,31 @@ router.post('/userInsert', upload.fields([{ name: 'userImg' }, { name: 'hosImg' 
       }
       await test();
     }
-  
-  let userImg;
-  let hosImg;
-  let infoImg;
-  // for (value in obj) {
-  //   if(value == 'userImg') {
-  //     userImg = req.files.userImg[0].path
-  //   }
 
-  // }
-  if (req.files.userImg != null) {
-    userImg = req.files.userImg[0].path;
-  } 
-  if (req.files.hosImg != null) {
-    hosImg = req.files.hosImg[0].path;
-  } 
-  if(req.files.infoImg != null) {
-    infoImg = req.files.infoImg[0].path;
-  }
-    await models.user.create({userName,hosName,hosPost,userAdres1,userAdres2,userAdres3,hosPhone1,hosPhone2,hosPhone3,userPhone1,userPhone2,userPhone3,userType,userPosition,pushYn,userImg,hosImg,infoImg
+    let userImg;
+    let hosImg;
+    let infoImg;
+    // for (value in obj) {
+    //   if(value == 'userImg') {
+    //     userImg = req.files.userImg[0].path
+    //   }
+
+    // }
+    if (req.files.userImg != null) {
+      userImg = req.files.userImg[0].path;
+    }
+    if (req.files.hosImg != null) {
+      hosImg = req.files.hosImg[0].path;
+    }
+    if (req.files.infoImg != null) {
+      infoImg = req.files.infoImg[0].path;
+    }
+    await models.user.create({
+      userName, hosName, hosPost, userAdres1, userAdres2, userAdres3, hosPhone1, hosPhone2, hosPhone3, userPhone1, userPhone2, userPhone3, userType, userPosition, pushYn, userImg, hosImg, infoImg
     });
   } else {
-    await models.user.create({userName,hosName,hosPost,userAdres1,userAdres2,userAdres3,hosPhone1,hosPhone2,hosPhone3,userPhone1,userPhone2,userPhone3,userType,userPosition,pushYn
+    await models.user.create({
+      userName, hosName, hosPost, userAdres1, userAdres2, userAdres3, hosPhone1, hosPhone2, hosPhone3, userPhone1, userPhone2, userPhone3, userType, userPosition, pushYn
     });
   }
   res.send('<script>alert("회원 등록이 완료되었습니다."); location.href="/admin/m_user/page?page=1";</script>');
@@ -204,8 +206,8 @@ router.post('/userUdtForm', async (req, res) => {
   let route = req.app.get('views') + '/m_user/orgm_udtForm';
   res.render(route, {
     result: req.body,
-    userImg : req.body.userImg,
-    hosImg : req.body.hosImg,
+    userImg: req.body.userImg,
+    hosImg: req.body.hosImg,
     infoImg: req.body.infoImg,
     page: req.body.page
   });
@@ -247,95 +249,95 @@ router.post('/userUdtForm', async (req, res) => {
 router.post('/userUpdate', upload.fields([{ name: 'userImg' }, { name: 'hosImg' }, { name: 'infoImg' }]), async (req, res) => {
   var { deleteFileId } = req.body;
   var obj = req.files;
-    for (value in obj) {
-        async function test() {
-            var i = value;
-            if (obj[i][0]['size'] > 1000000) {
-                sharp(obj[i][0]['path']).resize({
-                        width: 2000
-                    }).withMetadata() //이미지 방향 유지
-                    .toBuffer((err, buffer) => {
-                        if (err) {
-                            throw err;
-                        }
-                        fs.writeFile(obj[i][0]['path'], buffer, (err) => {
-                            if (err) {
-                                throw err
-                            }
-                        });
-                    });
+  for (value in obj) {
+    async function test() {
+      var i = value;
+      if (obj[i][0]['size'] > 1000000) {
+        sharp(obj[i][0]['path']).resize({
+          width: 2000
+        }).withMetadata() //이미지 방향 유지
+          .toBuffer((err, buffer) => {
+            if (err) {
+              throw err;
             }
+            fs.writeFile(obj[i][0]['path'], buffer, (err) => {
+              if (err) {
+                throw err
+              }
+            });
+          });
+      }
 
-        }
-        await test();
     }
-    var { userName, hosName, hosPost, userAdres1, userAdres2, userAdres3, hosPhone1, hosPhone2, 
-          hosPhone3, userPhone1, userPhone2, userPhone3, userType , userPosition, uid } = req.body;
+    await test();
+  }
+  var { userName, hosName, hosPost, userAdres1, userAdres2, userAdres3, hosPhone1, hosPhone2,
+    hosPhone3, userPhone1, userPhone2, userPhone3, userType, userPosition, uid } = req.body;
 
-    if (req.files['userImg'] != null) {
-        const paths = req.files['userImg'].map(data => data.path);
-        await models.user.update({ userImg: paths[0] }, { where: { uid: uid } })
-    }
-    if (req.files['hosImg'] != null) {
-        const paths = req.files['hosImg'].map(data => data.path);
-        await models.user.update({ hosImg: paths[0] }, { where: { uid: uid} })
-    }
-    if (req.files['infoImg'] != null) {
-        const paths = req.files['infoImg'].map(data => data.path);
-        await models.user.update({ infoImg: paths[0] }, { where: { uid: uid } })
+  if (req.files['userImg'] != null) {
+    const paths = req.files['userImg'].map(data => data.path);
+    await models.user.update({ userImg: paths[0] }, { where: { uid: uid } })
+  }
+  if (req.files['hosImg'] != null) {
+    const paths = req.files['hosImg'].map(data => data.path);
+    await models.user.update({ hosImg: paths[0] }, { where: { uid: uid } })
+  }
+  if (req.files['infoImg'] != null) {
+    const paths = req.files['infoImg'].map(data => data.path);
+    await models.user.update({ infoImg: paths[0] }, { where: { uid: uid } })
+  }
+
+  await models.user.update({
+    userName: userName, hosName: hosName, hosPost: hosPost, userAdres1: userAdres1, userAdres2: userAdres2,
+    userAdres3: userAdres3, hosPhone1: hosPhone1, hosPhone2: hosPhone2,
+    hosPhone3: hosPhone3, userPhone1: userPhone1,
+    userPhone2: userPhone2, userPhone3: userPhone3, userType: userType, userPosition: userPosition
+  }, {
+    where: { uid: uid }
+  })
+
+  if (deleteFileId != null) {
+    if (!Array.isArray(deleteFileId)) {
+      deleteFileId = [deleteFileId]
     }
 
-    await models.user.update({
-        userName: userName, hosName: hosName, hosPost: hosPost, userAdres1: userAdres1, userAdres2: userAdres2,
-        userAdres3: userAdres3, hosPhone1: hosPhone1, hosPhone2: hosPhone2,
-        hosPhone3: hosPhone3, userPhone1: userPhone1,
-        userPhone2: userPhone2, userPhone3: userPhone3, userType: userType, userPosition: userPosition
-    }, {
-        where: { uid: uid }
+    var fileRoutes = await models.user.findOne({
+      where: { uid: uid },
+      attributes: ['userImg', 'hosImg', 'infoImg'],
+      raw: true
     })
 
-    if (deleteFileId != null) {
-        if (!Array.isArray(deleteFileId)) {
-            deleteFileId = [deleteFileId]
+    var arr = [];
+    arr.push(fileRoutes['userImg'], fileRoutes['hosImg'], fileRoutes['infoImg'])
+
+    for (var i = 0; i < arr.length; i++) {
+      // console.log("arr ============== " + arr)
+      for (var j = 0; j < deleteFileId.length; j++) {
+        // console.log("deleteFileId ================ " + deleteFileId)
+        if (arr[i] == deleteFileId[j]) {
+          arr[i] = null;
+          // console.log("삭제될 번호는???? == " + i)
+          if (i == 0) {
+            await models.user.update({ userImg: arr[0] }, { where: { uid: uid } })
+          } if (i == 1) {
+            await models.user.update({ hosImg: arr[1] }, { where: { uid: uid } })
+          } if (i == 2) {
+            await models.user.update({ infoImg: arr[2] }, { where: { uid: uid } })
+          }
         }
-
-        var fileRoutes = await models.user.findOne({
-            where: { uid: uid },
-            attributes: ['userImg', 'hosImg', 'infoImg'],
-            raw: true
-        })
-
-        var arr = [];
-        arr.push(fileRoutes['userImg'], fileRoutes['hosImg'], fileRoutes['infoImg'])
-
-        for (var i = 0; i < arr.length; i++) {
-            // console.log("arr ============== " + arr)
-            for (var j = 0; j < deleteFileId.length; j++) {
-                // console.log("deleteFileId ================ " + deleteFileId)
-                if (arr[i] == deleteFileId[j]) {
-                    arr[i] = null;
-                    // console.log("삭제될 번호는???? == " + i)
-                    if (i == 0) {
-                        await models.user.update({ userImg: arr[0] }, { where: { uid: uid } })
-                    } if (i == 1) {
-                        await models.user.update({ hosImg: arr[1] }, { where: { uid: uid } })
-                    } if (i == 2) {
-                        await models.user.update({ infoImg: arr[2] }, { where: { uid: uid } })
-                    }
-                }
-            }
-        }
-
-        for (var i = 0; i < deleteFileId.length; i++) {
-            fs.unlinkSync(deleteFileId[i], (err) => {
-                if (err) {
-                    console.log(err);
-                }
-                return;
-            });
-        }
+      }
     }
-    res.redirect('selectOne?uid=' + req.body.uid + '&page=' + req.body.page);
+
+    for (var i = 0; i < deleteFileId.length; i++) {
+      fs.unlinkSync(deleteFileId[i], (err) => {
+        if (err) {
+          console.log(err);
+        }
+        return;
+      });
+    }
+  }
+  res.redirect('selectOne?uid=' + req.body.uid + '&page=' + req.body.page);
 });
 
 //사용자 여러명 삭제
@@ -383,8 +385,8 @@ router.get('/oneUserDelete', (req, res) => {
     if (err) {
       console.log(err)
     }
-    for(var i = 0; i < img.length ; i++) {
-      if(img[i] != '') {
+    for (var i = 0; i < img.length; i++) {
+      if (img[i] != '') {
         fs.unlinkSync(img[i], (err) => {
           if (err) {
             console.log(err);
@@ -437,47 +439,47 @@ router.get('/userExcel', async (req, res) => {
   var conf = {};
 
   conf.cols = [{
-      caption: '번호',
-      type: 'number',
-      width: 8
-    }, {
-      caption: '회원명',
-      captionStyleIndex: 1,
-      type: 'string',
-      width: 50
-    }, {
-      caption: '병원명',
-      captionStyleIndex: 1,
-      type: 'string',
-      width: 30
-    }, {
-      caption: '우편번호',
-      captionStyleIndex: 1,
-      type: 'string',
-      width: 8
-    },
-    {
-      caption: '병원주소',
-      captionStyleIndex: 1,
-      type: 'string',
-      width: 30
-    },
-    {
-      caption: '병원번호',
-      captionStyleIndex: 1,
-      type: 'string',
-      width: 15
-    }, {
-      caption: '형태',
-      captionStyleIndex: 1,
-      type: 'string',
-      width: 15
-    }, {
-      caption: '역할',
-      captionStyleIndex: 1,
-      type: 'string',
-      width: 12
-    }
+    caption: '번호',
+    type: 'number',
+    width: 8
+  }, {
+    caption: '회원명',
+    captionStyleIndex: 1,
+    type: 'string',
+    width: 50
+  }, {
+    caption: '병원명',
+    captionStyleIndex: 1,
+    type: 'string',
+    width: 30
+  }, {
+    caption: '우편번호',
+    captionStyleIndex: 1,
+    type: 'string',
+    width: 8
+  },
+  {
+    caption: '병원주소',
+    captionStyleIndex: 1,
+    type: 'string',
+    width: 30
+  },
+  {
+    caption: '병원번호',
+    captionStyleIndex: 1,
+    type: 'string',
+    width: 15
+  }, {
+    caption: '형태',
+    captionStyleIndex: 1,
+    type: 'string',
+    width: 15
+  }, {
+    caption: '역할',
+    captionStyleIndex: 1,
+    type: 'string',
+    width: 12
+  }
   ];
 
   var sql = "select * from user where 1=1";
