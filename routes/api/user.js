@@ -6,7 +6,7 @@ var connection = require('../../config/db').conn;
 router.get('/all', async (req, res) => {
   try {
     let user;
-    connection.query('select * from user', (err, results, fields) => {
+    connection.query('select * from user where uid <= 10000', (err, results, fields) => {
       if (err) {
         console.log(err);
       }
@@ -25,7 +25,7 @@ router.get('/search', async (req, res) => {
   var userType = req.query.userType == undefined ? "" : req.query.userType;
   // var searchType4 = req.query.searchType4 == undefined ? "" : req.query.searchType4;
   var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
-  var sql = "select * from user where 1=1";
+  var sql = "select * from user where uid <= 10000";
   if (userPosition != '') {
     sql += " and userPosition = '" + userPosition + "' \n";
   }

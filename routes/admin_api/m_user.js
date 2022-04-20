@@ -46,7 +46,7 @@ router.get('/page', async (req, res) => {
   var keepSearch = "&searchType1=" + searchType1 +
     "&searchType2=" + searchType2 + "&searchType3=" + searchType3 + "&searchText=" + searchText;
 
-  var sql = "select * from user where 1=1";
+  var sql = "select * from user where uid <= 10000";
 
   if (searchType1 != '') {
     sql += " and userAdres2 = '" + searchType1 + "' \n";
