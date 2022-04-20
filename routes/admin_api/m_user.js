@@ -341,7 +341,7 @@ router.post('/userUpdate', upload.fields([{ name: 'userImg' }, { name: 'hosImg' 
 //사용자 여러명 삭제
 router.get('/userDelete', (req, res) => {
   const param = req.query.uid;
-  const route = req.query.userImg;
+  const route = req.query.userImg + ',' + req.query.hosImg + ',' + req.query.infoImg;
   const str = param.split(',');
   const img = route.split(',');
   // DB 글삭제
@@ -373,19 +373,25 @@ router.get('/userDelete', (req, res) => {
 //사용자 한명 삭제
 router.get('/oneUserDelete', (req, res) => {
   const param = req.query.uid;
-  const route = req.query.userImg;
+  var img1 = req.query.userImg;
+  var img2 = req.query.hosImg;
+  var img3 = req.query.infoImg;
+  var arr = img1 + ',' + img2 + ',' + img3;
+  var img = arr.split(',');
   const sql = "delete from user where uid = ?";
   connection.query(sql, param, (err, row) => {
     if (err) {
       console.log(err)
     }
-    if (route != '') {
-      fs.unlinkSync(route, (err) => {
-        if (err) {
-          console.log(err);
-        }
-        return;
-      })
+    for(var i = 0; i < img.length ; i++) {
+      if(img[i] != '') {
+        fs.unlinkSync(img[i], (err) => {
+          if (err) {
+            console.log(err);
+          }
+          return;
+        })
+      }
     }
   });
   res.send('<script>alert("삭제되었습니다."); location.href="/admin/m_user/page?page=1";</script>');
