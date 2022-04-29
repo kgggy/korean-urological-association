@@ -60,7 +60,7 @@ router.get('/page', async (req, res) => {
   if (searchText != '') {
     sql += " and (hosName like '%" + searchText + "%' or userName like '%" + searchText + "%')";
   }
-  sql += " order by uid desc;"
+  sql += " order by userRank is null, userRank asc;"
   try {
     connection.query(sql, function (err, results) {
       var countPage = 10; //하단에 표시될 페이지 개수

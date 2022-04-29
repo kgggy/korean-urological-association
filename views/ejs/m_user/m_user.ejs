@@ -8,6 +8,16 @@
         content: none !important;
         cursor: unset
     }
+
+    .overflow-x-auto {
+        overflow-x: auto ;
+    }
+
+    .overflow-x-auto .table {
+        width: auto !important;
+        table-layout: fixed;
+        white-space: nowrap
+    }
 </style>
 <main class="main">
     <!-- Breadcrumb-->
@@ -63,79 +73,87 @@
                                     <% if(searchText != '') { %> <input class="searchbox" type="text" name="searchText"
                                             value="<%=searchText%>" />
                                         <% } else {%>
-                                        <input class="searchbox" type="text" name="searchText" placeholder=" 회원명, 병원명" />
+                                        <input class="searchbox" type="text" name="searchText"
+                                            placeholder=" 회원명, 병원명" />
                                         <% } %>
                                         <button class="btn btn-block btn-outline-success" type="submit"
                                             id="searchAction" style="margin-bottom: 10px;">검색</button>
                                 </form>
                             </div>
-                            <form name="udtForm" style="display: inline-block;">
-                                <table id="exampleTable" class="table userTable table-responsive-sm table-hover">
-                                    <colgroup>
-                                        <col width="5%" />
-                                        <col width="5%" />
-                                        <col width="10%" />
-                                        <col width="30%" />
-                                        <col width="15%" />
-                                        <col width="15%" />
-                                        <col width="10%" />
-                                        <col width="10%" />
-                                    </colgroup>
-                                    <thead>
-                                        <tr>
-                                            <th><input type="checkbox" name="chkAll" id="chkAll" /></th>
-                                            <th>번호</th>
-                                            <th>회원명</th>
-                                            <th>병원명</th>
-                                            <th>휴대번호</th>
-                                            <th>병원번호</th>
-                                            <th>형태</th>
-                                            <th>역할</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <% if(results.length > 0) { %>
-                                        <% for(var i = (page * page_num) - page_num; i < (page * page_num); i++) { 
+
+                            <form name="udtForm">
+                                <div style="overflow:auto">
+                                    <table id="exampleTable"
+                                        class="table userTable table-responsive-sm table-hover table--min"
+                                        cellspacing="0" cellpadding="0">
+                                        <colgroup>
+                                            <col width="5%" />
+                                            <col width="5%" />
+                                            <col width="10%" />
+                                            <col width="30%" />
+                                            <col width="15%" />
+                                            <col width="15%" />
+                                            <col width="10%" />
+                                            <col width="10%" />
+                                        </colgroup>
+                                        <thead>
+                                            <tr>
+                                                <th><input type="checkbox" name="chkAll" id="chkAll" /></th>
+                                                <th>번호</th>
+                                                <th>회원명</th>
+                                                <th>병원명</th>
+                                                <th>휴대번호</th>
+                                                <th>병원번호</th>
+                                                <th>형태</th>
+                                                <th>역할</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% if(results.length > 0) { %>
+                                            <% for(var i = (page * page_num) - page_num; i < (page * page_num); i++) { 
                                         if(i > length){
                                             i++;
                                         } else { %>
-                                        <tr class="pointer"
-                                            onclick="location.href='/admin/m_user/selectOne?uid=<%=results[i].uid%>&page=<%=page%><%=keepSearch%>'">
-                                            <td onclick="event.cancelBubble=true;"><input type="checkbox" id="chk"
-                                                    name="chk" value="<%=results[i].uid %>"
-                                                    data-img1="<%=results[i].userImg%>" data-img2="<%=results[i].hosImg%>" data-img3="<%=results[i].infoImg%>" />
-                                            </td>
-                                            <td>
-                                                <%=results[i].uid%>
-                                            </td>
-                                            <td>
-                                                <%=results[i].userName%>
-                                            </td>
-                                            <td>
-                                                <%= results[i].hosName %>
-                                            </td>
-                                            <td>
-                                                <%= results[i].userPhone1 %>-<%= results[i].userPhone2 %>-<%= results[i].userPhone3 %>
-                                            </td>
-                                            <td>
-                                                <%= results[i].hosPhone1 %>-<%= results[i].hosPhone2 %>-<%= results[i].hosPhone3 %>
-                                            </td>
-                                            <td>
-                                                <%= results[i].userType %>
-                                            </td>
-                                            <td>
-                                                <%= results[i].userPosition %>
-                                            </td>
-                                        </tr>
-                                        <% } %>
-                                        <% } %>
-                                        <% } else { %>
-                                        <tr>
-                                            <td colspan="7">등록된 회원이 없습니다.</td>
-                                        </tr>
-                                        <% } %>
-                                    </tbody>
-                                </table>
+                                            <tr class="pointer"
+                                                onclick="location.href='/admin/m_user/selectOne?uid=<%=results[i].uid%>&page=<%=page%><%=keepSearch%>'">
+                                                <td onclick="event.cancelBubble=true;"><input type="checkbox" id="chk"
+                                                        name="chk" value="<%=results[i].uid %>"
+                                                        data-img1="<%=results[i].userImg%>"
+                                                        data-img2="<%=results[i].hosImg%>"
+                                                        data-img3="<%=results[i].infoImg%>" />
+                                                </td>
+                                                <td>
+                                                    <%=results[i].uid%>
+                                                </td>
+                                                <td>
+                                                    <%=results[i].userName%>
+                                                </td>
+                                                <td>
+                                                    <%= results[i].hosName %>
+                                                </td>
+                                                <td>
+                                                    <%= results[i].userPhone1 %>-<%= results[i].userPhone2 %>-<%= results[i].userPhone3 %>
+                                                </td>
+                                                <td>
+                                                    <%= results[i].hosPhone1 %>-<%= results[i].hosPhone2 %>-<%= results[i].hosPhone3 %>
+                                                </td>
+                                                <td>
+                                                    <%= results[i].userType %>
+                                                </td>
+                                                <td>
+                                                    <%= results[i].userPosition %>
+                                                </td>
+                                            </tr>
+                                            <% } %>
+                                            <% } %>
+                                            <% } else { %>
+                                            <tr>
+                                                <td colspan="7">등록된 회원이 없습니다.</td>
+                                            </tr>
+                                            <% } %>
+                                        </tbody>
+                                    </table>
+                                </div>
                                 <div>
                                     <div>
                                         <button type="button" id="enrollAction"

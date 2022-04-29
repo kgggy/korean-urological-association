@@ -30,7 +30,7 @@
       height: 400px;
    }
 </style>
-<main class="main">
+<main class="main">  
    <!-- Breadcrumb-->
    <ol class="breadcrumb">
       <li class="breadcrumb-item">Home</li>
@@ -82,7 +82,8 @@
                               <input class="form-control" type="text" id="address_kakao" name="eventPlace"
                                  class="signup-input" value="<%=result[0].eventPlace%>" />
                               <input class="form-control" type="text" id="address_detail" name="eventPlaceDetail"
-                                 class="inputName signup-input" value="<%=result[0].eventPlaceDetail%>" placeholder="상세주소를 입력해주세요" />
+                                 class="inputName signup-input" value="<%=result[0].eventPlaceDetail%>"
+                                 placeholder="상세주소를 입력해주세요" />
                            </div>
                         </div>
                         <div class="form-group row">
@@ -107,17 +108,42 @@
                            </div>
                         </div>
                         <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">투표대상1</label>
+                           <div class="col-md-9">
+                              <select class="dropdown" name="eventTarget1">
+                                 <option  value="전체" <%if(result[0].eventTarget1=="전체"){%> selected="selected" <%}%>>전체</option>
+                                 <option value="임원" <%if(result[0].eventTarget1=="임원"){%> selected="selected" <%}%>>임원</option>
+                              </select>
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">투표대상2</label>
+                           <div class="col-md-9">
+                              <select class="dropdown" name="eventTarget2">
+                                 <option value="전체" <%if(result[0].eventTarget2=="전체"){%> selected="selected" <%}%>>전체</option>
+                                 <option value="동구" <%if(result[0].eventTarget2=="동구"){%> selected="selected" <%}%>>동구</option>
+                                        <option value="서구" <%if(result[0].eventTarget2=="서구"){%> selected="selected" <%}%>>서구</option>
+                                        <option value="남구" <%if(result[0].eventTarget2=="남구"){%> selected="selected" <%}%>>남구</option>
+                                        <option value="북구" <%if(result[0].eventTarget2=="북구"){%> selected="selected" <%}%>>북구</option>
+                                        <option value="중구" <%if(result[0].eventTarget2=="중구"){%> selected="selected" <%}%>>중구</option>
+                                        <option value="수성구" <%if(result[0].eventTarget2=="수성구"){%> selected="selected" <%}%>>수성구</option>
+                                        <option value="달서구" <%if(result[0].eventTarget2=="달서구"){%> selected="selected" <%}%>>달서구</option>
+                                        <option value="달성구" <%if(result[0].eventTarget2=="달성구"){%> selected="selected" <%}%>>달성구</option>
+                              </select>
+                           </div>
+                        </div>
+                        <div class="form-group row">
                            <label class="col-md-2 col-form-label">첨부파일</label>
                            <div class="file-wrap banner_img_wrap">
-                              <% if(result[0].eventFileRoute != null && result[0].eventFileRoute != '') { %>
-                              <p><span><%=fileOrgName%></span>
-                                 <button name="fileDelete" data-fileRoute="<%=result[0].eventFileRoute%>"
-                                    class="btn btn-block btn-outline-danger fileDelete">삭제</button>
-                              <% } else {%>
-                              <div style="display: flex; flex-direction: column; gap: 25px; padding-left: 15px">
-                                 <input type="file" id="file" name="file">
-                              </div>
-                              <% } %>
+                              <% if(result[0].eventFileRoute != null && result[0].eventFileRoute != '') { %> <p>
+                                    <span><%=fileOrgName%></span>
+                                    <button name="fileDelete" data-fileRoute="<%=result[0].eventFileRoute%>"
+                                       class="btn btn-block btn-outline-danger fileDelete">삭제</button>
+                                    <% } else {%>
+                                    <div style="display: flex; flex-direction: column; gap: 25px; padding-left: 15px">
+                                       <input type="file" id="file" name="file">
+                                    </div>
+                                    <% } %>
                            </div>
                         </div>
                         <!--option 버튼  -->

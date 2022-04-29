@@ -152,34 +152,34 @@ router.post('/eventWrite', upload.single('file'), async (req, res, next) => {
                     });
                     
             }
-            param1 = [req.body.eventTitle, req.body.eventContent, req.body.eventDate, req.body.eventPlace, req.body.eventPlaceDetail, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, path];
+            param1 = [req.body.eventTitle, req.body.eventContent, req.body.eventDate, req.body.eventPlace, req.body.eventPlaceDetail, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, path, req.body.eventTarget1, req.body.eventTarget2];
         } else {
-            param1 = [req.body.eventTitle, req.body.eventContent, req.body.eventDate, req.body.eventPlace, req.body.eventPlaceDetail, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, req.body.eventFileRoute];
+            param1 = [req.body.eventTitle, req.body.eventContent, req.body.eventDate, req.body.eventPlace, req.body.eventPlaceDetail, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, req.body.eventFileRoute, req.body.eventTarget1, req.body.eventTarget2];
         }
-        const sql1 = "insert into event(eventTitle, eventContent, eventDate, eventPlace, eventPlaceDetail, startDate, endDate, eventFileRoute)\
-                                  values(?, ?, ?, ?, ?, if(? = '',null,?), if(? = '',null,?), ?)";
+        const sql1 = "insert into event(eventTitle, eventContent, eventDate, eventPlace, eventPlaceDetail, startDate, endDate, eventFileRoute, eventTarget1, eventTarget2)\
+                                  values(?, ?, ?, ?, ?, if(? = '',null,?), if(? = '',null,?), ?, ?, ?)";
         connection.query(sql1, param1, (err) => {
             if (err) {
                 throw err;
             }
-            //OneSignal 푸쉬 알림
-            var message = {
-                app_id: ONE_SIGNAL_CONFIG.APP_ID,
-                contents: { "en": req.body.eventTitle },
-                included_segments: ["All"],
-                content_avaliable: true,
-                small_icon: "ic_notification_icon",
-                data: {
-                    PushTitle: "CUSTOM NOTIFICATION"
-                }
-            };
+            // //OneSignal 푸쉬 알림
+            // var message = {
+            //     app_id: ONE_SIGNAL_CONFIG.APP_ID,
+            //     contents: { "en": req.body.eventTitle },
+            //     included_segments: ["All"],
+            //     content_avaliable: true,
+            //     small_icon: "ic_notification_icon",
+            //     data: {
+            //         PushTitle: "CUSTOM NOTIFICATION"
+            //     }
+            // };
 
-            pushNotificationService.sendNotification(message, (error, results) => {
-                if (error) {
-                    return next(error);
-                }
-                return null;
-            })
+            // pushNotificationService.sendNotification(message, (error, results) => {
+            //     if (error) {
+            //         return next(error);
+            //     }
+            //     return null;
+            // })
 
             res.send('<script>alert("행사가 등록되었습니다."); location.href="/admin/m_event?page=1";</script>');
         });
@@ -230,15 +230,15 @@ router.post('/eventUpdate', upload.single('file'), (req, res) => {
         const page = req.body.page;
         const searchType1 = req.body.searchType1;
         const sql = "update event set eventTitle = ?, eventContent = ?, eventPlace = ?, eventPlaceDetail = ?,\
-        eventDate = ?, startDate = if(? = '',null,?), endDate = if(? = '',null,?), eventFileRoute = ?\
+        eventDate = ?, startDate = if(? = '',null,?), endDate = if(? = '',null,?), eventFileRoute = ?, eventTarget1 = ?, eventTarget2 = ?\
         where eventId = ?";
         var param = [];
 
         if (req.file != null) {
             const path = req.file.path;
-            param = [req.body.eventTitle, req.body.eventContent, req.body.eventPlace, req.body.eventPlaceDetail, req.body.eventDate, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, path, req.body.eventId];
+            param = [req.body.eventTitle, req.body.eventContent, req.body.eventPlace, req.body.eventPlaceDetail, req.body.eventDate, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, path, req.body.eventTarget1, req.body.eventTarget2, req.body.eventId];
         } else {
-            param = [req.body.eventTitle, req.body.eventContent, req.body.eventPlace, req.body.eventPlaceDetail, req.body.eventDate, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, req.body.eventFileRoute, req.body.eventId];
+            param = [req.body.eventTitle, req.body.eventContent, req.body.eventPlace, req.body.eventPlaceDetail, req.body.eventDate, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, req.body.eventFileRoute, req.body.eventTarget1, req.body.eventTarget2, req.body.eventId];
         }
         connection.query(sql, param, (err) => {
             if (err) {
