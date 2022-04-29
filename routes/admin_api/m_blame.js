@@ -5,7 +5,7 @@ var router = express.Router();
 var connection = require('../../config/db').conn;
 
 //신고 전체조회
-router.get('/blameAll', async (req, res) => {
+router.get('/blame', async (req, res) => {
     try {
         var page = req.query.page;
         var targetType = req.query.targetType == undefined ? "" : req.query.targetType;

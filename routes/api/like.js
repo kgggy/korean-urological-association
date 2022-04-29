@@ -31,7 +31,7 @@ router.get('/likeUserList', async (req, res) => {
         const sql = "select r.recommendId, r.boardId, u.userName, u.uid, u.userPosition, u.userImg\
                        from recommend r\
                   left join user u on r.uid = u.uid\
-                      where boardId = ?";
+                      where boardId = ? and u.uid < 10000";
         let likeUsers;
         connection.query(sql, param, (err, result) => {
             if (err) {

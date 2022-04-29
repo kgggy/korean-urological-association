@@ -111,7 +111,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     userSocialDiv: {
-      type: DataTypes.STRING(1),
+      type: DataTypes.STRING(7),
       allowNull: true,
       comment: "소셜로그인 종류"
     },
@@ -124,6 +124,17 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(200),
       allowNull: true,
       comment: "명함사진"
+    },
+    userRank: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      comment: "우선순위"
+    },
+    userAdmin: {
+      type: DataTypes.STRING(1),
+      allowNull: true,
+      defaultValue: "0",
+      comment: "0 : 회원, 1 : 관리자"
     }
   }, {
     sequelize,

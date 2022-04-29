@@ -22,6 +22,16 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(5),
       allowNull: false,
       comment: "공지사항, 자료실, 갤러리 pk"
+    },
+    supportId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      comment: "후원광고pk"
+    },
+    fileType: {
+      type: DataTypes.STRING(10),
+      allowNull: true,
+      comment: "파일종류"
     }
   }, {
     sequelize,

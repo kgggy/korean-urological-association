@@ -1,5 +1,6 @@
 var DataTypes = require("sequelize").DataTypes;
 var _admin = require("./admin");
+var _blame = require("./blame");
 var _comment = require("./comment");
 var _event = require("./event");
 var _file = require("./file");
@@ -12,11 +13,13 @@ var _president = require("./president");
 var _recommend = require("./recommend");
 var _reference = require("./reference");
 var _support = require("./support");
+var _tree = require("./tree");
 var _user = require("./user");
 var _vote = require("./vote");
 
 function initModels(sequelize) {
   var admin = _admin(sequelize, DataTypes);
+  var blame = _blame(sequelize, DataTypes);
   var comment = _comment(sequelize, DataTypes);
   var event = _event(sequelize, DataTypes);
   var file = _file(sequelize, DataTypes);
@@ -29,12 +32,14 @@ function initModels(sequelize) {
   var recommend = _recommend(sequelize, DataTypes);
   var reference = _reference(sequelize, DataTypes);
   var support = _support(sequelize, DataTypes);
+  var tree = _tree(sequelize, DataTypes);
   var user = _user(sequelize, DataTypes);
   var vote = _vote(sequelize, DataTypes);
 
 
   return {
     admin,
+    blame,
     comment,
     event,
     file,
@@ -47,6 +52,7 @@ function initModels(sequelize) {
     recommend,
     reference,
     support,
+    tree,
     user,
     vote,
   };
