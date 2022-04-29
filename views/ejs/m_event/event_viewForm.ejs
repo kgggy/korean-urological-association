@@ -76,6 +76,13 @@
                                </div>
                             </div>
                             <div class="form-group row">
+                              <label class="col-md-2 col-form-label" for="text-input">투표 대상</label>
+                              <div class="col-md-9">
+                                 <input class="form-control" id="" type="text" name=""
+                                    disabled="disabled" value="<%=result[0].eventTarget1%>, <%=result[0].eventTarget2%>">
+                              </div>
+                           </div>
+                            <div class="form-group row">
                                <label class="col-md-2 col-form-label" for="text-input">첨부파일</label>
                                <div class="col-md-9">
                                   <% if(result[0].eventFileRoute != null && result[0].eventFileRoute != '') {%>

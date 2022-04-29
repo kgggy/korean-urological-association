@@ -91,11 +91,7 @@ router.get('/', async (req, res) => {
                         });
                     }
                     gallerys = results;
-                    const sql3 = "select *,\
-                                        (select choose from vote v where e.eventId = v.eventId and uid = ?) as voteyn\
-                                    from event e\
-                                order by eventId desc limit 1;\
-                                  call checkvote(@yes, @nono, @undefine);\
+                    const sql3 = "call selectEvent(?, @yes, @nono, @undefine);\
                                   select @yes, @nono, @undefine;"
                     connection.query(sql3, req.query.uid, (err, results) => {
                         if (err) {
@@ -104,13 +100,13 @@ router.get('/', async (req, res) => {
                                 msg: "query3 error"
                             });
                         }
-                        event = results[0];
+                        event = results[0][0];
                         voteCount = results[2];
                         res.status(200).json([{
                             notices: notices,
                             gallerys: gallerys,
                             refers: refers,
-                            event: event,
+                            event: [event],
                             voteCount: voteCount
                         }]);
                     });
