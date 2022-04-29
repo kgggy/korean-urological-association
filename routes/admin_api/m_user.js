@@ -144,9 +144,6 @@ router.get('/userInsertForm', (req, res) => {
 
 //사용자 등록
 router.post('/userInsert', upload.fields([{ name: 'userImg' }, { name: 'hosImg' }, { name: 'infoImg' }]), async (req, res) => {
-  const {
-    userName, hosName, hosPost, userAdres1, userAdres2, userAdres3, hosPhone1, hosPhone2, hosPhone3, userPhone1, userPhone2, userPhone3, userType, userPosition, pushYn
-  } = req.body;
   if (req.files != null) {
     var obj = req.files;
     for (value in obj) {
@@ -190,15 +187,34 @@ router.post('/userInsert', upload.fields([{ name: 'userImg' }, { name: 'hosImg' 
     if (req.files.infoImg != null) {
       infoImg = req.files.infoImg[0].path;
     }
-    await models.user.create({
-      userName, hosName, hosPost, userAdres1, userAdres2, userAdres3, hosPhone1, hosPhone2, hosPhone3, userPhone1, userPhone2, userPhone3, userType, userPosition, pushYn, userImg, hosImg, infoImg
+    param = [req.body.userName, req.body.hosName, req.body.hosPost, req.body.userAdres1, req.body.userAdres2,
+            req.body.userAdres3, req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3, req.body.userPhone1,
+            req.body.userPhone2, req.body.userPhone3, req.body.userType, req.body.userPosition, req.body.pushYn,
+            userImg, hosImg, infoImg]
+    const sql = "call insertUser(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    connection.query(sql, param, (err) => {
+      if (err) {
+        console.log(err)
+      }
+      res.send('<script>alert("회원 등록이 완료되었습니다."); location.href="/admin/m_user/page?page=1";</script>');
     });
   } else {
-    await models.user.create({
-      userName, hosName, hosPost, userAdres1, userAdres2, userAdres3, hosPhone1, hosPhone2, hosPhone3, userPhone1, userPhone2, userPhone3, userType, userPosition, pushYn
+    let userImg;
+    let hosImg;
+    let infoImg;
+    param = [req.body.userName, req.body.hosName, req.body.hosPost, req.body.userAdres1, req.body.userAdres2,
+    req.body.userAdres3, req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3, req.body.userPhone1,
+    req.body.userPhone2, req.body.userPhone3, req.body.userType, req.body.userPosition, req.body.pushYn,
+      userImg, hosImg, infoImg]
+    const sql = "call insertUser(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    connection.query(sql, param, (err) => {
+      if (err) {
+        console.log(err)
+      }
+      res.send('<script>alert("회원 등록이 완료되었습니다."); location.href="/admin/m_user/page?page=1";</script>');
     });
   }
-  res.send('<script>alert("회원 등록이 완료되었습니다."); location.href="/admin/m_user/page?page=1";</script>');
+  
 });
 
 //사용자 정보 수정 페이지 이동
@@ -212,38 +228,6 @@ router.post('/userUdtForm', async (req, res) => {
     page: req.body.page
   });
 });
-
-// //사용자 정보 수정
-// router.post('/userUpdate', upload.fields([{ name: 'userImg' }, { name: 'hosImg' }, { name: 'infoImg' }]), async (req, res) => {
-//   var path = "";
-//   var param = "";
-//   if (req.file != null) {
-//     path = req.file.path;
-//     param = [path, req.body.userName, req.body.hosName,
-//       req.body.hosPost, req.body.userAdres1, req.body.userAdres2, req.body.userAdres3,
-//       req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3,
-//       req.body.userPhone1, req.body.userPhone2, req.body.userPhone3,
-//       req.body.userType, req.body.userPosition, req.body.uid
-//     ];
-//   } else {
-//     param = [req.body.userImg, req.body.userName, req.body.hosName,
-//       req.body.hosPost, req.body.userAdres1, req.body.userAdres2, req.body.userAdres3,
-//       req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3,
-//       req.body.userPhone1, req.body.userPhone2, req.body.userPhone3,
-//       req.body.userType, req.body.userPosition, req.body.uid
-//     ];
-//   }
-//   const sql = "update user set userImg = ?, userName = ?, hosName = ?, hosPost = ?, userAdres1 = ?, userAdres2 = ?,\
-//                                userAdres3 = ?, hosPhone1 = ?, hosPhone2 = ?, hosPhone3 = ?,\
-//                                userPhone1 = ?, userPhone2 = ?, userPhone3 = ?, userType = ? , userPosition = ?\
-//                 where uid = ?";
-//   connection.query(sql, param, (err) => {
-//     if (err) {
-//       console.error(err);
-//     }
-//     res.redirect('selectOne?uid=' + req.body.uid + '&page=' + req.body.page);
-//   });
-// });
 
 //사용자 정보 수정
 router.post('/userUpdate', upload.fields([{ name: 'userImg' }, { name: 'hosImg' }, { name: 'infoImg' }]), async (req, res) => {

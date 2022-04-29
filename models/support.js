@@ -8,15 +8,20 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true,
       comment: "일련번호"
     },
-    supportImg: {
+    supportUrl: {
       type: DataTypes.STRING(200),
       allowNull: true,
-      comment: "이미지"
+      comment: "홈페이지"
     },
-    supporter: {
-      type: DataTypes.STRING(45),
+    supportTitle: {
+      type: DataTypes.STRING(30),
       allowNull: true,
-      comment: "업체명"
+      comment: "광고 제목"
+    },
+    supportDetail: {
+      type: DataTypes.STRING(500),
+      allowNull: true,
+      comment: "상세정보"
     }
   }, {
     sequelize,

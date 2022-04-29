@@ -53,6 +53,16 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       defaultValue: "0",
       comment: "0이면 진행중, 1이면 마감"
+    },
+    eventTarget1: {
+      type: DataTypes.STRING(10),
+      allowNull: true,
+      comment: "임원인지 아닌지"
+    },
+    eventTarget2: {
+      type: DataTypes.STRING(10),
+      allowNull: true,
+      comment: "주소(구)"
     }
   }, {
     sequelize,

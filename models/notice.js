@@ -19,7 +19,7 @@ module.exports = function(sequelize, DataTypes) {
       comment: "제목"
     },
     noticeContent: {
-      type: DataTypes.STRING(3000),
+      type: DataTypes.STRING(5000),
       allowNull: false,
       comment: "내용"
     },

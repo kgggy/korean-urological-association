@@ -1,3 +1,19 @@
+<!-- ckeditor -->
+<script src="../../../public/build/ckeditor.js"></script>
+<style>
+   .ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
+      border-color: var(--ck-color-base-border);
+      height: 40%;
+   }
+
+   .ck.ck-editor__editable:not(.ck-editor__nested-editable).ck-focused {
+      height: 400px;
+   }
+
+   .ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
+      height: 400px;
+   }
+</style>
 <style>
 	.subTitle {
 		display: inline-block;
@@ -55,17 +71,33 @@
 							<form action="" id="bannerWritForm" name="bannerWritForm" method=""
 								enctype="multipart/form-data">
 								<div class="form-group row">
-									<label class="col-md-2 col-form-label">이미지</label>
+									<label class="col-md-2 col-form-label">* 배너 이미지 *</label>
 									<div style="display: flex; flex-direction: column; gap: 25px; padding-left: 15px">
 										<input type="file" id="file" name="file">
 									</div>
 								</div>
 								<div class="form-group row">
-									<label class="col-md-2 col-form-label" for="text-input">업체명</label>
-									<div class="col-md-9 sub">
-										<input type="text" id="supporter" name="supporter" value="">
-									</div>
+								<label class="col-md-2 col-form-label" for="text-input">* 업체명 *</label>
+								<div class="col-md-9">
+									<input class="form-control" id="supporter" type="supporter" name="referTitle" value="">
 								</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-md-2 col-form-label" for="text-input">내용</label>
+									<div class="col-md-9">
+										<textarea name="editor" class="editor" id="editor"></textarea>
+									</div>
+									</div>
+								<div class="form-group row">
+									<label class="col-md-2 col-form-label">첨부파일</label>
+									<div style="display: flex; flex-direction: column; gap: 25px; padding-left: 15px">
+										<input type="file" id="file" name="file">
+										<input type="file" id="file" name="file" />
+										<input type="file" id="file" name="file" />
+										<input type="file" id="file" name="file" />
+										<input type="file" id="file" name="file" />
+								</div>
+                        </div>
 								<!--option 버튼  -->
 								<div class="option_button" style="padding-left: 1.25rem; margin-bottom: 15px;">
 									<div>
@@ -89,6 +121,18 @@
 <script type="text/javascript">
 	var formObj = $("form[name='bannerWritForm']");
 	$(document).ready(function () {
+      //ckeditor
+      ClassicEditor
+         .create(document.querySelector('#editor'), {
+            language: 'ko'
+         })
+         .then(newEditor => {
+            editor = newEditor;
+         })
+         .catch(error => {
+            console.error(error);
+         });
+
 		//확장자 체크
 		$("input:file[name='file']").change(function () {
 			var str = $(this).val();
@@ -100,11 +144,17 @@
 		// 등록
 		$("#enroll_btn").on("click", function () {
 			var supportImg = $("#file").val();
+			var content = editor.getData();
 
 			if (supportImg == '') {
 				alert("이미지를 선택해주세요.");
 				return false;
 			}
+			if (content == "") {
+            alert("내용을 입력하세요.");
+            $("#editor").focus();
+            return false;
+        	}
 			if (confirm("등록하시겠습니까?") == true) {
 				formObj.attr("action", "supportWrit");
 				formObj.attr("method", "post");
@@ -116,13 +166,13 @@
 		});
 	});
 
-	//확장자 체크
-	function checkFileName(str) {
-		var ext = str.split('.').pop().toLowerCase();
-		// alert(ext);
-		if ($.inArray(ext, ['jpg', 'png', 'jpeg', 'gif']) == -1) {
-			alert(ext + '파일은 업로드 하실 수 없습니다.');
-			$("input:file[name='file']").val("");
-		}
-	}
+	// //확장자 체크
+	// function checkFileName(str) {
+	// 	var ext = str.split('.').pop().toLowerCase();
+	// 	// alert(ext);
+	// 	if ($.inArray(ext, ['jpg', 'png', 'jpeg', 'gif']) == -1) {
+	// 		alert(ext + '파일은 업로드 하실 수 없습니다.');
+	// 		$("input:file[name='file']").val("");
+	// 	}
+	// }
 </script>

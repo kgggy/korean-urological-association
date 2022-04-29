@@ -9,7 +9,7 @@ router.get('/hitUserList', async (req, res) => {
         const sql = "select u.uid, u.userName, u.userImg\
                        from hitCount h\
                   left join user u on u.uid = h.uid\
-                      where boardId = ?";
+                      where boardId = ? and u.uid < 10000";
         let likeUsers;
         connection.query(sql, param, (err, result) => {
             if (err) {

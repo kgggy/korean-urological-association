@@ -18,20 +18,14 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       comment: "이름"
     },
-    psdDetail: {
-      type: DataTypes.STRING(50),
-      allowNull: true,
-      comment: "세부내용"
-    },
     psdDate: {
       type: DataTypes.STRING(15),
       allowNull: true,
       comment: "취임기간"
     },
-    psdImg: {
-      type: DataTypes.STRING(500),
-      allowNull: true,
-      comment: "프로필이미지"
+    uid: {
+      type: DataTypes.INTEGER,
+      allowNull: true
     }
   }, {
     sequelize,
