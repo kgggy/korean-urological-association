@@ -34,24 +34,24 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <% for(var i = 0; i < results.length; i++){ %>
+                                        <% for(var i = 0; i < support.length; i++){ %>
                                         <tr>
                                             <td style="pointer-events:none"><%= i + 1 %></td>
-                                            <td style="pointer-events:none"><img src="../../../<%= results[i].supportImg %>" alt="사진"
+                                            <td style="pointer-events:none"><img src="../../../<%= img[i].fileRoute %>" alt="사진"
                                                     style="padding:20px !important; width:250px" /></td>
-                                            <td style="pointer-events:none"><%=results[i].supporter %></td>
+                                            <td style="pointer-events:none"><%=support[i].supportTitle %></td>
                                             <td>
                                                 <input id="searchAction" type="button"
                                                     class="btn btn-block btn-outline-success"
-                                                    onclick="supportUpdate('<%=results[i].supportId%>')" value="수정 " />
+                                                    onclick="supportUpdate('<%=support[i].supportId%>')" value="수정 " />
                                                 <button type="button" id="delete_btn" name="supportDelete"
                                                     class="btn btn-block btn-outline-danger"
-                                                    data-supportId="<%=results[i].supportId%>"
-                                                    data-supportImg="<%=results[i].supportImg%>">삭제</button>
+                                                    data-supportId="<%=support[i].supportId%>"
+                                                    data-supportImg="<%=img%>">삭제</button>
                                             </td>
                                         </tr>
                                         <% } %>
-                                        <%if(results.length == 0){%>
+                                        <%if(support.length == 0){%>
                                         <tr>
                                             <td colspan="4">
                                                 등록된 목록이 없습니다.

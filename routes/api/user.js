@@ -35,19 +35,19 @@ router.get('/all', async (req, res) => {
             console.log(err);
           }
           userAdres2 = results;
-          const userTypeSql = "select distinct userType from user where userType is not null and userType != '' order by field(userType, '전체') desc, userType asc;";
+          const userTypeSql = "select distinct userType from user where userType is not null and userType != '' order by field(userType, '형태') desc, userType asc;";
           connection.query(userTypeSql, (err, results) => {
             if (err) {
               console.log(err);
             }
             userType = results;
+            res.status(200).json({
+              user: user,
+              userPosition: userPosition,
+              userAdres2: userAdres2,
+              userType: userType
+            });
           })
-          res.status(200).json({
-            user: user,
-            userPosition: userPosition,
-            userAdres2: userAdres2,
-            userType: userType
-          });
         });
       });
     });

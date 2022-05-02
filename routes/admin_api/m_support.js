@@ -12,11 +12,11 @@ var connection = require('../../config/db').conn;
 var upload = multer({ //multer안에 storage정보  
     storage: multer.diskStorage({
         destination: (req, file, callback) => {
-            fs.mkdir('public/images/support', function (err) {
+            fs.mkdir('uploads/support', function (err) {
                 if (err && err.code != 'EEXIST') {
                     console.log("already exist")
                 } else {
-                    callback(null, 'public/images/support');
+                    callback(null, 'uploads/support');
                 }
             })
         },
@@ -36,6 +36,8 @@ var upload = multer({ //multer안에 storage정보
 //후원목록조회
 router.get('/', async (req, res) => {
     try {
+        let support;
+        let img;
         const sql = "select * from support";
         connection.query(sql, (err, results) => {
             if (err) {
@@ -44,9 +46,21 @@ router.get('/', async (req, res) => {
                     msg: "query error"
                 });
             }
-            let route = req.app.get('views') + '/m_support/support';
-            res.render(route, {
-                results: results
+            support = results
+            const sql = "select fileId, fileRoute, supportId from file group by supportId";
+            connection.query(sql, (err, results) => {
+                if (err) {
+                    console.log(err);
+                    res.json({
+                        msg: "query error"
+                    });
+                }
+                img = results;
+                let route = req.app.get('views') + '/m_support/support';
+                res.render(route, {
+                    support: support,
+                    img: img
+                });
             });
         });
     } catch (error) {
