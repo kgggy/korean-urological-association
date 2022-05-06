@@ -1,0 +1,107 @@
+<style>
+   #layout-navbar {
+      display: none;
+   }
+</style>
+<% if(targetType == '0') { %>
+<div class="card mb-4">
+   <div class="card-header">
+      <i class="fa fa-align-justify"></i> 신고 당한 게시글
+   </div>
+   <div class="card-body">
+         <!-- 컨텐츠 -->
+         <div class="mb-3 row">
+            <label class="col-md-2 col-form-label" for="text-input">글번호</label>
+            <div class="col-md-9">
+               <input class="form-control" id="boardId" type="text" name="boardId" disabled="disabled"
+                  value="<%=result[0].targetContentId%>">
+            </div>
+         </div>
+         <div class="mb-3 row">
+            <label class="col-md-2 col-form-label" for="text-input">게시판명</label>
+            <div class="col-md-9">
+               <input class="form-control" id="boardName" type="text" name="boardName" disabled="disabled"
+                  value="<%=result[0].boardName%>">
+            </div>
+         </div>
+         <div class="mb-3 row">
+            <label class="col-md-2 col-form-label" for="text-input">제목</label>
+            <div class="col-md-9">
+               <input class="form-control" id="boardTitle" type="text" name="boardTitle" disabled="disabled"
+                  value="<%=result[0].boardTitle%>">
+            </div>
+         </div>
+         <div class="mb-3 row">
+            <label class="col-md-2 col-form-label" for="text-input">작성일</label>
+            <div class="col-md-9">
+               <input class="form-control" id="boardDatefmt" type="text" name="boardDatefmt" disabled="disabled"
+                  value="<%=result[0].boardDateFmt%>">
+            </div>
+         </div>
+         <div class="mb-3 row">
+            <label class="col-md-2 col-form-label" for="text-input">내용</label>
+            <div class="col-md-9">
+               <%-result[0].boardContent%>
+            </div>
+         </div>
+         <div class="mb-3 row">
+            <label class="col-md-2 col-form-label">첨부파일</label>
+            <div class="col-md-9">
+               <% if(result[0].fileRoute != null) { %>
+               <div class="file-wrap">
+                  <% for(var i = 0; i < result.length; i++) {%>
+                  <div id="" style="padding: 10px;">
+                     <p><img src="../../../<%= result[i].fileRoute %>" style="width:300px; margin-bottom: 15px;">
+                     </p>
+                  </div>
+                  <% } %>
+               </div>
+               <% }%>
+               <% if(result[0].fileRoute == null) { %>
+               <div id="fileDiv" style="padding: 10px;">
+                  파일이 없습니다.
+               </div>
+               <br>
+               <% } %>
+            </div>
+         </div>
+   </div>
+</div>
+<% } else { %>
+<div class="card">
+   <div class="card-header">
+      <i class="fa fa-align-justify"></i> 신고 당한 댓글
+   </div>
+   <div class="card-body">
+      <!-- 컨텐츠 -->
+      <div class="mb-3 row">
+         <label class="col-md-2 col-form-label" for="text-input">댓글번호</label>
+         <div class="col-md-9">
+            <input class="form-control" id="boardId" type="text" name="boardId" disabled="disabled"
+               value="<%=result[0].cmtId%>">
+         </div>
+      </div>
+      <div class="mb-3 row">
+         <label class="col-md-2 col-form-label" for="text-input">작성자</label>
+         <div class="col-md-9">
+            <input class="form-control" id="boardTitle" type="text" name="boardTitle" disabled="disabled"
+               value="<%=result[0].targetUserName%>">
+         </div>
+      </div>
+      <div class="mb-3 row">
+         <label class="col-md-2 col-form-label" for="text-input">작성일자</label>
+         <div class="col-md-9">
+            <input class="form-control" id="hitCount" type="text" name="hitCount" disabled="disabled"
+               value="<%=result[0].cmtDateFmt%>">
+         </div>
+      </div>
+      <div class="mb-3 row">
+         <label class="col-md-2 col-form-label" for="text-input">내용</label>
+         <div class="col-md-9">
+            <input class="form-control" id="hitCount" type="text" name="hitCount" disabled="disabled"
+               value="<%= result[0].cmtContent %>">
+         </div>
+      </div>
+   </div>
+</div>
+<% } %>

@@ -60,7 +60,7 @@ router.get('/page', async (req, res) => {
   if (searchText != '') {
     sql += " and (hosName like '%" + searchText + "%' or userName like '%" + searchText + "%')";
   }
-  sql += " order by userRank is null, userRank asc;"
+  sql += " order by uid desc;"
   try {
     connection.query(sql, function (err, results) {
       var countPage = 10; //하단에 표시될 페이지 개수
@@ -204,6 +204,7 @@ router.get('/selectOne', async (req, res) => {
 
 //사용자 등록 페이지 이동
 router.get('/userInsertForm', (req, res) => {
+  const admin = req.query.admin;
   try {
     const userTypeSql = "select distinct userType from user\
                           where userType is not null and userType != ''\
@@ -226,7 +227,8 @@ router.get('/userInsertForm', (req, res) => {
         let route = req.app.get('views') + '/m_user/orgm_writForm';
         res.render(route, {
           userType: userType,
-          userPosition: userPosition
+          userPosition: userPosition,
+          admin: admin
         });
       });
     });
@@ -237,6 +239,7 @@ router.get('/userInsertForm', (req, res) => {
 
 //사용자 등록
 router.post('/userInsert', upload.fields([{name: 'userImg'}, {name: 'hosImg'}, {name: 'infoImg'}]), async (req, res) => {
+  var adminyn = req.body.adminyn == undefined ? "" : req.body.adminyn;
   let sql;
   let param;
   if (req.files != null) {
@@ -280,7 +283,7 @@ router.post('/userInsert', upload.fields([{name: 'userImg'}, {name: 'hosImg'}, {
     param = [req.body.userName, req.body.hosName, req.body.hosPost, req.body.userAdres1, req.body.userAdres2,
       req.body.userAdres3, req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3, req.body.userPhone1,
       req.body.userPhone2, req.body.userPhone3, req.body.userType, req.body.userPosition, req.body.pushYn,
-      userImg, hosImg, infoImg, req.body.adminyn
+      userImg, hosImg, infoImg, adminyn
     ]
     sql = "call insertUser(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
   } else {
@@ -290,7 +293,7 @@ router.post('/userInsert', upload.fields([{name: 'userImg'}, {name: 'hosImg'}, {
     param = [req.body.userName, req.body.hosName, req.body.hosPost, req.body.userAdres1, req.body.userAdres2,
       req.body.userAdres3, req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3, req.body.userPhone1,
       req.body.userPhone2, req.body.userPhone3, req.body.userType, req.body.userPosition, req.body.pushYn,
-      userImg, hosImg, infoImg, req.body.adminyn
+      userImg, hosImg, infoImg, adminyn
     ]
     sql = "call insertUser(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
   }
@@ -299,7 +302,7 @@ router.post('/userInsert', upload.fields([{name: 'userImg'}, {name: 'hosImg'}, {
       console.log(err)
     }
     //관리자 쿼리가 없으면 일반회원정보로, 있으면 개발자 회원정보로 이동.
-    if (req.query.admin != '') {
+    if (req.body.admin != '') {
       res.send('<script>alert("회원 등록이 완료되었습니다."); location.href="/admin/m_user/admin?page=1";</script>');
     } else {
       res.send('<script>alert("회원 등록이 완료되었습니다."); location.href="/admin/m_user/page?page=1";</script>');
