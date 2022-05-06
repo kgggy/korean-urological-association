@@ -26,7 +26,7 @@
         <li class="breadcrumb-item">
             <a style="font-weight: bold;">회원관리</a>
         </li>
-        <li class="breadcrumb-item active">회원정보</li>
+        <li class="breadcrumb-item active">개발자 회원 정보</li>
     </ol>
 
     <div class="container-fluid">
@@ -39,7 +39,7 @@
                             <div align="right">
                                 <form name="userForm" action="" method="get" class="easydropdown">
                                     <input type="hidden" name="page" value="1">
-                                    <select name="searchType1" class="dropdown">
+                                    <!-- <select name="searchType1" class="dropdown">
                                         <option value="">위치</option>
                                         <option value="동구" <%if(searchType1=="동구"){%> selected="selected" <%}%>>동구</option>
                                         <option value="서구" <%if(searchType1=="서구"){%> selected="selected" <%}%>>서구</option>
@@ -69,12 +69,12 @@
                                         <option value="선생" <%if(searchType3=="선생"){%> selected="selected" <%}%>>선생</option>
                                         <option value="주임과장" <%if(searchType3=="주임과장"){%> selected="selected" <%}%>>주임과장</option>
                                         <option value="과장" <%if(searchType3=="과장"){%> selected="selected" <%}%>>과장</option>
-                                    </select>
+                                    </select> -->
                                     <% if(searchText != '') { %> <input class="searchbox" type="text" name="searchText"
                                             value="<%=searchText%>" />
                                         <% } else {%>
                                         <input class="searchbox" type="text" name="searchText"
-                                            placeholder=" 회원명, 병원명" />
+                                            placeholder=" 회원명" />
                                         <% } %>
                                         <button class="btn btn-block btn-outline-success" type="submit"
                                             id="searchAction" style="margin-bottom: 10px;">검색</button>
@@ -164,28 +164,25 @@
                                         <input type="hidden" id="uid" name="uid" value="" />
                                         <button class="btn btn-block btn-outline-danger" type="button"
                                             id="delete_btn">삭제</button>
-                                        <input class="btn btn-block btn-outline-success" type="button"
-                                            id="excelFileExport" value="엑셀 다운로드"
-                                            style="margin-bottom: 15px; width: 140px; display: inline-block;" />
                                     </div>
                                     <div class="mt_20">
                                         <div class="paging" id="page_navi">
                                             <ul class="pagination customPaging">
-                                                <li> <a href="/admin/m_user/page?page=1<%= keepSearch %>" class="num">
+                                                <li> <a href="/admin/m_user/admin?page=1<%= keepSearch %>" class="num">
                                                         <<</a> </li> <li> <a
                                                                 <%if((page<startPage)||(page==1)){%><%} else {%>
-                                                                href="/admin/m_user/page?page=<%= parseInt(page) - 1 %><%= keepSearch %>"
+                                                                href="/admin/m_user/admin?page=<%= parseInt(page) - 1 %><%= keepSearch %>"
                                                                 class="num" <% } %>>
                                                                 <</a> </li>
                                                                     <% for(var i = startPage; i < endPage ; i++){  %>
                                                                     <li class="paging_on">
-                                                                    <a href="/admin/m_user/page?page=<%= i + 1 %><%= keepSearch %>"
+                                                                    <a href="/admin/m_user/admin?page=<%= i + 1 %><%= keepSearch %>"
                                                                         <%if(page==i+1){%>class="selected"
                                                                         <%}%> class="num"><%= i + 1 %></a> </li> <% } %>
                                                                         <li> <a <%if(page>last-1){%><%} else {%>
-                                                                            href="/admin/m_user/page?page=<%= parseInt(page) + 1 %><%= keepSearch %>"
+                                                                            href="/admin/m_user/admin?page=<%= parseInt(page) + 1 %><%= keepSearch %>"
                                                                             class="num" <% } %>>></a></li>
-                                                <li><a href="/admin/m_user/page?page=<%= last %><%= keepSearch %>"
+                                                <li><a href="/admin/m_user/admin?page=<%= last %><%= keepSearch %>"
                                                         class="num">>></a></li>
                                             </ul>
                                         </div>
@@ -230,13 +227,7 @@
         const formObj2 = $("form[name='userForm']");
         //검색
         $("#searchAction").on("click", function () {
-            formObj2.attr("action", "/admin/m_user/page");
-            formObj2.attr("method", "get");
-            formObj2.submit();
-        })
-        // 엑셀 다운로드
-        $("#excelFileExport").on("click", function () {
-            formObj2.attr("action", "userExcel");
+            formObj2.attr("action", "/admin/m_user/admin");
             formObj2.attr("method", "get");
             formObj2.submit();
         })

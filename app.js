@@ -35,7 +35,12 @@ app.use(                                // request를 통해 세션 접근 가�
 		// store: new MYSQLStore(connt),
 	})
 );
-
+app.use(function (req, res, next) {
+  if (req.session.user) {
+    global.sessionAdminId = req.session.user.adminId;
+  }
+  next();
+});
 
 // 화면 engine을 ejs로 설정
 app.set('layout', '../layout/layout');
