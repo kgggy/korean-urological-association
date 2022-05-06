@@ -203,7 +203,6 @@ router.get('/noticeUdtForm', async (req, res) => {
                 searchText: searchText,
                 page : page
             });
-            console.log(result);
         });
 
     } catch (error) {

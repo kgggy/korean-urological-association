@@ -1,3 +1,20 @@
+<style>
+    /* div.dataTables_wrapper div.dataTables_filter label {
+        display: block !important;
+    } */
+
+    .userTable thead tr .sorting:first-child::before,
+    .userTable thead tr .sorting_asc:first-child::before,
+    .userTable thead tr .sorting_asc:first-child::after,
+    .userTable thead .sorting_desc:first-child:after,
+    .userTable thead .sorting:first-child:after,
+    .userTable thead .sorting:first-child {
+        content: none !important;
+        cursor: unset
+        
+    }
+
+</style>
 <main class="main">
     <!-- Breadcrumb-->
     <ol class="breadcrumb">
@@ -17,55 +34,42 @@
                         <div class="card-body">
                             <form id="supportForm" name="supportForm" method="" action="">
                                 <input type="hidden" name="supportId" value="" />
-                                <input type="hidden" name="supportImg" value="" />
-                                <table class="table table-responsive-sm table-hover">
+                                <table id="exampleTable" class="table userTable table-responsive-sm table-hover">
                                     <colgroup>
-                                        <col width="10%" />
-                                        <col width="50%" />
                                         <col width="20%" />
-                                        <col width="20%" />
+                                        <col width="40%" />
+                                        <col width="40%" />
                                     </colgroup>
                                     <thead>
                                         <tr>
                                             <th>번호</th>
-                                            <th>이미지</th>
                                             <th>업체명</th>
-                                            <th>비고</th>
+                                            <th>사이트</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <% for(var i = 0; i < support.length; i++){ %>
-                                        <tr>
-                                            <td style="pointer-events:none"><%= i + 1 %></td>
-                                            <td style="pointer-events:none"><img src="../../../<%= img[i].fileRoute %>" alt="사진"
-                                                    style="padding:20px !important; width:250px" /></td>
-                                            <td style="pointer-events:none"><%=support[i].supportTitle %></td>
-                                            <td>
-                                                <input id="searchAction" type="button"
-                                                    class="btn btn-block btn-outline-success"
-                                                    onclick="supportUpdate('<%=support[i].supportId%>')" value="수정 " />
-                                                <button type="button" id="delete_btn" name="supportDelete"
-                                                    class="btn btn-block btn-outline-danger"
-                                                    data-supportId="<%=support[i].supportId%>"
-                                                    data-supportImg="<%=img%>">삭제</button>
-                                            </td>
-                                        </tr>
-                                        <% } %>
-                                        <%if(support.length == 0){%>
-                                        <tr>
-                                            <td colspan="4">
-                                                등록된 목록이 없습니다.
-                                            </td>
-                                        </tr>
-                                        <%}%>
-            </tbody>
-        </table>
-</form>
-<div class="mt_20">
-    <p class="float_r">
-        <input id="enrollAction" class="btn btn-block btn-outline-success" type="button" onclick="enroll()"
-                                        value="등록" />
-                                        </p>
+                                        <% for(var i = 0; i < support.length; i++){ %> <tr class="pointer"
+                                            onclick="location.href='/admin/m_support/supportSelectOne?supportId=<%=support[i].supportId%>'">
+                                <td><%= i + 1 %></td>
+                                <td><%=support[i].supportTitle %></td>
+                                <td><%=support[i].supportUrl %></td>
+                                </tr>
+                                <% } %>
+                                <%if(support.length == 0){%>
+                                <tr>
+                                    <td colspan="4">
+                                        등록된 목록이 없습니다.
+                                    </td>
+                                </tr>
+                                <%}%>
+                                </tbody>
+                            </table>
+                    </form>
+                        <div class="mt_20">
+                            <p class="float_r">
+                                <input id="enrollAction" class="btn btn-block btn-outline-success" type="button" onclick="enroll()"
+                                            value="등록" />
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -78,25 +82,6 @@
 <script>
     // 삭제
     const formObj = $("form[name='supportForm']");
-    $("button[name=supportDelete]").on("click", function () {
-        $('input[name=supportId').val($(this).attr('data-supportId'));
-        $('input[name=supportImg').val($(this).attr('data-supportImg'));
-        formObj.attr("action", "/admin/m_support/supportDelete");
-        formObj.attr("method", "get");
-        if (confirm("삭제하시겠습니까?") == true) {
-            formObj.submit();
-            alert("삭제되었습니다.");
-        } else {
-            return;
-        }
-    });
-
-    function supportUpdate(str) {
-        $('input[name=supportId').val(str);
-        formObj.attr("action", "/admin/m_support/supportUdtForm");
-        formObj.attr("method", "get");
-        formObj.submit();
-    }
 
     function enroll() {
         formObj.attr("action", "/admin/m_support/supportWritForm");

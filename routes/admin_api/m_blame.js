@@ -9,8 +9,8 @@ router.get('/blame', async (req, res) => {
     try {
         var page = req.query.page;
         var targetType = req.query.targetType == undefined ? "" : req.query.targetType;
-        var sql = "select b.* ,date_format(blaDate, '%Y-%m-%d') as blaDatefmt, c.certiContentId, f.fileRoute \
-                    from blame b left join comment c on c.cmtId = b.targetContentId left join file f on b.targetContentId = f.certiContentId";
+        var sql = "select b.* ,date_format(blaDate, '%Y-%m-%d') as blaDatefmt, c.boardId, f.fileRoute \
+                    from blame b left join comment c on c.cmtId = b.targetContentId left join file f on b.targetContentId = f.boardId";
         if (targetType != '') {
             sql += " where targetType = " + targetType;
         }
