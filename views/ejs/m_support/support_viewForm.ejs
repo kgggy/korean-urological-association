@@ -1,0 +1,113 @@
+    <main class="main">
+       <!-- Breadcrumb-->
+       <ol class="breadcrumb">
+          <li class="breadcrumb-item">Home</li>
+          <li class="breadcrumb-item">
+             <a style="font-weight: bold;">후원</a>
+          </li>
+          <li class="breadcrumb-item active">후원 상세</li>
+          <!-- Breadcrumb Menu-->
+       </ol>
+
+       <div class="container-fluid">
+          <div class="animated fadeIn">
+             <div class="row">
+                <div class="col-lg-6">
+                   <div class="card">
+                      <form name="udtForm" role="form">
+                         <input type="hidden" id="supportId" name="supportId" value="<%=result[0].supportId%>">
+                         <div class="card-header">
+                            <i class="fa fa-align-justify"></i> 후원 상세</div>
+                         <div class="card-body">
+                            <!-- 컨텐츠 -->
+                            <div class="form-group row">
+                               <label class="col-md-2 col-form-label" for="text-input">글번호</label>
+                               <div class="col-md-9">
+                                  <input class="form-control" id="supportId" type="text" name="supportId"
+                                     disabled="disabled" value="<%=result[0].supportId%>">
+                               </div>
+                            </div>
+                            <div class="form-group row">
+                               <label class="col-md-2 col-form-label" for="text-input">후원업체</label>
+                               <div class="col-md-9">
+                                  <input class="form-control" id="ucmtitle" type="text" name="ucmtitle"
+                                     disabled="disabled" value="<%=result[0].supportTitle%>">
+                               </div>
+                            </div>
+                            <div class="form-group row">
+                               <label class="col-md-2 col-form-label" for="text-input">내용</label>
+                               <div class="col-md-9">
+                                  <%-result[0].supportDetail%>
+                               </div>
+                            </div>
+                            <div class="form-group row">
+                               <label class="col-md-2 col-form-label" for="text-input">사이트</label>
+                               <div class="col-md-9">
+                                  <input class="form-control" id="supportUrl" type="text" name="supportUrl"
+                                     disabled="disabled" value="<%=result[0].supportUrl%>">
+                               </div>
+                            </div>
+                            <div class="form-group row">
+                               <label class="col-md-2 col-form-label" for="text-input">첨부파일</label>
+                               <div class="col-md-9">
+                                  <% if(result[0].fileRoute != null && result[0].fileRoute != '') {%>
+                                  <% for(var i = 0; i < result.length; i++) { %>
+                                  <!-- <img src="../../../<%= result[i].fileRoute %>" alt="사진"
+                                        style="padding:0 50px 8px 0 !important; width:40%; vertical-align: top !important;" /> -->
+                                  <p><span><%=result[i].fileOrgName%></span></p>
+                                  <a href="../../../<%= result[i].fileRoute %>"
+                                     class="btn btn-block btn-outline-success" type="button" style="width:30%;"
+                                     download>파일 다운로드</a>
+                                  </p>
+                                  <input type="hidden" name="fileRoute" value="<%=result[i].fileRoute%>">
+                                  <% } %>
+                                  <% }else{ %>
+                                  이미지가 존재하지 않습니다.
+                                  <% } %>
+                               </div>
+                            </div>
+                            <!--option 버튼  -->
+                            <div class="option_button">
+                               <div>
+                                  <button class="btn btn-block btn-outline-success" type="button"
+                                     id="update_btn">수정</button>
+                               </div>
+                               <div>
+                                  <button class="btn btn-block btn-outline-danger" type="button"
+                                     id="delete_btn">삭제</button>
+                               </div>
+                               <div>
+                                  <button class="btn btn-block btn-outline-success" type="button"
+                                     onclick="location.href='/admin/m_support'">목록</button>
+                               </div>
+                            </div>
+                         </div>
+                      </form>
+                   </div>
+                </div>
+             </div>
+          </div>
+       </div>
+    </main>
+
+    <script type="text/javascript">
+       var formObj = $("form[name='udtForm']");
+       $(document).ready(function () {
+          // 수정 폼 연결
+          $("#update_btn").on("click", function () {
+             formObj.attr("action", "supportUdtForm");
+             formObj.attr("method", "get");
+             formObj.submit();
+          });
+          // 삭제
+          $("#delete_btn").on("click", function () {
+             formObj.attr("action", "supportDelete");
+             formObj.attr("method", "get");
+             if (confirm("게시글을 삭제하시겠습니까?") == true) {
+                formObj.submit();
+             } else {
+                return;
+             }
+          });
+       })
+    </script>

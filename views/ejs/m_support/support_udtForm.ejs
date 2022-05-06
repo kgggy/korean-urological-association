@@ -1,3 +1,19 @@
+<!-- ckeditor -->
+<script src="../../../public/build/ckeditor.js"></script>
+<style>
+   .ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
+      border-color: var(--ck-color-base-border);
+      height: 40%;
+   }
+
+   .ck.ck-editor__editable:not(.ck-editor__nested-editable).ck-focused {
+      height: 400px;
+   }
+
+   .ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
+      height: 400px;
+   }
+</style>
 <main class="main">
 	<!-- Breadcrumb-->
 	<ol class="breadcrumb">
@@ -5,113 +21,154 @@
 		<li class="breadcrumb-item">
 			<a style="font-weight: bold;">후원</a>
 		</li>
-		<li class="breadcrumb-item active">후원수정</li>
+		<li class="breadcrumb-item active">후원등록</li>
 	</ol>
+         <div class="col-xs-6">
+            <!-- HTML5 Inputs -->
+            <div class="card mb-4">
+               <h5 class="card-header">후원 수정</h5>
+                  <div class="card-body">
+                     <!-- 컨텐츠 -->
+                     <form name="udtForm" role="form">
+                        <input type="hidden" name="fileId" value="">
+                        <input type="hidden" name="fileRoute" value="">
+                        <input type="hidden" id="writContent" name="supportDetail" value="">
+                        <div class="mb-3 row">
+                           <label class="col-md-1 col-form-label" for="text-input">글번호</label>
+                           <div class="col-md-10">
+                              <input class="form-control" id="writId" type="text" name="supportId" readonly
+                                 value="<%=result[0].supportId%>">
+                           </div>
+                        </div>
+						<div class="mb-3 row">
+                           <label class="col-md-1 col-form-label">후원대표이미지</label>
+                           <% if(result[0].fileRoute != null) { %>
+                           <div class="file-wrap support_img_wrap col-md-10">
+                              <p><span><%=result[0].fileOrgName%></span>
+                                 <button name="supportFileDelete" data-fileRoute="<%=result[0].fileRoute%>" data-fileId="<%=result[0].fileId%>"
+                                    class="btn btn-block btn-outline-danger fileDelete">삭제</button></p>
+                              </div>
+                              <% } else {%>
+                              <div class="col-md-10" style="display: flex; flex-direction: column; gap: 25px; padding-left: 15px">
+                                 <input type="file" id="file" name="file">
+                              </div>
+                              <% } %>
+                           
+                        </div>
+                        <div class="mb-3 row">
+                           <label class="col-md-1 col-form-label" for="text-input">후원업체명</label>
+                           <div class="col-md-10">
+                              <input class="form-control" id="writTitle" type="text" name="supportTitle"
+                                 value="<%=result[0].supportTitle%>">
+                           </div>
+                        </div>
+                        <div class="mb-3 row">
+                           <label class="col-md-1 col-form-label" for="text-input">업체세부내용</label>
+                           <div class="col-md-10">
+                              <textarea name="editor" class="editor" id="editor"><%-result[0].supportDetail %></textarea>
+                           </div>
+                        </div>
+                        <div class="mb-3 row">
+                           <label class="col-md-1 col-form-label" for="text-input">사이트</label>
+                           <div class="col-md-10">
+                              <input class="form-control" id="supportUrl" type="text" name="supportUrl" value="<%=result[0].supportUrl %>">
+                           </div>
+                        </div>
+                        <div class="mb-3 row">
+                           <label class="col-md-1 col-form-label">첨부파일</label>
+                           <% if(result[0].fileRoute != null) { %>
+                           <div class="file-wrap support_img_wrap col-md-10">
+                              <% for(var i = 1; i < result.length-1; i++) {%>
+                              <p><span><%=result[i].fileOrgName%></span>
+                                 <button name="supportFileDelete" data-fileRoute="<%=result[i].fileRoute%>" data-fileId="<%=result[i].fileId%>"
+                                    class="btn btn-block btn-outline-danger fileDelete">삭제</button></p>
+                              <% } %>
+                              <% if(result.length < 5) { %>
+                              <% for(var i = 0; i < 5-result.length; i++) {%>
+                              <br><br><input type="file" id="file" name="file" /><br><br>
+                              <% } %>
+                              <% } %>
+                              </div>
+                              <% } else {%>
+                              <div class="col-md-10" style="display: flex; flex-direction: column; gap: 25px; padding-left: 15px">
+                                 <input type="file" id="file" name="file" />
+                                 <input type="file" id="file" name="file" />
+                                 <input type="file" id="file" name="file" />
+                                 <input type="file" id="file" name="file" />
+                              </div>
+                              <% } %>
+                           
+                        </div>
 
-	<div class="container-fluid">
-		<div class="animated fadeIn">
-			<div class="row">
-				<div class="col-lg-6">
-					<div class="card">
-						<div class="card-header">
-							<i class="fa fa-align-justify"></i> 후원 수정
-						</div>
-						<div class="card-body">
-							<!-- 컨텐츠 -->
-							<form action="" id="bannerUdt" name="bannerUdt" method="" enctype="multipart/form-data">
-								<input type="hidden" id="supportImg" name="supportImg" value="">
-								<input type="hidden" id="supportId" name="supportId" value="<%=result[0].supportId%>">
-								<div class="form-group row">
-									<label class="col-md-2 col-form-label">이미지</label>
-									<% if(result.length > 0 && result[0].supportImg != null && result[0].supportImg != '') { %>
-									<div style="display: flex; flex-direction: column; padding-left: 15px">
-										<img src="../../../<%=result[0].supportImg%>" width="500px">&nbsp;
-										<button class="btn btn-block btn-outline-danger" name="fileDelete"
-											data-supportImg="<%=result[0].supportImg%>">삭제</button>
-									</div>
-									<% } else {%>
-									<div class="col-md-9 sub"><input type="file" id="file" name="file" /></div>
-									<% } %>
-									</td>
-								</div>
+                        <!--option 버튼  -->
+                         <div class="demo-inline-spacing" >
+                           <button type="button" class="btn btn-outline-success" id="update_btn">수정</button>
+                           <button type="button" class="btn btn-outline-primary"
+                              onclick="history.go(-1)">취소</button>
+                        </div>
+                           </div>
 
-								<div class="form-group row">
-									<label class="col-md-2 col-form-label" for="text-input">업체명</label>
-									<div class="col-md-9 sub">
-										<input type="text" id="supporter" name="supporter"
-											value="<%=result[0].supporter%>">
-									</div>
-								</div>
-								<!--option 버튼  -->
-								<div class="option_button" style="padding-left: 1.25rem; margin-bottom: 15px;">
-									<div>
-										<button class="btn btn-block btn-outline-success" type="button" id="enroll_btn"
-											onclick="bannerUpdate()">수정</button>
-									</div>
-									<div>
-										<button class="btn btn-block btn-outline-danger" type="button"
-											onclick="history.go(-1)">취소</button>
-									</div>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                     </form>
+                  </div>
+               </div>
+            </div>
 </main>
 
 <script type="text/javascript">
-	var formObj = $("form[name='bannerUdt']");
-	$(document).ready(function () {
-		//확장자 체크
-		$("input:file[name='file']").change(function () {
-			var str = $(this).val();
-			var fileName = str.split('\\').pop().toLowerCase();
-			// alert(fileName);
-			checkFileName(fileName);
-		});
-	});
+   $(document).ready(function () {
+      //ckeditor
+      ClassicEditor
+         .create(document.querySelector('#editor'), {
+            language: 'ko'
+         })
+         .then(newEditor => {
+            editor = newEditor;
+         })
+         .catch(error => {
+            console.error(error);
+         });
 
-	//확장자 체크
-	function checkFileName(str) {
-		var ext = str.split('.').pop().toLowerCase();
-		// alert(ext);
-		if ($.inArray(ext, ['jpg', 'png', 'jpeg', 'gif']) == -1) {
-			alert(ext + '파일은 업로드 하실 수 없습니다.');
-			$("input:file[name='file']").val("");
-		}
-	}
+      var formObj = $("form[name='udtForm']");
+      // 수정
+      $("#update_btn").on("click", function () {
+         var writTitle = $("#writTitle").val();
+         var content = editor.getData();
+         if (writTitle == "") {
+            alert("제목을 입력하세요.");
+            $("#writTitle").focus();
+            return false;
+         }
 
-	function bannerUpdate() {
-		var supportImg = $("#file").val();
+         if (content == null) {
+            alert("내용을 입력하세요.");
+            $("#editor").focus();
+            return false;
+         }
 
-		if (supportImg == '') {
-			alert("이미지를 선택해주세요.");
-			return false;
-		}
-		if (confirm("수정하시겠습니까?") == true) {
-			$('input[name=showYN]').val($("#showYN option:selected").val());
-			formObj.attr("action", "bannerUpdate");
-			formObj.attr("method", "post");
-			formObj.submit();
-			alert("수정이 완료되었습니다.");
-		} else {
-			return;
-		}
-	};
+         if (confirm("수정하시겠습니까?") == true) {
+            $('input[id=writContent]').attr('value', content);
+            formObj.attr("action", "supportUpdate");
+            formObj.attr("enctype", "multipart/form-data");
+            formObj.attr("method", "post");
+            formObj.submit();
+            alert("수정되었습니다.");
+         } else {
+            return;
+         }
+      });
 
-	// 첨부파일 삭제
-	$("[name=fileDelete]").on("click", function () {
-		$('input[name=supportImg').val($(this).attr('data-supportImg'));
-		if (confirm("실제 파일이 삭제됩니다. 정말 삭제하시겠습니까?") == true) {
-			formObj.attr("action", "supportImgDelete");
-			formObj.attr("method", "get");
-			formObj.submit();
-			alert("삭제되었습니다.");
-		} else {
-			return;
-		}
-	});
+      //첨부파일 삭제
+      $("[name=supportFileDelete]").on("click", function () {
+         $('input[name=fileId').val($(this).attr('data-fileId'));
+         $('input[name=fileRoute').val($(this).attr('data-fileRoute'));
+         if (confirm("실제 파일이 삭제됩니다. 정말 삭제하시겠습니까?") == true) {
+            formObj.attr("action", "supportFileDelete");
+            formObj.attr("method", "get");
+            alert("삭제되었습니다.");
+            formObj.submit();
+         } else {
+            return;
+         }
+      });
+   })
 </script>

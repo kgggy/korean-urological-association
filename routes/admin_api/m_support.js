@@ -2,6 +2,7 @@ const multer = require("multer");
 const path = require('path');
 const fs = require('fs');
 
+const sharp = require('sharp');
 var express = require('express');
 var router = express.Router();
 
@@ -37,8 +38,7 @@ var upload = multer({ //multer안에 storage정보
 router.get('/', async (req, res) => {
     try {
         let support;
-        let img;
-        const sql = "select * from support";
+        const sql = "select * from support order by 1 desc";
         connection.query(sql, (err, results) => {
             if (err) {
                 console.log(err);
@@ -47,20 +47,31 @@ router.get('/', async (req, res) => {
                 });
             }
             support = results
-            const sql = "select fileId, fileRoute, supportId from file group by supportId";
-            connection.query(sql, (err, results) => {
-                if (err) {
-                    console.log(err);
-                    res.json({
-                        msg: "query error"
-                    });
-                }
-                img = results;
                 let route = req.app.get('views') + '/m_support/support';
                 res.render(route, {
-                    support: support,
-                    img: img
+                    support: support
                 });
+        });
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
+//후원목록상세조회
+router.get('/supportSelectOne', async (req, res) => {
+    try {
+        const param = req.query.supportId;
+        const sql = "select b.*, f.* from support b join file f on b.supportId = f.supportId where b.supportId = ?";
+        connection.query(sql, param, (err, result) => {
+            if (err) {
+                console.log(err);
+                res.json({
+                    msg: "query error"
+                });
+            }
+            let route = req.app.get('views') + '/m_support/support_viewForm';
+            res.render(route, {
+                result: result
             });
         });
     } catch (error) {
@@ -75,15 +86,44 @@ router.get('/supportWritForm', async (req, res) => {
 });
 
 //후원광고 등록
-router.post('/supportWrit', upload.single('file'), async function (req, res) {
-    const path = req.file.path;
-    const param = [path, req.body.supporter];
+router.post('/supportWrit', upload.array('file'), async function (req, res) {
+    const param = [req.body.supportUrl, req.body.supportTitle, req.body.supportDetail];
+    const paths = req.files.map(data => data.path);
+    const orgName = req.files.map(data => data.originalname);
     try {
-        const sql = "insert into support(supportImg, supporter) values(?, ?)";
-        connection.query(sql, param, (err) => {
+        const sql = "insert into support(supportUrl, supportTitle, supportDetail) values(?, ?, ?);\
+                     select max(supportId) as supportId from support;";
+        for (let i = 0; i < paths.length; i++) {
+            if (req.files[i].size > 1000000) {
+                sharp(paths[i]).resize({
+                    width: 2000
+                }).withMetadata() //이미지 방향 유지
+                    .toBuffer((err, buffer) => {
+                        if (err) {
+                            throw err;
+                        }
+                        fs.writeFileSync(paths[i], buffer, (err) => {
+                            if (err) {
+                                throw err
+                            }
+                        });
+                    });
+            }
+        }
+        connection.query(sql, param, (err, results) => {
             if (err) {
                 throw err;
             }
+            const supportId = results[1][0].supportId;
+            for (let i = 0; i < paths.length; i++) {
+                const param2 = [supportId, paths[i], orgName[i], path.extname(paths[i])];
+                const sql2 = "insert into file(supportId, fileRoute, fileOrgName, fileType) values (?, ?, ?, ?)";
+                connection.query(sql2, param2, (err) => {
+                    if (err) {
+                        throw err;
+                    }
+                });
+            };
             res.redirect("/admin/m_support?page=1");
         });
     } catch (error) {
@@ -95,11 +135,12 @@ router.post('/supportWrit', upload.single('file'), async function (req, res) {
 router.get('/supportUdtForm', async (req, res) => {
     try {
         const param = req.query.supportId;
-        const sql = "select * from support where supportId = ?"
+        const sql = "select s.*, f.* from support s join file f on s.supportId = f.supportId where s.supportId = ?"
         connection.query(sql, param, function (err, result, fields) {
             if (err) {
                 console.log(err);
             }
+            console.log(result);
             let route = req.app.get('views') + '/m_support/support_udtForm';
             res.render(route, {
                 result: result
@@ -111,38 +152,40 @@ router.get('/supportUdtForm', async (req, res) => {
 });
 
 //후원 수정
-router.post('/bannerUpdate', upload.single('file'), async (req, res) => {
-    var path = "";
-    var param = "";
-    var sql = "";
-    if (req.file != null) {
-        path = req.file.path;
-        param = [path, req.body.supporter, req.body.supportId];
-        sql = "update support set supportImg = ?, supporter = ?\
-                                     where supportId = ?";
-    } else {
-        param = [req.body.supportImg, req.body.supporter, req.body.supportId];
-        sql = "update support set supportImg = ?, supporter = ?\
-                                     where supportId = ?";
-    }
+router.post('/supportUpdate', upload.array('file'), async (req, res) => {
+    const paths = req.files.map(data => data.path);
+    const orgName = req.files.map(data => data.originalname);
+    var param = [req.body.supportUrl, req.body.supportTitle, req.body.supportDetail, req.body.supportId];
+    sql = "update support set supportUrl = ?, supportTitle = ?,\
+                supportDetail = ? where supportId = ?";
     connection.query(sql, param, (err) => {
         if (err) {
             console.error(err);
         }
-        res.redirect('/admin/m_support?page=1');
+        for (let i = 0; i < paths.length; i++) {
+            const sql2 = "insert into file(fileRoute, fileOrgName, supportId) values (?, ?, ?)";
+            const param2 = [paths[i], orgName[i], req.body.supportId];
+            connection.query(sql2, param2, (err) => {
+                if (err) {
+                    throw err;
+                }
+            });
+        };
+        res.redirect('/admin/m_support');
     });
 });
 
 //후원 이미지 파일 삭제
 router.get('/supportImgDelete', async (req, res) => {
-    const param = req.query.supportImg;
+    const param = req.query.fileId;
+    const fileRoute = req.query.fileRoute; 
     try {
-        const sql = "update support set supportImg = null where supportId = ?";
-        connection.query(sql, req.query.supportId, (err, row) => {
+        const sql = "delete from file where fileId = ?";
+        connection.query(sql, param, (err, row) => {
             if (err) {
                 console.log(err)
             }
-            fs.unlinkSync(param, (err) => {
+            fs.unlinkSync(fileRoute.toString(), (err) => {
                 if (err) {
                     console.log(err);
                 }
@@ -154,26 +197,33 @@ router.get('/supportImgDelete', async (req, res) => {
             console.log("배너 파일 삭제 에러 발생");
         }
     }
-    res.redirect('supportUdtForm?supportId=' + req.query.supportId);
+    res.redirect('back');
 });
 
 //후원광고 삭제
 router.get('/supportDelete', async (req, res) => {
     try {
-        const supportImg = req.query.supportImg;
-        const sql = "delete from support where supportId = ?";
-        connection.query(sql, req.query.supportId, (err, row) => {
+        const param = [req.query.supportId, req.query.supportId];
+        const sql = "delete from support where supportId = ?;\
+                        delete from file where supportId = ?";
+        connection.query(sql, param, (err, row) => {
             if (err) {
                 console.log("쿼리 에러입니다.");
             }
-            if (supportImg !== '') {
-                fs.unlinkSync(supportImg, (err) => {
-                    if (err) {
-                        console.log(err);
-                    }
-                });
+            if (req.query.fileRoute != undefined) {
+                if (Array.isArray(req.query.fileRoute) == false) {
+                    req.query.fileRoute = [req.query.fileRoute];
+                }
+                for (let i = 0; i < req.query.fileRoute.length; i++) {
+                    fs.unlinkSync(req.query.fileRoute[i], (err) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        return;
+                    });
+                }
             }
-            res.redirect("/admin/m_support?page=1");
+            res.redirect("/admin/m_support");
         });
     } catch (error) {
         res.send(error.message);
