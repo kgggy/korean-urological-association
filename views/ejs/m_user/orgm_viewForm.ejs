@@ -17,6 +17,7 @@
                   <div class="card-header">
                      <i class="fa fa-align-justify"></i> 회원정보 상세</div>
                   <form name="udtForm" role="form">
+                     <input type="hidden" name="admin" value="<%=admin%>">
                      <input type="hidden" name="page" value="<%=page%>">
                      <div class="card-body">
                         <!-- 컨텐츠 -->
@@ -109,7 +110,7 @@
                               <% if(result.length > 0 && result[0].userImg != null && result[0].userImg != '') {%>
                               <img src="../../../<%= result[0].userImg %>" alt="사진" width="40%" />
                               <% }else{ %>
-                                 등록된 프로필 사진이 없습니다.
+                              등록된 프로필 사진이 없습니다.
                               <% } %>
                            </div>
                         </div>
@@ -181,8 +182,9 @@
                               <button class="btn btn-block btn-outline-danger" type="button" id="delete_btn">삭제</button>
                            </div>
                            <div>
-                              <button class="btn btn-block btn-outline-success" type="button"
-                                 onclick="location.href='/admin/m_user/page?page=<%=page%><%=keepSearch%>'">목록</button>
+                              <button class="btn btn-block btn-outline-success" type="button" <%if(admin!=''){%>
+                                 onclick="location.href='/admin/m_user/admin?page=<%=page%><%=keepSearch%>'" <%}else{%>
+                                 onclick="location.href='/admin/m_user/page?page=<%=page%><%=keepSearch%>'" <%}%>>목록</button>
                            </div>
                         </div>
                      </div>

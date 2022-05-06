@@ -25,6 +25,7 @@
                      <!-- 컨텐츠 -->
                      <form action="" id="userForm" method="" enctype="multipart/form-data">
                         <input type="hidden" name="page" value="<%=page%>">
+                        <input type="hidden" name="admin" value="<%=admin%>">
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">회원번호</label>
                            <div class="col-md-9">
@@ -99,15 +100,21 @@
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">형태</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="userType" type="text" name="userType"
-                                 value="<%=result.userType%>">
+                              <select class="dropdown" name="userType">
+                                 <% for(i = 0; i < userType.length; i++) { %>
+                                 <option <%if(userType[i].userType=='형태'){%> value="" <%}else{%> value="<%= userType[i].userType %>" <%}%> <%if(userType[i].userType==result.userType){%> selected="selected" <%}%>><%= userType[i].userType %></option>
+                                 <% } %>
+                              </select>
                            </div>
                         </div>
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">역할</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="userPosition" type="text" name="userPosition"
-                                 value="<%=result.userPosition%>">
+                              <select class="dropdown" name="userPosition">
+                                 <% for(i = 0; i < userPosition.length; i++) { %>
+                                 <option <%if(userPosition[i].userPosition=='전체'){%> value="" <%}else{%> value="<%= userPosition[i].userPosition %>" <%}%> <%if(userPosition[i].userPosition==result.userPosition){%> selected="selected" <%}%>><%= userPosition[i].userPosition %></option>
+                                 <% } %>
+                              </select>
                            </div>
                         </div>
                         <div class="form-group row">

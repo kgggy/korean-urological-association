@@ -10,6 +10,12 @@
 							<a class="nav-link" href="/admin/m_user/page?page=1">
 								<i class="nav-icon icon-arrow-right"></i> 회원 정보</a>
 						</li>
+						<% if(sessionAdminId == 'resoft') { %>
+						<li class="nav-item">
+							<a class="nav-link" href="/admin/m_user/admin?page=1">
+								<i class="nav-icon icon-arrow-right"></i> 개발자 회원 정보</a>
+						</li>
+						<% } %>
 					</ul>
 				</li>
 				<li class="nav-item nav-dropdown open" style="cursor: pointer;"><a
