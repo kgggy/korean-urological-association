@@ -7,6 +7,11 @@ const multer = require("multer");
 const path = require('path');               
 var connection = require('../../config/db').conn;
 
+const {
+    ONE_SIGNAL_CONFIG
+} = require("../../config/pushNotification_config");
+const pushNotificationService = require("../../services/push_Notification.services");
+
 //파일업로드 모듈
 var upload = multer({ //multer안에 storage정보  
     storage: multer.diskStorage({
@@ -188,40 +193,39 @@ router.post('/galleryWrite', upload.array('file'), async (req, res, next) => {
                     throw err;
                 }
                 for (let i = 0; i < paths.length; i++) {
-                    const param3 = [paths[i], orgName[i], result[0].galleryId];
-                    const sql3 = "insert into file(fileRoute, fileOrgName, boardId) values (?, ?, ?)";
+                    const param3 = [paths[i], orgName[i], result[0].galleryId, path.extname(paths[i])];
+                    const sql3 = "insert into file(fileRoute, fileOrgName, boardId, fileType) values (?, ?, ?, ?)";
                     connection.query(sql3, param3, (err) => {
                         if (err) {
                             throw err;
                         }
                     });
                 };
+                //OneSignal 푸쉬 알림
+                var message = {
+                    app_id: ONE_SIGNAL_CONFIG.APP_ID,
+                    contents: {
+                        "en": req.body.galleryTitle
+                    },
+                    included_segments: ["All"],
+                    // "include_player_ids": ["743b6e07-54ed-4267-8290-e6395974acc6"],
+                    content_avaliable: true,
+                    small_icon: "ic_notification_icon",
+                    data: {
+                        title: "gallery",
+                        id: result[0].galleryId
+                    }
+                };
+    
+                pushNotificationService.sendNotification(message, (error, results) => {
+                    if (error) {
+                        return next(error);
+                    }
+                    return null;
+                })
             });
-        });
-        //fcm
-        // var firebaseToken;
-        // const token = "select pushToken from user where pushToken is not null";
-        // connection.query(token, (err, result) => {
-        //     if (err) {
-        //         throw err;
-        //     }
-        //     for (var i = 0; i < result.length; i++) {
-        //         firebaseToken = result[i].pushToken;
-        //         pushing.sendFcmMessage({
-        //             "message": {
-        //                 "token": firebaseToken,
-        //                 "notification": {
-        //                     "body": "공지사항을 확인해주세요.",
-        //                     "title": "ECOCE 공지사항"
-        //                 },
-        //                 "data": {
-        //                     "action": "notice"
-        //                 }
-        //             }
-        //         });
-        //     }
             res.send('<script>alert("갤러리가 등록되었습니다."); location.href="/admin/m_gallery/gallery?&page=1";</script>');
-        // });
+        });
     } catch (error) {
         res.send(error.message);
     }
@@ -261,15 +265,32 @@ router.post('/galleryUpdate', upload.array('file'), (req, res) => {
     const page = req.body.page;
     var searchText = req.body.searchText == undefined ? "" : req.body.searchText;
     try {
+        for (let i = 0; i < paths.length; i++) {
+            if (req.files[i].size > 1000000) {
+                sharp(paths[i]).resize({
+                    width: 2000
+                }).withMetadata() //이미지 방향 유지
+                    .toBuffer((err, buffer) => {
+                        if (err) {
+                            throw err;
+                        }
+                        fs.writeFileSync(paths[i], buffer, (err) => {
+                            if (err) {
+                                throw err
+                            }
+                        });
+                    });
+            }
+        }
         const param1 = [req.body.galleryTitle, req.body.galleryContent, req.body.galleryId];
-        const sql1 = "update gallery set galleryTitle = ?, galleryContent = ?, galleryWritDate = sysdate() where galleryId = ?";
+        const sql1 = "update gallery set galleryTitle = ?, galleryContent = ? where galleryId = ?";
         connection.query(sql1, param1, (err) => {
             if (err) {
                 console.error(err);
             }
             for (let i = 0; i < paths.length; i++) {
-                const sql2 = "insert into file(fileRoute, fileOrgName, boardId) values (?, ?, ?)";
-                const param2 = [paths[i], orgName[i], req.body.galleryId];
+                const sql2 = "insert into file(fileRoute, fileOrgName, boardId, fileType) values (?, ?, ?, ?)";
+                const param2 = [paths[i], orgName[i], req.body.galleryId, path.extname(paths[i])];
                 connection.query(sql2, param2, (err) => {
                     if (err) {
                         throw err;

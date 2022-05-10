@@ -93,6 +93,24 @@
             console.error(error);
          });
 
+      //확장자 체크
+      $("input:file[name='file']").change(function () {
+         var str = $(this).val();
+         var fileName = str.split('\\').pop().toLowerCase();
+         // alert(fileName);
+         checkFileName(fileName);
+      });
+
+      //확장자 체크
+      function checkFileName(str) {
+         var ext = str.split('.').pop().toLowerCase();
+         // alert(ext);
+         if ($.inArray(ext, ['jpg', 'png', 'jpeg', 'gif']) == -1) {
+            alert(ext + '파일은 업로드 하실 수 없습니다.');
+            $("input:file[name='file']").val("");
+         }
+      }
+
       $("#enroll_btn").click(function () {
          // const aa = Array.from(editor.ui.componentFactory.names());
          // console.log(aa);

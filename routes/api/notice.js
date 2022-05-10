@@ -5,7 +5,10 @@ var connection = require('../../config/db').conn;
 //공지사항 글 전체 목록 조회
 router.get('/', async (req, res) => {
     try {
-        const sql = "select * from notice order by noticeFix desc, noticeWritDate desc";
+        const sql = "select n.noticeId, n.noticeWritDate, n.noticeTitle, n.noticeFix,\
+                            (select count(*) from hitCount where hitCount.boardId = n.noticeId) as hit,\
+                            (select count(*) from comment where comment.boardId = n.noticeId) as cmtCount\
+                       from notice n order by noticeFix desc, noticeWritDate desc;";
         let notices;
         connection.query(sql, (err, results) => {
             if (err) {

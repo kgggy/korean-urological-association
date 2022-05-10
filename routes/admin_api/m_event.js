@@ -5,7 +5,9 @@ const sharp = require('sharp');
 const multer = require("multer");
 const path = require('path');
 var connection = require('../../config/db').conn;
-const {ONE_SIGNAL_CONFIG} = require("../../config/pushNotification_config");
+const {
+    ONE_SIGNAL_CONFIG
+} = require("../../config/pushNotification_config");
 const pushNotificationService = require("../../services/push_Notification.services");
 
 //파일업로드 모듈
@@ -150,36 +152,48 @@ router.post('/eventWrite', upload.single('file'), async (req, res, next) => {
                             }
                         });
                     });
-                    
+
             }
             param1 = [req.body.eventTitle, req.body.eventContent, req.body.eventDate, req.body.eventPlace, req.body.eventPlaceDetail, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, path, req.body.eventTarget1, req.body.eventTarget2];
         } else {
             param1 = [req.body.eventTitle, req.body.eventContent, req.body.eventDate, req.body.eventPlace, req.body.eventPlaceDetail, req.body.startDate, req.body.startDate, req.body.endDate, req.body.endDate, req.body.eventFileRoute, req.body.eventTarget1, req.body.eventTarget2];
         }
         const sql1 = "insert into event(eventTitle, eventContent, eventDate, eventPlace, eventPlaceDetail, startDate, endDate, eventFileRoute, eventTarget1, eventTarget2)\
-                                  values(?, ?, ?, ?, ?, if(? = '',null,?), if(? = '',null,?), ?, ?, ?)";
-        connection.query(sql1, param1, (err) => {
+                                  values(?, ?, ?, ?, ?, if(? = '',null,?), if(? = '',null,?), ?, ?, ?);";
+        connection.query(sql1, param1, (err, results) => {
             if (err) {
                 throw err;
             }
-            // //OneSignal 푸쉬 알림
-            // var message = {
-            //     app_id: ONE_SIGNAL_CONFIG.APP_ID,
-            //     contents: { "en": req.body.eventTitle },
-            //     included_segments: ["All"],
-            //     content_avaliable: true,
-            //     small_icon: "ic_notification_icon",
-            //     data: {
-            //         PushTitle: "CUSTOM NOTIFICATION"
-            //     }
-            // };
-
-            // pushNotificationService.sendNotification(message, (error, results) => {
-            //     if (error) {
-            //         return next(error);
-            //     }
-            //     return null;
-            // })
+            const eventIdSql = "select max(eventId) as eventId from event;";
+            connection.query(eventIdSql, (err, results) => {
+                if (err) {
+                    throw err;
+                }
+                const eventId = results[0].eventId;
+                // console.log(eventId)
+                //OneSignal 푸쉬 알림
+                var message = {
+                    app_id: ONE_SIGNAL_CONFIG.APP_ID,
+                    contents: {
+                        "en": req.body.eventTitle
+                    },
+                    included_segments: ["All"],
+                    // "include_player_ids": ["743b6e07-54ed-4267-8290-e6395974acc6"],
+                    content_avaliable: true,
+                    small_icon: "ic_notification_icon",
+                    data: {
+                        title: "event",
+                        id: eventId
+                    }
+                };
+    
+                pushNotificationService.sendNotification(message, (error, results) => {
+                    if (error) {
+                        return next(error);
+                    }
+                    return null;
+                })
+            })
 
             res.send('<script>alert("행사가 등록되었습니다."); location.href="/admin/m_event?page=1";</script>');
         });

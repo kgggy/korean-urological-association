@@ -116,4 +116,24 @@ router.get('/president', async (req, res) => {
   }
 });
 
+//조직도
+router.get('/tree', async (req, res) => {
+  try {
+    const sql = "select u.* from tree t left join user u on u.uid = t.uid;";
+    let tree;
+    connection.query(sql, (err, result) => {
+      if (err) {
+        console.error(err);
+        res.json({
+          msg: "query error"
+        });
+      }
+      tree = result;
+      res.status(200).json(tree);
+    });
+  } catch (error) {
+    res.status(401).send(error.message);
+  }
+});
+
 module.exports = router;
