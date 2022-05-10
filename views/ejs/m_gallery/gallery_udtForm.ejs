@@ -58,7 +58,8 @@
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">내용</label>
                            <div class="col-md-9">
-                              <textarea name="editor" class="editor" id="editor"><%-result[0].galleryContent %></textarea>
+                              <textarea name="editor" class="editor"
+                                 id="editor"><%-result[0].galleryContent %></textarea>
                            </div>
                         </div>
                         <div class="form-group row">
@@ -120,6 +121,24 @@
             console.error(error);
          });
 
+      //확장자 체크
+      $("input:file[name='file']").change(function () {
+         var str = $(this).val();
+         var fileName = str.split('\\').pop().toLowerCase();
+         // alert(fileName);
+         checkFileName(fileName);
+      });
+
+      //확장자 체크
+      function checkFileName(str) {
+         var ext = str.split('.').pop().toLowerCase();
+         // alert(ext);
+         if ($.inArray(ext, ['jpg', 'png', 'jpeg', 'gif']) == -1) {
+            alert(ext + '파일은 업로드 하실 수 없습니다.');
+            $("input:file[name='file']").val("");
+         }
+      }
+
       var formObj = $("form[name='udtForm']");
       // 수정 폼 연결
       $("#update_btn").on("click", function () {
@@ -149,7 +168,7 @@
             return;
          }
       });
-       //첨부파일 삭제
+      //첨부파일 삭제
       $("[name=fileDelete]").on("click", function () {
          $('input[name=fileId').val($(this).attr('data-fileId'));
          $('input[name=fileRoute').val($(this).attr('data-fileRoute'));
@@ -163,5 +182,4 @@
          }
       });
    })
-   
 </script>

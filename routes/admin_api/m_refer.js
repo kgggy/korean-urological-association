@@ -48,7 +48,7 @@ router.get('/reference', async (req, res) => {
         if (searchText != '') {
             sql += " where referTitle like '%" + searchText + "%' or referContent like '%" + searchText + "%'";
         }
-            sql += " order by 2 desc";
+        sql += " order by 2 desc";
         connection.query(sql, (err, results) => {
             var countPage = 10; //하단에 표시될 페이지 개수
             var page_num = 10; //한 페이지에 보여줄 개수
@@ -113,7 +113,7 @@ router.get('/referSearch', async (req, res) => {
             startPage: startPage,
             endPage: endPage,
             pass: true,
-            last: last, 
+            last: last,
             searchText: searchText
         });
     });
@@ -156,25 +156,27 @@ router.get('/referWritForm', async (req, res) => {
 router.post('/referWrite', upload.array('file'), async (req, res, next) => {
     const paths = req.files.map(data => data.path);
     const orgName = req.files.map(data => data.originalname);
+    // console.log(req.files[0].mimetype)
     try {
         for (let i = 0; i < paths.length; i++) {
-            if (req.files[i].size > 1000000) {
-                sharp(paths[i]).resize({
-                        width: 2000
-                    }).withMetadata() //이미지 방향 유지
-                    .toBuffer((err, buffer) => {
-                        if (err) {
-                            throw err;
-                        }
-                        fs.writeFileSync(paths[i], buffer, (err) => {
+            if (req.files[i].mimetype == "image/jpeg" || req.files[i].mimetype == "image/jpg" || req.files[i].mimetype == "image/png") {
+                if (req.files[i].size > 1000000) {
+                    sharp(paths[i]).resize({
+                            width: 2000
+                        }).withMetadata() //이미지 방향 유지
+                        .toBuffer((err, buffer) => {
                             if (err) {
-                                throw err
+                                throw err;
                             }
+                            fs.writeFileSync(paths[i], buffer, (err) => {
+                                if (err) {
+                                    throw err
+                                }
+                            });
                         });
-                    });
+                }
             }
         }
-
         const param1 = [req.body.referTitle, req.body.referContent];
         const sql1 = "call insertReference(?,?)";
         connection.query(sql1, param1, (err) => {
@@ -187,8 +189,8 @@ router.post('/referWrite', upload.array('file'), async (req, res, next) => {
                     throw err;
                 }
                 for (let i = 0; i < paths.length; i++) {
-                    const param3 = [paths[i], orgName[i], result[0].referId];
-                    const sql3 = "insert into file(fileRoute, fileOrgName, boardId) values (?, ?, ?)";
+                    const param3 = [paths[i], orgName[i], result[0].referId, path.extname(paths[i])];
+                    const sql3 = "insert into file(fileRoute, fileOrgName, boardId, fileType) values (?, ?, ?, ?)";
                     connection.query(sql3, param3, (err) => {
                         if (err) {
                             throw err;
@@ -197,30 +199,7 @@ router.post('/referWrite', upload.array('file'), async (req, res, next) => {
                 };
             });
         });
-        // //fcm
-        // var firebaseToken;
-        // const token = "select pushToken from user where pushToken is not null";
-        // connection.query(token, (err, result) => {
-        //     if (err) {
-        //         throw err;
-        //     }
-        //     for (var i = 0; i < result.length; i++) {
-        //         firebaseToken = result[i].pushToken;
-        //         pushing.sendFcmMessage({
-        //             "message": {
-        //                 "token": firebaseToken,
-        //                 "notification": {
-        //                     "body": "공지사항을 확인해주세요.",
-        //                     "title": "ECOCE 공지사항"
-        //                 },
-        //                 "data": {
-        //                     "action": "notice"
-        //                 }
-        //             }
-        //         });
-        //     }
-            res.send('<script>alert("게시글이 등록되었습니다."); location.href="/admin/m_refer/reference?&page=1";</script>');
-        // });
+        res.send('<script>alert("게시글이 등록되었습니다."); location.href="/admin/m_refer/reference?&page=1";</script>');
     } catch (error) {
         res.send(error.message);
     }
@@ -260,16 +239,35 @@ router.post('/referUpdate', upload.array('file'), (req, res) => {
     const page = req.body.page;
     var searchText = req.body.searchText == undefined ? "" : req.body.searchText;
     try {
-        console.log(req.body)
+        for (let i = 0; i < paths.length; i++) {
+            if (req.files[i].mimetype == "image/jpeg" || req.files[i].mimetype == "image/jpg" || req.files[i].mimetype == "image/png") {
+                if (req.files[i].size > 1000000) {
+                    sharp(paths[i]).resize({
+                            width: 2000
+                        }).withMetadata() //이미지 방향 유지
+                        .toBuffer((err, buffer) => {
+                            if (err) {
+                                throw err;
+                            }
+                            fs.writeFileSync(paths[i], buffer, (err) => {
+                                if (err) {
+                                    throw err
+                                }
+                            });
+                        });
+                }
+            }
+        }
+        // console.log(req.body)
         const param = [req.body.referTitle, req.body.referContent, req.body.referId];
-        const sql = "update reference set referTitle = ?, referContent = ?, referWritDate = sysdate() where referId = ?";
+        const sql = "update reference set referTitle = ?, referContent = ? where referId = ?";
         connection.query(sql, param, (err) => {
             if (err) {
                 console.error(err);
             }
             for (let i = 0; i < paths.length; i++) {
-                const sql2 = "insert into file(fileRoute, fileOrgName, boardId) values (?, ?, ?)";
-                const param2 = [paths[i], orgName[i], req.body.referId];
+                const sql2 = "insert into file(fileRoute, fileOrgName, boardId, fileType) values (?, ?, ?, ?)";
+                const param2 = [paths[i], orgName[i], req.body.referId, path.extname(paths[i])];
                 connection.query(sql2, param2, (err) => {
                     if (err) {
                         throw err;
