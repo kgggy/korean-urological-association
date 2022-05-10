@@ -8,17 +8,18 @@
 	[type="reset"]:not(:disabled) {
 		pointer-events: none;
 	}
+
 	.cmtFrm .cmtInfo img {
-    width: 25px;
-    height: 30px;
+		width: 25px;
+		height: 30px;
 	}
+
 	.cmtFrm .cmtInfo {
 		font-size: 25px;
 		font-family: Apple SD Gothic Neo;
-		font-weight: bold ;
+		font-weight: bold;
 		color: black;
 	}
-
 </style>
 
 <main class="main">
@@ -43,6 +44,7 @@
 			<div class="row">
 				<div class="col-lg-6">
 					<div class="card">
+						<%if(choose == 0 || choose == 1) {%>
 						<%if(results.length > 0){%>
 						<div class="card-header">
 							<i class="fa fa-align-justify"></i> 총 <%= results.length %>명
@@ -62,25 +64,6 @@
 								<% } %>
 							</form>
 						</div>
-						<% } else if(noChoose.length > 0) { %>
-							<div class="card-header">
-								<i class="fa fa-align-justify"></i> 총 <%= noChoose.length %>명
-							</div>
-							<div class="card-body">
-								<!-- 컨텐츠 -->
-								<form action="" id="commentForm" method="get" class="cmtFrm">
-									<div class="form-group row col-sm-12">
-									<% for(var i = 0; i < noChoose.length; i++) {%>
-										<div class="cmtInfo-wrap col-sm-4" style="margin-bottom: 30px;">
-											<div class="cmtInfo">
-												<img src="../../../public/images/icon_admin.gif">
-												<span>&nbsp;<%= noChoose[i].userName %></span>
-											</div>
-										</div>
-										<% } %>
-									</div>
-								</form>
-							</div>
 						<% } else { %>
 						<div class="card-header">
 							<i class="fa fa-align-justify"></i> 총 0명
@@ -93,6 +76,41 @@
 								</div>
 							</div>
 						</div>
+						<% } %>
+						<% } %>
+						<%if(choose != 0 && choose != 1) {%>
+						<% if(noChoose.length > 0) { %>
+						<div class="card-header">
+							<i class="fa fa-align-justify"></i> 총 <%= noChoose.length %>명
+						</div>
+						<div class="card-body">
+							<!-- 컨텐츠 -->
+							<form action="" id="commentForm" method="get" class="cmtFrm">
+								<div class="form-group row col-sm-12">
+									<% for(var i = 0; i < noChoose.length; i++) {%>
+									<div class="cmtInfo-wrap col-sm-4" style="margin-bottom: 30px;">
+										<div class="cmtInfo">
+											<img src="../../../public/images/icon_admin.gif">
+											<span>&nbsp;<%= noChoose[i].userName %></span>
+										</div>
+									</div>
+									<% } %>
+								</div>
+							</form>
+						</div>
+						<% } else { %>
+						<div class="card-header">
+							<i class="fa fa-align-justify"></i> 총 0명
+						</div>
+						<div class="card-body">
+							<!-- 컨텐츠 -->
+							<div class="form-group row">
+								<div class="col-md-3">
+									<label class="col-md-2 col-form-label" for="text-input">투표 참여자가 존재하지 않습니다.</label>
+								</div>
+							</div>
+						</div>
+						<% } %>
 						<% } %>
 					</div>
 				</div>

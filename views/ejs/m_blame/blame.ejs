@@ -78,16 +78,13 @@
                                     if(i > length){
                                         i++;
                                     } else { 
-                                        if(results[i].fileRoute){
                                         if(results[i].targetType == 0){%> 
-                                            <tr onclick="board('/admin/m_certiContent/one?boardId=<%=results[i].targetContentId %>', '',
-                                             'resizable=no,width=640, height=700, scrollbars=1', '<%= results[i].fileRoute %>')">
+                                            <tr onclick="board('/admin/m_blame/detail?targetType=<%=results[i].targetType%>&blameId=<%=results[i].blameId%>', '',
+                                                'resizable=no,width=640, height=700, scrollbars=1')">
                                         <%} else{%>
-                                            <tr onclick="comment('/admin/m_comment/certiCommentOne', '', 'resizable=no,width=640, height=700, scrollbars=1',
-                                             '<%= results[i].boardId %>', '<%= results[i].targetContentId %>')">
-                                            <%}}else{%>
-                                                <tr>
-                                                    <%}%>
+                                            <tr onclick="board('/admin/m_blame/detail?targetType=<%=results[i].targetType%>&blameId=<%=results[i].blameId%>', '',
+                                                'resizable=no,width=640, height=700, scrollbars=1')">
+                                            <%}%>
                                     <td onclick='event.cancelBubble=true;'><input type="checkbox" id="chk" name="chk" value="<%=results[i].blaId %>"/>
                                     </td>
                                     <td>
@@ -118,7 +115,7 @@
                                     <% } %>
                                     <% } else { %>
                                     <tr>
-                                        <td colspan="6">
+                                        <td colspan="8">
                                             데이터가 존재하지 않습니다.
                                         </td>
                                     </tr>
@@ -139,7 +136,7 @@
                                                         class="num">
                                                         << </a> </li> <li>
                                                             <a <%if((page<last-1)||(page==1)){%><%} else {%>
-                                                                href="/admin/m_blame/blameAll?page=<%= parseInt(page) - 1 %><%= keepSearch %>"
+                                                                href="/admin/m_blame/blameAll?page=<%= parseInt(page) - 1 %>"
                                                                 class="num" <% } %>>
                                                                 < </a> </li>
                                                                     <% for(var i = startPage; i < endPage; i++){  %>
@@ -148,7 +145,7 @@
                                                                         <%if(page==i+1){%>class="selected"
                                                                         <%}%> class="num"><%= i + 1 %></a> </li> <% } %>
                                                                         <li> <a <%if(page>last-1){%><%} else {%>
-                                                                            href="/admin/m_blame/blameAll?page=<%= parseInt(page) + 1 %><%= keepSearch %>"
+                                                                            href="/admin/m_blame/blameAll?page=<%= parseInt(page) + 1 %>"
                                                                             class="num" <% } %>>></a></li>
                                                 <li><a href="/admin/m_blame/blameAll?page=<%= last%>"
                                                         class="num">>></a></li>
@@ -195,7 +192,6 @@
     })
     //검색
     function search() {
-        
         formObj.attr("method", "get");
         formObj.attr("action", "blameAll");
         formObj.submit();
@@ -230,18 +226,17 @@
     page.value = param.page;
 
     //신고 댓글 확인
-    function comment(theURL, winName, features, certiContentId, targetContentId) {
-        theURL += '?certiContentId=' + certiContentId + '&targetContentId=' + targetContentId + '&blame=y';
-        window.open(theURL, winName, features);
-    }
+    // function comment(theURL, winName, features, certiContentId, targetContentId) {
+    //     theURL += '?certiContentId=' + certiContentId + '&targetContentId=' + targetContentId + '&blame=y';
+    //     window.open(theURL, winName, features);
+    // }
 
     //신고 게시물 확인
-    function board(theURL, winName, features, imageRoute) {
-        theURL += '';
+    function board(theURL, winName, features) {
         window.open(theURL, winName, features);
     }
 
     // 레이아웃 adminNav 해당 탭에 접근했을때 펼쳐주기 '[1] = 게시판관리'
-    var navDropdown = document.getElementsByClassName("nav-dropdown");
-        navDropdown[1].className += 'open';
+    // var navDropdown = document.getElementsByClassName("nav-dropdown");
+    //     navDropdown[1].className += 'open';
 </script>

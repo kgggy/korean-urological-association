@@ -76,7 +76,7 @@
                                             if(i > length){
                                                 i++;
                                             } else { %> <tr
-                                            onclick="location.href='/admin/m_event/eventSelectOne?eventId=<%=results[i].eventId%>&vote=y'">
+                                            onclick="location.href='/admin/m_event/eventSelectOne?eventId=<%=results[i].eventId%>&vote=y&page=<%=page%>'">
                                             <!-- <td onclick='event.cancelBubble=true;'><input type="checkbox" id="chk"
                                                     name="chk" value=""/></td> -->
                                             <td style="width:-1px;"></td>
@@ -108,7 +108,7 @@
                                             <% } %>
                                             <% } else { %>
                                             <tr>
-                                                <td colspan="7">
+                                                <td colspan="8">
                                                     데이터가 존재하지 않습니다.
                                                 </td>
                                             </tr>

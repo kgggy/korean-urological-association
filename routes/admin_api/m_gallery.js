@@ -199,29 +199,29 @@ router.post('/galleryWrite', upload.array('file'), async (req, res, next) => {
             });
         });
         //fcm
-        var firebaseToken;
-        const token = "select pushToken from user where pushToken is not null";
-        connection.query(token, (err, result) => {
-            if (err) {
-                throw err;
-            }
-            for (var i = 0; i < result.length; i++) {
-                firebaseToken = result[i].pushToken;
-                pushing.sendFcmMessage({
-                    "message": {
-                        "token": firebaseToken,
-                        "notification": {
-                            "body": "공지사항을 확인해주세요.",
-                            "title": "ECOCE 공지사항"
-                        },
-                        "data": {
-                            "action": "notice"
-                        }
-                    }
-                });
-            }
+        // var firebaseToken;
+        // const token = "select pushToken from user where pushToken is not null";
+        // connection.query(token, (err, result) => {
+        //     if (err) {
+        //         throw err;
+        //     }
+        //     for (var i = 0; i < result.length; i++) {
+        //         firebaseToken = result[i].pushToken;
+        //         pushing.sendFcmMessage({
+        //             "message": {
+        //                 "token": firebaseToken,
+        //                 "notification": {
+        //                     "body": "공지사항을 확인해주세요.",
+        //                     "title": "ECOCE 공지사항"
+        //                 },
+        //                 "data": {
+        //                     "action": "notice"
+        //                 }
+        //             }
+        //         });
+        //     }
             res.send('<script>alert("갤러리가 등록되었습니다."); location.href="/admin/m_gallery/gallery?&page=1";</script>');
-        });
+        // });
     } catch (error) {
         res.send(error.message);
     }
