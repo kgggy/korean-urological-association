@@ -566,12 +566,18 @@ pre code {
 
 .pointer{cursor:pointer;}
 
+@media (max-width: 575px) {
+      #selectBox{
+        display: grid;
+    }
+}
+
 @media (min-width: 576px) {
   .container {
     max-width: 540px;
   }
       #selectBox{
-        display: block;
+        display: grid;
     }
 }
 
@@ -580,7 +586,7 @@ pre code {
     max-width: 90%;
   }
       #selectBox{
-        display: block;
+        display: grid;
     }
 }
 

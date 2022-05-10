@@ -1,72 +1,175 @@
-<title>대한비뇨의학회</title>
-<link rel="shortcut icon" href="/public/user/main/logo01.ico" type="image/x-icon" />
-<link rel="stylesheet" type="text/css" href="/public/stylesheets/css/style.css" />
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.5.5/css/simple-line-icons.min.css">
-<link href="/public/stylesheets/pace-progress/css/pace.min.css" rel="stylesheet">
-<link href="/public/stylesheets/datatables-plugins/dataTables.bootstrap4.min.css" rel="stylesheet">
+<!DOCTYPE html>
 
-<style>
-	.btn-primary {
-		color: #fff;
-		background-color: #0b9ad9;
-		border-color: #0b9ad9;
-	}
+<!-- =========================================================
+* Sneat - Bootstrap 5 HTML Admin Template - Pro | v1.0.0
+==============================================================
 
-	.btn-primary:hover {
-		opacity: 0.7;
-		background-color: #0b9ad9;
-		border-color: #0b9ad9;
-	}
-</style>
+* Product Page: https://themeselection.com/products/sneat-bootstrap-html-admin-template/
+* Created by: ThemeSelection
+* License: You must have a valid license purchased in order to legally use the theme for your project.
+* Copyright ThemeSelection (https://themeselection.com)
 
-<body class="app flex-row align-items-center"
-	style="background: url('${contextPath}/images/user/main/banner1-6.png') no-repeat; background-size: 100%;">
-	<div class="container">
-		<div class="row justify-content-center">
-			<div class="col-md-12">
-				<div class="card-group">
-					<div class="card p-4" style="opacity: 0.96;">
-						<div class="card-body">
-							<img alt="로고" src="../../uploads/others/logo1.png" width="60%">
-							<p class="text-muted">Sign In to your account</p>
+=========================================================
+ -->
+<!-- beautify ignore:start -->
+<html
+  lang="en"
+  class="light-style customizer-hide"
+  dir="ltr"
+  data-theme="theme-default"
+  data-assets-path="../../public/sneat/assets/"
+  data-template="vertical-menu-template-free"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
 
-							<form class="form-horizontal" id="frm" action="/admin/login" method="post">
-								<div class="input-group mb-3">
-									<div class="input-group-prepend">
-										<span class="input-group-text">
-											<i class="icon-user"></i>
-										</span>
-									</div>
-									<input class="form-control" type="text" placeholder="아이디" id="adminId"
-										name="adminId" value="" autofocus="autofocus" />
-								</div>
-								<div class="input-group mb-4">
-									<div class="input-group-prepend">
-										<span class="input-group-text">
-											<i class="icon-lock"></i>
-										</span>
-									</div>
-									<input class="form-control" type="password" placeholder="패스워드" id="adminPwd" value=""
-										name="adminPwd" />
-								</div>
-								<div class="row">
-									<div class="col-6">
-										<button class="btn btn-primary px-4" type="submit" id="loginBtn">로그인</button>
-									</div>
-								</div>
-							</form>
+    <title>대한비뇨의학회 관리자페이지</title>
 
-						</div>
+    <meta name="description" content="" />
 
-					</div>
-					<div class="card text-white bg-primary d-md-down-none" style="width:44%; opacity: 0.96;">
-						<div style="text-align: center;">
-							<img alt="로고" src="../../uploads/others/logo.png" style="width: 90%; margin-top: 13px;">
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</body>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../../public/sneat/assets/img/favicon/favicon.ico" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" href="../../public/sneat/assets/vendor/fonts/boxicons.css" />
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="../../public/sneat/assets/vendor/css/core.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="../../public/sneat/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="../../public/sneat/assets/css/demo.css" />
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="../../public/sneat/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+
+    <!-- Page CSS -->
+    <!-- Page -->
+    <link rel="stylesheet" href="../../public/sneat/assets/vendor/css/pages/page-auth.css" />
+    <!-- Helpers -->
+    <script src="../../public/sneat/assets/vendor/js/helpers.js"></script>
+
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script src="../../public/sneat/assets/js/config.js"></script>
+  </head>
+
+  <body>
+    <!-- Content -->
+
+    <div class="container-xxl">
+      <div class="authentication-wrapper authentication-basic container-p-y">
+        <div class="authentication-inner">
+          <!-- Register -->
+          <div class="card">
+            <div class="card-body">
+              <!-- Logo -->
+              <div class="justify-content-center">
+                <a href="" class="app-brand-link gap-2">
+                  <span class="app-brand-logo demo">
+                  </span>
+                  <!-- <span class="app-brand-text demo text-body fw-bolder">Sneat</span> -->
+                  <img alt="로고" src="../../uploads/others/logo1.png" width="80%">
+                </a>
+              </div>
+              <!-- /Logo -->
+              <h4 class="mb-2"></h4>
+              <!-- <p class="mb-4">대구인문사회대학 회원수첩 관리자 페이지입니다.</p> -->
+
+              <form id="formAuthentication" class="mb-3" action="/admin/login" method="POST">
+                <div class="mb-3">
+                  <label for="email" class="form-label">ID</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="adminId"
+                    name="adminId"
+                    placeholder="아이디를 입력해주세요."
+                    autofocus
+                  />
+                </div>
+                <div class="mb-3 form-password-toggle">
+                  <div class="d-flex justify-content-between">
+                    <label class="form-label" for="password">Password</label>
+                    <a href="auth-forgot-password-basic.html">
+                      <!-- <small>Forgot Password?</small> -->
+                    </a>
+                  </div>
+                  <div class="input-group input-group-merge">
+                    <input
+                      type="password"
+                      id="adminPwd"
+                      class="form-control"
+                      name="adminPwd"
+                      placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                      aria-describedby="password"
+                    />
+                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                  </div>
+                </div>
+                <!-- <div class="mb-3">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="remember-me" />
+                    <label class="form-check-label" for="remember-me"> Remember Me </label>
+                  </div>
+                </div> -->
+                <div class="mb-3">
+                  <button class="btn btn-primary d-grid w-100" type="submit">Sign in</button>
+                </div>
+              </form>
+
+              <!-- <p class="text-center">
+                <span>New on our platform?</span>
+                <a href="auth-register-basic.html">
+                  <span>Create an account</span>
+                </a>
+              </p> -->
+            </div>
+          </div>
+          <!-- /Register -->
+        </div>
+      </div>
+    </div>
+
+    <!-- / Content -->
+
+    <!-- <div class="buy-now">
+      <a
+        href="https://themeselection.com/products/sneat-bootstrap-html-admin-template/"
+        target="_blank"
+        class="btn btn-danger btn-buy-now"
+        >Upgrade to Pro</a
+      >
+    </div> -->
+
+    <!-- Core JS -->
+    <!-- build:js assets/vendor/js/core.js -->
+    <script src="../../public/sneat/assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="../../public/sneat/assets/vendor/libs/popper/popper.js"></script>
+    <script src="../../public/sneat/assets/vendor/js/bootstrap.js"></script>
+    <script src="../../public/sneat/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+
+    <script src="../../public/sneat/assets/vendor/js/menu.js"></script>
+    <!-- endbuild -->
+
+    <!-- Vendors JS -->
+
+    <!-- Main JS -->
+    <script src="../../public/sneat/assets/js/main.js"></script>
+
+    <!-- Page JS -->
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+  </body>
+</html>
