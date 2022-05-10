@@ -2,11 +2,17 @@ var express = require('express');
 var router = express.Router();
 const fs = require('fs');
 
+const sharp = require('sharp');
 const multer = require("multer");
 const path = require('path');
 
 // DB 커넥션 생성\              
 var connection = require('../../config/db').conn;
+
+const {
+    ONE_SIGNAL_CONFIG
+} = require("../../config/pushNotification_config");
+const pushNotificationService = require("../../services/push_Notification.services");
 
 //파일업로드 모듈
 var upload = multer({ //multer안에 storage정보  
@@ -125,10 +131,11 @@ router.get('/noticeSelectOne', async (req, res) => {
         var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
         const page = req.query.page;
         const param = req.query.noticeId;
-        const sql = "select *,date_format(noticeWritDate, '%Y-%m-%d') as noticeWritDateFmt,\
-                            (select count(*) from hitCount where hitCount.boardId = notice.noticeId) as hitCount\
-                        from notice\
-                       where noticeId = ?";
+        const sql = "select n.*,date_format(n.noticeWritDate, '%Y-%m-%d') as noticeWritDateFmt, f.fileRoute, f.fileOrgName,\
+                            (select count(*) from hitCount where hitCount.boardId = n.noticeId) as hitCount\
+                        from notice n\
+                        left join file f on f.boardId = n.noticeId\
+                        where noticeId = ?";
 
         connection.query(sql, param, (err, result) => {
             if (err) {
@@ -149,7 +156,7 @@ router.get('/noticeSelectOne', async (req, res) => {
 });
 
 //게시글 등록 폼 이동
-router.get('/galleryWritForm', async (req, res) => {
+router.get('/noticeWritForm', async (req, res) => {
     let route = req.app.get('views') + '/m_notice/notice_writForm.ejs';
     var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
     res.render(route, {
@@ -160,24 +167,83 @@ router.get('/galleryWritForm', async (req, res) => {
 });
 
 //공지사항 작성
-router.post('/noticewrite', async (req, res, next) => {
+router.post('/noticewrite', upload.array('file'), async (req, res, next) => {
     try {
+        const paths = req.files.map(data => data.path);
+        const orgName = req.files.map(data => data.originalname);
         const param = [req.body.noticeTitle, req.body.noticeContent];
         const noticeFix = req.body.noticeFix;
-        console.log(noticeFix);
+        const noticeId = req.body.noticeId;
         const sql = "call insertNotice(?,?)";
+        for (let i = 0; i < paths.length; i++) {
+            if (req.files[i].mimetype == "image/jpeg" || req.files[i].mimetype == "image/jpg" || req.files[i].mimetype == "image/png") {
+                if (req.files[i].size > 1000000) {
+                    sharp(paths[i]).resize({
+                        width: 2000
+                    }).withMetadata() //이미지 방향 유지
+                        .toBuffer((err, buffer) => {
+                            if (err) {
+                                throw err;
+                            }
+                            fs.writeFileSync(paths[i], buffer, (err) => {
+                                if (err) {
+                                    throw err
+                                }
+                            });
+                        });
+                }
+            }
+        }
         connection.query(sql, param, (err) => {
             if (err) {
                 throw err;
             }
+            const sql2 = "SELECT * FROM notice order by noticeWritDate desc limit 1"
+            connection.query(sql2, (err, result) => {
+                if (err) {
+                    throw err;
+                }
+                for (let i = 0; i < paths.length; i++) {
+                    const param3 = [paths[i], orgName[i], result[0].noticeId, path.extname(paths[i])];
+                    const sql3 = "insert into file(fileRoute, fileOrgName, boardId, fileType) values (?, ?, ?, ?)";
+                    connection.query(sql3, param3, (err) => {
+                        if (err) {
+                            throw err;
+                        }
+                    });
+                };
+            });
             if(noticeFix == 1){
                 const sql1 = "call noticeFixCheck()";
-                connection.query(sql1, param, (err) => {
+                connection.query(sql1, (err) => {
                     if (err) {
                         throw err;
                     }
                 });
             }
+            
+            //OneSignal 푸쉬 알림
+            var message = {
+                app_id: ONE_SIGNAL_CONFIG.APP_ID,
+                contents: {
+                    "en": req.body.noticeTitle
+                },
+                included_segments: ["All"],
+                // "include_player_ids": ["743b6e07-54ed-4267-8290-e6395974acc6"],
+                content_avaliable: true,
+                small_icon: "ic_notification_icon",
+                data: {
+                    title: "notice",
+                    id: noticeId
+                }
+            };
+            pushNotificationService.sendNotification(message, (error, results) => {
+                if (error) {
+                    return next(error);
+                }
+                return null;
+            })
+
         });
         res.send('<script>alert("공지사항이 등록되었습니다."); location.href="/admin/m_notice/notice?page=1";</script>');
     } catch (error) {
@@ -190,7 +256,10 @@ router.get('/noticeUdtForm', async (req, res) => {
     try {
         var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
         const param = req.query.noticeId;
-        const sql = "select * from notice where noticeId = ?";
+        const sql = "select n.*,date_format(n.noticeWritDate, '%Y-%m-%d') as noticeWritDateFmt, f.fileRoute, f.fileOrgName, f.fileId\
+                        from notice n\
+                        left join file f on f.boardId = n.noticeId\
+                        where noticeId = ?";
         const page = req.query.page;
         connection.query(sql, param, function (err, result) {
             if (err) {
@@ -211,17 +280,47 @@ router.get('/noticeUdtForm', async (req, res) => {
 });
 
 //게시글 수정
-router.post('/noticeUpdate', (req, res) => {
+router.post('/noticeUpdate', upload.array('file'), (req, res) => {
     try {
+        const paths = req.files.map(data => data.path);
+        const orgName = req.files.map(data => data.originalname);
         const noticeFix = req.body.noticeFix == undefined ? "0" : req.body.noticeFix;
         const param = [req.body.noticeTitle, req.body.noticeContent, noticeFix, req.body.noticeId];
-        const sql = "update notice set noticeTitle = ?, noticeContent = ?, noticeFix = ?, noticeWritDate = sysdate() where noticeId = ?";
+        const sql = "update notice set noticeTitle = ?, noticeContent = ?, noticeFix = ? where noticeId = ?";
         var searchText = req.body.searchText == undefined ? "" : req.body.searchText;
         const page = req.body.page;
+        for (let i = 0; i < paths.length; i++) {
+            if (req.files[i].mimetype == "image/jpeg" || req.files[i].mimetype == "image/jpg" || req.files[i].mimetype == "image/png") {
+                if (req.files[i].size > 1000000) {
+                    sharp(paths[i]).resize({
+                        width: 2000
+                    }).withMetadata() //이미지 방향 유지
+                        .toBuffer((err, buffer) => {
+                            if (err) {
+                                throw err;
+                            }
+                            fs.writeFileSync(paths[i], buffer, (err) => {
+                                if (err) {
+                                    throw err
+                                }
+                            });
+                        });
+                }
+            }
+        }
         connection.query(sql, param, (err) => {
             if (err) {
                 console.error(err);
             }
+            for (let i = 0; i < paths.length; i++) {
+                const sql2 = "insert into file(fileRoute, fileOrgName, boardId, fileType) values (?, ?, ?, ?)";
+                const param2 = [paths[i], orgName[i], req.body.noticeId, path.extname(paths[i])];
+                connection.query(sql2, param2, (err) => {
+                    if (err) {
+                        throw err;
+                    }
+                });
+            };
             res.redirect('noticeSelectOne?noticeId=' + req.body.noticeId + '&page='+ page +'&searchText=' + searchText);
         });
     } catch (error) {
@@ -231,11 +330,28 @@ router.post('/noticeUpdate', (req, res) => {
 
 //공지사항 여러개 삭제
 router.get('/noticesDelete', (req, res) => {
-    const noticeId = req.query.noticeId;
     const param = req.query.noticeId;
     const str = param.split(',');
     for (var i = 0; i < str.length; i++) {
-        const sql = "delete from notice where noticeId = ?";
+        let fileRoute = [];
+        const sql1 = "select fileRoute from file where boardId = ?";
+        connection.query(sql1, str[i], (err, result) => {
+            if (err) {
+                console.log(err)
+            }
+            fileRoute = result;
+            if (fileRoute != undefined) {
+                for (let j = 0; j < fileRoute.length; j++) {
+                    fs.unlinkSync(fileRoute[j].fileRoute, (err) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        return;
+                    });
+                }
+            }
+        });
+        const sql = "call deleteNotice(?)";
         connection.query(sql, str[i], (err) => {
             if (err) {
                 console.log(err)
@@ -250,10 +366,23 @@ router.get('/noticeDelete', async (req, res) => {
     try {
         const param = req.query.noticeId;
         // console.log(param);
-        const sql = "delete from notice where noticeId = ?";
+        const sql = "call deleteNotice(?)";
         connection.query(sql, param, (err) => {
             if (err) {
                 console.log(err);
+            }
+            if (req.query.fileRoute != undefined) {
+                if (Array.isArray(req.query.fileRoute) == false) {
+                    req.query.fileRoute = [req.query.fileRoute];
+                }
+                for (let i = 0; i < req.query.fileRoute.length; i++) {
+                    fs.unlinkSync(req.query.fileRoute[i], (err) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        return;
+                    });
+                }
             }
             res.send('<script>alert("공지사항이 삭제되었습니다."); location.href="/admin/m_notice/notice?page=1";</script>');
         });
@@ -262,4 +391,30 @@ router.get('/noticeDelete', async (req, res) => {
     }
 });
 
+//첨부파일 삭제
+router.get('/noticeFileDelete', async (req, res) => {
+    const param = req.query.fileId;
+    const fileRoute = req.query.fileRoute;
+    const page = req.query.page;
+    var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
+    try {
+        const sql = "delete from file where fileId = ?";
+        connection.query(sql, param, (err, row) => {
+            if (err) {
+                console.log(err)
+            }
+            fs.unlinkSync(fileRoute.toString(), (err) => {
+                if (err) {
+                    console.log(err);
+                }
+                return;
+            });
+        })
+    } catch (error) {
+        if (error.code == "ENOENT") {
+            console.log("프로필 삭제 에러 발생");
+        }
+    }
+    res.redirect('noticeUdtForm?noticeId=' + req.query.noticeId + '&page=' + page + '&searchText=' + searchText);
+});
 module.exports = router;
