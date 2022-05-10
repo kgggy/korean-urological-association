@@ -6,7 +6,7 @@ var connection = require('../../config/db').conn;
 router.get('/notice/:noticeId', async (req, res) => {
     try {
         const param = [req.params.noticeId];
-        const sql = "select c.*, u.userName from comment c left join user u on u.uid = c.uid where boardId = ?";
+        const sql = "select c.*, u.userName, u.userImg from comment c left join user u on u.uid = c.uid where boardId = ?";
         let comment;
         connection.query(sql, param, (err, results) => {
             if (err) {
@@ -26,7 +26,7 @@ router.get('/notice/:noticeId', async (req, res) => {
 router.get('/gallery/:galleryId', async (req, res) => {
     try {
         const param = [req.params.galleryId];
-        const sql = "select c.*, u.userName from comment c left join user u on u.uid = c.uid where boardId = ?";
+        const sql = "select c.*, u.userName, u.userImg from comment c left join user u on u.uid = c.uid where boardId = ?";
         let comment;
         connection.query(sql, param, (err, results) => {
             if (err) {
@@ -46,7 +46,7 @@ router.get('/gallery/:galleryId', async (req, res) => {
 router.get('/refer/:referId', async (req, res) => {
     try {
         const param = [req.params.referId];
-        const sql = "select c.*, u.userName from comment c left join user u on u.uid = c.uid where boardId = ?";
+        const sql = "select c.*, u.userName, u.userImg from comment c left join user u on u.uid = c.uid where boardId = ?";
         let comment;
         connection.query(sql, param, (err, results) => {
             if (err) {

@@ -170,14 +170,20 @@ router.post('/eventWrite', upload.single('file'), async (req, res, next) => {
                     throw err;
                 }
                 const eventId = results[0].eventId;
-                // console.log(eventId)
-                //OneSignal 푸쉬 알림
+                let segment;
+                if(req.body.eventTarget1 == '임원') {
+                    segment = ["executive"];
+                } else {
+                    segment = ["All"];
+                }
+                // console.log(segment)
+                // OneSignal 푸쉬 알림
                 var message = {
                     app_id: ONE_SIGNAL_CONFIG.APP_ID,
                     contents: {
                         "en": req.body.eventTitle
                     },
-                    included_segments: ["All"],
+                    included_segments: segment,
                     // "include_player_ids": ["743b6e07-54ed-4267-8290-e6395974acc6"],
                     content_avaliable: true,
                     small_icon: "ic_notification_icon",
