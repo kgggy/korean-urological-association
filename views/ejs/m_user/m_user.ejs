@@ -18,6 +18,10 @@
         table-layout: fixed;
         white-space: nowrap
     }
+    #selectBox{
+        overflow: auto; 
+        display: inline-flex;
+    }
 </style>
 <main class="main">
     <!-- Breadcrumb-->
@@ -36,8 +40,8 @@
                     <div class="card">
                         <div class="card-header"><i class="fa fa-align-justify"></i> 회원 관리 </div>
                         <div class="card-body">
-                            <div align="right">
-                                <form name="userForm" action="" method="get" class="easydropdown">
+                            <form name="userForm" action="" method="get" class="easydropdown">
+                                    <div id="selectBox">
                                     <input type="hidden" name="page" value="1">
                                     <select name="searchType1" class="dropdown">
                                         <option value="">위치</option>
@@ -70,6 +74,7 @@
                                         <option value="주임과장" <%if(searchType3=="주임과장"){%> selected="selected" <%}%>>주임과장</option>
                                         <option value="과장" <%if(searchType3=="과장"){%> selected="selected" <%}%>>과장</option>
                                     </select>
+                                    <span style="margin-bottom: 20px;">
                                     <% if(searchText != '') { %> <input class="searchbox" type="text" name="searchText"
                                             value="<%=searchText%>" />
                                         <% } else {%>
@@ -77,9 +82,10 @@
                                             placeholder=" 회원명, 병원명" />
                                         <% } %>
                                         <button class="btn btn-block btn-outline-success" type="submit"
-                                            id="searchAction" style="margin-bottom: 10px;">검색</button>
-                                </form>
-                            </div>
+                                            id="searchAction" style="margin-bottom: 0;">검색</button>
+                                    </span>
+                                        </div>
+                                        </form>
 
                             <form name="udtForm">
                                 <input type="hidden" name="admin" value="<%=admin%>">
@@ -167,7 +173,7 @@
                                             id="delete_btn">삭제</button>
                                         <input class="btn btn-block btn-outline-success" type="button"
                                             id="excelFileExport" value="엑셀 다운로드"
-                                            style="margin-bottom: 15px; width: 140px; display: inline-block; margin-top: 0px; !important" />
+                                            style="margin-bottom: 15px; width: 140px; display: inline-block; margin-top: 0px !important" />
                                     </div>
                                     <div class="mt_20">
                                         <div class="paging" id="page_navi">
