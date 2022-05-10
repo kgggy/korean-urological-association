@@ -53,8 +53,8 @@ router.get('/voteList', async (req, res) => {
     try {
         const choose = [req.query.choose];
         const param = [req.query.eventId, req.query.choose];
-        const sql = "select u.userName from vote v left join user u on u.uid = v.uid where eventId = ? and choose = ?";
-        const nChooseSql = "select u.* from user u left join (select uid from vote v where v.eventId = ?) AS B on u.uid = B.uid WHERE B.uid IS NULL;";
+        const sql = "select u.userName from vote v left join user u on u.uid = v.uid where eventId = ? and choose = ? and u.uid <= 10000";
+        const nChooseSql = "select u.* from user u left join (select uid from vote v where v.eventId = ?) AS B on u.uid = B.uid WHERE B.uid IS NULL and u.uid <= 10000;";
         connection.query(sql, param, (err, results) => {
             if (err) {
                 console.log(err);
