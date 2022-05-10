@@ -175,7 +175,6 @@
         var chkArr = [];
         $("input[name=chk]:checked").each(function () {
             chkArr.push($(this).val());
-            console.log($(this));
         });
         $('#blameId').val(chkArr);
         if (chkArr == "") {

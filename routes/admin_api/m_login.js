@@ -6,8 +6,6 @@ const models = require('../../models');
 router.get('/', (req, res) => {
     
     let route = req.app.get('views') + '/index';
-    console.log(req.app.get('views'));
-    console.log(route);
     res.render(route, {
         layout: false
     })

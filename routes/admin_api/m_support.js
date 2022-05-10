@@ -140,7 +140,6 @@ router.get('/supportUdtForm', async (req, res) => {
             if (err) {
                 console.log(err);
             }
-            console.log(result);
             let route = req.app.get('views') + '/m_support/support_udtForm';
             res.render(route, {
                 result: result
