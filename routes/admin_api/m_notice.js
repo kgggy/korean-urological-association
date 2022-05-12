@@ -157,13 +157,18 @@ router.get('/noticeSelectOne', async (req, res) => {
 
 //게시글 등록 폼 이동
 router.get('/noticeWritForm', async (req, res) => {
-    let route = req.app.get('views') + '/m_notice/notice_writForm.ejs';
-    var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
-    res.render(route, {
-        uid: req.query.uid,
-        noticeId: req.query.noticeId,
-        searchText: searchText
-    });
+    var app = req.query.app == undefined ? "" : req.query.app;
+    // 웹으로 접근시
+    if (app == "") {
+        let route = req.app.get('views') + '/m_notice/notice_writForm.ejs';
+        res.render(route);
+        // 앱으로 접근시
+    } else if (app == "app") {
+        res.json({
+            msg: "success"
+        });
+    }
+
 });
 
 //공지사항 작성
@@ -245,6 +250,7 @@ router.post('/noticewrite', upload.array('file'), async (req, res, next) => {
                 });
             }
         });
+        
         res.send('<script>alert("공지사항이 등록되었습니다."); location.href="/admin/m_notice/notice?page=1";</script>');
     } catch (error) {
         res.send(error.message);

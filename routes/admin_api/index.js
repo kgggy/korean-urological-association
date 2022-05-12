@@ -12,7 +12,9 @@ const m_event = require('./m_event.js');
 const m_vote = require('./m_vote.js');
 const m_blame = require('./m_blame.js');
 
-router.use('/', (req,res,next) => {
+router.use('/', (req, res, next) => {
+    var app = req.query.app == undefined ? "" : req.query.app;
+    if(app == ""){
     if(req.url == '/' || req.url == '/login') {
         // console.log("세션 검사 하지않고 로그인페이지로")
         next();
@@ -29,7 +31,11 @@ router.use('/', (req,res,next) => {
             // console.log("세션이 없다.")
             res.send("<script>alert('로그인이 필요합니다.');location.href='/admin'</script>");
         }
+        }
+    } else if (app == "app") {
+        next();
     }
+
 });
 router.use('/', m_login);
 router.use('/m_user', m_user);

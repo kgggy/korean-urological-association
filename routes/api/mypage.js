@@ -122,109 +122,216 @@ router.get('/:uid', async (req, res) => {
 
 // 회원정보수정
 router.patch('/:uid', upload.fields([{ name: 'userImg' }, { name: 'hosImg' }, { name: 'infoImg' }]), async (req, res) => {
-    try {
-        var deleteFileRoute = req.body.deleteFileRoute; //바꾼 파일(바뀌기 전 경로)
-        const uid = req.params.uid;
+    if (req.query.version == version) {
+        try {
+            var deleteFileRoute = req.body.deleteFileRoute; //바꾼 파일(바뀌기 전 경로)
+            const uid = req.params.uid;
 
-        if (req.files != null) {
-            var obj = req.files;
-            for (value in obj) {
-                async function test() {
-                    var i = value;
-                    if (obj[i][0]['size'] > 1000000) {
-                        sharp(obj[i][0]['path']).resize({
-                            width: 2000
-                        }).withMetadata() //이미지 방향 유지
-                            .toBuffer((err, buffer) => {
-                                if (err) {
-                                    throw err;
-                                }
-                                fs.writeFile(obj[i][0]['path'], buffer, (err) => {
+            if (req.files != null) {
+                var obj = req.files;
+                for (value in obj) {
+                    async function test() {
+                        var i = value;
+                        if (obj[i][0]['size'] > 1000000) {
+                            sharp(obj[i][0]['path']).resize({
+                                width: 2000
+                            }).withMetadata() //이미지 방향 유지
+                                .toBuffer((err, buffer) => {
                                     if (err) {
-                                        throw err
+                                        throw err;
                                     }
+                                    fs.writeFile(obj[i][0]['path'], buffer, (err) => {
+                                        if (err) {
+                                            throw err
+                                        }
+                                    });
                                 });
-                            });
+                        }
+
+                    }
+                    await test();
+                }
+            }
+
+            //(최초의 경우)파일이 있으면 경로 업데이트하기
+            if (req.files['userImg'] != null && req.files['userImg'] != undefined) {
+                const paths = req.files['userImg'].map(data => data.path);
+                await models.user.update({ userImg: paths[0] }, { where: { uid: uid } })
+            }
+            if (req.files['hosImg'] != null && req.files['hosImg'] != undefined) {
+                const paths = req.files['hosImg'].map(data => data.path);
+                await models.user.update({ hosImg: paths[0] }, { where: { uid: uid } })
+            }
+            if (req.files['infoImg'] != null && req.files['infoImg'] != undefined) {
+                const paths = req.files['infoImg'].map(data => data.path);
+                await models.user.update({ infoImg: paths[0] }, { where: { uid: uid } })
+            }
+
+            const param = [req.body.userName, req.body.userPosition, req.body.userType,
+            req.body.userAdres1, req.body.userAdres2, req.body.userAdres3, req.body.userAdres4,
+            req.body.hosName, req.body.userUrl, req.body.userEmail, req.body.hosPost,
+            req.body.userPhone1, req.body.userPhone2, req.body.userPhone3,
+            req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3, req.body.Latitude, req.body.longitude, req.params.uid
+            ];
+            const sql = "update user set userName = ?, userPosition = ?, userType = ?,\
+                                 userAdres1 = ?, userAdres2 = ?, userAdres3 = ?, userAdres4 = ?,\
+                                 hosName = ?, userUrl = ?, userEmail = ?, hosPost = ?,\
+                                 userPhone1 = ?, userPhone2 = ?, userPhone3 = ?,\
+                                 hosPhone1 = ?, hosPhone2 = ?, hosPhone3 = ?, Latitude = ?, longitude = ?\
+                  where uid = ?";
+            connection.query(sql, param, async (err) => {
+                if (err) {
+                    console.error(err);
+                }
+                //바뀐 이미지 있는경우
+                if (deleteFileRoute != '') {
+                    // if (!Array.isArray(deleteFileRoute)) {
+                    //     deleteFileRoute = [deleteFileRoute]
+                    // }
+                    var deleteFilerouteArr = deleteFileRoute.split(',');
+                    var fileRoutes = await models.user.findOne({
+                        where: { uid: uid },
+                        attributes: ['userImg', 'hosImg', 'infoImg'],
+                        raw: true
+                    })
+                    var arr = [];
+                    arr.push(fileRoutes['userImg'], fileRoutes['hosImg'], fileRoutes['infoImg'])
+                    for (var i = 0; i < arr.length; i++) {
+                        for (var j = 0; j < deleteFilerouteArr.length; j++) {
+                            if (arr[i] == deleteFilerouteArr[j]) { //바뀐 파일 기존경로와 현재 파일 경로가 같으면 null로 하고 나머지는 업데이트시키기
+                                arr[i] = null;
+                                if (i == 0) {
+                                    await models.user.update({ userImg: arr[0] }, { where: { uid: uid } })
+                                } if (i == 1) {
+                                    await models.user.update({ hosImg: arr[1] }, { where: { uid: uid } })
+                                } if (i == 2) {
+                                    await models.user.update({ infoImg: arr[2] }, { where: { uid: uid } })
+                                }
+                            }
+                        }
                     }
 
+                    for (var i = 0; i < deleteFilerouteArr.length; i++) {
+                        fs.unlinkSync(deleteFilerouteArr[i], (err) => {
+                            if (err) {
+                                console.log(err);
+                            }
+                            return;
+                        });
+                    }
                 }
-                await test();
+                res.json({
+                    msg: "success"
+                });
+            });
+        } catch (error) {
+            res.send(error.message);
+        }
+    } else {
+        try {
+            var deleteFileRoute = req.body.deleteFileRoute; //바꾼 파일(바뀌기 전 경로)
+            const uid = req.params.uid;
+
+            if (req.files != null) {
+                var obj = req.files;
+                for (value in obj) {
+                    async function test() {
+                        var i = value;
+                        if (obj[i][0]['size'] > 1000000) {
+                            sharp(obj[i][0]['path']).resize({
+                                width: 2000
+                            }).withMetadata() //이미지 방향 유지
+                                .toBuffer((err, buffer) => {
+                                    if (err) {
+                                        throw err;
+                                    }
+                                    fs.writeFile(obj[i][0]['path'], buffer, (err) => {
+                                        if (err) {
+                                            throw err
+                                        }
+                                    });
+                                });
+                        }
+
+                    }
+                    await test();
+                }
             }
-        }
 
-        //(최초의 경우)파일이 있으면 경로 업데이트하기
-        if (req.files['userImg'] != null && req.files['userImg'] != undefined) {
-            const paths = req.files['userImg'].map(data => data.path);
-            await models.user.update({ userImg: paths[0] }, { where: { uid: uid } })
-        }
-        if (req.files['hosImg'] != null && req.files['hosImg'] != undefined) {
-            const paths = req.files['hosImg'].map(data => data.path);
-            await models.user.update({ hosImg: paths[0] }, { where: { uid: uid } })
-        }
-        if (req.files['infoImg'] != null && req.files['infoImg'] != undefined) {
-            const paths = req.files['infoImg'].map(data => data.path);
-            await models.user.update({ infoImg: paths[0] }, { where: { uid: uid } })
-        }
+            //(최초의 경우)파일이 있으면 경로 업데이트하기
+            if (req.files['userImg'] != null && req.files['userImg'] != undefined) {
+                const paths = req.files['userImg'].map(data => data.path);
+                await models.user.update({ userImg: paths[0] }, { where: { uid: uid } })
+            }
+            if (req.files['hosImg'] != null && req.files['hosImg'] != undefined) {
+                const paths = req.files['hosImg'].map(data => data.path);
+                await models.user.update({ hosImg: paths[0] }, { where: { uid: uid } })
+            }
+            if (req.files['infoImg'] != null && req.files['infoImg'] != undefined) {
+                const paths = req.files['infoImg'].map(data => data.path);
+                await models.user.update({ infoImg: paths[0] }, { where: { uid: uid } })
+            }
 
-        const param = [req.body.userName, req.body.userPosition, req.body.userType,
-        req.body.userAdres1, req.body.userAdres2, req.body.userAdres3,
-        req.body.hosName, req.body.userUrl, req.body.userEmail, req.body.hosPost,
-        req.body.userPhone1, req.body.userPhone2, req.body.userPhone3,
-        req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3, req.body.Latitude, req.body.longitude, req.params.uid
-        ];
-        const sql = "update user set userName = ?, userPosition = ?, userType = ?,\
+            const param = [req.body.userName, req.body.userPosition, req.body.userType,
+            req.body.userAdres1, req.body.userAdres2, req.body.userAdres3,
+            req.body.hosName, req.body.userUrl, req.body.userEmail, req.body.hosPost,
+            req.body.userPhone1, req.body.userPhone2, req.body.userPhone3,
+            req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3, req.body.Latitude, req.body.longitude, req.params.uid
+            ];
+            const sql = "update user set userName = ?, userPosition = ?, userType = ?,\
                                  userAdres1 = ?, userAdres2 = ?, userAdres3 = ?,\
                                  hosName = ?, userUrl = ?, userEmail = ?, hosPost = ?,\
                                  userPhone1 = ?, userPhone2 = ?, userPhone3 = ?,\
                                  hosPhone1 = ?, hosPhone2 = ?, hosPhone3 = ?, Latitude = ?, longitude = ?\
                   where uid = ?";
-        connection.query(sql, param, async (err) => {
-            if (err) {
-                console.error(err);
-            }
-            //바뀐 이미지 있는경우
-            if (deleteFileRoute != '') {
-                // if (!Array.isArray(deleteFileRoute)) {
-                //     deleteFileRoute = [deleteFileRoute]
-                // }
-                var deleteFilerouteArr = deleteFileRoute.split(',');
-                var fileRoutes = await models.user.findOne({
-                    where: { uid: uid },
-                    attributes: ['userImg', 'hosImg', 'infoImg'],
-                    raw: true
-                })
-                var arr = [];
-                arr.push(fileRoutes['userImg'], fileRoutes['hosImg'], fileRoutes['infoImg'])
-                for (var i = 0; i < arr.length; i++) {
-                    for (var j = 0; j < deleteFilerouteArr.length; j++) {
-                        if (arr[i] == deleteFilerouteArr[j]) { //바뀐 파일 기존경로와 현재 파일 경로가 같으면 null로 하고 나머지는 업데이트시키기
-                            arr[i] = null;
-                            if (i == 0) {
-                                await models.user.update({ userImg: arr[0] }, { where: { uid: uid } })
-                            } if (i == 1) {
-                                await models.user.update({ hosImg: arr[1] }, { where: { uid: uid } })
-                            } if (i == 2) {
-                                await models.user.update({ infoImg: arr[2] }, { where: { uid: uid } })
+            connection.query(sql, param, async (err) => {
+                if (err) {
+                    console.error(err);
+                }
+                //바뀐 이미지 있는경우
+                if (deleteFileRoute != '') {
+                    // if (!Array.isArray(deleteFileRoute)) {
+                    //     deleteFileRoute = [deleteFileRoute]
+                    // }
+                    var deleteFilerouteArr = deleteFileRoute.split(',');
+                    var fileRoutes = await models.user.findOne({
+                        where: { uid: uid },
+                        attributes: ['userImg', 'hosImg', 'infoImg'],
+                        raw: true
+                    })
+                    var arr = [];
+                    arr.push(fileRoutes['userImg'], fileRoutes['hosImg'], fileRoutes['infoImg'])
+                    for (var i = 0; i < arr.length; i++) {
+                        for (var j = 0; j < deleteFilerouteArr.length; j++) {
+                            if (arr[i] == deleteFilerouteArr[j]) { //바뀐 파일 기존경로와 현재 파일 경로가 같으면 null로 하고 나머지는 업데이트시키기
+                                arr[i] = null;
+                                if (i == 0) {
+                                    await models.user.update({ userImg: arr[0] }, { where: { uid: uid } })
+                                } if (i == 1) {
+                                    await models.user.update({ hosImg: arr[1] }, { where: { uid: uid } })
+                                } if (i == 2) {
+                                    await models.user.update({ infoImg: arr[2] }, { where: { uid: uid } })
+                                }
                             }
                         }
                     }
-                }
 
-                for (var i = 0; i < deleteFilerouteArr.length; i++) {
-                    fs.unlinkSync(deleteFilerouteArr[i], (err) => {
-                        if (err) {
-                            console.log(err);
-                        }
-                        return;
-                    });
+                    for (var i = 0; i < deleteFilerouteArr.length; i++) {
+                        fs.unlinkSync(deleteFilerouteArr[i], (err) => {
+                            if (err) {
+                                console.log(err);
+                            }
+                            return;
+                        });
+                    }
                 }
-            }
-            res.json({
-                msg: "success"
+                res.json({
+                    msg: "success"
+                });
             });
-        });
-    } catch (error) {
-        res.send(error.message);
+        } catch (error) {
+            res.send(error.message);
+        }
     }
 });
 
