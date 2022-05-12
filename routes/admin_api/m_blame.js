@@ -9,12 +9,18 @@ router.get('/blameAll', async (req, res) => {
     try {
         var page = req.query.page;
         var targetType = req.query.targetType == undefined ? "" : req.query.targetType;
-        var sql = "select b.* ,date_format(blaDate, '%Y-%m-%d') as blaDatefmt, c.boardId, f.fileRoute \
-                    from blame b left join comment c on c.cmtId = b.targetContentId left join file f on b.targetContentId = f.boardId";
+        var sql = "select b.* ,date_format(blaDate, '%Y-%m-%d') as blaDatefmt, c.boardId,\
+                          (select count(*) from blame where b.targetContentId = n.noticeId) as noticeyn,\
+                          (select count(*) from blame where b.targetContentId = r.referId) as referyn,\
+                          (select count(*) from blame where b.targetContentId = g.galleryId) as galleryyn\
+                    from blame b left join comment c on c.cmtId = b.targetContentId\
+               left join notice n on b.targetContentId = n.noticeId\
+               left join reference r on b.targetContentId = r.referId\
+               left join gallery g on b.targetContentId = g.galleryId where 1=1";
         if (targetType != '') {
-            sql += " where targetType = " + targetType;
+            sql += " and targetType = " + targetType;
         }
-            sql += " order by 1 desc"
+        sql += " order by 1 desc"
         connection.query(sql, (err, results) => {
             var countPage = 10; //하단에 표시될 페이지 개수
             var page_num = 10; //한 페이지에 보여줄 개수
@@ -49,11 +55,12 @@ router.get('/blameAll', async (req, res) => {
 
 //신고 여러개 삭제
 router.get('/blameDelete', (req, res) => {
-     const param = req.query.targetType;
+     const param = req.query.blameId;
      const page = req.query.page;
      const str = param.split(',');
+    //  console.log(str)
     for (var i = 0; i < str.length; i++) {
-        const sql = "call blameComplate(?)";
+        const sql = "delete from blame where blaId = ?";
         connection.query(sql, str[i], (err, result) => {
             if (err) {
                 console.log(err)
@@ -64,39 +71,39 @@ router.get('/blameDelete', (req, res) => {
 });
 
 //게시글, 댓글 상세보기
-router.get('/detail', (req, res) => {
-    try {
-        const param = req.query.targetType;
-        var sql = "";
-        if (param == '0') {
-            //게시글
-            // sql = "select *, (select boardName from boardDiv where d.boardDivId = boardDiv.boardDivId) as boardName, d.crewDiv, date_format(boardDate, '%Y-%m-%d') as boardDateFmt\
-            //          from blame b\
-            //     left join board d on d.boardId = b.targetContentId\
-            //     left join file f on b.targetContentId = f.boardId\
-            //         where b.targetType = ?";
-            sql = "select * from notice where noticeId = 'n1'";
-        } else {
-            //댓글
-            sql = "select date_format(cmtDate, '%Y-%m-%d') as cmtDateFmt, b.blameDiv,\
-                                b.targetUserName, b.uid, c.cmtId, c.cmtContent, c.cmtDate from blame b\
-                      left join comment c on c.cmtId = b.targetContentId\
-                          where b.targetType = ?";
-        }
-        connection.query(sql, (err, result) => {
-            if (err) {
-                console.log(err);
-            }
-            let route = req.app.get('views') + '/m_blame/blameDetail';
-            res.render(route, {
-                result: result,
-                targetType: param
-            });
-        })
+// router.get('/detail', (req, res) => {
+//     try {
+//         const param = req.query.targetType;
+//         var sql = "";
+//         if (param == '0') {
+//             //게시글
+//             // sql = "select *, (select boardName from boardDiv where d.boardDivId = boardDiv.boardDivId) as boardName, d.crewDiv, date_format(boardDate, '%Y-%m-%d') as boardDateFmt\
+//             //          from blame b\
+//             //     left join board d on d.boardId = b.targetContentId\
+//             //     left join file f on b.targetContentId = f.boardId\
+//             //         where b.targetType = ?";
+//             sql = "select * from notice where noticeId = 'n1'";
+//         } else {
+//             //댓글
+//             sql = "select date_format(cmtDate, '%Y-%m-%d') as cmtDateFmt, b.blameDiv,\
+//                                 b.targetUserName, b.uid, c.cmtId, c.cmtContent, c.cmtDate from blame b\
+//                       left join comment c on c.cmtId = b.targetContentId\
+//                           where b.targetType = ?";
+//         }
+//         connection.query(sql, (err, result) => {
+//             if (err) {
+//                 console.log(err);
+//             }
+//             let route = req.app.get('views') + '/m_blame/blameDetail';
+//             res.render(route, {
+//                 result: result,
+//                 targetType: param
+//             });
+//         })
 
-    } catch (error) {
-        res.status(401).send(error.message);
-    }
-});
+//     } catch (error) {
+//         res.status(401).send(error.message);
+//     }
+// });
 
 module.exports = router;
