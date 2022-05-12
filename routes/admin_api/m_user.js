@@ -205,6 +205,7 @@ router.get('/selectOne', async (req, res) => {
 //사용자 등록 페이지 이동
 router.get('/userInsertForm', (req, res) => {
   const admin = req.query.admin;
+  var app = req.query.app == undefined ? "" : req.query.app;
   try {
     const userTypeSql = "select distinct userType from user\
                           where userType is not null and userType != ''\
@@ -224,12 +225,22 @@ router.get('/userInsertForm', (req, res) => {
           console.log(err);
         }
         userPosition = result;
+        // 웹으로 접근시
+        if(app == ""){
         let route = req.app.get('views') + '/m_user/orgm_writForm';
         res.render(route, {
           userType: userType,
           userPosition: userPosition,
           admin: admin
         });
+        // 앱으로 접근시
+        } else if(app =="app"){
+          res.status(200).json({
+            userPosition: userPosition,
+            userType: userType,
+            admin: admin
+          });
+        }
       });
     });
   } catch (error) {
@@ -238,7 +249,8 @@ router.get('/userInsertForm', (req, res) => {
 });
 
 //사용자 등록
-router.post('/userInsert', upload.fields([{name: 'userImg'}, {name: 'hosImg'}, {name: 'infoImg'}]), async (req, res) => {
+router.post('/userInsert', upload.fields([{ name: 'userImg' }, { name: 'hosImg' }, { name: 'infoImg' }]), async (req, res) => {
+  var app = req.body.app == undefined ? "" : req.body.app;
   var adminyn = req.body.adminyn == undefined ? "" : req.body.adminyn;
   let sql;
   let param;
@@ -281,32 +293,42 @@ router.post('/userInsert', upload.fields([{name: 'userImg'}, {name: 'hosImg'}, {
       infoImg = req.files.infoImg[0].path;
     }
     param = [req.body.userName, req.body.hosName, req.body.hosPost, req.body.userAdres1, req.body.userAdres2,
-      req.body.userAdres3, req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3, req.body.userPhone1,
+      req.body.userAdres3, req.body.userAdres4, req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3, req.body.userPhone1,
       req.body.userPhone2, req.body.userPhone3, req.body.userType, req.body.userPosition, req.body.pushYn,
       userImg, hosImg, infoImg, adminyn
     ]
-    sql = "call insertUser(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    sql = "call insertUser(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
   } else {
     let userImg;
     let hosImg;
     let infoImg;
     param = [req.body.userName, req.body.hosName, req.body.hosPost, req.body.userAdres1, req.body.userAdres2,
-      req.body.userAdres3, req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3, req.body.userPhone1,
+      req.body.userAdres3, req.body.userAdres4, req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3, req.body.userPhone1,
       req.body.userPhone2, req.body.userPhone3, req.body.userType, req.body.userPosition, req.body.pushYn,
       userImg, hosImg, infoImg, adminyn
     ]
-    sql = "call insertUser(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    sql = "call insertUser(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
   }
   connection.query(sql, param, (err) => {
     if (err) {
       console.log(err)
     }
-    //관리자 쿼리가 없으면 일반회원정보로, 있으면 개발자 회원정보로 이동.
-    if (req.body.admin != '') {
-      res.send('<script>alert("회원 등록이 완료되었습니다."); location.href="/admin/m_user/admin?page=1";</script>');
-    } else {
-      res.send('<script>alert("회원 등록이 완료되었습니다."); location.href="/admin/m_user/page?page=1";</script>');
+    
+    // 웹으로 접근시
+    if (app == "") {
+      //관리자 쿼리가 없으면 일반회원정보로, 있으면 개발자 회원정보로 이동.
+      if (req.body.admin != '') {
+        res.send('<script>alert("회원 등록이 완료되었습니다."); location.href="/admin/m_user/admin?page=1";</script>');
+      } else {
+        res.send('<script>alert("회원 등록이 완료되었습니다."); location.href="/admin/m_user/page?page=1";</script>');
+      }
+    // 앱으로 접근시
+    } else if (app == "app") {
+      res.json({
+        msg: "success"
+      });
     }
+
   });
 });
 
@@ -390,6 +412,7 @@ router.post('/userUpdate', upload.fields([{
     userAdres1,
     userAdres2,
     userAdres3,
+    userAdres4,
     hosPhone1,
     hosPhone2,
     hosPhone3,
@@ -439,6 +462,7 @@ router.post('/userUpdate', upload.fields([{
     userAdres1: userAdres1,
     userAdres2: userAdres2,
     userAdres3: userAdres3,
+    userAdres4: userAdres4,
     hosPhone1: hosPhone1,
     hosPhone2: hosPhone2,
     hosPhone3: hosPhone3,
@@ -521,6 +545,7 @@ router.post('/userUpdate', upload.fields([{
 
 //사용자 여러명 삭제
 router.get('/userDelete', (req, res) => {
+  var app = req.query.app == undefined ? "" : req.query.app;
   const param = req.query.uid;
   const route = req.query.userImg;
   const str = param.split(',');
@@ -557,6 +582,7 @@ router.get('/userDelete', (req, res) => {
 
 //사용자 한명 삭제
 router.get('/oneUserDelete', (req, res) => {
+  var app = req.query.app == undefined ? "" : req.query.app;
   const param = req.query.uid;
   var img1 = req.query.userImg;
   var img2 = req.query.hosImg;
@@ -579,11 +605,22 @@ router.get('/oneUserDelete', (req, res) => {
       }
     }
   });
-  if (req.query.admin != '') {
-    res.send('<script>alert("삭제되었습니다"); location.href="/admin/m_user/admin?page=1";</script>');
-  } else {
-    res.send('<script>alert("삭제되었습니다"); location.href="/admin/m_user/page?page=1";</script>');
+
+  // 웹으로 접근시
+  if (app == "") {
+    //관리자 쿼리가 없으면 일반회원정보로, 있으면 개발자 회원정보로 이동.
+    if (req.query.admin != '') {
+      res.send('<script>alert("삭제되었습니다"); location.href="/admin/m_user/admin?page=1";</script>');
+    } else {
+      res.send('<script>alert("삭제되었습니다"); location.href="/admin/m_user/page?page=1";</script>');
+    }
+    // 앱으로 접근시
+  } else if (app == "app") {
+    res.json({
+      msg: "success"
+    });
   }
+
 });
 
 //프로필 삭제
