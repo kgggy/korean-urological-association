@@ -266,7 +266,6 @@ router.get('/noticeUdtForm', async (req, res) => {
                 console.log(err);
             }
             let route = req.app.get('views') + '/m_notice/notice_udtForm';
-            console.log(route);
             res.render(route, {
                 'result': result,
                 searchText: searchText,

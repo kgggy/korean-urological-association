@@ -144,7 +144,6 @@ router.post('/eventWrite', upload.single('file'), async (req, res, next) => {
                         if (err) {
                             throw err;
                         }
-                        console.log(path)
                         fs.writeFile(path, buffer, (err) => {
                             // console.log("삭제한 path ==============" + path)
                             if (err) {
