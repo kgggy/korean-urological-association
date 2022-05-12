@@ -250,6 +250,7 @@ router.post('/noticewrite', upload.array('file'), async (req, res, next) => {
                 });
             }
         });
+        
         res.send('<script>alert("공지사항이 등록되었습니다."); location.href="/admin/m_notice/notice?page=1";</script>');
     } catch (error) {
         res.send(error.message);
