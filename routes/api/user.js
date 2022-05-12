@@ -4,55 +4,115 @@ var connection = require('../../config/db').conn;
 
 // 전체 회원 목록
 router.get('/all', async (req, res) => {
-  try {
-    const page = parseInt(req.query.page);
-    let user;
-    let userPosition;
-    let userAdres2;
-    let userType;
-    var sql = "";
-    var param = [];
-    if(req.query.page != 'null') {
-      sql = "select * from user where uid <= 10000 order by userRank is null, userRank asc limit 15 offset ?";
-      param = page * 15;
-    } else {
-      sql = "select * from user where uid <= 10000 order by userRank is null, userRank asc";
-    }
-    connection.query(sql, param, (err, results, fields) => {
-      if (err) {
-        console.log(err);
+  //업데이트 된 버전
+  if(req.query.version == version) {
+    try {
+      const page = parseInt(req.query.page);
+      const uid = req.query.uid;
+      let user;
+      let userPosition;
+      let userAdres2;
+      let userType;
+      var sql = "";
+      var param = [];
+      if(req.query.page != 'null') {
+        sql = "select u.*, p.psd from user u\
+            left join president p on p.uid = u.uid where u.uid <= 10000\
+             order by field(u.uid, ?) desc, u.userRank is null, u.userRank asc limit 15 offset ?";
+        param = [uid, page * 15];
+      } else {
+        sql = "select u.*, p.psd from user u left join president p on p.uid = u.uid where u.uid <= 10000 order by field(u.uid, ?) desc, u.userRank is null, u.userRank asc";
+        param = [uid]
       }
-      user = results;
-      const userPositionSql = "select distinct userPosition from user where userPosition is not null and userPosition != ''  order by field(userPosition, '전체') desc, userPosition asc;";
-      connection.query(userPositionSql, (err, results) => {
+      connection.query(sql, param, (err, results, fields) => {
         if (err) {
           console.log(err);
         }
-        userPosition = results;
-        const userAdres2Sql = "select distinct userAdres2 from user where userAdres2 is not null and userAdres2 != '' order by field(userAdres2, '지역') desc, userAdres2 asc;";
-        connection.query(userAdres2Sql, (err, results) => {
+        user = results;
+        const userPositionSql = "select distinct userPosition from user where userPosition is not null and userPosition != ''  order by field(userPosition, '전체') desc, userPosition asc;";
+        connection.query(userPositionSql, (err, results) => {
           if (err) {
             console.log(err);
           }
-          userAdres2 = results;
-          const userTypeSql = "select distinct userType from user where userType is not null and userType != '' order by field(userType, '형태') desc, userType asc;";
-          connection.query(userTypeSql, (err, results) => {
+          userPosition = results;
+          const userAdres2Sql = "select distinct userAdres2 from user where userAdres2 is not null and userAdres2 != '' order by field(userAdres2, '지역') desc, userAdres2 asc;";
+          connection.query(userAdres2Sql, (err, results) => {
             if (err) {
               console.log(err);
             }
-            userType = results;
-            res.status(200).json({
-              user: user,
-              userPosition: userPosition,
-              userAdres2: userAdres2,
-              userType: userType
-            });
-          })
+            userAdres2 = results;
+            const userTypeSql = "select distinct userType from user where userType is not null and userType != '' order by field(userType, '형태') desc, userType asc;";
+            connection.query(userTypeSql, (err, results) => {
+              if (err) {
+                console.log(err);
+              }
+              userType = results;
+              res.status(200).json({
+                user: user,
+                userPosition: userPosition,
+                userAdres2: userAdres2,
+                userType: userType
+              });
+            })
+          });
         });
       });
-    });
-  } catch (error) {
-    res.status(401).send(error.message);
+    } catch (error) {
+      res.status(401).send(error.message);
+    }
+  } else {
+    try {
+      const page = parseInt(req.query.page);
+      let user;
+      let userPosition;
+      let userAdres2;
+      let userType;
+      var sql = "";
+      var param = [];
+      if(req.query.page != 'null') {
+        sql = "select u.*, p.psd from user u\
+            left join president p on p.uid = u.uid where u.uid <= 10000\
+             order by u.userRank is null, u.userRank asc limit 15 offset ?";
+        param = page * 15;
+      } else {
+        sql = "select u.*, p.psd from user u left join president p on p.uid = u.uid where u.uid <= 10000 order by u.userRank is null, u.userRank asc";
+      }
+      connection.query(sql, param, (err, results, fields) => {
+        if (err) {
+          console.log(err);
+        }
+        user = results;
+        const userPositionSql = "select distinct userPosition from user where userPosition is not null and userPosition != ''  order by field(userPosition, '전체') desc, userPosition asc;";
+        connection.query(userPositionSql, (err, results) => {
+          if (err) {
+            console.log(err);
+          }
+          userPosition = results;
+          const userAdres2Sql = "select distinct userAdres2 from user where userAdres2 is not null and userAdres2 != '' order by field(userAdres2, '지역') desc, userAdres2 asc;";
+          connection.query(userAdres2Sql, (err, results) => {
+            if (err) {
+              console.log(err);
+            }
+            userAdres2 = results;
+            const userTypeSql = "select distinct userType from user where userType is not null and userType != '' order by field(userType, '형태') desc, userType asc;";
+            connection.query(userTypeSql, (err, results) => {
+              if (err) {
+                console.log(err);
+              }
+              userType = results;
+              res.status(200).json({
+                user: user,
+                userPosition: userPosition,
+                userAdres2: userAdres2,
+                userType: userType
+              });
+            })
+          });
+        });
+      });
+    } catch (error) {
+      res.status(401).send(error.message);
+    }
   }
 });
 

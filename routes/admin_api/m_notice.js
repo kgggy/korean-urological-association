@@ -50,7 +50,7 @@ router.get('/notice', async (req, res) => {
                            date_format(noticeWritDate, '%Y-%m-%d') as noticeWritDateFmt\
                        from notice";
         if (searchText != '') {
-            sql += " where noticeTitle like '%"+searchText+"%' or noticeContent like '%"+searchText+"%'";
+            sql += " where noticeTitle like '%" + searchText + "%' or noticeContent like '%" + searchText + "%'";
         }
         sql += " order by noticeFix desc, noticeWritDate desc";
         connection.query(sql, (err, results) => {
@@ -118,7 +118,7 @@ router.get('/noticeSearch', async (req, res) => {
             startPage: startPage,
             endPage: endPage,
             pass: true,
-            last: last, 
+            last: last,
             searchText: searchText
         });
         // console.log("page = " + page)
@@ -173,14 +173,14 @@ router.post('/noticewrite', upload.array('file'), async (req, res, next) => {
         const orgName = req.files.map(data => data.originalname);
         const param = [req.body.noticeTitle, req.body.noticeContent];
         const noticeFix = req.body.noticeFix;
-        const noticeId = req.body.noticeId;
+
         const sql = "call insertNotice(?,?)";
         for (let i = 0; i < paths.length; i++) {
             if (req.files[i].mimetype == "image/jpeg" || req.files[i].mimetype == "image/jpg" || req.files[i].mimetype == "image/png") {
                 if (req.files[i].size > 1000000) {
                     sharp(paths[i]).resize({
-                        width: 2000
-                    }).withMetadata() //이미지 방향 유지
+                            width: 2000
+                        }).withMetadata() //이미지 방향 유지
                         .toBuffer((err, buffer) => {
                             if (err) {
                                 throw err;
@@ -212,8 +212,31 @@ router.post('/noticewrite', upload.array('file'), async (req, res, next) => {
                         }
                     });
                 };
+                const noticeId = result[0].noticeId
+                //OneSignal 푸쉬 알림
+                var message = {
+                    app_id: ONE_SIGNAL_CONFIG.APP_ID,
+                    contents: {
+                        "en": req.body.noticeTitle
+                    },
+                    // included_segments: ["All"],
+                    included_segments: ["developer"],
+                    // "include_player_ids": ["743b6e07-54ed-4267-8290-e6395974acc6"],
+                    content_avaliable: true,
+                    small_icon: "ic_notification_icon",
+                    data: {
+                        title: "notice",
+                        id: noticeId
+                    }
+                };
+                pushNotificationService.sendNotification(message, (error, results) => {
+                    if (error) {
+                        return next(error);
+                    }
+                    return null;
+                })
             });
-            if(noticeFix == 1){
+            if (noticeFix == 1) {
                 const sql1 = "call noticeFixCheck()";
                 connection.query(sql1, (err) => {
                     if (err) {
@@ -221,29 +244,6 @@ router.post('/noticewrite', upload.array('file'), async (req, res, next) => {
                     }
                 });
             }
-            
-            //OneSignal 푸쉬 알림
-            var message = {
-                app_id: ONE_SIGNAL_CONFIG.APP_ID,
-                contents: {
-                    "en": req.body.noticeTitle
-                },
-                included_segments: ["All"],
-                // "include_player_ids": ["743b6e07-54ed-4267-8290-e6395974acc6"],
-                content_avaliable: true,
-                small_icon: "ic_notification_icon",
-                data: {
-                    title: "notice",
-                    id: noticeId
-                }
-            };
-            pushNotificationService.sendNotification(message, (error, results) => {
-                if (error) {
-                    return next(error);
-                }
-                return null;
-            })
-
         });
         res.send('<script>alert("공지사항이 등록되었습니다."); location.href="/admin/m_notice/notice?page=1";</script>');
     } catch (error) {
@@ -270,7 +270,7 @@ router.get('/noticeUdtForm', async (req, res) => {
             res.render(route, {
                 'result': result,
                 searchText: searchText,
-                page : page
+                page: page
             });
         });
 
@@ -293,8 +293,8 @@ router.post('/noticeUpdate', upload.array('file'), (req, res) => {
             if (req.files[i].mimetype == "image/jpeg" || req.files[i].mimetype == "image/jpg" || req.files[i].mimetype == "image/png") {
                 if (req.files[i].size > 1000000) {
                     sharp(paths[i]).resize({
-                        width: 2000
-                    }).withMetadata() //이미지 방향 유지
+                            width: 2000
+                        }).withMetadata() //이미지 방향 유지
                         .toBuffer((err, buffer) => {
                             if (err) {
                                 throw err;
@@ -321,7 +321,7 @@ router.post('/noticeUpdate', upload.array('file'), (req, res) => {
                     }
                 });
             };
-            res.redirect('noticeSelectOne?noticeId=' + req.body.noticeId + '&page='+ page +'&searchText=' + searchText);
+            res.redirect('noticeSelectOne?noticeId=' + req.body.noticeId + '&page=' + page + '&searchText=' + searchText);
         });
     } catch (error) {
         res.send(error.message);
