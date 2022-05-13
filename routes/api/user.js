@@ -4,7 +4,7 @@ var connection = require('../../config/db').conn;
 
 // 전체 회원 목록
 router.get('/all', async (req, res) => {
-  //업데이트 된 버전
+  //업데이트 된 버전 1.0.8
   if(req.query.version == version) {
     try {
       const page = parseInt(req.query.page);
@@ -17,11 +17,11 @@ router.get('/all', async (req, res) => {
       var param = [];
       if(req.query.page != 'null') {
         sql = "select u.*, p.psd from user u\
-            left join president p on p.uid = u.uid where u.uid <= 10000\
+            left join president p on p.uid = u.uid\
              order by field(u.uid, ?) desc, u.userRank is null, u.userRank asc limit 15 offset ?";
         param = [uid, page * 15];
       } else {
-        sql = "select u.*, p.psd from user u left join president p on p.uid = u.uid where u.uid <= 10000 order by field(u.uid, ?) desc, u.userRank is null, u.userRank asc";
+        sql = "select u.*, p.psd from user u left join president p on p.uid = u.uid order by field(u.uid, ?) desc, u.userRank is null, u.userRank asc";
         param = [uid]
       }
       connection.query(sql, param, (err, results, fields) => {
