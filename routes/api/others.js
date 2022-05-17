@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var connection = require('../../config/db').conn;
+var models = require('../../models');
 // 총칙 파일 다운로드
 router.get('/rules/download', async (req, res) => {
   try {
@@ -121,15 +122,30 @@ router.get('/tree', async (req, res) => {
   try {
     const sql = "select u.* from tree t left join user u on u.uid = t.uid;";
     let tree;
-    connection.query(sql, (err, result) => {
+    connection.query(sql, async (err, result) => {
       if (err) {
         console.error(err);
         res.json({
           msg: "query error"
         });
       }
-      tree = result;
-      res.status(200).json(tree);
+      tree = result
+      //병원파일 가져오기
+      var hosImgs;
+      for (i = 0; i < tree.length; i++) {
+        hosImgs = await models.file.findAll({
+          where: {
+            uid: tree[i].uid
+          },
+          attributes: ["fileRoute", "fileOrgName", "fileType"],
+          raw: true
+        })
+        // console.log(hosImgs)
+        tree[i]['hosImgs'] = hosImgs;
+      }
+      res.status(200).json({
+        tree: tree
+      });
     });
   } catch (error) {
     res.status(401).send(error.message);
