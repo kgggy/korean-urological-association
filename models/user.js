@@ -150,6 +150,11 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(100),
       allowNull: true,
       comment: "상세주소"
+    },
+    hosDetail: {
+      type: DataTypes.STRING(300),
+      allowNull: true,
+      comment: "병원 소개"
     }
   }, {
     sequelize,
