@@ -87,6 +87,7 @@ router.get('/supportWritForm', async (req, res) => {
 
 //후원광고 등록
 router.post('/supportWrit', upload.array('file'), async function (req, res) {
+    var app = req.body.app == undefined ? "" : req.body.app;
     const param = [req.body.supportUrl, req.body.supportTitle, req.body.supportDetail];
     const paths = req.files.map(data => data.path);
     const orgName = req.files.map(data => data.originalname);
