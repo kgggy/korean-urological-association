@@ -51,6 +51,7 @@ app.set('view engine', 'ejs');
 // app.engine('html', require('ejs').renderFile);
 // app.set('views', __dirname + '/views/ejs');   //view 경로 설정
 app.set('views', path.join(__dirname, '/views/ejs'));
+app.set('error', __dirname);
 
 
 // app.get('/', (req, res) => { res.render(__dirname + "/views/ejs/index.ejs", {layout:false}) })
@@ -74,7 +75,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.render('error', {layout: false});
 });
 
 module.exports = app; //app객체를 모듈로 만듦(bin/www에서 사용된 app모듈)

@@ -20,7 +20,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     boardId: {
       type: DataTypes.STRING(5),
-      allowNull: false,
+      allowNull: true,
       comment: "공지사항, 자료실, 갤러리 pk"
     },
     supportId: {
@@ -32,6 +32,11 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(10),
       allowNull: true,
       comment: "파일종류"
+    },
+    uid: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      comment: "사용자 일련번호(병원사진, 유저프로필)"
     }
   }, {
     sequelize,

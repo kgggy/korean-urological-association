@@ -54,7 +54,17 @@ module.exports = function(sequelize, DataTypes) {
     userAdres3: {
       type: DataTypes.STRING(100),
       allowNull: true,
-      comment: "상세주소"
+      comment: "도로명주소\n"
+    },
+    Latitude: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+      comment: "위도"
+    },
+    longitude: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+      comment: "경도"
     },
     userPosition: {
       type: DataTypes.STRING(10),
@@ -135,6 +145,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true,
       defaultValue: "0",
       comment: "0 : 회원, 1 : 관리자"
+    },
+    userAdres4: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+      comment: "상세주소"
     }
   }, {
     sequelize,
