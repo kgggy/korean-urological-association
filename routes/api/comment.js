@@ -1,14 +1,15 @@
 var express = require('express');
 var router = express.Router();
 var connection = require('../../config/db').conn;
+var models = require('../../models');
 
 //공지사항 댓글 전체조회
 router.get('/notice/:noticeId', async (req, res) => {
     try {
         const param = [req.params.noticeId];
         const sql = "select c.*, u.userName, u.userImg from comment c left join user u on u.uid = c.uid where boardId = ?";
-        let comment;
-        connection.query(sql, param, (err, results) => {
+        let comment = [];
+        connection.query(sql, param, async (err, results) => {
             if (err) {
                 res.json({
                     msg: "query error"

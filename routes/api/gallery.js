@@ -5,7 +5,9 @@ var connection = require('../../config/db').conn;
 //갤러리 글 전체 목록 조회
 router.get('/', async (req, res) => {
     try {
-        const sql = "select * from file f\
+        const sql = "select *, (select count(*) from hitCount where hitCount.boardId = g.galleryId) as hit,\
+                            (select count(*) from comment where comment.boardId = g.galleryId) as cmtCount\
+                       from file f\
                   left join gallery g on g.galleryId = f.boardId\
                    group by boardId\
                      having substring(boardId, 1, 1) = 'g'\

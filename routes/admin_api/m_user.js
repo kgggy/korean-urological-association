@@ -28,12 +28,6 @@ var upload = multer({ //multer안에 storage정보
       done(null, path.basename(file.originalname, ext) + Date.now() + ext);
     },
   }),
-  //파일 개수, 파일사이즈 제한
-  limits: {
-    files: 5,
-    fileSize: 1024 * 1024 * 1024 //1기가
-  },
-
 });
 
 //사용자 전체조회
@@ -249,11 +243,12 @@ router.get('/userInsertForm', (req, res) => {
 });
 
 //사용자 등록
-router.post('/userInsert', upload.fields([{ name: 'userImg' }, { name: 'hosImg' }, { name: 'infoImg' }]), async (req, res) => {
+router.post('/userInsert', upload.array('file'), async (req, res) => {
   var app = req.body.app == undefined ? "" : req.body.app;
   var adminyn = req.body.adminyn == undefined ? "" : req.body.adminyn;
   let sql;
   let param;
+  console.log(req.files)
   if (req.files != null) {
     var obj = req.files;
     for (value in obj) {

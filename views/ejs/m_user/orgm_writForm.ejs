@@ -22,7 +22,7 @@
                   <div class="card-header">
                      <i class="fa fa-align-justify"></i> 회원 등록</div>
                   <form action="" id="userEnrollForm" method="post" enctype="multipart/form-data">
-                     <input type="hidden" name="admin" value="<%=admin%>">
+                     
                      <div class="card-body">
                         <!-- 컨텐츠 -->
                         <div class="form-group row">
@@ -104,20 +104,24 @@
                         </div>
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">프로필사진</label>
-                           <div class="col-md-9">
-                              <input type="file" id="file" name="userImg" />
+                           <div style="display: flex; flex-direction: column; gap: 25px; padding-left: 15px">
+                              <input type="file" id="file" name="file" />
                            </div>
                         </div>
                         <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">병원사진1</label>
-                           <div class="col-md-9">
-                              <input type="file" id="file" name="hosImg" />
+                           <label class="col-md-2 col-form-label">병원사진</label>
+                           <div style="display: flex; flex-direction: column; gap: 25px; padding-left: 15px">
+                              <input type="file" id="file" name="file">
+                              <input type="file" id="file" name="file" />
+                              <input type="file" id="file" name="file" />
+                              <input type="file" id="file" name="file" />
+                              <input type="file" id="file" name="file" />
                            </div>
                         </div>
                         <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">병원사진2</label>
+                           <label class="col-md-2 col-form-label" for="text-input">병원세부설명</label>
                            <div class="col-md-9">
-                              <input type="file" id="file" name="infoImg" />
+                              <input class="form-control" id="hosDetail" type="text" name="hosDetail" value="">
                            </div>
                         </div>
                         <% if(sessionAdminId == 'resoft') { %>
@@ -171,10 +175,29 @@
 
    $("#update_btn").click(function () {
       var userName = $("#userName").val();
+      var userPhone1 = $("#userPhone1").val();
+      var userPhone2 = $("#userPhone2").val();
+      var userPhone3 = $("#userPhone3").val();
+
 
       if (userName == '') {
          alert("회원명을 입력해주세요.");
          $("#userName").focus();
+         return false;
+      }
+      if (userPhone1 == '') {
+         alert("휴대번호를 입력해주세요.");
+         $("#userPhone1").focus();
+         return false;
+      }
+      if (userPhone2 == '') {
+         alert("휴대번호를 입력해주세요.");
+         $("#userPhone2").focus();
+         return false;
+      }
+      if (userPhone3 == '') {
+         alert("휴대번호를 입력해주세요.");
+         $("#userPhone3").focus();
          return false;
       }
 

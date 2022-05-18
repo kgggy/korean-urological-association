@@ -38,6 +38,9 @@ app.use(                                // request를 통해 세션 접근 가�
 app.use(function (req, res, next) {
   if (req.session.user) {
     global.sessionAdminId = req.session.user.adminId;
+    global.firstAdmin = req.session.user.adminId;
+  } else {
+    global.fisrtAdmin = '';
   }
   // global.version = "1.0.8"; //최신 업데이트 버전
   next();
