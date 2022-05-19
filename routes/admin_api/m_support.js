@@ -95,20 +95,22 @@ router.post('/supportWrit', upload.array('file'), async function (req, res) {
         const sql = "insert into support(supportUrl, supportTitle, supportDetail) values(?, ?, ?);\
                      select max(supportId) as supportId from support;";
         for (let i = 0; i < paths.length; i++) {
-            if (req.files[i].size > 1000000) {
-                sharp(paths[i]).resize({
-                    width: 2000
-                }).withMetadata() //이미지 방향 유지
-                    .toBuffer((err, buffer) => {
-                        if (err) {
-                            throw err;
-                        }
-                        fs.writeFileSync(paths[i], buffer, (err) => {
+            if (req.files[i].mimetype == "image/jpeg" || req.files[i].mimetype == "image/jpg" || req.files[i].mimetype == "image/png") {
+                if (req.files[i].size > 1000000) {
+                    sharp(paths[i]).resize({
+                        width: 2000
+                    }).withMetadata() //이미지 방향 유지
+                        .toBuffer((err, buffer) => {
                             if (err) {
-                                throw err
+                                throw err;
                             }
+                            fs.writeFileSync(paths[i], buffer, (err) => {
+                                if (err) {
+                                    throw err
+                                }
+                            });
                         });
-                    });
+                }
             }
         }
         connection.query(sql, param, (err, results) => {
@@ -176,7 +178,7 @@ router.post('/supportUpdate', upload.array('file'), async (req, res) => {
 });
 
 //후원 이미지 파일 삭제
-router.get('/supportImgDelete', async (req, res) => {
+router.get('/supportFileDelete', async (req, res) => {
     const param = req.query.fileId;
     const fileRoute = req.query.fileRoute; 
     try {

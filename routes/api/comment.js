@@ -4,10 +4,12 @@ var connection = require('../../config/db').conn;
 var models = require('../../models');
 
 //공지사항 댓글 전체조회
-router.get('/notice/:noticeId', async (req, res) => {
+router.get('/notice', async (req, res) => {
     try {
-        const param = [req.params.noticeId];
-        const sql = "select c.*, u.userName, u.userImg from comment c left join user u on u.uid = c.uid where boardId = ?";
+        const param = [req.query.noticeId, req.query.uid];
+        const sql = "select c.*, u.userName, u.userImg from comment c\
+         left join user u on u.uid = c.uid where boardId = ?\
+         and c.cmtId not IN(SELECT distinct targetContentId FROM blame where targetType=1 and uid = ? and blaDivision = 1)";
         let comment = [];
         connection.query(sql, param, async (err, results) => {
             if (err) {
@@ -24,10 +26,12 @@ router.get('/notice/:noticeId', async (req, res) => {
 });
 
 //갤러리 댓글 전체조회
-router.get('/gallery/:galleryId', async (req, res) => {
+router.get('/gallery', async (req, res) => {
     try {
-        const param = [req.params.galleryId];
-        const sql = "select c.*, u.userName, u.userImg from comment c left join user u on u.uid = c.uid where boardId = ?";
+        const param = [req.query.galleryId, req.query.uid];
+        const sql = "select c.*, u.userName, u.userImg from comment c\
+         left join user u on u.uid = c.uid where boardId = ?\
+         and c.cmtId not IN(SELECT distinct targetContentId FROM blame where targetType=1 and uid = ? and blaDivision = 1)";
         let comment;
         connection.query(sql, param, (err, results) => {
             if (err) {
@@ -44,10 +48,12 @@ router.get('/gallery/:galleryId', async (req, res) => {
 });
 
 //자료실 댓글 전체조회
-router.get('/refer/:referId', async (req, res) => {
+router.get('/refer', async (req, res) => {
     try {
-        const param = [req.params.referId];
-        const sql = "select c.*, u.userName, u.userImg from comment c left join user u on u.uid = c.uid where boardId = ?";
+        const param = [req.query.referId, req.query.uid];
+        const sql = "select c.*, u.userName, u.userImg from comment c\
+         left join user u on u.uid = c.uid where boardId = ?\
+         and c.cmtId not IN(SELECT distinct targetContentId FROM blame where targetType = 1 and uid = ? and blaDivision = 1)";
         let comment;
         connection.query(sql, param, (err, results) => {
             if (err) {
