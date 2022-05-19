@@ -29,10 +29,46 @@
                            </div>
                         </div>
                         <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">프로필사진</label>
+                           <div class="col-md-9">
+                              <input type="hidden" name="userImg" value="<%=result[0].userImg%>">
+                              <% if(result.length > 0 && result[0].userImg != null && result[0].userImg != '') {%>
+                              <img src="../../../<%= result[0].userImg %>" alt="사진" width="40%" />
+                              <% }else{ %>
+                              등록된 프로필 사진이 없습니다.
+                              <% } %>
+                           </div>
+                        </div>
+                        <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">회원명</label>
                            <div class="col-md-9">
                               <input class="form-control" id="userName" type="text" name="userName" readonly
                                  value="<%=result[0].userName%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">휴대번호</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="ucmtitle" type="text" readonly
+                                 value="<%=result[0].userPhone1%>-<%=result[0].userPhone2%>-<%=result[0].userPhone3%>">
+                              <input type="hidden" id="userPhone1" name="userPhone1" value="<%=result[0].userPhone1%>">
+                              <input type="hidden" id="userPhone2" name="userPhone2" value="<%=result[0].userPhone2%>">
+                              <input type="hidden" id="userPhone3" name="userPhone3" value="<%=result[0].userPhone3%>">
+                           </div>
+                        </div>
+
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">이메일</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="userEmail" type="text" name="userEmail" readonly
+                                 value="<%=result[0].userEmail%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">팩스번호</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="userFax" type="text" name="userFax" readonly
+                                 value="<%=result[0].userFax%>">
                            </div>
                         </div>
                         <div class="form-group row">
@@ -57,17 +93,7 @@
                               <input type="hidden" id="userAdres1" name="userAdres1" value="<%=result[0].userAdres1%>">
                               <input type="hidden" id="userAdres2" name="userAdres2" value="<%=result[0].userAdres2%>">
                               <input type="hidden" id="userAdres3" name="userAdres3" value="<%=result[0].userAdres3%>">
-                              <input type="hidden" id="userAdres3" name="userAdres3" value="<%=result[0].userAdres4%>">
-                           </div>
-                        </div>
-                        <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">휴대번호</label>
-                           <div class="col-md-9">
-                              <input class="form-control" id="ucmtitle" type="text" readonly
-                                 value="<%=result[0].userPhone1%>-<%=result[0].userPhone2%>-<%=result[0].userPhone3%>">
-                              <input type="hidden" id="userPhone1" name="userPhone1" value="<%=result[0].userPhone1%>">
-                              <input type="hidden" id="userPhone2" name="userPhone2" value="<%=result[0].userPhone2%>">
-                              <input type="hidden" id="userPhone3" name="userPhone3" value="<%=result[0].userPhone3%>">
+                              <input type="hidden" id="userAdres4" name="userAdres4" value="<%=result[0].userAdres4%>">
                            </div>
                         </div>
                         <div class="form-group row">
@@ -78,6 +104,13 @@
                               <input type="hidden" id="hosPhone1" name="hosPhone1" value="<%=result[0].hosPhone1%>">
                               <input type="hidden" id="hosPhone2" name="hosPhone2" value="<%=result[0].hosPhone2%>">
                               <input type="hidden" id="hosPhone3" name="hosPhone3" value="<%=result[0].hosPhone3%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">홈페이지</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="userUrl" type="text" name="userUrl" readonly
+                                 value="<%=result[0].userUrl%>">
                            </div>
                         </div>
                         <div class="form-group row">
@@ -94,7 +127,7 @@
                                  value="<%=result[0].userPosition%>">
                            </div>
                         </div>
-                        <div class="form-group row">
+                        <!-- <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">푸쉬알림</label>
                            <div class="col-md-9">
                               <% if (result[0].pushYn == '0'){%>
@@ -103,75 +136,31 @@
                               <input class="form-control" id="pushYn" type="text" name="pushYn" readonly value="비동의">
                               <%}%>   
                         </div>
-                     </div>
+                     </div> -->
                         <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">프로필사진</label>
+                           <label class="col-md-2 col-form-label" for="text-input">병원세부설명</label>
                            <div class="col-md-9">
-                              <input type="hidden" name="userImg" value="<%=result[0].userImg%>">
-                              <% if(result.length > 0 && result[0].userImg != null && result[0].userImg != '') {%>
-                              <img src="../../../<%= result[0].userImg %>" alt="사진" width="40%" />
-                              <% }else{ %>
-                              등록된 프로필 사진이 없습니다.
-                              <% } %>
+                              <%=result[0].hosDetail%>
                            </div>
                         </div>
                         <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">병원사진1</label>
+                           <label class="col-md-2 col-form-label" for="text-input">병원사진</label>
                            <div class="col-md-9">
-                              <input type="hidden" name="hosImg" value="<%=result[0].hosImg%>">
-                              <% if(result.length > 0 && result[0].hosImg != null && result[0].hosImg != '') {%>
-                              <img src="../../../<%= result[0].hosImg %>" alt="사진" width="40%" />
+                              <% if(result[0].fileRoute != null && result[0].fileRoute != '') {%>
+                              <% for(var i = 0; i < result.length ; i++) { %>
+                              <img src="../../../<%= result[i].fileRoute %>" alt="사진"
+                                        style="padding:0 50px 8px 0 !important; width:40%; vertical-align: top !important;" />
+                              <!-- <p><span><%=result[i].fileOrgName%></span></p> -->
+                              <a href="../../../<%= result[i].fileRoute %>" class="btn btn-block btn-outline-success"
+                                 type="button" style="width:30%;" download>파일 다운로드</a>
+                              </p>
+                              <input type="hidden" name="fileRoute" value="<%=result[i].fileRoute%>">
+                              <% } %>
                               <% }else{ %>
-                              등록된 사진이 없습니다.
+                              첨부파일이 존재하지 않습니다.
                               <% } %>
                            </div>
                         </div>
-                        <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">병원사진2</label>
-                           <div class="col-md-9">
-                              <input type="hidden" name="infoImg" value="<%=result[0].infoImg%>">
-                              <% if(result.length > 0 && result[0].infoImg != null && result[0].infoImg != '') {%>
-                              <img src="../../../<%= result[0].infoImg %>" alt="사진" width="40%" />
-                              <% }else{ %>
-                              등록된 사진이 없습니다.
-                              <% } %>
-                           </div>
-                        </div>
-                        <!-- <div class="form-group row">
-                        <label class="col-md-2 col-form-label" for="text-input">이메일</label>
-                        <div class="col-md-9">
-                           <input class="form-control" id="userPosition" type="text" name="userPosition" readonly
-                              value="">
-                        </div>
-                     </div>
-                     <div class="form-group row">
-                        <label class="col-md-2 col-form-label" for="text-input">팩스</label>
-                        <div class="col-md-9">
-                           <input class="form-control" id="userPosition" type="text" name="userPosition" readonly
-                              value="">
-                        </div>
-                     </div>
-                     <div class="form-group row">
-                        <label class="col-md-2 col-form-label" for="text-input">휴대번호</label>
-                        <div class="col-md-9">
-                           <input class="form-control" id="userPosition" type="text" name="userPosition" readonly
-                              value="">
-                        </div>
-                     </div>
-                     <div class="form-group row">
-                        <label class="col-md-2 col-form-label" for="text-input">병원이미지</label>
-                        <div class="col-md-9">
-                           <input class="form-control" id="userPosition" type="text" name="userPosition" readonly
-                              value="">
-                        </div>
-                     </div>
-                     <div class="form-group row">
-                        <label class="col-md-2 col-form-label" for="text-input">홈페이지</label>
-                        <div class="col-md-9">
-                           <input class="form-control" id="userPosition" type="text" name="userPosition" readonly
-                              value="">
-                        </div>
-                     </div>-->
 
                         <!--option 버튼  -->
                         <div class="option_button">
@@ -209,7 +198,7 @@
       // 삭제
       $("#delete_btn").on("click", function () {
          formObj.attr("action", "oneUserDelete");
-         formObj.attr("method", "get");
+         formObj.attr("method", "post");
          if (confirm("회원을 삭제하시겠습니까?") == true) {
             formObj.submit();
          } else {

@@ -121,11 +121,8 @@
                                             <tr class="pointer"
                                                 onclick="location.href='/admin/m_user/selectOne?admin=<%=admin%>&uid=<%=results[i].uid%>&page=<%=page%><%=keepSearch%>'">
                                                 <td onclick="event.cancelBubble=true;"><input type="checkbox" id="chk"
-                                                        name="chk" value="<%=results[i].uid %>"
-                                                        data-img1="<%=results[i].userImg%>"
-                                                        data-img2="<%=results[i].hosImg%>"
-                                                        data-img3="<%=results[i].infoImg%>" />
-                                                </td>
+                                                        name="chk" value="<%=results[i].uid %>"/>
+                                                </td> 
                                                 <td>
                                                     <%=results[i].uid%>
                                                 </td>
@@ -216,13 +213,13 @@
                 alert("삭제할 목록을 선택해주세요.");
                 return false;
             }
-            var chkImg = [];
-            $("input[name=chk]:checked").each(function () {
-                chkImg.push($(this).attr('data-img1'));
-                chkImg.push($(this).attr('data-img2'));
-                chkImg.push($(this).attr('data-img3'));
-            });
-            $('#userImg').val(chkImg);
+            // var chkImg = [];
+            // $("input[name=chk]:checked").each(function () {
+            //     chkImg.push($(this).attr('data-img1'));
+            //     chkImg.push($(this).attr('data-img2'));
+            //     chkImg.push($(this).attr('data-img3'));
+            // });
+            // $('#userImg').val(chkImg);
             formObj.attr("action", "userDelete");
             formObj.attr("method", "get");
             if (confirm("삭제하시겠습니까?") == true) {

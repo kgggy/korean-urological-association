@@ -306,6 +306,7 @@ router.patch('/:uid', upload.array('file'), async (req, res) => {
             req.body.userPhone1, req.body.userPhone2, req.body.userPhone3,
             req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3, req.body.Latitude, req.body.longitude, req.body.hosDetail, req.params.uid
         ];
+        console.log(param);
         connection.query(sql, param, async (err) => {
             if (err) {
                 console.error(err);
@@ -332,10 +333,10 @@ router.patch('/:uid', upload.array('file'), async (req, res) => {
                             });
                     }
                 }
-                console.log(deleteFileRoute == '')
-                console.log(deleteFileRoute == undefined)
+                // console.log(deleteFileRoute == '')
+                // console.log(deleteFileRoute == undefined)
                 if (deleteFileRoute == '' || deleteFileRoute == undefined) {
-                    console.log("이전 사진 없을때 파일업로드됨")
+                    // console.log("이전 사진 없을때 파일업로드됨")
                     for (let i = 0; i < paths.length; i++) {
                         const fileSql = "insert into file(uid, fileRoute, fileOrgName, fileType) values (?, ?, ?, ?)";
                         const param1 = [uid, paths[i], orgName[i], path.extname(paths[i])];
@@ -348,17 +349,17 @@ router.patch('/:uid', upload.array('file'), async (req, res) => {
                     }
                 }
                 //바뀐 이미지 있는경우
-                console.log(deleteFileRoute != '')
-                console.log(deleteFileRoute != undefined)
+                // console.log(deleteFileRoute != '')
+                // console.log(deleteFileRoute != undefined)
                 
                 if (deleteFileRoute != '' && deleteFileRoute != undefined) {
-                    console.log("바뀐 이미지 있다!!!")
-                    console.log(deleteFileRoute)
+                    // console.log("바뀐 이미지 있다!!!")
+                    // console.log(deleteFileRoute)
                     var redeleteFileRoute = deleteFileRoute.replaceAll('\\', '\\');
                     // var deleteFilerouteArr1 = deleteFileRoute.split(',')
                     // console.log(deleteFilerouteArr1)
                     var deleteFilerouteArr = redeleteFileRoute.split(',')
-                    console.log(deleteFilerouteArr)
+                    // console.log(deleteFilerouteArr)
 
                     // var redeleteFileRoute = deleteFileRoute.replaceAll('\\', '\\\\');
                     // console.log(typeof redeleteFileRoute)
