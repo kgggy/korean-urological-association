@@ -178,7 +178,7 @@ router.post('/noticewrite', upload.array('file'), async (req, res, next) => {
         const orgName = req.files.map(data => data.originalname);
         const param = [req.body.noticeTitle, req.body.noticeContent];
         const noticeFix = req.body.noticeFix;
-
+        const noticePush = req.body.noticePush;
         const sql = "call insertNotice(?,?)";
         for (let i = 0; i < paths.length; i++) {
             if (req.files[i].mimetype == "image/jpeg" || req.files[i].mimetype == "image/jpg" || req.files[i].mimetype == "image/png") {
@@ -218,6 +218,7 @@ router.post('/noticewrite', upload.array('file'), async (req, res, next) => {
                     });
                 };
                 const noticeId = result[0].noticeId
+                if (noticePush == 1) {
                 //OneSignal 푸쉬 알림
                 var message = {
                     app_id: ONE_SIGNAL_CONFIG.APP_ID,
@@ -240,6 +241,7 @@ router.post('/noticewrite', upload.array('file'), async (req, res, next) => {
                     }
                     return null;
                 })
+                }
             });
             if (noticeFix == 1) {
                 const sql1 = "call noticeFixCheck()";
@@ -337,10 +339,11 @@ router.post('/noticeUpdate', upload.array('file'), (req, res) => {
 router.get('/noticesDelete', (req, res) => {
     const param = req.query.noticeId;
     const str = param.split(',');
+    console.log("asd")
     for (var i = 0; i < str.length; i++) {
         let fileRoute = [];
         const sql1 = "select fileRoute from file where boardId = ?";
-        connection.query(sql1, str[i], (err, result) => {
+        connection.query(sql1, str[i], async (err, result) => {
             if (err) {
                 console.log(err)
             }
@@ -355,9 +358,12 @@ router.get('/noticesDelete', (req, res) => {
                     });
                 }
             }
+            console.log(result)
         });
+        console.log("test")
         const sql = "call deleteNotice(?)";
         connection.query(sql, str[i], (err) => {
+            console.log("2222");
             if (err) {
                 console.log(err)
             }
