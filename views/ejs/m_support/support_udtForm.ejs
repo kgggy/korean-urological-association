@@ -44,8 +44,8 @@
                                  value="<%=result[0].supportId%>">
                            </div>
                         </div>
-                        <div class="mb-3 row">
-                           <label class="col-md-1 col-form-label">후원대표이미지</label>
+						<div class="mb-3 row">
+                           <label class="col-md-1 col-form-label">* 배너 이미지 *</label>
                            <% if(result[0].fileRoute != null) { %>
                            <div class="file-wrap support_img_wrap col-md-10">
                               <p><span><%=result[0].fileOrgName%></span>
@@ -62,14 +62,14 @@
 
                         </div>
                         <div class="mb-3 row">
-                           <label class="col-md-1 col-form-label" for="text-input">후원업체명</label>
+                           <label class="col-md-1 col-form-label" for="text-input">* 업체명 *</label>
                            <div class="col-md-10">
                               <input class="form-control" id="writTitle" type="text" name="supportTitle"
                                  value="<%=result[0].supportTitle%>">
                            </div>
                         </div>
                         <div class="mb-3 row">
-                           <label class="col-md-1 col-form-label" for="text-input">업체세부내용</label>
+                           <label class="col-md-1 col-form-label" for="text-input">업체 상세 설명</label>
                            <div class="col-md-10">
                               <textarea name="editor" class="editor"
                                  id="editor"><%-result[0].supportDetail %></textarea>
@@ -86,7 +86,7 @@
                            <label class="col-md-1 col-form-label">첨부파일</label>
                            <% if(result[0].fileRoute != null) { %>
                            <div class="file-wrap support_img_wrap col-md-10">
-                              <% for(var i = 1; i < result.length-1; i++) {%>
+                              <% for(var i = 1; i < result.length; i++) {%>
                               <p><span><%=result[i].fileOrgName%></span>
                                  <button name="supportFileDelete" data-fileRoute="<%=result[i].fileRoute%>"
                                     data-fileId="<%=result[i].fileId%>"
@@ -167,6 +167,7 @@
          }
       });
 
+      
       //첨부파일 삭제
       $("[name=supportFileDelete]").on("click", function () {
          $('input[name=fileId').val($(this).attr('data-fileId'));

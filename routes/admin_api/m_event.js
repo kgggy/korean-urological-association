@@ -133,6 +133,7 @@ router.get('/eventWritForm', async (req, res) => {
 //이벤트 등록
 router.post('/eventWrite', upload.single('file'), async (req, res, next) => {
     try {
+        const eventPush = req.body.eventPush;
         var param1 = [];
         if (req.file != null) {
             const path = req.file.path;
@@ -177,28 +178,30 @@ router.post('/eventWrite', upload.single('file'), async (req, res, next) => {
                 }
                 // console.log(segment)
                 // OneSignal 푸쉬 알림
-                var message = {
-                    app_id: ONE_SIGNAL_CONFIG.APP_ID,
-                    contents: {
-                        "en": req.body.eventTitle
-                    },
-                    // included_segments: segment,
-                    included_segments: ["developer"],
-                    // "include_player_ids": ["743b6e07-54ed-4267-8290-e6395974acc6"],
-                    content_avaliable: true,
-                    small_icon: "ic_notification_icon",
-                    data: {
-                        title: "event",
-                        id: eventId
-                    }
-                };
+                if (eventPush == 1) {
+                    var message = {
+                        app_id: ONE_SIGNAL_CONFIG.APP_ID,
+                        contents: {
+                            "en": req.body.eventTitle
+                        },
+                        // included_segments: segment,
+                        included_segments: ["developer"],
+                        // "include_player_ids": ["743b6e07-54ed-4267-8290-e6395974acc6"],
+                        content_avaliable: true,
+                        small_icon: "ic_notification_icon",
+                        data: {
+                            title: "event",
+                            id: eventId
+                        }
+                    };
     
-                pushNotificationService.sendNotification(message, (error, results) => {
-                    if (error) {
-                        return next(error);
-                    }
-                    return null;
-                })
+                    pushNotificationService.sendNotification(message, (error, results) => {
+                        if (error) {
+                            return next(error);
+                        }
+                        return null;
+                    })
+                }
             })
 
             res.send('<script>alert("행사가 등록되었습니다."); location.href="/admin/m_event?page=1";</script>');

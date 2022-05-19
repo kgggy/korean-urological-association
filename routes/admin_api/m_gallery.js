@@ -163,6 +163,7 @@ router.get('/galleryWritForm', async (req, res) => {
 router.post('/galleryWrite', upload.array('file'), async (req, res, next) => {
     const paths = req.files.map(data => data.path);
     const orgName = req.files.map(data => data.originalname);
+    const galleryPush = req.body.galleryPush;
     try {
         for (let i = 0; i < paths.length; i++) {
             if (req.files[i].size > 1000000) {
@@ -202,30 +203,32 @@ router.post('/galleryWrite', upload.array('file'), async (req, res, next) => {
                         }
                     });
                 };
-                //OneSignal 푸쉬 알림
-                var message = {
-                    app_id: ONE_SIGNAL_CONFIG.APP_ID,
-                    contents: {
-                        "en": req.body.galleryTitle
-                    },
-                    // included_segments: ["All"],
-                    // included_segments: ["executive", "developer"],
-                    included_segments: ["developer"],
-                    // "include_player_ids": ["743b6e07-54ed-4267-8290-e6395974acc6"],
-                    content_avaliable: true,
-                    small_icon: "ic_notification_icon",
-                    data: {
-                        title: "gallery",
-                        id: result[0].galleryId
-                    }
-                };
+                if (galleryPush == 1) {
+                    //OneSignal 푸쉬 알림
+                    var message = {
+                        app_id: ONE_SIGNAL_CONFIG.APP_ID,
+                        contents: {
+                            "en": req.body.galleryTitle
+                        },
+                        // included_segments: ["All"],
+                        // included_segments: ["executive", "developer"],
+                        included_segments: ["developer"],
+                        // "include_player_ids": ["743b6e07-54ed-4267-8290-e6395974acc6"],
+                        content_avaliable: true,
+                        small_icon: "ic_notification_icon",
+                        data: {
+                            title: "gallery",
+                            id: result[0].galleryId
+                        }
+                    };
     
-                pushNotificationService.sendNotification(message, (error, results) => {
-                    if (error) {
-                        return next(error);
-                    }
-                    return null;
-                })
+                    pushNotificationService.sendNotification(message, (error, results) => {
+                        if (error) {
+                            return next(error);
+                        }
+                        return null;
+                    })
+                }
             });
             res.send('<script>alert("갤러리가 등록되었습니다."); location.href="/admin/m_gallery/gallery?&page=1";</script>');
         });
