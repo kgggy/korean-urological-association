@@ -1,3 +1,19 @@
+<!--주소api-->
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+   window.onload = function () {
+      document.getElementById("address_kakao").addEventListener("click", function () {
+         new daum.Postcode({
+            oncomplete: function (data) {
+               // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분입니다.
+               // 예제를 참고하여 다양한 활용법을 확인해 보세요.
+               document.getElementById("address_kakao").value = data.address; // 주소 넣기
+               document.querySelector("input[id=address_detail]").focus(); //상세입력 포커싱
+            }
+         }).open();
+      });
+   }
+</script>
 <style>
    .phone {
       width: 90px;
@@ -34,10 +50,50 @@
                            </div>
                         </div>
                         <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">프로필사진</label>
+                           <div class="col-md-9">
+                              <% if(userImg != null && userImg != '') {%> <img src="../../../<%= userImg %>" alt="사진"
+                                    width="40%" />
+                                 <!-- <button id="searchAction" class="btn btn-block btn-outline-danger" type="button"
+                                 onclick="javascript:file_del();">삭제</button> -->
+                                 <button name="searchAction" class="btn btn-block btn-outline-danger fileDelete"
+                                    type="button" data-route="<%=userImg%>" data-img="userImg"
+                                    data-inputReset="userImg">삭제</button>
+                                 </td>
+                                 <% }else{ %>
+                                 <input type="file" id="file" name="userImg" />
+                                 <% } %>
+                                 <input type="hidden" id="userImg" name="userImg" value="<%=userImg%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">회원명</label>
                            <div class="col-md-9">
                               <input class="form-control" id="userName" type="text" name="userName"
                                  value="<%=result.userName%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">휴대번호</label>
+                           <div class="col-md-9" style="display: flex;text-align: center;align-items: center;">
+                              <input class="form-control phone" id="userPhone1" type="text" name="userPhone1"
+                                 value="<%=result.userPhone1%>">&nbsp;&nbsp;-&nbsp;&nbsp;
+                              <input class="form-control phone" id="userPhone2" type="text" name="userPhone2"
+                                 value="<%=result.userPhone2%>">&nbsp;&nbsp;-&nbsp;&nbsp;
+                              <input class="form-control phone" id="userPhone3" type="text" name="userPhone3"
+                                 value="<%=result.userPhone3%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">이메일</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="userEmail" type="text" name="userEmail" value="<%=result.userEmail%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">팩스번호</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="userFax" type="text" name="userFax" value="<%=result.userFax%>">
                            </div>
                         </div>
                         <div class="form-group row">
@@ -55,44 +111,19 @@
                            </div>
                         </div>
                         <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">병원주소(시)</label>
+                           <label class="col-md-2 col-form-label" for="text-input">병원주소</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="userAdres1" type="text" name="userAdres1"
-                                 value="<%=result.userAdres1%>">
+                              <input class="form-control" type="text" id="address_kakao" name="userAdres" value="<%=result.userAdres1%> <%=result.userAdres2%> <%=result.userAdres3%>" />
                            </div>
                         </div>
                         <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">병원주소(구/군)</label>
+                           <label class="col-md-2 col-form-label" for="text-input">상세주소</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="userAdres2" type="text" name="userAdres2"
-                                 value="<%=result.userAdres2%>">
+                              <input class="form-control" type="text" id="address_detail" name="userAdres4" value="<%=result.userAdres4%>"
+                                 placeholder="상세주소를 입력해주세요" />
                            </div>
                         </div>
-                        <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">병원주소(도로명)</label>
-                           <div class="col-md-9">
-                              <input class="form-control" id="userAdres3" type="text" name="userAdres3"
-                                 value="<%=result.userAdres3%>">
-                           </div>
-                        </div>
-                        <div class="form-group row">
-                        <label class="col-md-2 col-form-label" for="text-input">병원주소(상세주소)</label>
-                        <div class="col-md-9">
-                           <input class="form-control" id="userAdres4" type="text" name="userAdres4"
-                              value="<%=result.userAdres4%>">
-                        </div>
-                        </div>
-                        <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">휴대번호</label>
-                           <div class="col-md-9" style="display: flex;text-align: center;align-items: center;">
-                              <input class="form-control phone" id="userPhone1" type="text" name="userPhone1"
-                                 value="<%=result.userPhone1%>">&nbsp;&nbsp;-&nbsp;&nbsp;
-                              <input class="form-control phone" id="userPhone2" type="text" name="userPhone2"
-                                 value="<%=result.userPhone2%>">&nbsp;&nbsp;-&nbsp;&nbsp;
-                              <input class="form-control phone" id="userPhone3" type="text" name="userPhone3"
-                                 value="<%=result.userPhone3%>">
-                           </div>
-                        </div>
+                        
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">병원번호</label>
                            <div class="col-md-9" style="display: flex;text-align: center;align-items: center;">
@@ -102,6 +133,12 @@
                                  value="<%=result.hosPhone2%>">&nbsp;&nbsp;-&nbsp;&nbsp;
                               <input class="form-control phone" id="hosPhone3" type="text" name="hosPhone3"
                                  value="<%=result.hosPhone3%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">홈페이지</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="userUrl" type="text" name="userUrl" value="<%=result.userUrl%>">
                            </div>
                         </div>
                         <div class="form-group row">
@@ -124,7 +161,7 @@
                               </select>
                            </div>
                         </div>
-                        <div class="form-group row">
+                        <!-- <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">푸쉬알림</label>
                            <div class="col-md-9">
                               <select class="dropdown" name="pushYn">
@@ -132,56 +169,40 @@
                                  <option value="1" <%if(result.pushYn=="1"){%> selected="selected" <%}%>>비동의</option>
                              </select>
                            </div>
-                        </div> 
+                        </div>  -->
                         <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">프로필사진</label>
+                           <label class="col-md-2 col-form-label" for="text-input">병원세부설명</label>
                            <div class="col-md-9">
-                              <% if(userImg != null && userImg != '') {%> <img src="../../../<%= userImg %>" alt="사진"
-                                    width="40%" />
-                                 <!-- <button id="searchAction" class="btn btn-block btn-outline-danger" type="button"
-                                 onclick="javascript:file_del();">삭제</button> -->
-                                 <button name="searchAction" class="btn btn-block btn-outline-danger fileDelete"
-                                    type="button" data-route="<%=userImg%>" data-img="userImg"
-                                    data-inputReset="userImg">삭제</button>
-                                 </td>
-                                 <% }else{ %>
-                                 <input type="file" id="file" name="userImg" />
+                              <input class="form-control" id="hosDetail" type="text" name="hosDetail"
+                                 value="<%= result.hosDetail %>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">병원사진</label>
+                           <div class="col-md-9">
+                              <% if(result.fileRoute != null) { %>
+                              <% for(var i = 0; i <  result.fileRoute.length; i++) {%>
+                                 <img src="../../../<%= result.fileRoute[i] %>" alt="사진"
+                                        style="padding:0 50px 8px 0 !important; width:40%; vertical-align: top !important;" />
+                                        <button name="fileDelete" class="btn btn-block btn-outline-danger fileDelete"
+                                        type="button" data-route="<%= result.fileRoute[i] %>" data-img="file"
+                                        data-inputReset="file">삭제</button>
                                  <% } %>
-                                 <input type="hidden" id="userImg" name="userImg" value="<%=userImg%>">
-                           </div>
-                        </div>
-                        <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">병원사진1</label>
-                           <div class="col-md-9">
-                              <% if(hosImg != null && hosImg != '') {%>
-                              <img src="../../../<%= hosImg %>" alt="사진" width="40%" />
-                              <!-- <button id="searchAction" class="btn btn-block btn-outline-danger" type="button"
-                                 onclick="javascript:file_del();">삭제</button> -->
-                                 <button name="searchAction" class="btn btn-block btn-outline-danger fileDelete"
-                                 type="button" data-route="<%=hosImg%>" data-img="hosImg"
-                                 data-inputReset="hosImg">삭제</button>
-                              </td>
+                              <% if( result.fileRoute.length < 6) { %>
+                                 <% for(var i = 0; i < 6- result.fileRoute.length; i++) {%>
+                                 <br><br><input type="file" id="file" name="file" /><br><br>
+                                 <% } %>
+                                 <% } %>
                               <% }else{ %>
-                              <input type="file" id="file" name="hosImg" />
+                                 <div style="display: flex; flex-direction: column; gap: 25px;">
+                                    <input type="file" id="file" name="file">
+                                    <input type="file" id="file" name="file" />
+                                    <input type="file" id="file" name="file" />
+                                    <input type="file" id="file" name="file" />
+                                    <input type="file" id="file" name="file" />
+                                    <input type="file" id="file" name="file" />
+                                 </div>
                               <% } %>
-                              <input type="hidden" id="hosImg" name="hosImg" value="<%=hosImg%>">
-                           </div>
-                        </div>
-                        <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">병원사진2</label>
-                           <div class="col-md-9">
-                              <% if(infoImg != null && infoImg != '') {%>
-                              <img src="../../../<%= infoImg %>" alt="사진" width="40%" />
-                              <!-- <button id="searchAction" class="btn btn-block btn-outline-danger" type="button"
-                                 onclick="javascript:file_del();">삭제</button> -->
-                              <button name="searchAction" class="btn btn-block btn-outline-danger fileDelete"
-                                 type="button" data-route="<%=infoImg%>" data-img="infoImg"
-                                 data-inputReset="infoImg">삭제</button>
-                              </td>
-                              <% }else{ %>
-                              <input type="file" id="file" name="infoImg" />
-                              <% } %>
-                              <input type="hidden" id="infoImg" name="infoImg" value="<%=infoImg%>">
                            </div>
                         </div>
                      </form>
@@ -193,7 +214,7 @@
                         </div>
                         <div>
                            <button class="btn btn-block btn-outline-danger" type="button"
-                              onclick="location.href='/admin/m_user/selectOne?uid=<%=result.uid%>&page=<%=page%>'">
+                              onclick="location.href='/admin/m_user/selectOne?uid=<%=result.uid%>&page=<%=page%>&admin=<%=admin%>'">
                               취소</button>
                         </div>
                      </div>
@@ -251,20 +272,24 @@
    //    }
    // }
 
-   $('button[name="searchAction"]').on('click', function (e) {
+   $('button[name="fileDelete"]').on('click', function (e) {
       parent = this.parentNode;
-      parent.innerHTML = "";
-      const input = document.createElement('input');
-      parent.append(input);
-      input.setAttribute('type', 'hidden');
-      input.setAttribute('name', 'deleteFileId');
-      input.value = this.dataset['route'];
-      const inputReset = document.createElement('input');
-      const resetName = this.dataset['inputreset']
-      inputReset.setAttribute('type', 'file');
-      inputReset.setAttribute('id', 'file');
-      inputReset.setAttribute('name', resetName);
-      inputReset.className += 'certiImg'
-      parent.append(inputReset);
+      // parent.innerHTML = "";
+      console.log(parent)
+     this.parentNode.remove();
+      // this.setAttribute('disabled', 'true');
+      // // console.log(parent.innerHTML)
+      // const input = document.createElement('input');
+      // parent.append(input);
+      // input.setAttribute('type', 'hidden');
+      // input.setAttribute('name', 'deleteFileRoute');
+      // input.value = this.dataset['route'];
+      // const inputReset = document.createElement('input');
+      // const resetName = this.dataset['inputreset']
+      // inputReset.setAttribute('type', 'file');
+      // inputReset.setAttribute('id', 'file');
+      // inputReset.setAttribute('name', resetName);
+      // // inputReset.className += 'certiImg'
+      // parent.append(inputReset);
    })
 </script>
