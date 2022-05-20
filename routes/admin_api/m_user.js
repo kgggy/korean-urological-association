@@ -36,9 +36,10 @@ router.get('/page', async (req, res) => {
   var searchType1 = req.query.searchType1 == undefined ? "" : req.query.searchType1;
   var searchType2 = req.query.searchType2 == undefined ? "" : req.query.searchType2;
   var searchType3 = req.query.searchType3 == undefined ? "" : req.query.searchType3;
+  var userSocialDiv = req.query.userSocialDiv == undefined ? "" : req.query.userSocialDiv;
   var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
   var keepSearch = "&searchType1=" + searchType1 +
-    "&searchType2=" + searchType2 + "&searchType3=" + searchType3 + "&searchText=" + searchText;
+    "&searchType2=" + searchType2 + "&searchType3=" + searchType3 + "&userSocialDiv=" + userSocialDiv + "&searchText=" + searchText;
 
   var sql = "select * from user where uid <= 10000";
 
@@ -50,6 +51,14 @@ router.get('/page', async (req, res) => {
   }
   if (searchType3 != '') {
     sql += " and userPosition = '" + searchType3 + "' \n";
+  }
+  if (userSocialDiv != '') {
+    if (userSocialDiv == 'all') {
+      sql += " and userSocialDiv != '' \n";
+    } else {
+      // console.log(userSocialDiv)
+      sql += " and userSocialDiv = '" + userSocialDiv + "' \n";
+    }
   }
   if (searchText != '') {
     sql += " and (hosName like '%" + searchText + "%' or userName like '%" + searchText + "%')";
@@ -73,6 +82,7 @@ router.get('/page', async (req, res) => {
         searchType1: searchType1,
         searchType2: searchType2,
         searchType3: searchType3,
+        userSocialDiv: userSocialDiv,
         searchText: searchText,
         results: results,
         page: page, //현재 페이지
@@ -177,7 +187,7 @@ router.get('/selectOne', async (req, res) => {
         console.log(err);
       }
       let route = req.app.get('views') + '/m_user/orgm_viewForm';
-      console.log(result)
+      // console.log(result)
       res.render(route, {
         result: result,
         page: page,
@@ -271,10 +281,13 @@ router.post('/userInsert', upload.array('file'), async (req, res) => {
   }
   //프로필 사진 없는경우
   var userImg;
+  var a;
   if (req.body.userImgyn == '0') {
-    userImg = ''
+    userImg = '';
+    a = 0;
   } else {
-    userImg = paths[0]
+    userImg = paths[0];
+    a = 1;
   }
   const param = [req.body.userName, req.body.hosName, req.body.hosPost, userAddress[0], userAddress[1], join, req.body.userAdres4, req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3, req.body.userPhone1,
     req.body.userPhone2, req.body.userPhone3, req.body.userType, req.body.userPosition, req.body.hosDetail, req.body.userEmail,
@@ -298,12 +311,12 @@ router.post('/userInsert', upload.array('file'), async (req, res) => {
         throw err;
       }
       //프로필 사진 없는경우
-      var a;
-      if (req.body.userImgyn == '0') {
-        a = 0
-      } else {
-        a = 1
-      }
+      // var a;
+      // if (req.body.userImgyn == '0') {
+      //   a = 0
+      // } else {
+      //   a = 1
+      // }
       for (let i = a; i < paths.length; i++) {
         const param3 = [paths[i], orgName[i], result[0].uid, path.extname(paths[i])];
         const sql3 = "insert into file(fileRoute, fileOrgName, uid, fileType) values (?, ?, ?, ?)";
@@ -335,7 +348,10 @@ router.post('/userInsert', upload.array('file'), async (req, res) => {
 //사용자 정보 수정 페이지 이동
 router.post('/userUdtForm', async (req, res) => {
   try {
-    console.log(req.body.fileRoute[1])
+    var fileRoute = req.body.fileRoute;
+    if (Array.isArray(fileRoute) == false) {
+      fileRoute = [fileRoute];
+    }
     const userTypeSql = "select distinct userType from user\
                           where userType is not null and userType != ''\
                        order by field(userType, '형태') desc, userType asc;";
@@ -355,11 +371,11 @@ router.post('/userUdtForm', async (req, res) => {
         }
         userPosition = result;
         let route = req.app.get('views') + '/m_user/orgm_udtForm';
+        console.log(fileRoute)
         res.render(route, {
           result: req.body,
+          fileRoute: fileRoute,
           userImg: req.body.userImg,
-          hosImg: req.body.hosImg,
-          infoImg: req.body.infoImg,
           page: req.body.page,
           userType: userType,
           userPosition: userPosition,
@@ -374,71 +390,82 @@ router.post('/userUdtForm', async (req, res) => {
 
 //사용자 정보 수정
 router.post('/userUpdate', upload.array('file'), async (req, res) => {
-  const deleteFileRoute = req.body.deleteFileRoute;
- console.log(deleteFileRoute);
-  // const paths = req.files.map(data => data.path);
-  // const orgName = req.files.map(data => data.originalname);
-  // const userAdres = req.body.userAdres;
-  // const userAddress = userAdres.split(' ');
-  // const join = userAddress.slice(2).join(' ');
-  // for (let i = 0; i < paths.length; i++) {
-  //   if (req.files[i].size > 1000000) {
-  //     sharp(paths[i]).resize({
-  //         width: 2000
-  //       }).withMetadata() //이미지 방향 유지
-  //       .toBuffer((err, buffer) => {
-  //         if (err) {
-  //           throw err;
-  //         }
-  //         fs.writeFileSync(paths[i], buffer, (err) => {
-  //           if (err) {
-  //             throw err
-  //           }
-  //         });
-  //       });
-  //   }
-  // }
-  // //사용자 DB 업데이트
-  // const param = [req.body.userName, userImg, req.body.userEmail, req.body.userType, req.body.userPosition,
-  //   req.body.userPhone1, req.body.userPhone2, req.body.userPhone3, req.body.userFax,
-  //   userAddress[0], userAddress[1], join, req.body.userAdres4, req.body.hosName, req.body.userUrl, req.body.hosPost,
-  //   req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3, req.body.hosDetail, req.body.uid
-  // ]
-  // const sql = "update user set userName = ?, userImg = ?, userEmail = ?, userType = ?, userPosition = ?,\
-  //                              userPhone1 = ?, userPhone2 = ?, userPhone3 = ?, userFax = ?,\
-  //                              userAdres1 = ?, userAdres2 = ?, userAdres3 = ?, userAdres4 = ?,\
-  //                              hosName = ?, userUrl = ?, hosPost = ?,\
-  //                              hosPhone1 = ?, hosPhone2 = ?, hosPhone3 = ?, userUrl = ?, hosDetail = ?\
-  //               where uid = ?";
-  // connection.query(sql, param, function (err) {
-  //   if (err) {
-  //     console.log(err);
-  //   }
-  // });
-  // //파일 테이블 업데이트
-  // if (deleteFileRoute == '' || deleteFileRoute == undefined) {
-  //   // console.log("이전 사진 없을때 파일업로드됨")
-  //   for (let i = 0; i < paths.length; i++) {
-  //     const fileSql = "insert into file(uid, fileRoute, fileOrgName, fileType) values (?, ?, ?, ?)";
-  //     const param1 = [uid, paths[i], orgName[i], path.extname(paths[i])];
-  //     connection.query(fileSql, param1, async (err) => {
-  //       if (err) {
-  //         console.error(err);
-  //       }
-
-  //     });
-  //   }
-  // }
-  // //이전사진 서버에서 삭제
-  // for (var i = 0; i < deleteFileRoute.length; i++) {
-  //   fs.unlinkSync(deleteFileRoute[i], (err) => {
-  //     if (err) {
-  //       console.log(err);
-  //     }
-  //     return;
-  //   });
-  // }
-  // res.redirect('selectOne?admin=' + req.body.admin + '&uid=' + req.body.uid + '&page=' + req.body.page);
+  //첨부파일 삭제 x, 업로드만!
+  const paths = req.files.map(data => data.path);
+  const orgName = req.files.map(data => data.originalname);
+  const userAdres = req.body.userAdres;
+  const userAddress = userAdres.split(' ');
+  const join = userAddress.slice(2).join(' ');
+  const uid = req.body.uid;
+  for (let i = 0; i < paths.length; i++) {
+    if (req.files[i].size > 1000000) {
+      sharp(paths[i]).resize({
+          width: 2000
+        }).withMetadata() //이미지 방향 유지
+        .toBuffer((err, buffer) => {
+          if (err) {
+            throw err;
+          }
+          fs.writeFileSync(paths[i], buffer, (err) => {
+            if (err) {
+              throw err
+            }
+          });
+        });
+    }
+  }
+  //프로필 사진 없는경우
+  var userImg;
+  var a;
+  //파일도 없고 기존파일도 없는경우
+  if (req.body.userImgyn == '0') {
+    if (req.body.userImg != '') {
+      userImg = req.body.userImg;
+      a = 0;
+    } else {
+      userImg = '';
+      a = 0;
+    }
+  } else {
+    userImg = paths[0];
+    a = 1;
+  }
+  // console.log("userImg ====== " + userImg)
+  // console.log("a ====== " + a)
+  // console.log(paths)
+  //사용자 DB 업데이트
+  const param = [req.body.userName, userImg, req.body.userEmail, req.body.userType, req.body.userPosition,
+    req.body.userPhone1, req.body.userPhone2, req.body.userPhone3, req.body.userFax,
+    userAddress[0], userAddress[1], join, req.body.userAdres4, req.body.hosName, req.body.userUrl, req.body.hosPost,
+    req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3, req.body.userUrl, req.body.hosDetail, uid
+  ]
+  const sql = "update user set userName = ?, userImg = ?, userEmail = ?, userType = ?, userPosition = ?,\
+                               userPhone1 = ?, userPhone2 = ?, userPhone3 = ?, userFax = ?,\
+                               userAdres1 = ?, userAdres2 = ?, userAdres3 = ?, userAdres4 = ?,\
+                               hosName = ?, userUrl = ?, hosPost = ?,\
+                               hosPhone1 = ?, hosPhone2 = ?, hosPhone3 = ?, userUrl = ?, hosDetail = ?\
+                where uid = ?";
+  connection.query(sql, param, function (err) {
+    if (err) {
+      console.log(err);
+    }
+    // console.log("userImg ====== " + userImg)
+    // console.log("a ====== " + a)
+    // console.log(paths)
+    //파일 테이블 업데이트
+    for (let i = a; i < paths.length; i++) {
+      const fileSql = "insert into file(uid, fileRoute, fileOrgName, fileType) values (?, ?, ?, ?)";
+      const param1 = [uid, paths[i], orgName[i], path.extname(paths[i])];
+      console.log(param1);
+      connection.query(fileSql, param1, async (err) => {
+        if (err) {
+          console.error(err);
+        }
+        console.log("file table upload success!!")
+      });
+    }
+    res.redirect('selectOne?admin=' + req.body.admin + '&uid=' + uid + '&page=' + req.body.page);
+  });
 });
 
 //사용자 여러명 삭제
@@ -557,21 +584,76 @@ router.post('/oneUserDelete', (req, res) => {
   });
 });
 
+
 //첨부파일 삭제
 router.post('/imgDelete', async (req, res) => {
-  const param = req.query.userImg;
-  const page = req.query.page;
+  var deleteFileRoute = req.body.deleteFileRoute;
+  const page = req.body.page;
+  if (Array.isArray(deleteFileRoute) == false) {
+    deleteFileRoute = [deleteFileRoute];
+  }
+  console.log(req.body)
+  console.log(typeof deleteFileRoute)
   try {
     const sql = "update user set userImg = null where uid = ?";
-    connection.query(sql, req.query.uid, (err) => {
+    const fileDeleteSql = "delete from file where fileRoute = ?";
+    connection.query(sql, req.body.uid, (err) => {
       if (err) {
         console.log(err)
       }
-      fs.unlinkSync(param, (err) => {
+      connection.query(fileDeleteSql, deleteFileRoute, (err) => {
         if (err) {
-          console.log(err);
+          console.log(err)
         }
-        return;
+        fs.unlinkSync(deleteFileRoute.toString(), (err) => {
+          if (err) {
+            console.log(err);
+          }
+          return;
+        });
+        var fileSql = "select fileRoute from file where uid = ?";
+        var fileRoute = [];
+        connection.query(fileSql, req.body.uid, function (err, result) {
+          if (err) {
+            console.log(err);
+          }
+          for (i = 0; i < result.length; i++) {
+            console.log(result[i].fileRoute)
+            fileRoute[i] = result[i].fileRoute;
+          }
+          const userTypeSql = "select distinct userType from user\
+                          where userType is not null and userType != ''\
+                       order by field(userType, '형태') desc, userType asc;";
+          const userPositionSql = "select distinct userPosition from user\
+                              where userPosition is not null and userPosition != ''\
+                           order by field(userPosition, '전체') desc, userPosition asc;";
+          let userType;
+          let userPosition;
+          connection.query(userTypeSql, function (err, result) {
+            if (err) {
+              console.log(err);
+            }
+            userType = result;
+            connection.query(userPositionSql, function (err, result) {
+              if (err) {
+                console.log(err);
+              }
+              userPosition = result;
+              console.log(fileRoute)
+              let route = req.app.get('views') + '/m_user/orgm_udtForm';
+              res.render(route, {
+                result: req.body,
+                fileRoute: fileRoute,
+                userImg: '',
+                page: page,
+                userType: userType,
+                userPosition: userPosition,
+                admin: req.body.admin
+              });
+              
+            });
+          });
+        });
       });
     })
   } catch (error) {
@@ -579,12 +661,7 @@ router.post('/imgDelete', async (req, res) => {
       console.log("프로필 삭제 에러 발생");
     }
   }
-  let route = req.app.get('views') + '/m_user/orgm_udtForm';
-  res.render(route, {
-    result: req.query,
-    userImg: '',
-    page: page
-  });
+
 });
 
 //엑셀 다운로드
