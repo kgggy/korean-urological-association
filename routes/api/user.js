@@ -95,7 +95,10 @@ router.get('/search', async (req, res) => {
   var userType = req.query.userType == undefined ? "" : req.query.userType;
   // var searchType4 = req.query.searchType4 == undefined ? "" : req.query.searchType4;
   var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
-  var sql = "select * from user where uid <= 10000";
+
+  var choDiv = 'N';
+
+  var sql = "select * from user where uid";
   var param = [];
   if (userPosition != '') {
     sql += " and userPosition = '" + userPosition + "' \n";
@@ -110,8 +113,16 @@ router.get('/search', async (req, res) => {
   //   sql += " and userRole = '" + searchType4 + "' \n";
   // }
   if (searchText != '') {
-    sql += " and (userName like '%" + searchText + "%' or hosName like '%" + searchText + "%')";
+  if (choDiv == 'Y') {
+    sql += " and (choSearch(userName) LIKE '%" + searchText + "%' COLLATE utf8mb4_0900_ai_ci OR userName LIKE '%" + searchText + "%' OR\
+              choSearch(hosName) LIKE '%" + searchText + "%' COLLATE utf8mb4_0900_ai_ci OR hosName LIKE '%" + searchText + "%')";
+  
+  } else if(choDiv == 'N'){
+    sql += " and (userName like '%" + searchText + "%' or hosName like '%" + searchText + "%'\
+              or concat(userPhone1,userPhone2,userPhone3) like '%"+ searchText +"%' or concat(hosPhone1,hosPhone2,hosPhone3) like '%"+ searchText+"%')";
   }
+}
+
   if (req.query.page != 'null') {
     sql += " order by userRank is null, userRank asc limit 15 offset ?;"
     param = page * 15;
