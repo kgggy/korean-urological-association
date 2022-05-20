@@ -9,8 +9,8 @@ router.get('/notice', async (req, res) => {
         const param = [req.query.noticeId, req.query.uid];
         const sql = "select c.*, u.userName, u.userImg from comment c\
          left join user u on u.uid = c.uid where boardId = ?\
-         and c.cmtId not IN(SELECT distinct targetContentId FROM blame where targetType=1 and uid = ? and blaDivision = 1)";
-        let comment = [];
+         and c.cmtId not IN(SELECT distinct targetContentId FROM blame where targetType = 1 and uid = ? and blaDivision = 1)";
+        let comment;
         connection.query(sql, param, async (err, results) => {
             if (err) {
                 res.json({

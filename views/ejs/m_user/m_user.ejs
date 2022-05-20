@@ -10,7 +10,7 @@
     }
 
     .overflow-x-auto {
-        overflow-x: auto ;
+        overflow-x: auto;
     }
 
     .overflow-x-auto .table {
@@ -18,7 +18,6 @@
         table-layout: fixed;
         white-space: nowrap
     }
-
 </style>
 <main class="main">
     <!-- Breadcrumb-->
@@ -38,7 +37,7 @@
                         <div class="card-header"><i class="fa fa-align-justify"></i> 회원 관리 </div>
                         <div class="card-body">
                             <form name="userForm" action="" method="get" class="easydropdown">
-                                    <div id="selectBox">
+                                <div id="selectBox">
                                     <input type="hidden" name="page" value="1">
                                     <select name="searchType1" class="dropdown">
                                         <option value="">위치</option>
@@ -71,6 +70,12 @@
                                         <option value="주임과장" <%if(searchType3=="주임과장"){%> selected="selected" <%}%>>주임과장</option>
                                         <option value="과장" <%if(searchType3=="과장"){%> selected="selected" <%}%>>과장</option>
                                     </select>
+                                    <select name="userSocialDiv" class="dropdown">
+                                        <option value="">설치유무</option>
+                                        <option value="all" <%if(userSocialDiv=="all"){%> selected="selected" <%}%>>전체</option>
+                                        <option value="android" <%if(userSocialDiv=="android"){%> selected="selected" <%}%>>안드로이드</option>
+                                        <option value="ios" <%if(userSocialDiv=="ios"){%> selected="selected" <%}%>>IOS</option>
+                                    </select>
                                     <span style="margin-bottom: 20px;">
                                     <% if(searchText != '') { %> <input class="searchbox" type="text" name="searchText"
                                             value="<%=searchText%>" />
@@ -80,9 +85,9 @@
                                         <% } %>
                                         <button class="btn btn-block btn-outline-success" type="submit"
                                             id="searchAction" style="margin-bottom: 0;">검색</button>
-                                    </span>
-                                        </div>
-                                        </form>
+                                        </span>
+                                </div>
+                            </form>
 
                             <form name="udtForm">
                                 <input type="hidden" name="admin" value="<%=admin%>">
@@ -91,6 +96,7 @@
                                         class="table userTable table-responsive-sm table-hover table--min"
                                         cellspacing="0" cellpadding="0">
                                         <colgroup>
+                                            <col width="5%" />
                                             <col width="5%" />
                                             <col width="5%" />
                                             <col width="10%" />
@@ -104,6 +110,7 @@
                                             <tr>
                                                 <th><input type="checkbox" name="chkAll" id="chkAll" /></th>
                                                 <th>번호</th>
+                                                <th>설치</th>
                                                 <th>회원명</th>
                                                 <th>병원명</th>
                                                 <th>휴대번호</th>
@@ -121,10 +128,18 @@
                                             <tr class="pointer"
                                                 onclick="location.href='/admin/m_user/selectOne?admin=<%=admin%>&uid=<%=results[i].uid%>&page=<%=page%><%=keepSearch%>'">
                                                 <td onclick="event.cancelBubble=true;"><input type="checkbox" id="chk"
-                                                        name="chk" value="<%=results[i].uid %>"/>
-                                                </td> 
+                                                        name="chk" value="<%=results[i].uid %>" />
+                                                </td>
                                                 <td>
                                                     <%=results[i].uid%>
+                                                </td>
+                                                <td>
+                                                    <% if (results[i].userSocialDiv == 'android') { %>
+                                                    <img src="../../../public/images/android.png">
+                                                    <% } else if (results[i].userSocialDiv == 'ios') { %>
+                                                    <img src="../../../public/images/ios.png">
+                                                    <% } else { %>
+                                                    <% } %>
                                                 </td>
                                                 <td>
                                                     <%=results[i].userName%>
