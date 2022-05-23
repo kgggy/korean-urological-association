@@ -14,12 +14,12 @@ router.get('/all', async (req, res) => {
       var sql = "";
       var param = [];
       if (req.query.page != 'null') {
-        sql = "select u.*, p.psd from user u\
-            left join president p on p.uid = u.uid \
-             order by field(u.uid, ?) desc, u.userRank is null, u.userRank asc limit 15 offset ?";
+        sql = "select u.*, p.psd from user u \
+            left join president p on p.uid = u.uid where u.uid <= 10000\
+             order by field(u.uid, ?) desc, u.userRank is null, u.userRank asc, u.userName limit 15 offset ?";
         param = [uid, page * 15];
       } else {
-        sql = "select u.*, p.psd from user u left join president p on p.uid = u.uid order by field(u.uid, ?) desc, u.userRank is null, u.userRank asc";
+        sql = "select u.*, p.psd from user u left join president p on p.uid = u.uid where u.uid <= 10000 order by field(u.uid, ?) desc, u.userRank is null, u.userRank asc";
         param = [uid]
       }
       connection.query(sql, param, async (err, results, fields) => {
@@ -95,10 +95,11 @@ router.get('/search', async (req, res) => {
   var userType = req.query.userType == undefined ? "" : req.query.userType;
   // var searchType4 = req.query.searchType4 == undefined ? "" : req.query.searchType4;
   var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
+  var choDiv;
+  cho = ["ㄱ", "ㄲ", "ㄴ", "ㄷ", "ㄸ", "ㄹ", "ㅁ", "ㅂ", "ㅃ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"];
+  result = "";
 
-  var choDiv = 'N';
-
-  var sql = "select * from user where uid";
+  var sql = "select * from user where uid <= 10000";
   var param = [];
   if (userPosition != '') {
     sql += " and userPosition = '" + userPosition + "' \n";
@@ -109,18 +110,26 @@ router.get('/search', async (req, res) => {
   if (userType != '') {
     sql += " and userType = '" + userType + "' \n";
   }
-  // if (searchType4 != '') {
-  //   sql += " and userRole = '" + searchType4 + "' \n";
-  // }
+
   if (searchText != '') {
-  if (choDiv == 'Y') {
-    sql += " and (choSearch(userName) LIKE '%" + searchText + "%' COLLATE utf8mb4_0900_ai_ci OR userName LIKE '%" + searchText + "%' OR\
+    // 검색어가 숫자인지 초성인지 아닌지를 유니코드를 통해 구분
+    for (i = 0; i < searchText.length; i++) {
+      code = searchText.charCodeAt(i);
+      if (code > 12592 && code < 12623) {
+        choDiv = "Y";
+      };
+      // 초성일 경우 DB에 있는 function을 호출하여 DB의 저장된 이름을 초성으로 변경후
+      // like 연산자로 비교
+      if (choDiv == "Y") {
+        sql += " and (choSearch(userName) LIKE '%" + searchText + "%' COLLATE utf8mb4_0900_ai_ci OR userName LIKE '%" + searchText + "%' OR\
               choSearch(hosName) LIKE '%" + searchText + "%' COLLATE utf8mb4_0900_ai_ci OR hosName LIKE '%" + searchText + "%')";
-  
-  } else if(choDiv == 'N'){
-    sql += " and (userName like '%" + searchText + "%' or hosName like '%" + searchText + "%'\
-              or concat(userPhone1,userPhone2,userPhone3) like '%"+ searchText +"%' or concat(hosPhone1,hosPhone2,hosPhone3) like '%"+ searchText+"%')";
-  }
+      // 초성이 아닐 경우 번호또는 글자이니 일반 검색과 번호 검색 
+      } else {
+        sql += " and (userName like '%" + searchText + "%' or hosName like '%" + searchText + "%'\
+              or concat(userPhone1,userPhone2,userPhone3) like '%"+ searchText + "%' or concat(hosPhone1,hosPhone2,hosPhone3) like '%" + searchText + "%')";
+      }
+    }
+
 }
 
   if (req.query.page != 'null') {
