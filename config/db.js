@@ -10,6 +10,7 @@ const mysql = require('mysql'); // mysql 모듈 로드
 	user: process.env.DB_USER,
 	database: process.env.DB_NAME,
 	password: process.env.DB_PWD,
+	timezone: "Asia/Seoul",
 	multipleStatements: true
 }
 
