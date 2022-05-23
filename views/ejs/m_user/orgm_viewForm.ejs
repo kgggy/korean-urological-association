@@ -127,16 +127,6 @@
                                  value="<%=result[0].userPosition%>">
                            </div>
                         </div>
-                        <!-- <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">푸쉬알림</label>
-                           <div class="col-md-9">
-                              <% if (result[0].pushYn == '0'){%>
-                              <input class="form-control" id="pushYn" type="text" name="pushYn" readonly value="동의">
-                              <% } else if (result[0].pushYn == '1') {%>
-                              <input class="form-control" id="pushYn" type="text" name="pushYn" readonly value="비동의">
-                              <%}%>   
-                        </div>
-                     </div> -->
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">병원세부설명</label>
                            <div class="col-md-9">
@@ -144,12 +134,27 @@
                            </div>
                         </div>
                         <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">진료시간</label>
+                           <div class="col-md-9">
+                              <div style="white-space:pre-wrap">
+                                 <%=result[0].hosMedicalInfo%>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">회비 납부 여부</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="userPay" type="text" name="userPay" readonly
+                                 <%if(result[0].userPay=='y'){%> value="O" <%}else{%> value="X" <%}%>>
+                           </div>
+                        </div>
+                        <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">병원사진</label>
                            <div class="col-md-9">
                               <% if(result[0].fileRoute != null && result[0].fileRoute != '') {%>
-                              <% for(var i = 0; i < result.length ; i++) { %>
-                              <img src="../../../<%= result[i].fileRoute %>" alt="사진"
-                                        style="padding:0 50px 8px 0 !important; width:40%; vertical-align: top !important;" />
+                                 <% for(var i = 0; i < result.length ; i++) { %> <img
+                                 src="../../../<%= result[i].fileRoute %>" alt="사진"
+                                 style="padding:0 50px 8px 0 !important; width:40%; vertical-align: top !important;" />
                               <!-- <p><span><%=result[i].fileOrgName%></span></p> -->
                               <a href="../../../<%= result[i].fileRoute %>" class="btn btn-block btn-outline-success"
                                  type="button" style="width:30%;" download>파일 다운로드</a>

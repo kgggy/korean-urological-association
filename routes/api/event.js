@@ -5,7 +5,7 @@ var connection = require('../../config/db').conn;
 //행사 목록
 router.get('/', async (req, res) => {
     try {
-        const sql = "call selectEvent(?, @yes, @nono, @undefine);"
+        const sql = "call selectEvent(?, @yes, @nono, @undefine); select @yes, @nono, @undefine"
         connection.query(sql, req.query.uid, (err, result) => {
             if (err) {
                 console.log(err);
@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
                     msg: "query error"
                 });
             }
-            res.status(200).json(result[0]);
+            res.status(200).json({event: result[0], voteCount: result[2]});
         });
     } catch (error) {
         res.status(500).send(error.message);

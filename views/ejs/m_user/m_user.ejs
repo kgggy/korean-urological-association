@@ -100,11 +100,12 @@
                                             <col width="5%" />
                                             <col width="5%" />
                                             <col width="10%" />
-                                            <col width="30%" />
+                                            <col width="25%" />
                                             <col width="15%" />
                                             <col width="15%" />
+                                            <col width="5%" />
                                             <col width="10%" />
-                                            <col width="10%" />
+                                            <col width="5%" />
                                         </colgroup>
                                         <thead>
                                             <tr>
@@ -117,6 +118,7 @@
                                                 <th>병원번호</th>
                                                 <th>형태</th>
                                                 <th>역할</th>
+                                                <th>회비납부</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -159,12 +161,19 @@
                                                 <td>
                                                     <%= results[i].userPosition %>
                                                 </td>
+                                                <td>
+                                                    <% if (results[i].userPay == 'y') { %>
+                                                    O
+                                                    <% } else if (results[i].userPay == 'n') { %>
+                                                    X
+                                                    <% } %>
+                                                </td>
                                             </tr>
                                             <% } %>
                                             <% } %>
                                             <% } else { %>
                                             <tr>
-                                                <td colspan="8">등록된 회원이 없습니다.</td>
+                                                <td colspan="9">등록된 회원이 없습니다.</td>
                                             </tr>
                                             <% } %>
                                         </tbody>
