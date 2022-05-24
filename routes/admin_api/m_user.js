@@ -371,7 +371,7 @@ router.post('/userUdtForm', async (req, res) => {
         }
         userPosition = result;
         let route = req.app.get('views') + '/m_user/orgm_udtForm';
-        console.log(fileRoute)
+        // console.log(fileRoute)
         res.render(route, {
           result: req.body,
           fileRoute: fileRoute,
@@ -391,6 +391,7 @@ router.post('/userUdtForm', async (req, res) => {
 //사용자 정보 수정
 router.post('/userUpdate', upload.array('file'), async (req, res) => {
   //첨부파일 삭제 x, 업로드만!
+  console.log(req.body)
   const paths = req.files.map(data => data.path);
   const orgName = req.files.map(data => data.originalname);
   const userAdres = req.body.userAdres;
@@ -437,13 +438,13 @@ router.post('/userUpdate', upload.array('file'), async (req, res) => {
   const param = [req.body.userName, userImg, req.body.userEmail, req.body.userType, req.body.userPosition,
     req.body.userPhone1, req.body.userPhone2, req.body.userPhone3, req.body.userFax,
     userAddress[0], userAddress[1], join, req.body.userAdres4, req.body.hosName, req.body.userUrl, req.body.hosPost,
-    req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3, req.body.userUrl, req.body.hosDetail, uid
+    req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3, req.body.userUrl, req.body.hosDetail, req.body.userPay, req.body.hosMedicalInfo, uid
   ]
   const sql = "update user set userName = ?, userImg = ?, userEmail = ?, userType = ?, userPosition = ?,\
                                userPhone1 = ?, userPhone2 = ?, userPhone3 = ?, userFax = ?,\
                                userAdres1 = ?, userAdres2 = ?, userAdres3 = ?, userAdres4 = ?,\
                                hosName = ?, userUrl = ?, hosPost = ?,\
-                               hosPhone1 = ?, hosPhone2 = ?, hosPhone3 = ?, userUrl = ?, hosDetail = ?\
+                               hosPhone1 = ?, hosPhone2 = ?, hosPhone3 = ?, userUrl = ?, hosDetail = ?, userpay = ?, hosMedicalInfo  = ?\
                 where uid = ?";
   connection.query(sql, param, function (err) {
     if (err) {
@@ -456,12 +457,12 @@ router.post('/userUpdate', upload.array('file'), async (req, res) => {
     for (let i = a; i < paths.length; i++) {
       const fileSql = "insert into file(uid, fileRoute, fileOrgName, fileType) values (?, ?, ?, ?)";
       const param1 = [uid, paths[i], orgName[i], path.extname(paths[i])];
-      console.log(param1);
+      // console.log(param1);
       connection.query(fileSql, param1, async (err) => {
         if (err) {
           console.error(err);
         }
-        console.log("file table upload success!!")
+        // console.log("file table upload success!!")
       });
     }
     res.redirect('selectOne?admin=' + req.body.admin + '&uid=' + uid + '&page=' + req.body.page);
@@ -494,7 +495,7 @@ router.get('/userDelete', (req, res) => {
       //서버에서 프로필 이미지 삭제
       for (var j = 0; j < fileAll.length; j++) {
         if (fileAll[j] !== '') {
-          console.log(fileAll[j])
+          // console.log(fileAll[j])
           fs.unlinkSync(fileAll[j].fileRoute, (err) => {
             if (err) {
               console.log(err);
@@ -529,6 +530,8 @@ router.post('/oneUserDelete', (req, res) => {
   if (Array.isArray(fileRoute) == false) {
     fileRoute = [fileRoute];
   }
+  // console.log(fileRoute[0] != undefined)
+  // onsole.log(fileRoute[0] == undefined)
   // var img2 = req.query.hosImg;
   // var img3 = req.query.infoImg;
   // var arr = img1 + ',' + img2 + ',' + img3;
@@ -541,8 +544,8 @@ router.post('/oneUserDelete', (req, res) => {
     }
     //서버에서 프로필 이미지 삭제
     for (var j = 0; j < fileRoute.length; j++) {
-      if (fileRoute !== undefined) {
-        console.log(fileRoute)
+      if (fileRoute[j] != undefined) {
+        // console.log(fileRoute)
         fs.unlinkSync(fileRoute[j], (err) => {
           if (err) {
             console.log(err);
@@ -592,76 +595,81 @@ router.post('/imgDelete', async (req, res) => {
   if (Array.isArray(deleteFileRoute) == false) {
     deleteFileRoute = [deleteFileRoute];
   }
-  console.log(req.body)
-  console.log(typeof deleteFileRoute)
+  // console.log(req.body)
+  // console.log(typeof deleteFileRoute)
+  let sql;
+  let param = [];
   try {
-    const sql = "update user set userImg = null where uid = ?";
-    const fileDeleteSql = "delete from file where fileRoute = ?";
-    connection.query(sql, req.body.uid, (err) => {
+    if (req.body.profileyn == '0') {
+      sql = "update user set userImg = null where uid = ?";
+      param = req.body.uid;
+    } else {
+      sql = "delete from file where fileRoute = ?";
+      param = deleteFileRoute;
+    }
+    // console.log(sql)
+    // console.log(param)
+    connection.query(sql, param, (err) => {
       if (err) {
         console.log(err)
       }
-      connection.query(fileDeleteSql, deleteFileRoute, (err) => {
+      fs.unlinkSync(deleteFileRoute.toString(), (err) => {
         if (err) {
-          console.log(err)
+          console.log(err);
         }
-        fs.unlinkSync(deleteFileRoute.toString(), (err) => {
-          if (err) {
-            console.log(err);
-          }
-          return;
-        });
-        var fileSql = "select fileRoute from file where uid = ?";
-        var fileRoute = [];
-        connection.query(fileSql, req.body.uid, function (err, result) {
-          if (err) {
-            console.log(err);
-          }
-          for (i = 0; i < result.length; i++) {
-            console.log(result[i].fileRoute)
-            fileRoute[i] = result[i].fileRoute;
-          }
-          const userTypeSql = "select distinct userType from user\
+        return;
+      });
+      var fileSql = "select u.userImg, f.fileRoute from user u left join file f on f.uid = u.uid where u.uid = ?";
+      var fileRoute = [];
+      connection.query(fileSql, req.body.uid, function (err, result) {
+        if (err) {
+          console.log(err);
+        }
+        for (i = 0; i < result.length; i++) {
+          // console.log(result[i].fileRoute)
+          fileRoute[i] = result[i].fileRoute;
+        }
+        const userImg = result[0].userImg;
+        // console.log(result)
+        const userTypeSql = "select distinct userType from user\
                           where userType is not null and userType != ''\
                        order by field(userType, '형태') desc, userType asc;";
-          const userPositionSql = "select distinct userPosition from user\
+        const userPositionSql = "select distinct userPosition from user\
                               where userPosition is not null and userPosition != ''\
                            order by field(userPosition, '전체') desc, userPosition asc;";
-          let userType;
-          let userPosition;
-          connection.query(userTypeSql, function (err, result) {
+        let userType;
+        let userPosition;
+        connection.query(userTypeSql, function (err, result) {
+          if (err) {
+            console.log(err);
+          }
+          userType = result;
+          connection.query(userPositionSql, function (err, result) {
             if (err) {
               console.log(err);
             }
-            userType = result;
-            connection.query(userPositionSql, function (err, result) {
-              if (err) {
-                console.log(err);
-              }
-              userPosition = result;
-              console.log(fileRoute)
-              let route = req.app.get('views') + '/m_user/orgm_udtForm';
-              res.render(route, {
-                result: req.body,
-                fileRoute: fileRoute,
-                userImg: '',
-                page: page,
-                userType: userType,
-                userPosition: userPosition,
-                admin: req.body.admin
-              });
-              
+            userPosition = result;
+            // console.log(fileRoute)
+            let route = req.app.get('views') + '/m_user/orgm_udtForm';
+            res.render(route, {
+              result: req.body,
+              fileRoute: fileRoute,
+              userImg: userImg,
+              page: page,
+              userType: userType,
+              userPosition: userPosition,
+              admin: req.body.admin
             });
+
           });
         });
       });
-    })
+    });
   } catch (error) {
     if (error.code == "ENOENT") {
       console.log("프로필 삭제 에러 발생");
     }
   }
-
 });
 
 //엑셀 다운로드

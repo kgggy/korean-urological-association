@@ -41,6 +41,7 @@
                      <!-- 컨텐츠 -->
                      <form action="" id="userForm" method="" enctype="multipart/form-data">
                         <input type="hidden" name="deleteFileRoute" value="">
+                        <input type="hidden" name="profileyn" value="">
                         <input type="hidden" name="page" value="<%=page%>">
                         <input type="hidden" name="admin" value="<%=admin%>">
                         <div class="form-group row">
@@ -57,8 +58,8 @@
                                  width="40%" />
                               <!-- <button id="searchAction" class="btn btn-block btn-outline-danger" type="button"
                                  onclick="javascript:file_del();">삭제</button> -->
-                              <button name="fileDelete" class="btn btn-block btn-outline-danger fileDelete"
-                                 type="button"  data-route="<%= userImg %>">삭제</button>
+                              <button name="profile_fileDelete" class="btn btn-block btn-outline-danger fileDelete"
+                                 type="button" data-yn="0" data-route="<%= userImg %>">삭제</button>
                               </td>
                               <input type="hidden" id="userProfile" value="" />
                               <% }else{ %>
@@ -170,43 +171,63 @@
                                              <div class="col-md-9">
                                                 <select class="dropdown" name="pushYn">
                                                    <option value="0" <%if(result.pushYn=="0"){%> selected="selected" <%}%>>동의</option>
-                                 <option value="1" <%if(result.pushYn=="1"){%> selected="selected" <%}%>>비동의</option>
+                                 <option value="1" <%if(result.pushYn=="1"){%> selected="selected"
+                                                      <%}%>>비동의</option>
                              </select>
                            </div>
                         </div>  -->
+                        
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">병원세부설명</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="hosDetail" type="text" name="hosDetail"
-                                 value="<%= result.hosDetail %>">
-                                             </div>
-                                    </div>
+                              <textarea wrap="hard" style="width: 100%; height: 150px"><%= result.hosDetail %></textarea>
+                              <!-- <input class="form-control" id="hosDetail" type="text" name="hosDetail" value="<%= result.hosDetail %>"> -->
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">진료시간</label>
+                           <div class="col-md-9">
+                              <textarea id="content" style="width: 100%; height: 150px"><%= result.hosMedicalInfo %></textarea>
+                              <input class="form-control" id="hosMedicalInfo" type="hidden"
+                                 name="hosMedicalInfo" value="">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">회비 납부 여부</label>
+                           <div class="col-md-9">
+                              <select class="dropdown" name="userPay">
+                                 <option value="y" <%if(result.userPay=='O'){%> selected="selected" <%}%>>O</option>
+                                 <option value="n" <%if(result.userPay=='X'){%> selected="selected" <%}%>>X</option>
+                              </select>
+                           </div>
+                        </div>
                                     <div class="form-group row">
                                        <label class="col-md-2 col-form-label" for="text-input">병원사진</label>
                                        <div class="col-md-9">
-                                          <% if(fileRoute != '') { %>
-                                          <% for(var i = 0; i <  fileRoute.length; i++) {%>
-                                          <img src="../../../<%= fileRoute[i] %>" alt="사진"
-                                             style="padding:0 50px 8px 0 !important; width:40%; vertical-align: top !important;" />
-                                          <button name="fileDelete" class="btn btn-block btn-outline-danger fileDelete"
-                                             type="button" data-route="<%= fileRoute[i] %>">삭제</button>
-                                             <input type="hidden" id="fileRoute" name="fileRoute" value="<%= fileRoute[i] %>">
-                                          <% } %>
-                                          <% if(fileRoute.length < 6) { %>
-                                          <% for(var i = 0; i < 6- fileRoute.length; i++) {%>
-                                          <br><br><input type="file" id="file" name="file" /><br><br>
-                                          <% } %>
-                                          <% } %>
-                                          <% }else{ %>
-                                          <div style="display: flex; flex-direction: column; gap: 25px;">
-                                             <input type="file" id="file" name="file">
-                                             <input type="file" id="file" name="file" />
-                                             <input type="file" id="file" name="file" />
-                                             <input type="file" id="file" name="file" />
-                                             <input type="file" id="file" name="file" />
-                                             <input type="file" id="file" name="file" />
-                                          </div>
-                                          <% } %>
+                                          <% if(fileRoute != '') { %> <% for(var i = 0; i <  fileRoute.length; i++) {%>
+                                                <img src="../../../<%= fileRoute[i] %>" alt="사진"
+                                                style="padding:0 50px 8px 0 !important; width:40%; vertical-align: top !important;" />
+                                             <button name="fileDelete"
+                                                class="btn btn-block btn-outline-danger fileDelete" type="button"
+                                                data-route="<%= fileRoute[i] %>">삭제</button>
+                                             <input type="hidden" id="fileRoute" name="fileRoute"
+                                                value="<%= fileRoute[i] %>">
+                                             <% } %>
+                                             <% if(fileRoute.length < 6) { %>
+                                             <% for(var i = 0; i < 6- fileRoute.length; i++) {%>
+                                             <br><br><input type="file" id="file" name="file" /><br><br>
+                                             <% } %>
+                                             <% } %>
+                                             <% }else{ %>
+                                             <div style="display: flex; flex-direction: column; gap: 25px;">
+                                                <input type="file" id="file" name="file">
+                                                <input type="file" id="file" name="file" />
+                                                <input type="file" id="file" name="file" />
+                                                <input type="file" id="file" name="file" />
+                                                <input type="file" id="file" name="file" />
+                                                <input type="file" id="file" name="file" />
+                                             </div>
+                                             <% } %>
                                        </div>
                                     </div>
                      </form>
@@ -253,7 +274,9 @@
    function userUpdate() {
       var userName = $("#userName").val();
       var userProfile = $("#userProfile").val();
-
+      var content = $("#content").val();
+      console.log($("#content").val());
+      // content = content.replace(/(?:\r\n|\r|\n)/g, '<br>');
       if (userName == '') {
          alert("회원명을 입력해주세요.");
          $("#userName").focus();
@@ -264,6 +287,8 @@
          if (userProfile == '') {
             $("#userImgyn").val("0");
          }
+         
+         $("#hosMedicalInfo").attr("value", content);
          $("#userForm").attr("action", "userUpdate");
          $("#userForm").attr("method", "post");
          $("#userForm").submit();
@@ -273,17 +298,32 @@
 
    //첨부파일 삭제
    $("[name=fileDelete]").on("click", function () {
-         $('input[name=deleteFileRoute').val($(this).attr('data-route'));
-         if (confirm("실제 파일이 삭제됩니다. 정말 삭제하시겠습니까?") == true) {
-            $("#userForm").attr("action", "/admin/m_user/imgDelete");
-            $("#userForm").attr("method", "post");
-            $("#userForm").attr("enctype", "application/x-www-form-urlencoded");
-            $("#userForm").submit();
-            alert("삭제되었습니다.");
-         } else {
-            return;
-         }
-      });
+      $('input[name=deleteFileRoute').val($(this).attr('data-route'));
+      if (confirm("실제 파일이 삭제됩니다. 정말 삭제하시겠습니까?") == true) {
+         $("#userForm").attr("action", "/admin/m_user/imgDelete");
+         $("#userForm").attr("method", "post");
+         $("#userForm").attr("enctype", "application/x-www-form-urlencoded");
+         $("#userForm").submit();
+         alert("삭제되었습니다.");
+      } else {
+         return;
+      }
+   });
+
+   //프로필 삭제
+   $("[name=profile_fileDelete]").on("click", function () {
+      $('input[name=deleteFileRoute').val($(this).attr('data-route'));
+      $('input[name=profileyn').val($(this).attr('data-yn'));
+      if (confirm("실제 파일이 삭제됩니다. 정말 삭제하시겠습니까?") == true) {
+         $("#userForm").attr("action", "/admin/m_user/imgDelete");
+         $("#userForm").attr("method", "post");
+         $("#userForm").attr("enctype", "application/x-www-form-urlencoded");
+         $("#userForm").submit();
+         alert("삭제되었습니다.");
+      } else {
+         return;
+      }
+   });
 
    // $('button[name="fileDelete"]').on('click', function (e) {
    //    parent = this.parentNode;

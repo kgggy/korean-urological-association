@@ -18,17 +18,16 @@ router.get('/rules/download', async (req, res) => {
       res.status(200).json({
         route,
         rule: '<h2><strong>대한</strong><span style=\\"color:red;\\"><strong>비뇨의학회</strong></span><strong>&nbsp;대구경북지부학회&nbsp;회칙\
-        </strong></h2><p>&nbsp;</p><p>&nbsp;</p><p><strong>제 1&nbsp;장&nbsp;총&nbsp;칙</strong></p><p>제 1조&nbsp;본회는&nbsp;대한\
+        </strong></h2><p><strong>제 1&nbsp;장&nbsp;총&nbsp;칙</strong></p><p>제 1조&nbsp;본회는&nbsp;대한\
         <span style=\\"color:red;\\">비뇨의학회</span>&nbsp;대구경북지부학회라&nbsp;칭한다.</p><p>제 2조&nbsp;본회는&nbsp;회원상호간의&nbsp;친목과&nbsp;본&nbsp;\
         지부학회발전에&nbsp;기여함을&nbsp;목적으로&nbsp;한다.</p><p>제 3조&nbsp;본회원은&nbsp;대구,경북도내에&nbsp;거주하고&nbsp;<span style=\\"color:red;\\">비뇨의학\
         </span>을&nbsp;전공한&nbsp;자로서&nbsp;정회원&nbsp;및&nbsp;준회원으로&nbsp;구성한다.</p><ol><li>정회원은&nbsp;<span style=\\"color:red;\\">비뇨의학</span>&nbsp;\
         전문의&nbsp;과정을&nbsp;수료한&nbsp;자로&nbsp;구성한다.</li><li>준회원은&nbsp;<span style=\\"color:red;\\">비뇨의학</span>&nbsp;전문의&nbsp;수련&nbsp;과정에\
         &nbsp;있는&nbsp;자&nbsp;또는&nbsp;회칙을&nbsp;찬동하여&nbsp;본인&nbsp;희망에&nbsp;따라&nbsp;가입하고자&nbsp;하는&nbsp;자로&nbsp;한다.</li></ol><p>제 4조&nbsp;\
         본회는&nbsp;사무소를&nbsp;대구광역시&nbsp;혹은&nbsp;경상북도에&nbsp;둔다.</p><p><strong>제 2&nbsp;장&nbsp;조&nbsp;직</strong></p><p>제 5조&nbsp;본회는&nbsp;\
-        다음의&nbsp;임원을&nbsp;둔다.</p><p>회장:&nbsp;&nbsp;1명&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \
-        부회장:&nbsp;&nbsp;1명&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 총무이사:&nbsp;1명</p><p>학술이사:&nbsp;&nbsp;1명\
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 재무이사:&nbsp;&nbsp;1명&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 개원이사: &nbsp;1명</p><p>\
-        자문위원:&nbsp;본회&nbsp; 회장을&nbsp;역임한&nbsp;자&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 감사:&nbsp;1명</p><p>제 6조&nbsp;본&nbsp;회&nbsp;\
+        다음의&nbsp;임원을&nbsp;둔다.</p><p>회장:&nbsp;&nbsp;1명<br> \
+        부회장:&nbsp;&nbsp;1명<br> 총무이사:&nbsp;1명<br>학술이사:&nbsp;&nbsp;1명\
+        <br> 재무이사:&nbsp;&nbsp;1명<br> 개원이사: &nbsp;1명<br>자문위원:&nbsp;본회&nbsp;회장을&nbsp;역임한&nbsp;자<br> 감사:&nbsp;1명</p><p>제 6조&nbsp;본&nbsp;회&nbsp;\
         회장은&nbsp;본&nbsp;회를&nbsp;대표하고&nbsp;회를&nbsp;총괄한다.</p><p>제 7조&nbsp;이사회는&nbsp;회장,&nbsp;부회장&nbsp;및&nbsp;이사로&nbsp;구성하고&nbsp;\
         회무를&nbsp;총괄하며&nbsp;정기총회&nbsp;및&nbsp;임시총회를&nbsp;소집할&nbsp;수&nbsp;있다.</p><p>제 8조&nbsp;자문위원은&nbsp;본회&nbsp;회장을&nbsp;역임한&nbsp;\
         자가&nbsp;맡게&nbsp;되며,&nbsp;본&nbsp;회의&nbsp;회무에&nbsp;관하여&nbsp;자문을&nbsp;할&nbsp;수&nbsp;있다.</p><p>제 9조&nbsp;총무이사는&nbsp;회장을&nbsp;보좌하고\
@@ -49,7 +48,7 @@ router.get('/rules/download', async (req, res) => {
         본인상-조기와 <span style=\\"color:red;\\">30만원</span>,</p><p>&nbsp; &nbsp;:&nbsp;부모 및 배우자상-조기와 <span style=\\"color:red;\\">10만원 \
         (최근 3년간 회비를 1회이상 납부한 회원으로 한다.)</span></p><p>&nbsp; &nbsp;:&nbsp;지부학회 강의료-지부학회 내 강사 혹은 대구경북\
          소재의 강사-<span style=\\"color:red;\\">20만원</span></p><p>&nbsp; &nbsp; 대구경북 외 원거리강사-<span style=\\"color:red;\\">40만원\
-         </span></p><p>&nbsp;</p><p><strong>(본 회칙은 2019년 4월 12일 임시총회에서 개정되었음.)</strong></p>'
+         </span></p><p>&nbsp;</p><p><strong>(개정)</strong></p><p>2019년 4월 12일</p>'
       })
     })
   } catch (error) {
