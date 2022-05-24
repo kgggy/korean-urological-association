@@ -78,7 +78,7 @@
                         </div>
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">휴대번호</label>
-                           <div class="col-md-9" style="display: flex;text-align: center;align-items: center;">
+                           <div class="col-md-9 phone_num">
                               <input class="form-control phone" id="userPhone1" type="text" name="userPhone1"
                                  value="<%=result.userPhone1%>">&nbsp;&nbsp;-&nbsp;&nbsp;
                               <input class="form-control phone" id="userPhone2" type="text" name="userPhone2"
@@ -132,7 +132,7 @@
 
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">병원번호</label>
-                           <div class="col-md-9" style="display: flex;text-align: center;align-items: center;">
+                           <div class="col-md-9 phone_num">
                               <input class="form-control phone" id="hosPhone1" type="text" name="hosPhone1"
                                  value="<%=result.hosPhone1%>">&nbsp;&nbsp;-&nbsp;&nbsp;
                               <input class="form-control phone" id="hosPhone2" type="text" name="hosPhone2"
@@ -180,14 +180,16 @@
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">병원세부설명</label>
                            <div class="col-md-9">
-                              <textarea wrap="hard" style="width: 100%; height: 150px"><%= result.hosDetail %></textarea>
+                              <textarea id="content1" style="width: 100%; height: 150px"><%= result.hosDetail %></textarea>
+                              <input class="form-control" id="hosDetail" type="hidden"
+                                 name="hosDetail" value="">
                               <!-- <input class="form-control" id="hosDetail" type="text" name="hosDetail" value="<%= result.hosDetail %>"> -->
                            </div>
                         </div>
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">진료시간</label>
                            <div class="col-md-9">
-                              <textarea id="content" style="width: 100%; height: 150px"><%= result.hosMedicalInfo %></textarea>
+                              <textarea id="content2" style="width: 100%; height: 150px"><%= result.hosMedicalInfo %></textarea>
                               <input class="form-control" id="hosMedicalInfo" type="hidden"
                                  name="hosMedicalInfo" value="">
                            </div>
@@ -274,8 +276,8 @@
    function userUpdate() {
       var userName = $("#userName").val();
       var userProfile = $("#userProfile").val();
-      var content = $("#content").val();
-      console.log($("#content").val());
+      var content1 = $("#content1").val();
+      var content2 = $("#content2").val();
       // content = content.replace(/(?:\r\n|\r|\n)/g, '<br>');
       if (userName == '') {
          alert("회원명을 입력해주세요.");
@@ -287,8 +289,8 @@
          if (userProfile == '') {
             $("#userImgyn").val("0");
          }
-         
-         $("#hosMedicalInfo").attr("value", content);
+         $("#hosDetail").attr("value", content1);
+         $("#hosMedicalInfo").attr("value", content2);
          $("#userForm").attr("action", "userUpdate");
          $("#userForm").attr("method", "post");
          $("#userForm").submit();

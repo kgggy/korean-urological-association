@@ -306,7 +306,7 @@ router.patch('/:uid', upload.array('file'), async (req, res) => {
             req.body.userPhone1, req.body.userPhone2, req.body.userPhone3,
             req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3, req.body.Latitude, req.body.longitude, req.body.hosDetail, req.params.uid
         ];
-        console.log(param);
+        // console.log(param);
         connection.query(sql, param, async (err) => {
             if (err) {
                 console.error(err);

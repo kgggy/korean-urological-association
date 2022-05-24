@@ -339,7 +339,6 @@ router.post('/noticeUpdate', upload.array('file'), (req, res) => {
 router.get('/noticesDelete', (req, res) => {
     const param = req.query.noticeId;
     const str = param.split(',');
-    console.log("asd")
     for (var i = 0; i < str.length; i++) {
         let fileRoute = [];
         const sql1 = "select fileRoute from file where boardId = ?";
@@ -358,12 +357,12 @@ router.get('/noticesDelete', (req, res) => {
                     });
                 }
             }
-            console.log(result)
+            // console.log(result)
         });
-        console.log("test")
+        // console.log("test")
         const sql = "call deleteNotice(?)";
         connection.query(sql, str[i], (err) => {
-            console.log("2222");
+            // console.log("2222");
             if (err) {
                 console.log(err)
             }

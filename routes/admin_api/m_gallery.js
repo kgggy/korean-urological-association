@@ -64,7 +64,7 @@ router.get('/gallery', async (req, res) => {
                 endPage = last
             };
             let route = req.app.get('views') + '/m_gallery/gallery';
-            console.log(route)
+            // console.log(route)
             res.render(route, {
                 searchText: searchText,
                 results: results,

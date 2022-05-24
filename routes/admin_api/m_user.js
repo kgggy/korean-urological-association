@@ -391,7 +391,6 @@ router.post('/userUdtForm', async (req, res) => {
 //사용자 정보 수정
 router.post('/userUpdate', upload.array('file'), async (req, res) => {
   //첨부파일 삭제 x, 업로드만!
-  console.log(req.body)
   const paths = req.files.map(data => data.path);
   const orgName = req.files.map(data => data.originalname);
   const userAdres = req.body.userAdres;
