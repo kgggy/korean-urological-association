@@ -95,6 +95,7 @@ router.get('/search', async (req, res) => {
   var userType = req.query.userType == undefined ? "" : req.query.userType;
   // var searchType4 = req.query.searchType4 == undefined ? "" : req.query.searchType4;
   var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
+  let user;
   var choDiv;
   cho = ["ㄱ", "ㄲ", "ㄴ", "ㄷ", "ㄸ", "ㄹ", "ㅁ", "ㅂ", "ㅃ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"];
   result = "";
@@ -139,13 +140,27 @@ router.get('/search', async (req, res) => {
     sql += " order by userRank is null, userRank asc;";
   }
   try {
-    connection.query(sql, param, function (err, results) {
+    connection.query(sql, param, async(err, results) => {
       if (err) {
         console.log(err);
       }
-      res.json(
-        results
-      );
+      user = results;
+      //병원파일 가져오기
+      var hosImgs;
+      for (i = 0; i < user.length; i++) {
+        hosImgs = await models.file.findAll({
+          where: {
+            uid: user[i].uid
+          },
+          attributes: ["fileRoute", "fileOrgName", "fileType"],
+          raw: true
+        })
+        // console.log(hosImgs)
+        user[i]['hosImgs'] = hosImgs;
+      }
+      res.status(200).json({
+        user: user
+      });
     });
   } catch (error) {
     res.status(401).send(error.message);

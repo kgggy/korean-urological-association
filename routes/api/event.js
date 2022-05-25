@@ -2,7 +2,26 @@ var express = require('express');
 var router = express.Router();
 var connection = require('../../config/db').conn;
 
-//행사 목록
+//행사 목록 조회
+router.get('/', async (req, res) => {
+    try {
+        const sql = "call selectEvent(?, @yes, @nono, @undefine); select @yes, @nono, @undefine"
+        connection.query(sql, req.query.uid, (err, result) => {
+            if (err) {
+                console.log(err);
+                res.json({
+                    msg: "query error"
+                });
+            }
+            console.log(result)
+            // res.status(200).json({event: result[0], voteCount: result[2]});
+        });
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
+//행사 목록 상세조회
 router.get('/', async (req, res) => {
     try {
         const sql = "call selectEvent(?); "

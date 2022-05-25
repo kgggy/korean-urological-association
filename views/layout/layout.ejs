@@ -160,15 +160,28 @@
         outline: none;
     }
 
-    .customPaging .num {
-        margin-left: 3px;
-        padding: 0;
-        width: 30px;
-        height: 30px;
-        line-height: 30px;
-        /* -moz-border-radius: 100%;
+
+
+    /* 페이징 반응형 */
+    @media (max-width: 576px) {
+        .customPaging {
+            width: 252px !important;
+            /* display: inline-flex;
+            justify-content: center; */
+        }
+    }
+
+    @media (min-width: 576px) {
+        .customPaging .num {
+            margin-left: 3px;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            /* -moz-border-radius: 100%;
         -webkit-border-radius: 100%; */
-        /* border-radius: 100%; */
+            /* border-radius: 100%; */
+        }
     }
 
     .customPaging .selected {
@@ -229,6 +242,27 @@
 
     tr {
         cursor: pointer;
+    }
+
+    /* 전화번호 반응형 */
+    @media (max-width: 576px) {
+        .phone_num {
+            display: flex;
+            text-align: center;
+            flex-direction: column-reverse;
+            align-content: center;
+            align-items: baseline;
+            width: 90px;
+        }
+    }
+
+    @media (min-width: 576px) {
+        .phone_num {
+            display: flex;
+            text-align: center;
+            align-items: center;
+            width: 90px;
+        }
     }
 </style>
 
