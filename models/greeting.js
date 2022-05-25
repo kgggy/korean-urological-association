@@ -27,6 +27,11 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(500),
       allowNull: true,
       comment: "이미지"
+    },
+    no: {
+      type: DataTypes.STRING(4),
+      allowNull: true,
+      comment: "회"
     }
   }, {
     sequelize,

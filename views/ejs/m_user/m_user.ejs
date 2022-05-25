@@ -76,6 +76,11 @@
                                         <option value="android" <%if(userSocialDiv=="android"){%> selected="selected" <%}%>>안드로이드</option>
                                         <option value="ios" <%if(userSocialDiv=="ios"){%> selected="selected" <%}%>>IOS</option>
                                     </select>
+                                    <select name="userPay" class="dropdown">
+                                        <option value="">회비납부</option>
+                                        <option value="y" <%if(userPay=="y"){%> selected="selected" <%}%>>완납</option>
+                                        <option value="n" <%if(userPay=="n"){%> selected="selected" <%}%>>미납</option>
+                                    </select>
                                     <span>
                                     <% if(searchText != '') { %> <input class="searchbox" type="text" name="searchText"
                                             value="<%=searchText%>" />

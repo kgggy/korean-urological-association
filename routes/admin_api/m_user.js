@@ -37,9 +37,10 @@ router.get('/page', async (req, res) => {
   var searchType2 = req.query.searchType2 == undefined ? "" : req.query.searchType2;
   var searchType3 = req.query.searchType3 == undefined ? "" : req.query.searchType3;
   var userSocialDiv = req.query.userSocialDiv == undefined ? "" : req.query.userSocialDiv;
+  var userPay = req.query.userPay == undefined ? "" : req.query.userPay;
   var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
   var keepSearch = "&searchType1=" + searchType1 +
-    "&searchType2=" + searchType2 + "&searchType3=" + searchType3 + "&userSocialDiv=" + userSocialDiv + "&searchText=" + searchText;
+    "&searchType2=" + searchType2 + "&searchType3=" + searchType3 + "&userSocialDiv=" + userSocialDiv + "&userPay=" + userPay + "&searchText=" + searchText;
 
   var sql = "select * from user where uid <= 10000";
 
@@ -59,6 +60,9 @@ router.get('/page', async (req, res) => {
       // console.log(userSocialDiv)
       sql += " and userSocialDiv = '" + userSocialDiv + "' \n";
     }
+  }
+  if (userPay != '') {
+    sql += " and userPay = '" + userPay + "' \n";
   }
   if (searchText != '') {
     sql += " and (hosName like '%" + searchText + "%' or userName like '%" + searchText + "%')";
@@ -83,6 +87,7 @@ router.get('/page', async (req, res) => {
         searchType2: searchType2,
         searchType3: searchType3,
         userSocialDiv: userSocialDiv,
+        userPay: userPay,
         searchText: searchText,
         results: results,
         page: page, //현재 페이지
@@ -290,11 +295,11 @@ router.post('/userInsert', upload.array('file'), async (req, res) => {
     a = 1;
   }
   const param = [req.body.userName, req.body.hosName, req.body.hosPost, userAddress[0], userAddress[1], join, req.body.userAdres4, req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3, req.body.userPhone1,
-    req.body.userPhone2, req.body.userPhone3, req.body.userType, req.body.userPosition, req.body.hosDetail, req.body.userEmail,
+    req.body.userPhone2, req.body.userPhone3, req.body.userType, req.body.userPosition, req.body.hosDetail, req.body.hosMedicalInfo, req.body.userEmail,
     req.body.userFax, req.body.userUrl, userImg, adminyn
   ]
   // console.log(param)
-  const sql = "call insertUser(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+  const sql = "call insertUser(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
   if (adminyn == 'admin') {
     uidSql = "select max(uid) as uid from user where uid > 10000";

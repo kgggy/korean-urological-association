@@ -38,6 +38,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(500),
       allowNull: true,
       comment: "신고사유"
+    },
+    blaDivision: {
+      type: DataTypes.INTEGER,
+      allowNull: false
     }
   }, {
     sequelize,

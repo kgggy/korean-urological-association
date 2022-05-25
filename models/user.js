@@ -155,6 +155,17 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(300),
       allowNull: true,
       comment: "병원 소개"
+    },
+    userPay: {
+      type: DataTypes.STRING(1),
+      allowNull: false,
+      defaultValue: "n",
+      comment: "y : 완납, n :미납"
+    },
+    hosMedicalInfo: {
+      type: DataTypes.STRING(300),
+      allowNull: true,
+      comment: "진료시간"
     }
   }, {
     sequelize,

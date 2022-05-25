@@ -155,12 +155,12 @@ router.get('/search', async (req, res) => {
           attributes: ["fileRoute", "fileOrgName", "fileType"],
           raw: true
         })
-        // console.log(hosImgs)
+        console.log(hosImgs)
         user[i]['hosImgs'] = hosImgs;
+        
       }
-      res.status(200).json({
-        user: user
-      });
+      console.log(user)
+      res.status(200).send(user);
     });
   } catch (error) {
     res.status(401).send(error.message);

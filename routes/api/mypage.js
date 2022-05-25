@@ -298,13 +298,13 @@ router.patch('/:uid', upload.array('file'), async (req, res) => {
                                 userAdres1 = ?, userAdres2 = ?, userAdres3 = ?, userAdres4 = ?,\
                                 hosName = ?, userUrl = ?, userEmail = ?, hosPost = ?,\
                                 userPhone1 = ?, userPhone2 = ?, userPhone3 = ?,\
-                                hosPhone1 = ?, hosPhone2 = ?, hosPhone3 = ?, Latitude = ?, longitude = ?, hosDetail = ?\
+                                hosPhone1 = ?, hosPhone2 = ?, hosPhone3 = ?, Latitude = ?, longitude = ?, hosDetail = ?, hosMedicalInfo = ?\
                 where uid = ?";
         const param = [req.body.userName, req.body.userPosition, req.body.userType,
             req.body.userAdres1, req.body.userAdres2, req.body.userAdres3, req.body.userAdres4,
             req.body.hosName, req.body.userUrl, req.body.userEmail, req.body.hosPost,
             req.body.userPhone1, req.body.userPhone2, req.body.userPhone3,
-            req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3, req.body.Latitude, req.body.longitude, req.body.hosDetail, req.params.uid
+            req.body.hosPhone1, req.body.hosPhone2, req.body.hosPhone3, req.body.Latitude, req.body.longitude, req.body.hosDetail, req.body.hosMedicalInfo, req.params.uid
         ];
         // console.log(param);
         connection.query(sql, param, async (err) => {
