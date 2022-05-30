@@ -181,9 +181,11 @@ router.get('/selectOne', async (req, res) => {
     var searchType1 = req.query.searchType1 == undefined ? "" : req.query.searchType1;
     var searchType2 = req.query.searchType2 == undefined ? "" : req.query.searchType2;
     var searchType3 = req.query.searchType3 == undefined ? "" : req.query.searchType3;
+    var userSocialDiv = req.query.userSocialDiv == undefined ? "" : req.query.userSocialDiv;
+    var userPay = req.query.userPay == undefined ? "" : req.query.userPay;
     var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
     var keepSearch = "&searchType1=" + searchType1 +
-      "&searchType2=" + searchType2 + "&searchType3=" + searchType3 + "&searchText=" + searchText;
+    "&searchType2=" + searchType2 + "&searchType3=" + searchType3 + "&userSocialDiv=" + userSocialDiv + "&userPay=" + userPay + "&searchText=" + searchText;
     var page = req.query.page;
     const param = [req.query.uid, req.query.uid, req.query.uid];
     const sql = "select u.*, f.fileRoute from user u left join file f on f.uid = u.uid where u.uid = ?";
@@ -199,6 +201,8 @@ router.get('/selectOne', async (req, res) => {
         searchType1: searchType1,
         searchType2: searchType2,
         searchType3: searchType3,
+        userSocialDiv: userSocialDiv,
+        userPay: userPay,
         searchText: searchText,
         keepSearch: keepSearch,
         admin: admin
@@ -655,6 +659,7 @@ router.post('/imgDelete', async (req, res) => {
             userPosition = result;
             // console.log(fileRoute)
             let route = req.app.get('views') + '/m_user/orgm_udtForm';
+            console.log(req.body)
             res.render(route, {
               result: req.body,
               fileRoute: fileRoute,

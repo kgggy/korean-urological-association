@@ -174,7 +174,7 @@ router.post('/eventWrite', upload.single('file'), async (req, res, next) => {
                 if(req.body.eventTarget1 == '임원') {
                     segment = ["executive"];
                 } else {
-                    segment = ["All"];
+                    segment = ["developer"];
                 }
                 // console.log(segment)
                 // OneSignal 푸쉬 알림
@@ -314,6 +314,7 @@ router.get('/eventDelete', async (req, res) => {
     try {
         const param = req.query.eventId;
         const eventFileRoute = req.query.eventFileRoute;
+        console.log(param)
         const sql = "call deleteEvent(?)";
         connection.query(sql, param, (err) => {
             if (err) {

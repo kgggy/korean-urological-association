@@ -225,8 +225,8 @@ router.post('/noticewrite', upload.array('file'), async (req, res, next) => {
                     contents: {
                         "en": req.body.noticeTitle
                     },
-                    included_segments: ["All"],
-                    // included_segments: ["developer"],
+                    // included_segments: ["All"],
+                    included_segments: ["developer"],
                     // "include_player_ids": ["743b6e07-54ed-4267-8290-e6395974acc6"],
                     content_avaliable: true,
                     small_icon: "ic_notification_icon",

@@ -107,6 +107,7 @@ router.get('/search', async (req, res) => {
   if (userPosition != '') {
     sql += " and userPosition = '" + userPosition + "' \n";
   }
+  // console.log(userAdres2)
   if (userAdres2 != '') {
     sql += " and userAdres2 like '" + userAdres2 + "' \n";
   }
@@ -158,7 +159,7 @@ router.get('/search', async (req, res) => {
         // 초성일 경우 DB에 있는 function을 호출하여 DB의 저장된 이름을 초성으로 변경후
         // like 연산자로 비교
         if (choDiv == "Y") {
-          sql += " and choSearch(hosName) LIKE '%" + searchText + "%' COLLATE utf8mb4_0900_ai_ci OR hosName LIKE '%" + searchText + "%')";
+          sql += " and choSearch(hosName) LIKE '%" + searchText + "%' COLLATE utf8mb4_0900_ai_ci OR hosName LIKE '%" + searchText + "%'";
           // 초성이 아닐 경우 번호또는 글자이니 일반 검색과 번호 검색 
         } else {
           sql += " and hosName like '%" + searchText + "%'";

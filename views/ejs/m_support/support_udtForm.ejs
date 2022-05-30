@@ -28,24 +28,23 @@
          <div class="row">
             <div class="col-lg-6">
                <div class="card">
-
-                  <form name="udtForm" role="form">
-                     <input type="hidden" name="fileId" value="">
-                     <input type="hidden" name="fileRoute" value="">
-                     <input type="hidden" id="writContent" name="supportDetail" value="">
-                     <div class="card-header">
-                        <i class="fa fa-align-justify"></i> 후원 수정</div>
-                     <div class="card-body">
+                  <div class="card-header">
+                     <i class="fa fa-align-justify"></i> 후원 수정</div>
+                  <div class="card-body">
+                     <form name="udtForm" role="form">
+                        <input type="hidden" name="fileId" value="">
+                        <input type="hidden" name="fileRoute" value="">
+                        <input type="hidden" id="writContent" name="supportDetail" value="">
                         <!-- 컨텐츠 -->
                         <div class="mb-3 row">
-                           <label class="col-md-1 col-form-label" for="text-input">글번호</label>
+                           <label class="col-md-2 col-form-label" for="text-input">글번호</label>
                            <div class="col-md-10">
                               <input class="form-control" id="writId" type="text" name="supportId" readonly
                                  value="<%=result[0].supportId%>">
                            </div>
                         </div>
-						<div class="mb-3 row">
-                           <label class="col-md-1 col-form-label">* 배너 이미지 *</label>
+                        <div class="mb-3 row">
+                           <label class="col-md-2 col-form-label">* 배너 이미지 *</label>
                            <% if(result[0].fileRoute != null) { %>
                            <div class="file-wrap support_img_wrap col-md-10">
                               <p><span><%=result[0].fileOrgName%></span>
@@ -56,34 +55,33 @@
                            <% } else {%>
                            <div class="col-md-10"
                               style="display: flex; flex-direction: column; gap: 25px; padding-left: 15px">
-                              <input type="file" id="file" name="file">
+                              <input type="file" id="main" name="file">
                            </div>
                            <% } %>
-
                         </div>
                         <div class="mb-3 row">
-                           <label class="col-md-1 col-form-label" for="text-input">* 업체명 *</label>
+                           <label class="col-md-2 col-form-label" for="text-input">* 업체명 *</label>
                            <div class="col-md-10">
-                              <input class="form-control" id="writTitle" type="text" name="supportTitle"
+                              <input class="form-control" id="supportTitle" type="text" name="supportTitle"
                                  value="<%=result[0].supportTitle%>">
                            </div>
                         </div>
                         <div class="mb-3 row">
-                           <label class="col-md-1 col-form-label" for="text-input">업체 상세 설명</label>
+                           <label class="col-md-2 col-form-label" for="text-input">업체 상세 설명</label>
                            <div class="col-md-10">
                               <textarea name="editor" class="editor"
                                  id="editor"><%-result[0].supportDetail %></textarea>
                            </div>
                         </div>
                         <div class="mb-3 row">
-                           <label class="col-md-1 col-form-label" for="text-input">사이트</label>
+                           <label class="col-md-2 col-form-label" for="text-input">사이트</label>
                            <div class="col-md-10">
                               <input class="form-control" id="supportUrl" type="text" name="supportUrl"
                                  value="<%=result[0].supportUrl %>">
                            </div>
                         </div>
                         <div class="mb-3 row">
-                           <label class="col-md-1 col-form-label">첨부파일</label>
+                           <label class="col-md-2 col-form-label">첨부파일</label>
                            <% if(result[0].fileRoute != null) { %>
                            <div class="file-wrap support_img_wrap col-md-10">
                               <% for(var i = 1; i < result.length; i++) {%>
@@ -113,10 +111,10 @@
                         <!--option 버튼  -->
                         <div class="demo-inline-spacing">
                            <button type="button" class="btn btn-outline-success" id="update_btn">수정</button>
-                           <button type="button" class="btn btn-outline-primary" onclick="history.go(-1)">취소</button>
+                           <button type="button" class="btn btn-outline-danger" onclick="history.go(-1)">취소</button>
                         </div>
-                     </div>
-                  </form>
+                     </form>
+                  </div>
                </div>
             </div>
          </div>
@@ -126,6 +124,13 @@
 
 <script type="text/javascript">
    $(document).ready(function () {
+      //확장자 체크
+		$("input:file[id='main']").change(function () {
+			var str = $(this).val();
+			var fileName = str.split('\\').pop().toLowerCase();
+			// alert(fileName);
+			checkFileName(fileName);
+		});
       //ckeditor
       ClassicEditor
          .create(document.querySelector('#editor'), {
@@ -141,19 +146,19 @@
       var formObj = $("form[name='udtForm']");
       // 수정
       $("#update_btn").on("click", function () {
-         var writTitle = $("#writTitle").val();
+         var supportImg = $("#main").val();
+			var supportTitle = $("#supportTitle").val();
          var content = editor.getData();
-         if (writTitle == "") {
-            alert("제목을 입력하세요.");
-            $("#writTitle").focus();
-            return false;
-         }
 
-         if (content == null) {
-            alert("내용을 입력하세요.");
-            $("#editor").focus();
-            return false;
-         }
+         if (supportImg == '') {
+				alert("배너이미지를 선택해주세요.");
+				return false;
+			}
+			if (supportTitle == "") {
+				alert("업체명을 입력하세요.");
+				$("#editor").focus();
+				return false;
+			}
 
          if (confirm("수정하시겠습니까?") == true) {
             $('input[id=writContent]').attr('value', content);
@@ -167,7 +172,7 @@
          }
       });
 
-      
+
       //첨부파일 삭제
       $("[name=supportFileDelete]").on("click", function () {
          $('input[name=fileId').val($(this).attr('data-fileId'));
@@ -182,4 +187,14 @@
          }
       });
    })
+
+   //확장자 체크
+	function checkFileName(str) {
+      var ext = str.split('.').pop().toLowerCase();
+      // alert(ext);
+      if ($.inArray(ext, ['jpg', 'png', 'jpeg', 'gif']) == -1) {
+         alert(ext + '파일은 업로드 하실 수 없습니다.');
+         $("input:file[id='main']").val("");
+      }
+   }
 </script>

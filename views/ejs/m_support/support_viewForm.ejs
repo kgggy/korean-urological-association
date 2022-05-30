@@ -30,8 +30,7 @@
                             <div class="form-group row">
                               <label class="col-md-2 col-form-label" for="text-input">배너이미지</label>
                               <div class="col-md-9">
-                                 <img src="../../../<%= result[0].fileRoute %>" alt="사진"
-                                       style="padding:0 50px 8px 0 !important; width:40%; vertical-align: top !important;" />
+                                 <img src="../../../<%= result[0].fileRoute %>" alt="사진" class="viewFormImg" />
                               </div>
                            </div>
                             <div class="form-group row">
@@ -112,6 +111,7 @@
              formObj.attr("method", "get");
              if (confirm("게시글을 삭제하시겠습니까?") == true) {
                 formObj.submit();
+                alert("삭제되었습니다.")
              } else {
                 return;
              }

@@ -61,7 +61,7 @@ router.get('/', async (req, res) => {
 router.get('/supportSelectOne', async (req, res) => {
     try {
         const param = req.query.supportId;
-        const sql = "select b.*, f.* from support b join file f on b.supportId = f.supportId where b.supportId = ?";
+        const sql = "select b.*, f.fileRoute, f.fileOrgName from support b left join file f on b.supportId = f.supportId where b.supportId = ?";
         connection.query(sql, param, (err, result) => {
             if (err) {
                 console.log(err);
@@ -92,6 +92,7 @@ router.post('/supportWrit', upload.array('file'), async function (req, res) {
     const paths = req.files.map(data => data.path);
     const orgName = req.files.map(data => data.originalname);
     try {
+        console.log(param)
         const sql = "insert into support(supportUrl, supportTitle, supportDetail) values(?, ?, ?);\
                      select max(supportId) as supportId from support;";
         for (let i = 0; i < paths.length; i++) {
@@ -138,7 +139,7 @@ router.post('/supportWrit', upload.array('file'), async function (req, res) {
 router.get('/supportUdtForm', async (req, res) => {
     try {
         const param = req.query.supportId;
-        const sql = "select s.*, f.* from support s join file f on s.supportId = f.supportId where s.supportId = ?"
+        const sql = "select b.*, f.fileRoute, f.fileOrgName from support b left join file f on b.supportId = f.supportId where b.supportId = ?"
         connection.query(sql, param, function (err, result, fields) {
             if (err) {
                 console.log(err);
@@ -157,7 +158,8 @@ router.get('/supportUdtForm', async (req, res) => {
 router.post('/supportUpdate', upload.array('file'), async (req, res) => {
     const paths = req.files.map(data => data.path);
     const orgName = req.files.map(data => data.originalname);
-    var param = [req.body.supportUrl, req.body.supportTitle, req.body.supportDetail, req.body.supportId];
+    const supportId = req.body.supportId;
+    var param = [req.body.supportUrl, req.body.supportTitle, req.body.supportDetail, supportId];
     sql = "update support set supportUrl = ?, supportTitle = ?,\
                 supportDetail = ? where supportId = ?";
     connection.query(sql, param, (err) => {
@@ -173,17 +175,17 @@ router.post('/supportUpdate', upload.array('file'), async (req, res) => {
                 }
             });
         };
-        res.redirect('/admin/m_support');
+        res.redirect('/admin/m_support/supportSelectOne?supportId=' + supportId);
     });
 });
 
 //후원 이미지 파일 삭제
 router.get('/supportFileDelete', async (req, res) => {
-    const param = req.query.fileId;
     const fileRoute = req.query.fileRoute; 
+    console.log(fileRoute)
     try {
-        const sql = "delete from file where fileId = ?";
-        connection.query(sql, param, (err, row) => {
+        const sql = "delete from file where fileRoute = ?";
+        connection.query(sql, fileRoute, (err, row) => {
             if (err) {
                 console.log(err)
             }

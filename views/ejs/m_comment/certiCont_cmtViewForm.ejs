@@ -58,8 +58,8 @@
 										<input type="submit" class="btn btn-block btn-outline-danger cmtDelBtn" id="delete_btn" name="delete_btn"
 											value="삭제" data-cmtId="<%= results[i].cmtId %>">
 									</div>
-										<div class="form-control" id="writTitle" type="text" name="writTitle"
-											><%= results[i].cmtContent %></div>
+										<textarea class="form-control" id="writTitle" type="text" name="writTitle"
+											><%= results[i].cmtContent %></textarea>
 								</div>
 								<% } %>
 							</form>

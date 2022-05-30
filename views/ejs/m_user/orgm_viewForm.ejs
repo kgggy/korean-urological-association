@@ -33,7 +33,7 @@
                            <div class="col-md-9">
                               <input type="hidden" name="userImg" value="<%=result[0].userImg%>">
                               <% if(result.length > 0 && result[0].userImg != null && result[0].userImg != '') {%>
-                              <img src="../../../<%= result[0].userImg %>" alt="사진" width="40%" />
+                              <img src="../../../<%= result[0].userImg %>" alt="사진" class="viewFormImg" />
                               <% }else{ %>
                               등록된 프로필 사진이 없습니다.
                               <% } %>
@@ -153,8 +153,8 @@
                            <div class="col-md-9">
                               <% if(result[0].fileRoute != null && result[0].fileRoute != '') {%>
                                  <% for(var i = 0; i < result.length ; i++) { %> <img
-                                 src="../../../<%= result[i].fileRoute %>" alt="사진"
-                                 style="padding:0 50px 8px 0 !important; width:40%; vertical-align: top !important;" />
+                                 src="../../../<%= result[i].fileRoute %>" alt="사진" class="viewFormImgs"
+                                 style="" />
                               <!-- <p><span><%=result[i].fileOrgName%></span></p> -->
                               <a href="../../../<%= result[i].fileRoute %>" class="btn btn-block btn-outline-success"
                                  type="button" style="width:30%;" download>파일 다운로드</a>

@@ -64,20 +64,20 @@
                            </div>
                         </div>
                         <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">제목</label>
+                           <label class="col-md-2 col-form-label" for="text-input">* 제목 *</label>
                            <div class="col-md-9">
                               <input class="form-control" id="eventTitle" type="text" name="eventTitle"
                                  value="<%=result[0].eventTitle%>">
                            </div>
                         </div>
                         <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">내용</label>
+                           <label class="col-md-2 col-form-label" for="text-input">* 내용 *</label>
                            <div class="col-md-9">
                               <textarea name="editor" class="editor" id="editor"><%-result[0].eventContent %></textarea>
                            </div>
                         </div>
                         <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">장소</label>
+                           <label class="col-md-2 col-form-label" for="text-input">* 장소 *</label>
                            <div class="col-md-9">
                               <input class="form-control" type="text" id="address_kakao" name="eventPlace"
                                  class="signup-input" value="<%=result[0].eventPlace%>" />
@@ -87,7 +87,7 @@
                            </div>
                         </div>
                         <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">행사일</label>
+                           <label class="col-md-2 col-form-label" for="text-input">* 행사일시 *</label>
                            <div class="col-md-9">
                               <input class="form-control" id="eventDate" type="datetime-local" name="eventDate"
                                  value="<%=result[0].eventDateFmt%>">

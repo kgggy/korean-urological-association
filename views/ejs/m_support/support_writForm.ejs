@@ -1,18 +1,18 @@
 <!-- ckeditor -->
 <script src="../../../public/build/ckeditor.js"></script>
 <style>
-   .ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
-      border-color: var(--ck-color-base-border);
-      height: 40%;
-   }
+	.ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
+		border-color: var(--ck-color-base-border);
+		height: 40%;
+	}
 
-   .ck.ck-editor__editable:not(.ck-editor__nested-editable).ck-focused {
-      height: 400px;
-   }
+	.ck.ck-editor__editable:not(.ck-editor__nested-editable).ck-focused {
+		height: 400px;
+	}
 
-   .ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
-      height: 400px;
-   }
+	.ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
+		height: 400px;
+	}
 </style>
 <style>
 	.subTitle {
@@ -70,17 +70,19 @@
 							<!-- 컨텐츠 -->
 							<form action="" id="bannerWritForm" name="bannerWritForm" method=""
 								enctype="multipart/form-data">
+								<input type="hidden" name="supportDetail" value="">
 								<div class="form-group row">
 									<label class="col-md-2 col-form-label">* 배너 이미지 *</label>
 									<div style="display: flex; flex-direction: column; gap: 25px; padding-left: 15px">
-										<input type="file" id="file" name="file">
+										<input type="file" id="main" name="file">
 									</div>
 								</div>
 								<div class="form-group row">
-								<label class="col-md-2 col-form-label" for="text-input">* 업체명 *</label>
-								<div class="col-md-9">
-									<input class="form-control" id="supportTitle" type="supportTitle" name="supportTitle" value="">
-								</div>
+									<label class="col-md-2 col-form-label" for="text-input">* 업체명 *</label>
+									<div class="col-md-9">
+										<input class="form-control" id="supportTitle" type="supportTitle"
+											name="supportTitle" value="">
+									</div>
 								</div>
 								<div class="form-group row">
 									<label class="col-md-2 col-form-label" for="text-input">업체 상세 설명</label>
@@ -91,7 +93,8 @@
 								<div class="form-group row">
 									<label class="col-md-2 col-form-label" for="text-input">사이트</label>
 									<div class="col-md-9">
-										<input class="form-control" id="supportUrl" type="supportUrl" name="supportUrl" value="">
+										<input class="form-control" id="supportUrl" type="supportUrl" name="supportUrl"
+											value="">
 									</div>
 								</div>
 								<div class="form-group row">
@@ -101,8 +104,8 @@
 										<input type="file" id="file" name="file" />
 										<input type="file" id="file" name="file" />
 										<input type="file" id="file" name="file" />
+									</div>
 								</div>
-                        </div>
 								<!--option 버튼  -->
 								<div class="option_button" style="padding-left: 1.25rem; margin-bottom: 15px;">
 									<div>
@@ -126,41 +129,42 @@
 <script type="text/javascript">
 	var formObj = $("form[name='bannerWritForm']");
 	$(document).ready(function () {
-      //ckeditor
-      ClassicEditor
-         .create(document.querySelector('#editor'), {
-            language: 'ko'
-         })
-         .then(newEditor => {
-            editor = newEditor;
-         })
-         .catch(error => {
-            console.error(error);
-         });
-
 		//확장자 체크
-		$("input:file[name='file']").change(function () {
+		$("input:file[id='main']").change(function () {
 			var str = $(this).val();
 			var fileName = str.split('\\').pop().toLowerCase();
 			// alert(fileName);
 			checkFileName(fileName);
 		});
+		//ckeditor
+		ClassicEditor
+			.create(document.querySelector('#editor'), {
+				language: 'ko'
+			})
+			.then(newEditor => {
+				editor = newEditor;
+			})
+			.catch(error => {
+				console.error(error);
+			});
 
 		// 등록
 		$("#enroll_btn").on("click", function () {
-			var supportImg = $("#file").val();
+			var supportImg = $("#main").val();
+			var supportTitle = $("#supportTitle").val();
 			var content = editor.getData();
 
 			if (supportImg == '') {
-				alert("이미지를 선택해주세요.");
+				alert("배너이미지를 선택해주세요.");
 				return false;
 			}
-			if (content == "") {
-            alert("내용을 입력하세요.");
-            $("#editor").focus();
-            return false;
-        	}
+			if (supportTitle == "") {
+				alert("업체명을 입력하세요.");
+				$("#editor").focus();
+				return false;
+			}
 			if (confirm("등록하시겠습니까?") == true) {
+				$('input[name=supportDetail]').attr('value', content);
 				formObj.attr("action", "supportWrit");
 				formObj.attr("method", "post");
 				alert("등록이 완료되었습니다.");
@@ -171,13 +175,13 @@
 		});
 	});
 
-	// //확장자 체크
-	// function checkFileName(str) {
-	// 	var ext = str.split('.').pop().toLowerCase();
-	// 	// alert(ext);
-	// 	if ($.inArray(ext, ['jpg', 'png', 'jpeg', 'gif']) == -1) {
-	// 		alert(ext + '파일은 업로드 하실 수 없습니다.');
-	// 		$("input:file[name='file']").val("");
-	// 	}
-	// }
+	//확장자 체크
+	function checkFileName(str) {
+      var ext = str.split('.').pop().toLowerCase();
+      // alert(ext);
+      if ($.inArray(ext, ['jpg', 'png', 'jpeg', 'gif']) == -1) {
+         alert(ext + '파일은 업로드 하실 수 없습니다.');
+         $("input:file[id='main']").val("");
+      }
+   }
 </script>

@@ -58,13 +58,13 @@
                                </div>
                             </div>
                            <div class="form-group row">
-                              <label class="col-md-2 col-form-label" for="text-input">갤러리사진</label>
+                              <label class="col-md-2 col-form-label" for="text-input">이미지</label>
                               <% if(result.length > 0 && result[0].fileRoute != null && result[0].fileRoute != '') {
                                  for(i=0; i<result.length; i++){%>
                                     <input class="form-control" id="fileRoute" type="hidden" name="fileRoute"
                                       value="<%=result[i].fileRoute%>">
                                     <div class="col-md-9" style="margin-bottom:20px">
-                                       <img src="../../../<%=result[i].fileRoute %>" alt="사진" width="40%" />
+                                       <img src="../../../<%=result[i].fileRoute %>" alt="사진" class="viewFormImgs" />
                                     </div>
                                     <br><br>
                                     <div class="col-md-2"></div>
