@@ -30,7 +30,11 @@
                             <div class="form-group row">
                               <label class="col-md-2 col-form-label" for="text-input">배너이미지</label>
                               <div class="col-md-9">
-                                 <img src="../../../<%= result[0].fileRoute %>" alt="사진" class="viewFormImg" />
+                                 <% if(result[0].supportBanner != null){ %>
+                                 <img src="../../../<%= result[0].supportBanner %>" alt="사진" class="viewFormImg" />
+                                 <%} else{%>
+                                   * 등록된 이미지가 없습니다 * 
+                                    <%}%>
                               </div>
                            </div>
                             <div class="form-group row">
@@ -57,7 +61,7 @@
                                <label class="col-md-2 col-form-label" for="text-input">첨부파일</label>
                                <div class="col-md-9">
                                   <% if(result[0].fileRoute != null && result[0].fileRoute != '') {%>
-                                  <% for(var i = 1; i < result.length ; i++) { %>
+                                  <% for(var i = 0; i < result.length ; i++) { %>
                                   <!-- <img src="../../../<%= result[i].fileRoute %>" alt="사진"
                                         style="padding:0 50px 8px 0 !important; width:40%; vertical-align: top !important;" /> -->
                                   <p><span><%=result[i].fileOrgName%></span></p>

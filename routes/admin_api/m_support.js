@@ -88,12 +88,11 @@ router.get('/supportWritForm', async (req, res) => {
 //후원광고 등록
 router.post('/supportWrit', upload.array('file'), async function (req, res) {
     var app = req.body.app == undefined ? "" : req.body.app;
-    const param = [req.body.supportUrl, req.body.supportTitle, req.body.supportDetail];
     const paths = req.files.map(data => data.path);
+    const param = [req.body.supportUrl, req.body.supportTitle, req.body.supportDetail, paths[0]];
     const orgName = req.files.map(data => data.originalname);
     try {
-        console.log(param)
-        const sql = "insert into support(supportUrl, supportTitle, supportDetail) values(?, ?, ?);\
+        const sql = "insert into support(supportUrl, supportTitle, supportDetail, supportBanner) values(?, ?, ?, ?);\
                      select max(supportId) as supportId from support;";
         for (let i = 0; i < paths.length; i++) {
             if (req.files[i].mimetype == "image/jpeg" || req.files[i].mimetype == "image/jpg" || req.files[i].mimetype == "image/png") {
@@ -119,7 +118,7 @@ router.post('/supportWrit', upload.array('file'), async function (req, res) {
                 throw err;
             }
             const supportId = results[1][0].supportId;
-            for (let i = 0; i < paths.length; i++) {
+            for (let i = 1; i < paths.length; i++) {
                 const param2 = [supportId, paths[i], orgName[i], path.extname(paths[i])];
                 const sql2 = "insert into file(supportId, fileRoute, fileOrgName, fileType) values (?, ?, ?, ?)";
                 connection.query(sql2, param2, (err) => {
@@ -159,14 +158,34 @@ router.post('/supportUpdate', upload.array('file'), async (req, res) => {
     const paths = req.files.map(data => data.path);
     const orgName = req.files.map(data => data.originalname);
     const supportId = req.body.supportId;
-    var param = [req.body.supportUrl, req.body.supportTitle, req.body.supportDetail, supportId];
+    var param = [req.body.supportUrl, req.body.supportTitle, req.body.supportDetail, paths[0], supportId];
+    console.log(req.body.supportBanner)
     sql = "update support set supportUrl = ?, supportTitle = ?,\
-                supportDetail = ? where supportId = ?";
+                supportDetail = ?, supportBanner = ? where supportId = ?";
     connection.query(sql, param, (err) => {
         if (err) {
             console.error(err);
         }
         for (let i = 0; i < paths.length; i++) {
+            if (req.files[i].mimetype == "image/jpeg" || req.files[i].mimetype == "image/jpg" || req.files[i].mimetype == "image/png") {
+                if (req.files[i].size > 1000000) {
+                    sharp(paths[i]).resize({
+                        width: 2000
+                    }).withMetadata() //이미지 방향 유지
+                        .toBuffer((err, buffer) => {
+                            if (err) {
+                                throw err;
+                            }
+                            fs.writeFileSync(paths[i], buffer, (err) => {
+                                if (err) {
+                                    throw err
+                                }
+                            });
+                        });
+                }
+            }
+        }
+        for (let i = 1; i < paths.length; i++) {
             const sql2 = "insert into file(fileRoute, fileOrgName, supportId) values (?, ?, ?)";
             const param2 = [paths[i], orgName[i], req.body.supportId];
             connection.query(sql2, param2, (err) => {
@@ -204,31 +223,71 @@ router.get('/supportFileDelete', async (req, res) => {
     res.redirect('back');
 });
 
+//후원 배너 이미지 파일 삭제
+router.get('/supportBannerDelete', async (req, res) => {
+    const supportBanner = req.query.supportBanner;
+    const supportId = req.query.supportId;
+    console.log(supportBanner)
+    try {
+        const sql = "update support set supportBanner = null where supportId = ?";
+        connection.query(sql, [supportId], (err, row) => {
+            if (err) {
+                console.log(err)
+            }
+            fs.unlinkSync(supportBanner, (err) => {
+                if (err) {
+                    console.log(err);
+                }
+                return;
+            });
+        })
+    } catch (error) {
+        if (error.code == "ENOENT") {
+            console.log("배너 파일 삭제 에러 발생");
+        }
+    }
+    res.redirect('back');
+});
+
 //후원광고 삭제
 router.get('/supportDelete', async (req, res) => {
     try {
-        const param = [req.query.supportId, req.query.supportId];
-        const sql = "delete from support where supportId = ?;\
+        const sql1 = "select supportBanner from support where supportId = ?"
+        connection.query(sql1, req.query.supportId, (err, result) => {
+            console.log(result);
+            if (result[0].supportBanner != undefined){
+                fs.unlinkSync(result[0].supportBanner, (err) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                    return;
+                });
+            }
+            const param = [req.query.supportId, req.query.supportId];
+            const sql = "delete from support where supportId = ?;\
                         delete from file where supportId = ?";
-        connection.query(sql, param, (err, row) => {
-            if (err) {
-                console.log("쿼리 에러입니다.");
-            }
-            if (req.query.fileRoute != undefined) {
-                if (Array.isArray(req.query.fileRoute) == false) {
-                    req.query.fileRoute = [req.query.fileRoute];
+            connection.query(sql, param, (err, row) => {
+                if (err) {
+                    console.log("쿼리 에러입니다.");
                 }
-                for (let i = 0; i < req.query.fileRoute.length; i++) {
-                    fs.unlinkSync(req.query.fileRoute[i], (err) => {
-                        if (err) {
-                            console.log(err);
-                        }
-                        return;
-                    });
+
+                if (req.query.fileRoute != undefined) {
+                    if (Array.isArray(req.query.fileRoute) == false) {
+                        req.query.fileRoute = [req.query.fileRoute];
+                    }
+                    for (let i = 0; i < req.query.fileRoute.length; i++) {
+                        fs.unlinkSync(req.query.fileRoute[i], (err) => {
+                            if (err) {
+                                console.log(err);
+                            }
+                            return;
+                        });
+                    }
                 }
-            }
-            res.redirect("/admin/m_support");
-        });
+                res.redirect("/admin/m_support");
+            });
+        })
+
     } catch (error) {
         res.send(error.message);
     }
