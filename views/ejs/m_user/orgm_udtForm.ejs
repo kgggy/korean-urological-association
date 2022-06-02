@@ -195,7 +195,7 @@
                            </div>
                         </div>
                         <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">회비 납부 여부<%=result.userPay%></label>
+                           <label class="col-md-2 col-form-label" for="text-input">회비 납부 여부</label>
                            <div class="col-md-9">
                               <select class="dropdown" name="userPay">
                                  <option value="y" <%if(result.userPay=='y'||result.userPay=='O'){%> selected="selected" <%}%>>O</option>
@@ -210,7 +210,7 @@
                                                 <img src="../../../<%= fileRoute[i] %>" alt="사진"
                                                 style="padding:0 50px 8px 0 !important; width:40%; vertical-align: top !important;" />
                                              <button name="fileDelete"
-                                                class="btn btn-block btn-outline-danger fileDelete" type="button"
+                                                class="btn btn-block btn-outline-danger fileButton" type="button"
                                                 data-route="<%= fileRoute[i] %>">삭제</button>
                                              <input type="hidden" id="fileRoute" name="fileRoute"
                                                 value="<%= fileRoute[i] %>">

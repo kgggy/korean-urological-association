@@ -185,7 +185,7 @@ router.get('/selectOne', async (req, res) => {
     var userPay = req.query.userPay == undefined ? "" : req.query.userPay;
     var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
     var keepSearch = "&searchType1=" + searchType1 +
-    "&searchType2=" + searchType2 + "&searchType3=" + searchType3 + "&userSocialDiv=" + userSocialDiv + "&userPay=" + userPay + "&searchText=" + searchText;
+      "&searchType2=" + searchType2 + "&searchType3=" + searchType3 + "&userSocialDiv=" + userSocialDiv + "&userPay=" + userPay + "&searchText=" + searchText;
     var page = req.query.page;
     const param = [req.query.uid, req.query.uid, req.query.uid];
     const sql = "select u.*, f.fileRoute from user u left join file f on f.uid = u.uid where u.uid = ?";
@@ -686,7 +686,8 @@ router.get('/userExcel', async (req, res) => {
   var searchType1 = req.query.searchType1 == undefined ? "" : req.query.searchType1;
   var searchType2 = req.query.searchType2 == undefined ? "" : req.query.searchType2;
   var searchType3 = req.query.searchType3 == undefined ? "" : req.query.searchType3;
-  // var searchType4 = req.query.searchType4 == undefined ? "" : req.query.searchType4;
+  var userSocialDiv = req.query.userSocialDiv == undefined ? "" : req.query.userSocialDiv;
+  var userPay = req.query.userPay == undefined ? "" : req.query.userPay;
   var searchText = req.query.searchText == undefined ? "" : req.query.searchText;
   var conf = {};
 
@@ -699,7 +700,26 @@ router.get('/userExcel', async (req, res) => {
       captionStyleIndex: 1,
       type: 'string',
       width: 50
-    }, {
+    },
+    {
+      caption: '휴대번호',
+      captionStyleIndex: 1,
+      type: 'string',
+      width: 15
+    },
+    {
+      caption: '이메일',
+      captionStyleIndex: 1,
+      type: 'string',
+      width: 15
+    },
+    {
+      caption: '팩스번호',
+      captionStyleIndex: 1,
+      type: 'string',
+      width: 15
+    },
+    {
       caption: '병원명',
       captionStyleIndex: 1,
       type: 'string',
@@ -721,7 +741,14 @@ router.get('/userExcel', async (req, res) => {
       captionStyleIndex: 1,
       type: 'string',
       width: 15
-    }, {
+    },
+    {
+      caption: '홈페이지',
+      captionStyleIndex: 1,
+      type: 'string',
+      width: 15
+    },
+    {
       caption: '형태',
       captionStyleIndex: 1,
       type: 'string',
@@ -731,6 +758,12 @@ router.get('/userExcel', async (req, res) => {
       captionStyleIndex: 1,
       type: 'string',
       width: 12
+    },
+    {
+      caption: '회비납부여부',
+      captionStyleIndex: 1,
+      type: 'string',
+      width: 15
     }
   ];
 
@@ -745,6 +778,17 @@ router.get('/userExcel', async (req, res) => {
   if (searchType3 != '') {
     sql += " and userPosition = '" + searchType3 + "' \n";
   }
+  if (userSocialDiv != '') {
+    if (userSocialDiv == 'all') {
+      sql += " and userSocialDiv != '' \n";
+    } else {
+      // console.log(userSocialDiv)
+      sql += " and userSocialDiv = '" + userSocialDiv + "' \n";
+    }
+  }
+  if (userPay != '') {
+    sql += " and userPay = '" + userPay + "' \n";
+  }
   if (searchText != '') {
     sql += " and (hosName like '%" + searchText + "%' or userName like '%" + searchText + "%') order by uid";
   }
@@ -756,15 +800,44 @@ router.get('/userExcel', async (req, res) => {
       }
       var arr = [];
       for (var i = 0; i < results.length; i++) {
+        var userPayFmt;
+        if (results[i].userPay == 'y') {
+          userPayFmt = '완납'
+        } else {
+          userPayFmt = '미납'
+        }
+        //병원번호
+        var hosPhoneFmt;
+        if (results[i].hosPhone2 == '' || results[i].hosPhone2 == undefined && results[i].hosPhone3 == '' || results[i].hosPhone3 == undefined) {
+          hosPhoneFmt = ''
+        } else {
+          if (results[i].hosPhone1 == '' || results[i].hosPhone1 == undefined) {
+            hosPhoneFmt = results[i].hosPhone2 + '-' + results[i].hosPhone3;
+          } else {
+            hosPhoneFmt = results[i].hosPhone1 + '-' + results[i].hosPhone2 + '-' + results[i].hosPhone3;
+          }
+        }
+        //휴대번호
+        var userPhoneFmt;
+        if (results[i].userPhone1 == '' || results[i].userPhone1 == undefined && results[i].userPhone2 == '' || results[i].userPhone2 == undefined && results[i].userPhone3 == '' || results[i].userPhone3 == undefined) {
+          userPhoneFmt = ''
+        } else {
+          userPhoneFmt = results[i].userPhone1 + '-' + results[i].userPhone2 + '-' + results[i].userPhone3;
+        }
         var resultData = [
           results[i].uid,
           results[i].userName,
+          userPhoneFmt,
+          results[i].userEmail,
+          results[i].userFax,
           results[i].hosName,
           results[i].hosPost,
           results[i].userAdres1 + ' ' + results[i].userAdres2 + results[i].userAdres3,
-          results[i].hosPhone1 + '-' + results[i].hosPhone2 + '-' + results[i].hosPhone3,
+          hosPhoneFmt,
+          results[i].userUrl,
           results[i].userType,
-          results[i].userPosition
+          results[i].userPosition,
+          userPayFmt
         ];
         arr.push(resultData);
       }

@@ -153,11 +153,10 @@
                            <div class="col-md-9">
                               <% if(result[0].fileRoute != null && result[0].fileRoute != '') {%>
                                  <% for(var i = 0; i < result.length ; i++) { %> <img
-                                 src="../../../<%= result[i].fileRoute %>" alt="사진" class="viewFormImgs"
-                                 style="" />
+                                 src="../../../<%= result[i].fileRoute %>" alt="사진" class="viewFormImgs" />
                               <!-- <p><span><%=result[i].fileOrgName%></span></p> -->
-                              <a href="../../../<%= result[i].fileRoute %>" class="btn btn-block btn-outline-success"
-                                 type="button" style="width:30%;" download>파일 다운로드</a>
+                              <a href="../../../<%= result[i].fileRoute %>" class="btn btn-block btn-outline-success fileButton"
+                                 type="button"  download>파일 다운로드</a>
                               </p>
                               <input type="hidden" name="fileRoute" value="<%=result[i].fileRoute%>">
                               <% } %>

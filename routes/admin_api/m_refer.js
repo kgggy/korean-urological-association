@@ -9,6 +9,11 @@ const path = require('path');
 // DB 커넥션 생성             
 var connection = require('../../config/db').conn;
 
+const {
+    ONE_SIGNAL_CONFIG
+} = require("../../config/pushNotification_config");
+const pushNotificationService = require("../../services/push_Notification.services");
+
 //파일업로드 모듈
 var upload = multer({ //multer안에 storage정보  
     // dest: 'uploads/refer',
@@ -156,6 +161,7 @@ router.get('/referWritForm', async (req, res) => {
 router.post('/referWrite', upload.array('file'), async (req, res, next) => {
     const paths = req.files.map(data => data.path);
     const orgName = req.files.map(data => data.originalname);
+    const referPush = req.body.referPush;
     // console.log(req.files[0].mimetype)
     try {
         for (let i = 0; i < paths.length; i++) {
@@ -197,6 +203,32 @@ router.post('/referWrite', upload.array('file'), async (req, res, next) => {
                         }
                     });
                 };
+                if (referPush == 1) {
+                    //OneSignal 푸쉬 알림
+                    var message = {
+                        app_id: ONE_SIGNAL_CONFIG.APP_ID,
+                        contents: {
+                            "en": req.body.referTitle
+                        },
+                        included_segments: ["All"],
+                        // included_segments: ["executive", "developer"],
+                        // included_segments: ["developer"],
+                        // "include_player_ids": ["743b6e07-54ed-4267-8290-e6395974acc6"],
+                        content_avaliable: true,
+                        small_icon: "ic_notification_icon",
+                        data: {
+                            title: "refer",
+                            id: result[0].referId
+                        }
+                    };
+    
+                    pushNotificationService.sendNotification(message, (error, results) => {
+                        if (error) {
+                            return next(error);
+                        }
+                        return null;
+                    })
+                }
             });
         });
         res.send('<script>alert("게시글이 등록되었습니다."); location.href="/admin/m_refer/reference?&page=1";</script>');

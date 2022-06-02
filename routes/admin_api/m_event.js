@@ -174,7 +174,7 @@ router.post('/eventWrite', upload.single('file'), async (req, res, next) => {
                 if(req.body.eventTarget1 == '임원') {
                     segment = ["executive"];
                 } else {
-                    segment = ["developer"];
+                    segment = ["All"];
                 }
                 // console.log(segment)
                 // OneSignal 푸쉬 알림
