@@ -34,6 +34,7 @@
                      <form name="udtForm" role="form">
                         <input type="hidden" name="fileId" value="">
                         <input type="hidden" name="fileRoute" value="">
+                        <input type="hidden" name="supportBanner" value="">
                         <input type="hidden" id="writContent" name="supportDetail" value="">
                         <!-- 컨텐츠 -->
                         <div class="mb-3 row">
@@ -45,11 +46,11 @@
                         </div>
                         <div class="mb-3 row">
                            <label class="col-md-2 col-form-label">* 배너 이미지 *</label>
-                           <% if(result[0].fileRoute != null) { %>
+                           <% if(result[0].supportBanner != null) { %>
                            <div class="file-wrap support_img_wrap col-md-10">
-                              <p><span><%=result[0].fileOrgName%></span>
-                                 <button name="supportFileDelete" data-fileRoute="<%=result[0].fileRoute%>"
-                                    data-fileId="<%=result[0].fileId%>"
+                              <p><img src="../../../<%= result[0].supportBanner %>" alt="사진" class="viewFormImg" />
+                                 <button name="supportBannerDelete" data-supportBanner="<%=result[0].supportBanner%>"
+                                    data-supportId="<%=result[0].supportId%>"
                                     class="btn btn-block btn-outline-danger fileDelete">삭제</button></p>
                            </div>
                            <% } else {%>
@@ -84,14 +85,14 @@
                            <label class="col-md-2 col-form-label">첨부파일</label>
                            <% if(result[0].fileRoute != null) { %>
                            <div class="file-wrap support_img_wrap col-md-10">
-                              <% for(var i = 1; i < result.length; i++) {%>
+                              <% for(var i = 0; i < result.length; i++) {%>
                               <p><span><%=result[i].fileOrgName%></span>
                                  <button name="supportFileDelete" data-fileRoute="<%=result[i].fileRoute%>"
                                     data-fileId="<%=result[i].fileId%>"
                                     class="btn btn-block btn-outline-danger fileDelete">삭제</button></p>
                               <% } %>
                               <% if(result.length < 5) { %>
-                              <% for(var i = 0; i < 5-result.length; i++) {%>
+                              <% for(var i = 0; i < 4-result.length; i++) {%>
                               <br><input type="file" id="file" name="file" /><br>
                               <% } %>
                               <% } %>
@@ -172,6 +173,20 @@
          }
       });
 
+
+      //배너파일 삭제
+      $("[name=supportBannerDelete]").on("click", function () {
+         $('input[name=supportId').val($(this).attr('data-supportId'));
+         $('input[name=supportBanner').val($(this).attr('data-supportBanner'));
+         if (confirm("실제 파일이 삭제됩니다. 정말 삭제하시겠습니까?") == true) {
+            formObj.attr("action", "supportBannerDelete");
+            formObj.attr("method", "get");
+            alert("삭제되었습니다.");
+            formObj.submit();
+         } else {
+            return;
+         }
+      });
 
       //첨부파일 삭제
       $("[name=supportFileDelete]").on("click", function () {
