@@ -1,4 +1,19 @@
-    <main class="main">
+<style>
+   .textarea {
+     color: #5c6873;
+       background-color: #e4e7ea;
+     border: 1px solid #d9dee3;
+     padding: 0.4375rem 0.875rem;
+     appearance: none;
+     border-radius: 0.375rem;
+     overflow: auto;
+     margin: 0px;
+     padding: 10px;
+     overflow: auto;
+     white-space: pre-wrap;
+  }
+  </style>
+   <main class="main">
        <!-- Breadcrumb-->
        <ol class="breadcrumb">
           <li class="breadcrumb-item">Home</li>
@@ -53,7 +68,7 @@
                             <div class="form-group row">
                                <label class="col-md-2 col-form-label" for="text-input">내용</label>
                                <div class="col-md-9">
-                                  <%-result[0].referContent%>
+                                  <pre class="textarea" disabled><%-result[0].referContent%></pre>
                                </div>
                             </div>
                             <div class="form-group row">

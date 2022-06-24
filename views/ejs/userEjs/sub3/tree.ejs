@@ -1,0 +1,426 @@
+<%- include('../../../partials/userHeader.ejs') %>
+<style>
+    /*Now the CSS*/
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    .tree {
+        display: inline-block;
+    }
+
+    .tree ul {
+        padding-top: 68px;
+        position: relative;
+
+        transition: all 0.5s;
+        -webkit-transition: all 0.5s;
+        -moz-transition: all 0.5s;
+    }
+
+    .tree li {
+        float: left;
+        text-align: center;
+        list-style-type: none;
+        position: relative;
+        padding: 20px 5px 0 5px;
+
+        transition: all 0.5s;
+        -webkit-transition: all 0.5s;
+        -moz-transition: all 0.5s;
+    }
+
+    /*We will use ::before and ::after to draw the connectors*/
+
+    .tree li::before,
+    .tree li::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 50%;
+        border-top: 1px solid #ccc;
+        width: 50%;
+        height: 20px;
+    }
+
+    .tree li::after {
+        right: auto;
+        left: 50%;
+        border-left: 1px solid #ccc;
+    }
+
+    /*We need to remove left-right connectors from elements without 
+any siblings*/
+    .tree li:only-child::after,
+    .tree li:only-child::before {
+        display: none;
+    }
+
+    /*Remove space from the top of single children*/
+    .tree li:only-child {
+        padding-top: 0;
+    }
+
+    /*Remove left connector from first child and 
+right connector from last child*/
+    .tree li:first-child::before,
+    .tree li:last-child::after {
+        border: 0 none;
+    }
+
+    /*Adding back the vertical connector to the last nodes*/
+    .tree li:last-child::before {
+        border-right: 1px solid #ccc;
+        border-radius: 0 5px 0 0;
+        -webkit-border-radius: 0 5px 0 0;
+        -moz-border-radius: 0 5px 0 0;
+    }
+
+    .tree li:first-child::after {
+        border-radius: 5px 0 0 0;
+        -webkit-border-radius: 5px 0 0 0;
+        -moz-border-radius: 5px 0 0 0;
+    }
+
+    /*Time to add downward connectors from parents*/
+    .tree ul ul::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        border-left: 1px solid #ccc;
+        width: 0;
+        height: 68px;
+    }
+
+    .tree li a {
+        cursor: default;
+        border: 1px solid #ccc;
+        padding: 5px 10px;
+        text-decoration: none;
+        color: #666;
+        font-family: arial, verdana, tahoma;
+        font-size: 30px;
+        display: inline-block;
+        padding: 17px 50px 17px 50px;
+        margin: 0px 30px 0px 30px;
+        line-height: 50px;
+        font-weight: 700;
+
+        border-radius: 5px;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+
+        transition: all 0.5s;
+        -webkit-transition: all 0.5s;
+        -moz-transition: all 0.5s;
+    }
+
+    /*Time for some hover effects*/
+    /*We will apply the hover effect the the lineage of the element also*/
+    /* .tree li a:hover,
+    .tree li a:hover+ul li a {
+        background: #c8e4f8;
+        color: #000;
+        border: 1px solid #94a0b4;
+    } */
+
+    /*Connector styles on hover*/
+    /* .tree li a:hover+ul li::after,
+    .tree li a:hover+ul li::before,
+    .tree li a:hover+ul::before,
+    .tree li a:hover+ul ul::before {
+        border-color: #94a0b4;
+    } */
+
+    .position {
+        font-size: 20px;
+        color: #2c58cf;
+        line-height: 30px;
+        font-weight: 700;
+    }
+
+    .resize {
+        margin-top: 25px;
+    }
+
+    .tree2 {
+        display: inline-block;
+    }
+
+    .tree2 ul {
+        padding-top: 68px;
+        position: relative;
+
+        transition: all 0.5s;
+        -webkit-transition: all 0.5s;
+        -moz-transition: all 0.5s;
+    }
+
+    .tree2 li {
+        float: left;
+        text-align: center;
+        list-style-type: none;
+        position: relative;
+        padding: 20px 5px 0 5px;
+
+        transition: all 0.5s;
+        -webkit-transition: all 0.5s;
+        -moz-transition: all 0.5s;
+    }
+
+    .tree2 li::before,
+    .tree2 li::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 50%;
+        border-top: 1px solid #ccc;
+        width: 50%;
+        height: 20px;
+    }
+
+    .tree2 li::after {
+        right: auto;
+        left: 50%;
+        border-left: 1px solid #ccc;
+    }
+
+    .tree2 li:only-child::after,
+    .tree2 li:only-child::before {
+        display: none;
+    }
+
+    .tree2 li:only-child {
+        padding-top: 0;
+    }
+
+    .tree2 li:first-child::before,
+    .tree2 li:last-child::after {
+        border: 0 none;
+    }
+
+    .tree2 li:last-child::before {
+        border-right: 1px solid #ccc;
+        border-radius: 0 5px 0 0;
+        -webkit-border-radius: 0 5px 0 0;
+        -moz-border-radius: 0 5px 0 0;
+    }
+
+    .tree2 li:first-child::after {
+        border-radius: 5px 0 0 0;
+        -webkit-border-radius: 5px 0 0 0;
+        -moz-border-radius: 5px 0 0 0;
+    }
+
+    .tree2 ul ul::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        border-left: 1px solid #ccc;
+        width: 0;
+        height: 68px;
+    }
+
+    .tree2 li a {
+        cursor: default;
+        border: 1px solid #ccc;
+        padding: 5px 10px;
+        text-decoration: none;
+        color: #666;
+        font-family: arial, verdana, tahoma;
+        font-size: 30px;
+        display: inline-block;
+        padding: 17px 30px 17px 30px;
+        margin: 0px 10px 0px 10px;
+        line-height: 50px;
+        font-weight: 700;
+
+        border-radius: 5px;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+
+        transition: all 0.5s;
+        -webkit-transition: all 0.5s;
+        -moz-transition: all 0.5s;
+    }
+
+    @media (min-width: 1229px) {
+        .tree2 {
+            display: none
+        }
+    }
+    @media (max-width: 1229px) {
+        .tree {
+            display: none
+        }
+    }
+</style>
+<!-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script> -->
+<script>
+    // $(document).ready(function () {
+    //     var m = matchMedia("screen and (min-width: 1226px)");
+    //     console.log(m)
+    //     console.log(m.matches)
+    //     var tree = document.getElementById("tree");
+    //     var tree2 = document.getElementById("tree2");
+    //     if (m.matches) {
+    //         //1126px 이상
+    //         // tree.style.display = 'block';
+    //         tree2.style.display = 'none';
+    //     } else {
+    //         //1126px 미만
+    //         // tree2.style.display = 'block';
+    //         tree.style.display = 'none';
+    //     }
+    // });
+</script>
+<div class="orgChart-wrap">
+    <div class="sub_top">
+        <!-- <div class="banner_text">
+            <p>더 큰 세상, 더 큰 내일</p>
+            <p>DAEGU HUMANITIE SCHOOL</p>
+        </div> -->
+        <div class="lnb_sec">
+            <dl class="lnb">
+                <dt><a href="/">HOME</a></dt>
+                <dd class="dep01">
+                    <div class="subs">
+                        <div class="select_text">조직도</div>
+                    </div>
+                </dd>
+                <!-- <dd class="dep02">
+                    <div id="subs2" class="subs">
+                        <div id="sub2_txt" class="select_text">조직도</div>
+                        <div class="select fa fa-angle-down"></div>
+                    </div>
+                    <ul class="sub_option">
+                        <a href="/sub01_1">
+                            <li class="option">이사장인사말</li>
+                        </a>
+                        <a href="/sub01_2">
+                            <li class="option">대학연혁</li>
+                        </a>
+                        <a href="/sub01_3">
+                            <li class="option">조직도</li>
+                        </a>
+                        <a href="/sub01_4">
+                            <li class="option">오시는길</li>
+                        </a>
+                    </ul>
+                </dd> -->
+            </dl>
+        </div>
+    </div>
+    <div class="sub_wrap">
+        <div class="content_in">
+            <div class="sub_tit" style="margin-bottom: 0px;">
+                <h3>조직도</h3>
+                <p class="titleEng">organization chart</p>
+            </div>
+            <!-- <img src="/public/user/user/main/세로조직도.png" alt="조직도"> -->
+            <div class="tree" id="tree">
+                <ul>
+                    <li>
+                        <a href="javascript:void(0)"><%=results[0].userName%><br>
+                            <div class="position"><%=results[0].position%></div>
+                        </a>
+                        <ul>
+                            <!-- <li>
+                                <a href="#">Child</a>
+                                <ul>
+                                    <li>
+                                        <a href="#">Grand Child</a>
+                                    </li>
+                                </ul>
+                            </li> -->
+                            <li>
+                                <a href="javascript:void(0)"><%=results[1].userName%><br>
+                                    <div class="position"><%=results[1].position%></div>
+                                </a>
+                                <ul class="inner_position">
+                                    <li><a href="javascript:void(0)"><%=results[2].userName%><br>
+                                            <div class="position"><%=results[2].position%></div>
+                                        </a></li>
+                                    <li>
+                                        <a href="javascript:void(0)"><%=results[3].userName%><br>
+                                            <div class="position"><%=results[3].position%></div>
+                                        </a>
+                                        <!-- <ul>
+                                            <li>
+                                                <a href="#">Great Grand Child</a>
+                                            </li>
+                                            <li>
+                                                <a href="#">Great Grand Child</a>
+                                            </li>
+                                            <li>
+                                                <a href="#">Great Grand Child</a>
+                                            </li>
+                                        </ul> -->
+                                    </li>
+                                    <li><a href="javascript:void(0)"><%=results[4].userName%><br>
+                                            <div class="position"><%=results[4].position%></div>
+                                        </a></li>
+                                    <li><a href="javascript:void(0)"><%=results[5].userName%><br>
+                                            <div class="position"><%=results[5].position%></div>
+                                        </a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="tree2" id="tree2">
+                <ul>
+                    <div>
+                        <li>
+                            <a href="javascript:void(0)"><%=results[0].userName%><br>
+                                <div class="position"><%=results[0].position%></div>
+                            </a>
+                            <ul>
+                                <!-- <li>
+                                <a href="#">Child</a>
+                                <ul>
+                                    <li>
+                                        <a href="#">Grand Child</a>
+                                    </li>
+                                </ul>
+                            </li> -->
+                                <li>
+                                    <a href="javascript:void(0)"><%=results[1].userName%><br>
+                                        <div class="position"><%=results[1].position%></div>
+                                    </a>
+                                    <ul class="inner_position">
+                                        <li><a href="javascript:void(0)"><%=results[2].userName%><br>
+                                                <div class="position"><%=results[2].position%></div>
+                                            </a>
+                                            <div class="resize"><a
+                                                    href="javascript:void(0)"><%=results[4].userName%><br>
+                                                    <div class="position"><%=results[4].position%></div>
+                                                </a></div>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)"><%=results[3].userName%><br>
+                                                <div class="position"><%=results[3].position%></div>
+                                            </a>
+                                            <div class="resize"><a
+                                                    href="javascript:void(0)"><%=results[5].userName%><br>
+                                                    <div class="position"><%=results[5].position%></div>
+                                                </a></div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </div>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../../../partials/userFooter.ejs') %>

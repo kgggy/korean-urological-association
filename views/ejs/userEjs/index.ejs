@@ -1,0 +1,405 @@
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=4cd6069a11e9e7879a858cca60c2cac6"></script>
+<%- include('../../partials/userHeader.ejs') %>
+
+<style>
+	/* 후원광고 크기 고정 */
+	/* .slide {
+		width: 300px;
+		height: 150px;
+		object-fit: cover;
+	} */
+
+	/* .new img {
+		overflow: hidden;
+		width: 300px;
+		height: 150px;
+		object-fit: cover;
+	} */
+
+	.new_img img {
+		overflow: hidden;
+		width: 300px;
+		height: 150px;
+		display: flex;
+		justify-content: center;
+	}
+/* 
+	.container_slide .slide {
+		width: 100%;
+		height: 302px;
+		overflow: hidden;
+		margin: 0 auto;
+		position: relative;
+		border-radius: 6px;
+	}
+
+	.container_slide img {
+		width: 100%;
+		object-fit: cover;
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+	} */
+</style>
+
+<script>
+	$(document).ready(function () {
+
+		$('#slide3>ul>li').hide();
+		$('#slide3>ul>li:first-child').show();
+		setInterval(function () {
+			$('#slide3>ul>li:first-child').fadeOut().next().fadeIn().end(5000).appendTo('#slide3>ul');
+			$("#slide_title1").toggle();
+			$("#slide_title2").toggle();
+		}, 6000);
+
+
+		var active_num = $("input:radio[name=tab]:checked").val();
+
+		$("input:radio[name=tab]").change(function () {
+			/* var chk_tab = $(":input:radio[name=tab]:checked").val();
+			
+			$(".content1_wrap").hide();
+			$("#con"+chk_tab).show(); */
+
+			var click_num = $(this).val();
+
+			//alert("active_num : "+active_num+", click_num : "+click_num);
+
+			if (active_num - click_num > 0) {
+				prev(active_num - click_num);
+			} else if (active_num - click_num < 0) {
+				next(click_num - active_num);
+			}
+
+			active_num = click_num;
+		});
+
+		$('.news_list').slick({
+			slidesToShow: 4,
+			slidesToScroll: 1,
+			autoplay: true,
+			autoplaySpeed: 3000,
+			arrows: false,
+			dots: false,
+			pauseOnHover: false,
+			responsive: [{
+				breakpoint: 940,
+				settings: {
+					slidesToShow: 2
+				}
+			}, {
+				breakpoint: 430,
+				settings: {
+					slidesToShow: 1
+				}
+			}]
+		});
+	});
+
+	function prev(cnt) {
+		var move_width = 1910 * cnt;
+
+		$(".content_slide").css({
+			left: "-=" + move_width + "px"
+		});
+
+		for (var i = 0; i < cnt; i++) {
+			$(".content_slide").children(":last").insertBefore($(".content_slide").children(
+				":first")); // first 이전에 last 삽입			
+		}
+
+		/* $(".content_slide").stop(true).animate({left : "0"}, 500, function() {
+			$(this).css({left : "0"});
+		}); */
+
+		$(".content_slide").stop(true).css({
+			opacity: 0,
+			left: "0"
+		});
+		$(".content_slide").stop(true).animate({
+			opacity: 1
+		}, 500);
+	}
+
+	function next(cnt) {
+		var move_width = 1910 * cnt;
+
+		/* $(".content_slide").stop(true).animate({left : "-="+move_width+"px"}, 500, function() {
+			for(var i=0; i<cnt; i++){
+				$(this).children(":first").insertAfter($(this).children(":last"));
+			}
+			$(this).css({left : "0"});
+		}); */
+
+		for (var i = 0; i < cnt; i++) {
+			$(".content_slide").children(":first").insertAfter($(".content_slide").children(":last"));
+		}
+		$(".content_slide").stop(true).css({
+			opacity: 0,
+			left: "0"
+		});
+		$(".content_slide").stop(true).animate({
+			opacity: 1
+		}, 500);
+	}
+
+
+	var fileArr = new Array();
+	var noImg = false;
+
+
+
+	// 파일 업로드 확장자 체크
+	/* $("input[name^=file]").each(function() {
+		if ($(this).val() != "") {
+			var ext = $(this).val().split('.').pop().toLowerCase();
+
+			if ($.inArray(ext, [ 'gif', 'png', 'jpg', 'jpeg' ]) == -1) {
+				alert('이미지 파일만 등록 가능합니다.');
+				$("#file_text").val(""); // input file 파일명을 다시 지워준다.
+				noImg = true;
+				return false;
+			}
+		}
+	}); */
+
+
+	function fnDetail(flag, idx) {
+		window.location.href = "user/boardDetailDir.action?flag=" + flag + "&idx=" + idx;
+	}
+</script>
+
+
+<div class="banner_wrap">
+	<!-- <div class="tit_wrap">
+		<div class="banner_tit">
+	        <p> 
+	        	<span id="slide_title1" class="strong"> TAE YOUNG BEARING </span>
+	        	<span id="slide_title2" class="strong" style="display: none;"> 대영베어링 </span>
+	        	대영의 이름으로 품질 경영주의, 기술진보주의를 펼칩니다.
+	        </p>
+	    </div>
+	</div> -->
+	<!-- <div class="banner_tit">
+        <p> 
+        	<span id="slide_title1" class="strong"> TAE YOUNG BEARING </span>
+        	<span id="slide_title2" class="strong" style="display: none;"> 대영베어링 </span>
+        	대영의 이름으로 품질 경영주의, 기술진보주의를 펼칩니다.
+        </p>
+    </div> -->
+	<!-- <div class="slide_b" id="slide3"> -->
+	<ul>
+		<!-- <li><img src="/user/main/banner_2.png" alt="banner_2"></li> -->
+		<li>
+			<!-- <img src="/user/main/banner_1.png" alt="banner_1"> -->
+		</li>
+		<!-- <li><img src="/images/user/main/banner_2.png" alt="banner_2"></li> -->
+	</ul>
+</div>
+<!-- </div> -->
+
+<div class="b_wrap">
+	<div class="busi_content_wrap">
+		<ul class="business_list">
+			<li>
+				<a href="/greeting">
+					<p class="title">회장인사</p>
+					<p class="titleEng">greetings</p>
+					<div class="img_wrap">
+						<img src="/public/user/user/main/greeting.png" alt="회장인사" />
+					</div>
+					<div class="txt_wrap">
+						<button class="more_btn">
+							<span>more</span>
+						</button>
+					</div>
+				</a>
+			</li>
+			<li>
+				<a href="/rules">
+					<p class="title">총칙</p>
+					<p class="titleEng">general rules</p>
+					<div class="img_wrap">
+						<img src="/public/user/user/main/rules.png" alt="총칙" />
+					</div>
+					<div class="txt_wrap">
+						<button class="more_btn">
+							<span>more</span>
+						</button>
+					</div>
+				</a>
+			</li>
+			<li>
+				<a href="/tree">
+					<p class="title">조직도</p>
+					<p class="titleEng">
+						organization chart</p>
+					<div class="img_wrap">
+						<img src="/public/user/user/main/tree.png" alt="조직도" />
+					</div>
+					<div class="txt_wrap">
+						<button class="more_btn">
+							<span>more</span>
+						</button>
+					</div>
+				</a>
+			</li>
+			<li>
+				<a href="/support">
+					<p class="title">후원광고</p>
+					<p class="titleEng">support</p>
+					<div class="img_wrap">
+						<img src="/public/user/user/main/support.png" alt="후원광고" />
+					</div>
+					<div class="txt_wrap">
+						<button class="more_btn">
+							<span>more</span>
+						</button>
+					</div>
+				</a>
+			</li>
+		</ul>
+	</div>
+</div>
+
+
+<div class="news_wrap">
+	<div class="news_content_wrap">
+		<div class="title tit_center">
+			<h2 class="h_tit">후원광고</h2>
+			<p class="titleEng">SUPPORTER</p>
+		</div>
+		<div class="btn_wrap">
+			<a href="/support" class="more"><span>more</span></a>
+		</div>
+	</div>
+	<div class="container_slide">
+		<section class="news_list slider">
+			<% for(var i = 0; i < results.length; i++) { %>
+			<div class="slide">
+				<a href="/support/detail?supportId=<%= results[i].supportId %>">
+					<div class="new_img">
+						<% if(results[i].supportBanner == null) { %>
+						<img src="/public/user/user/main/default_logo.png" alt="" style="width: auto">
+						<% } else {%>
+						<img src="/<%= results[i].supportBanner %>" />
+						<% } %>
+					</div>
+					<div class="new_body">
+						<!-- <span class="cate"><%= results[i].crclDate %></span> -->
+						<h3 class="news_tit"><%= results[i].supportTitle %></h3>
+
+						<!-- <% if(results[i].crclTitle == '') { %>
+							<h3 class="news_tit" style="font-weight: 600;"><%= results[i].crclProf %></h3>
+							<h3 class="news_tit"><%= results[i].crclBelong %></h3>
+						<% } %> -->
+					</div>
+				</a>
+			</div>
+			<% } %>
+		</section>
+	</div>
+</div>
+<!-- <div class="cus_wrap">
+	<div class="cus_content">
+		<h3>'대구인문사회대학'으로 초대합니다.</h3>
+		<p>2022년 제9기 신입생 모집</p>
+	</div>
+	<div class="left_right_wrap">
+		<div class="cus_sub_content cus_top_left">
+			<a href="/sub02_1">
+			<h3>신입생 등록 과정</h3>
+			<p>대구인문사회대학 제9기 신입생<br/>등록 과정 안내</p>
+			</a>
+			
+		</div>
+		<div class="cus_sub_content cus_top_right">
+			<a href="/sub02_1">
+			<h3>등록금 안내</h3>
+			<p>2022년 제9기 신입생 <br/>등록금 안내</p>
+			</a>
+		</div>
+	</div>
+</div>
+</div>
+<div class="box_wrap">
+	<div class="box_info">
+		<ul>
+			<li>
+				<strong>TEL</strong>
+				<a href="tel:053-756-0505" style="cursor:text"><span>(053) 756-0505</span></a>
+			</li>
+			<li>
+				<strong>FAX</strong>
+				<a href="#" style="cursor:text"><span>(053) 759-7500</span></a>
+			</li>
+			<li>
+				<strong>E-MAIL</strong>
+				<span>dhs@naver.com</span>
+			</li>
+			<li>
+				<strong>ADDRESS</strong>
+				<span>(41236) 대구광역시 동구 효신로 14-2, 2~4층 (효목동 508-7)</span>
+			</li>
+		</ul>
+	</div>
+	<div class="box_btn">
+		<ul>
+			<li>
+				<a href="/user/regist" class="loc_btn"><span>온라인 입학등록</span></a>
+			</li>
+			<li>
+				<a href="/public/user/user/main/대구인문사회대학 입학원서.hwp" class="cus_btn" download><span>입학원서 다운로드</span></a>
+			</li>
+		</ul>
+	</div>
+	<div id="map" class="indexKakaoMap"></div>
+</div> -->
+<%- include('../../partials/userFooter.ejs') %>
+
+<script>
+	// 카카오 지도 api
+	var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
+	var options = { //지도를 생성할 때 필요한 기본 옵션
+		center: new kakao.maps.LatLng(35.873443475775204, 128.6350039841533), //지도의 중심좌표.
+		level: 3 //지도의 레벨(확대, 축소 정도)
+	};
+
+	var map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
+
+	// 마커가 표시될 위치입니다 
+	var markerPosition = new kakao.maps.LatLng(35.873443475775204, 128.6350039841533);
+
+	// 마커를 생성합니다
+	var marker = new kakao.maps.Marker({
+		position: markerPosition
+	});
+
+	// 마커가 지도 위에 표시되도록 설정합니다
+	marker.setMap(map);
+
+	var iwContent =
+		'<div id="tail" style="padding:10px;">대구인문사회대학</div>', // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+		iwPosition = new kakao.maps.LatLng(33.450701, 126.570667); //인포윈도우 표시 위치입니다
+
+	// 인포윈도우를 생성합니다
+	var infowindow = new kakao.maps.InfoWindow({
+		position: iwPosition,
+		content: iwContent
+	});
+	// 마커 위에 인포윈도우를 표시합니다. 두번째 파라미터인 marker를 넣어주지 않으면 지도 위에 표시됩니다
+	infowindow.open(map, marker);
+
+	var tail = document.getElementById('tail');
+	tail.parentNode.parentNode.style.background = '#25358f';
+	tail.parentNode.parentNode.style.fontWeight = '600';
+	tail.parentNode.parentNode.style.color = 'white';
+	tail.parentNode.parentNode.style.border = 'none';
+	tail.parentNode.parentNode.style.borderRadius = '5px';
+	tail.parentNode.parentNode.style.top = '112px';
+	tail.parentNode.parentNode.style.width = '140px';
+	tail.parentNode.parentNode.childNodes[0].style.background =
+		'url(/public/user/user/main/triangle1.png) 0% 0% / 11px 9px no-repeat';
+</script>

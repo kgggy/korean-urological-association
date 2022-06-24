@@ -1,0 +1,71 @@
+@charset "utf-8";
+
+html {height:100%;}
+body {margin:0; padding:0; height:100%; background:#f0f0f0;}
+div {margin:0; padding:0; color:#555; font-size:1em; font-family:'돋움',dotum,Tahoma,Geneva, sans-serif; line-height:130%; overflow:hidden; font-size:12px;}
+
+input, textarea, select {margin:0; padding:0;}
+form {display:block; border:none;}
+fieldset {margin:0px; padding:0px; border:none;}
+input {padding:0px; vertical-align:middle; border:none;}
+input[type~="text"] ,input[type~="password"]  {border:1px solid #ccc; padding:1px;}
+input[type~="file"] {border:1px solid #eaeaea; padding:2px 0 2px 5px;}
+input[type~="checkbox"] {border:none; margin:-1px 0; padding:2px 0 2px 5px;}
+input[type~="radio"] {border:none; margin:-1px 0; padding:2px 0 2px 5px;}
+input[type~="button"]{padding-top:3px; cursor:pointer;}
+input[type~="submit"]{padding-top:3px; cursor:pointer;}
+input[type~="image"]{margin:0; padding:0; cursor:pointer;}
+
+select {vertical-align:middle; padding:0;}
+textarea {padding:2px 0 2px 5px; border:1px solid #ccc;}
+
+a {margin:0; padding:0; -webkit-text-size-adjust:none;}
+
+p {margin:0; padding:0; line-height:130%;}
+
+strong {margin:0; padding:0; font-family:'돋움',dotum;}
+Form {display:inline; margin:0; padding:0;}
+img {border:none; margin:0; padding:0;}
+fieldset {margin:0; padding:0; border:0;}
+table {margin:0;  border-collapse:collapse; table-layout:fixed;}
+td{word-break:break-all;}
+th{word-break:break-all;}
+
+ul,li,ol,dl,dd,dt {margin:0; padding:0; list-style:none; overflow:hidden;}
+hr {padding:0; margin:0;}
+
+h1 {margin:0; padding:0; -webkit-text-size-adjust:none;}
+h2 {margin:0; padding:0; -webkit-text-size-adjust:none;}
+h3 {margin:0; padding:0; -webkit-text-size-adjust:none;}
+h4 {margin:0; padding:0; -webkit-text-size-adjust:none;}
+h5 {margin:0; padding:0; -webkit-text-size-adjust:none;}
+
+a:link   {color: #555; text-decoration:none; border:none;}
+a:visited{color: #555; text-decoration:none; border:none;}
+a:hover	 {color: #555; text-decoration:none; border:none;}
+a:active {color: #555; text-decoration:none; border:none;}
+a        {color: #555; text-decoration:none; border:none;}
+a:focus	 {border:none;}
+
+.clear{clear:both; width:100%;}
+.float_l{float:left;}
+.float_r{float:right;}
+
+.align_c    {text-align:center !important;}
+.align_r    {text-align:right !important;}
+.align_l    {text-align:left !important;}
+
+.valign_t{vertical-align:top;}
+.valign_m{vertical-align:middle;}
+.valign_b{vertical-align:bottom;}
+
+.strong{font-weight:bold;}
+.f_normal{ font-weight:normal !important;}
+.nobg{background:none !important;}
+.noline{border:none !important;}
+
+.nomargin{margin:0 !important;}
+.nopadding{padding:0 !important;}
+
+.hand{cursor:pointer;}
+.hide{display: none;}

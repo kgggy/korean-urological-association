@@ -22,6 +22,8 @@ const event = require('./api/event.js');
 const hit = require('./api/hit.js');
 const blame = require('./api/blame.js');
 
+const dialogflow_test = require('./api/dialogflow_test.js');
+
 router.use('/greeting', greeting);
 router.use('/user', user);
 router.use('/mypage', mypage);
@@ -37,6 +39,8 @@ router.use('/like', like);
 router.use('/event', event);
 router.use('/hit', hit);
 router.use('/blame', blame);
+
+router.use('/dialogflow_test', dialogflow_test);
 
 router.get('/SendNotification',pushNotificationController.SendNotification);
 router.post('/SendNotificationToDevice',pushNotificationController.SendNotificationToDevice)

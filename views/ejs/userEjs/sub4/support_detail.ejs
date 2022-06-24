@@ -1,0 +1,121 @@
+<%- include('../../../partials/userHeader.ejs') %>
+<style>
+	#fileDiv.hover {
+		color: blue;
+	}
+	#fileDiv {
+		padding: 20px 20px 10px 20px;
+	}
+</style>
+<div class="sub_top">
+	<!-- <div class="banner_text">
+        <p>아름다운 동행</p>
+        <p>DAEGU HUMANITIE SCHOOL</p>
+    </div> -->
+	<div class="lnb_sec">
+		<dl class="lnb">
+			<dt><a href="/">HOME</a></dt>
+			<dd class="dep01">
+				<div class="subs">
+					<div class="select_text">후원광고</div>
+				</div>
+			</dd>
+			<!-- <dd class="dep02">
+                <div id="subs2" class="subs">
+                    <div id="sub2_txt" class="select_text">자료실</div>
+                    <div class="select fa fa-angle-down"></div>
+                </div>
+                <ul class="sub_option">
+                    <a href="/user/notice"><li class="option">공지사항</li></a>
+                    <a href="/user/reference"><li class="option">자료실</li></a>
+                    <a href="/user/gallery"><li class="option">갤러리</li></a>
+                </ul>
+            </dd> -->
+		</dl>
+	</div>
+</div>
+<div class="registration">
+	<div class="content_in">
+		<div class="sub_tit">
+			<h3>후원광고</h3>
+			<p class="titleEng">supporter</p>
+		</div>
+		<input type="hidden" id="referId" name="referId" value="<%= result[0].supportId %>">
+		<div class="board_view">
+			<div class="board_tit">
+				<div class="text">
+					<p><%= result[0].supportTitle %></p>
+				</div>
+			</div>
+
+			<div class="board_content">
+				<%- result[0].supportDetail %>
+			</div>
+
+			<div class="file_wrap">
+				<span>홈페이지</span><br>
+				<% if(result[0].supportUrl == null || result[0].supportUrl == '') { %>
+				<div id="fileDiv">등록된 링크가 없습니다.</div>
+				<!-- <spring:message code="board.noFile" text="파일이 없습니다." /> -->
+				<% } else { %>
+				<div id="fileDiv">
+					<a href="<%= result[0].supportUrl %>">
+						<p><%= result[0].supportUrl %></p>
+					</a>
+				</div>
+				<% } %>
+			</div>
+
+			<div class="file_wrap">
+				<span>첨부파일</span><br>
+				<% if(result[0].fileRoute != null) { %>
+				<% for(var i = 0; i < result.length; i++) { %>
+				<div id="fileDiv">
+					<a href="/<%= result[i].fileRoute %>" download>
+						<p><%= result[i].fileOrgName %></p>
+						<button class="downBtn" type="button"><i class="fa fa-save"></i></button>
+						<input type="hidden" name="fileRoute" value="<%= result[i].fileRoute %>">
+						<input type="hidden" name="fileOrgName" value="<%= result[i].fileOrgName %>">
+					</a>
+				</div>
+				<br>
+				<% } %>
+				<% } else { %>
+				<div id="fileDiv">등록된 파일이 없습니다.</div>
+				<!-- <spring:message code="board.noFile" text="파일이 없습니다." /> -->
+				<% } %>
+			</div>
+
+			<div class="view_paging">
+				<form action="/support/previous" method="get" id="prevFrm">
+					<button id="prevBtn" class="prev">
+						<div class="txt"><em>PREV</em><span>이전</span></div>
+					</button>
+					<input type="hidden" name="supportId" value="<%= result[0].supportId %>">
+				</form>
+				<a href="/support" class="board_btn">목록으로</a>
+				<form action="/support/next" method="get" id="nextFrm">
+					<button id="nextBtn" class="next">
+						<div class="txt"><em>NEXT</em><span>다음</span></div>
+					</button>
+					<input type="hidden" name="supportId" value="<%= result[0].supportId %>">
+				</form>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+<script>
+	const prevFrm = document.getElementById('prevFrm');
+	const prevBtn = document.getElementById('prevBtn');
+	prevBtn.addEventListener('click', function () {
+		prevFrm.submit();
+	});
+
+	const nextFrm = document.getElementById('nextFrm');
+	const nextBtn = document.getElementById('nextBtn');
+	nextBtn.addEventListener('click', function () {
+		nextFrm.submit();
+	});
+</script>

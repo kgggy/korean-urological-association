@@ -73,46 +73,46 @@
                            <label class="col-md-2 col-form-label" for="text-input">* 회원명 *</label>
                            <div class="col-md-9">
                               <input class="form-control" id="userName" type="text" name="userName"
-                                 value="<%=result.userName%>">
+                                 value="<%=result.userName%>" maxlength="10">
                            </div>
                         </div>
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">* 휴대번호 *</label>
                            <div class="col-md-9 phone_num">
-                              <input class="form-control phone" id="userPhone1" type="text" name="userPhone1"
+                              <input class="form-control phone" id="userPhone1" type="number" name="userPhone1"
                                  value="<%=result.userPhone1%>">&nbsp;&nbsp;-&nbsp;&nbsp;
-                              <input class="form-control phone" id="userPhone2" type="text" name="userPhone2"
+                              <input class="form-control phone" id="userPhone2" type="number" name="userPhone2"
                                  value="<%=result.userPhone2%>">&nbsp;&nbsp;-&nbsp;&nbsp;
-                              <input class="form-control phone" id="userPhone3" type="text" name="userPhone3"
+                              <input class="form-control phone" id="userPhone3" type="number" name="userPhone3"
                                  value="<%=result.userPhone3%>">
                            </div>
                         </div>
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">이메일</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="userEmail" type="text" name="userEmail"
-                                 value="<%=result.userEmail%>">
+                              <input class="form-control" id="userEmail" type="email" name="userEmail"
+                                 value="<%=result.userEmail%>" maxlength="50" required>
                            </div>
                         </div>
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">팩스번호</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="userFax" type="text" name="userFax"
-                                 value="<%=result.userFax%>">
+                              <input class="form-control" id="userFax" type="num" name="userFax"
+                                 value="<%=result.userFax%>" maxlength="10">
                            </div>
                         </div>
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">병원명</label>
                            <div class="col-md-9">
                               <input class="form-control" id="hosName" type="text" name="hosName"
-                                 value="<%=result.hosName%>">
+                                 value="<%=result.hosName%>" maxlength="20">
                            </div>
                         </div>
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">우편번호</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="hosPost" type="text" name="hosPost"
-                                 value="<%=result.hosPost%>">
+                              <input class="form-control" id="hosPost" type="num" name="hosPost"
+                                 value="<%=result.hosPost%>" maxlength="10">
                            </div>
                         </div>
                         <div class="form-group row">
@@ -126,7 +126,7 @@
                            <label class="col-md-2 col-form-label" for="text-input">상세주소</label>
                            <div class="col-md-9">
                               <input class="form-control" type="text" id="address_detail" name="userAdres4"
-                                 value="<%=result.userAdres4%>" placeholder="상세주소를 입력해주세요" />
+                                 value="<%=result.userAdres4%>" placeholder="상세주소를 입력해주세요" maxlength="100" />
                            </div>
                         </div>
 
@@ -145,7 +145,7 @@
                            <label class="col-md-2 col-form-label" for="text-input">홈페이지</label>
                            <div class="col-md-9">
                               <input class="form-control" id="userUrl" type="text" name="userUrl"
-                                 value="<%=result.userUrl%>">
+                                 value="<%=result.userUrl%>" maxlength="300">
                            </div>
                         </div>
                         <div class="form-group row">
@@ -180,26 +180,29 @@
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">병원세부설명</label>
                            <div class="col-md-9">
-                              <textarea id="content1" style="width: 100%; height: 150px"><%= result.hosDetail %></textarea>
-                              <input class="form-control" id="hosDetail" type="hidden"
-                                 name="hosDetail" value="">
-                              <!-- <input class="form-control" id="hosDetail" type="text" name="hosDetail" value="<%= result.hosDetail %>"> -->
-                           </div>
-                        </div>
-                        <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">진료시간</label>
-                           <div class="col-md-9">
-                              <textarea id="content2" style="width: 100%; height: 150px"><%= result.hosMedicalInfo %></textarea>
-                              <input class="form-control" id="hosMedicalInfo" type="hidden"
-                                 name="hosMedicalInfo" value="">
-                           </div>
-                        </div>
-                        <div class="form-group row">
-                           <label class="col-md-2 col-form-label" for="text-input">회비 납부 여부</label>
-                           <div class="col-md-9">
-                              <select class="dropdown" name="userPay">
-                                 <option value="y" <%if(result.userPay=='y'||result.userPay=='O'){%> selected="selected" <%}%>>O</option>
-                                 <option value="n" <%if(result.userPay=='n'||result.userPay=='X'){%> selected="selected" <%}%>>X</option>
+                              <textarea id="content1" style="width: 100%; height: 150px" maxlength="300" ><%= result.hosDetail %></textarea> <input
+                                                      class="form-control" id="hosDetail" type="hidden" name="hosDetail"
+                                                      value="">
+                                                      <!-- <input class="form-control" id="hosDetail" type="text" name="hosDetail" value="<%= result.hosDetail %>"> -->
+                                             </div>
+                                    </div>
+                                    <div class="form-group row">
+                                       <label class="col-md-2 col-form-label" for="text-input">진료시간</label>
+                                       <div class="col-md-9">
+                                          <textarea id="content2" style="width: 100%; height: 150px"
+                                             maxlength="300"><%= result.hosMedicalInfo %></textarea>
+                                          <input class="form-control" id="hosMedicalInfo" type="hidden"
+                                             name="hosMedicalInfo" value="">
+                                       </div>
+                                    </div>
+                                    <div class="form-group row">
+                                       <label class="col-md-2 col-form-label" for="text-input">회비 납부 여부</label>
+                                       <div class="col-md-9">
+                                          <select class="dropdown" name="userPay">
+                                             <option value="y" <%if(result.userPay=='y'||result.userPay=='O'){%>
+                                                selected="selected" <%}%>>O</option>
+                                 <option value="n" <%if(result.userPay=='n'||result.userPay=='X'){%>
+                                                selected="selected" <%}%>>X</option>
                               </select>
                            </div>
                         </div>
@@ -272,23 +275,78 @@
          $("input:file[name='file']").val("");
       }
    }
+   var content1 = $("#content1").val();
+   var content2 = $("#content2").val();
    //수정
    function userUpdate() {
       var userName = $("#userName").val();
+      var userPhone1 = $("#userPhone1").val();
+      var userPhone2 = $("#userPhone2").val();
+      var userPhone3 = $("#userPhone3").val();
       var userProfile = $("#userProfile").val();
-      var content1 = $("#content1").val();
-      var content2 = $("#content2").val();
+
       // content = content.replace(/(?:\r\n|\r|\n)/g, '<br>');
       if (userName == '') {
          alert("회원명을 입력해주세요.");
          $("#userName").focus();
          return false;
       }
+      if (userPhone1 == '') {
+         alert("휴대번호를 입력해주세요.");
+         $("#userPhone1").focus();
+         return false;
+      }
+      if (userPhone2 == '') {
+         alert("휴대번호를 입력해주세요.");
+         $("#userPhone2").focus();
+         return false;
+      }
+      if (userPhone3 == '') {
+         alert("휴대번호를 입력해주세요.");
+         $("#userPhone3").focus();
+         return false;
+      }
 
+      var [phoneContent1, phoneContent4] = [$('#userPhone1').val(), $('#hosPhone1').val()];
+      if (phoneContent1.length < 2 || phoneContent1.length > 3) {
+         alert("올바른 휴대번호를 입력해주세요.")
+         $("#userPhone1").focus();
+         return false;
+      }
+      if (phoneContent4 != '' && (phoneContent4.length < 2 || phoneContent4.length > 3)) {
+         alert("올바른 병원번호를 입력해주세요.")
+         $("#hosPhone1").focus();
+         return false;
+      }
+      var [phoneContent2, phoneContent3, phoneContent5, phoneContent6] = [$('#userPhone2').val(), $('#userPhone3')
+      .val(), $('#hosPhone2').val(), $('#hosPhone3').val()
+      ];
+      if (phoneContent2.length < 3 || phoneContent2.length > 4) {
+         alert("올바른 휴대번호를 입력해주세요.");
+         $("#userPhone2").focus();
+         return false;
+      }
+      if (phoneContent3.length < 3 || phoneContent4.length > 4) {
+         alert("올바른 휴대번호를 입력해주세요.");
+         $("#userPhone2").focus();
+         return false;
+      }
+      if (phoneContent5 != '' && (phoneContent5.length < 3 || phoneContent5.length > 4)) {
+         alert("올바른 병원번호를 입력해주세요.");
+         $("#hosPhone2").focus();
+         return false;
+      }
+      if (phoneContent6 != '' && (phoneContent6.length < 3 || phoneContent6.length > 4)) {
+         alert("올바른 병원번호를 입력해주세요.");
+         $("#hosPhone3").focus();
+         return false;
+      }
+      console.log(content1)
       if (confirm("수정하시겠습니까?")) {
          if (userProfile == '') {
             $("#userImgyn").val("0");
          }
+         console.log(content1)
          $("#hosDetail").attr("value", content1);
          $("#hosMedicalInfo").attr("value", content2);
          $("#userForm").attr("action", "userUpdate");
@@ -302,6 +360,8 @@
    $("[name=fileDelete]").on("click", function () {
       $('input[name=deleteFileRoute').val($(this).attr('data-route'));
       if (confirm("실제 파일이 삭제됩니다. 정말 삭제하시겠습니까?") == true) {
+         $("#hosDetail").attr("value", content1);
+         $("#hosMedicalInfo").attr("value", content2);
          $("#userForm").attr("action", "/admin/m_user/imgDelete");
          $("#userForm").attr("method", "post");
          $("#userForm").attr("enctype", "application/x-www-form-urlencoded");
@@ -317,6 +377,8 @@
       $('input[name=deleteFileRoute').val($(this).attr('data-route'));
       $('input[name=profileyn').val($(this).attr('data-yn'));
       if (confirm("실제 파일이 삭제됩니다. 정말 삭제하시겠습니까?") == true) {
+         $("#hosDetail").attr("value", content1);
+         $("#hosMedicalInfo").attr("value", content2);
          $("#userForm").attr("action", "/admin/m_user/imgDelete");
          $("#userForm").attr("method", "post");
          $("#userForm").attr("enctype", "application/x-www-form-urlencoded");

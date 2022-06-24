@@ -29,6 +29,16 @@ var upload = multer({ //multer안에 storage정보
     },
   }),
 });
+router.get('/test', async (req, res) => {
+  try {
+    let route = req.app.get('views') + '/m_user/dialogflow_test';
+    res.render(route, {
+      layout: false
+    });
+  } catch (error) {
+    res.status(401).send(error.message);
+  }
+});
 
 //일반 사용자 전체조회
 router.get('/page', async (req, res) => {
@@ -381,6 +391,7 @@ router.post('/userUdtForm', async (req, res) => {
         userPosition = result;
         let route = req.app.get('views') + '/m_user/orgm_udtForm';
         // console.log(fileRoute)
+        
         res.render(route, {
           result: req.body,
           fileRoute: fileRoute,
@@ -399,6 +410,7 @@ router.post('/userUdtForm', async (req, res) => {
 
 //사용자 정보 수정
 router.post('/userUpdate', upload.array('file'), async (req, res) => {
+  // console.log(req.body)
   //첨부파일 삭제 x, 업로드만!
   const paths = req.files.map(data => data.path);
   const orgName = req.files.map(data => data.originalname);
@@ -659,7 +671,7 @@ router.post('/imgDelete', async (req, res) => {
             userPosition = result;
             // console.log(fileRoute)
             let route = req.app.get('views') + '/m_user/orgm_udtForm';
-            console.log(req.body)
+            // console.log(req.body)
             res.render(route, {
               result: req.body,
               fileRoute: fileRoute,

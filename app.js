@@ -50,6 +50,7 @@ app.use(function (req, res, next) {
 app.set('layout', '../layout/layout');
 app.set("layout extractScripts", true);
 app.set('view engine', 'ejs');
+app.engine('html', require('ejs').renderFile);
 // app.engine('ejs', require('ejs').__express);
 // app.engine('html', require('ejs').renderFile);
 // app.set('views', __dirname + '/views/ejs');   //view 경로 설정
@@ -58,9 +59,151 @@ app.set('error', __dirname);
 
 
 // app.get('/', (req, res) => { res.render(__dirname + "/views/ejs/index.ejs", {layout:false}) })
-app.get('/', (req, res) => {
-  res.redirect('/admin');
+// app.get('/', (req, res) => {
+//   res.redirect('/admin');
+// })
+app.get("/", async (req, res) => {
+  try {
+	  var sql = "select * from support";
+	  connection.query(sql, (err, results) => {
+			if (err) {
+				console.log(err);
+			}
+			let route = req.app.get('views') + '/userEjs/index.ejs';
+			res.render(route, {results: results, layout: false});
+		});
+	} catch (error) {
+		res.status(500).send(error.message);
+	}
+
 })
+app.get("/greeting", (req, res) => {
+	var sql = "select * from greeting where id = 1";
+	  connection.query(sql, (err, results) => {
+			if (err) {
+				console.log(err);
+			}
+			let route = req.app.get('views') + '/userEjs/sub1/greeting.ejs';
+			res.render(route, {results: results, layout: false});
+		});
+})
+app.get("/rules", (req, res) => {
+	var sql = "select * from greeting where id = 3";
+	var fileSql = "select * from file where fileId = 1";
+	let file;
+	connection.query(fileSql, (err, results) => {
+		if (err) {
+			console.log(err);
+		}
+		file = results;
+		const fileRoute = file[0].fileRoute;
+		const fileName = file[0].fileOrgName;
+		connection.query(sql, (err, results) => {
+			if (err) {
+				console.log(err);
+			}
+			let route = req.app.get('views') + '/userEjs/sub2/rules.ejs';
+			res.render(route, {
+				results: results,
+				fileRoute: fileRoute,
+				fileOrgName : fileName,
+				layout: false
+			});
+		});
+	});
+})
+app.get("/tree", (req, res) => {
+	var sql = "select * from tree t left join user u on u.uid = t.uid";
+	connection.query(sql, (err, results) => {
+		if (err) {
+			console.log(err);
+		}
+		let route = req.app.get('views') + '/userEjs/sub3/tree.ejs';
+		res.render(route, {
+			results: results,
+			layout: false
+		});
+	});
+})
+app.get("/support", (req, res) => {
+	var sql = "select * from support";
+	connection.query(sql, (err, results) => {
+		if (err) {
+			console.log(err);
+		}
+		let route = req.app.get('views') + '/userEjs/sub4/support.ejs';
+		res.render(route, {
+			results: results,
+			layout: false
+		});
+	});
+})
+app.get("/support/detail", (req, res) => {
+	var sql = "select * from support s left join file f on f.supportId = s.supportId where s.supportId = ?;";
+	const param = req.query.supportId;
+	connection.query(sql, param, (err, result) => {
+		if (err) {
+			console.log(err);
+		}
+		let route = req.app.get('views') + '/userEjs/sub4/support_detail.ejs';
+		res.render(route, {
+			result: result,
+			layout: false
+		});
+	});
+})
+// 이전페이지
+app.get('/support/previous', async (req, res) => {
+    try {
+        const param = req.query.supportId;
+        const sql = "select supportId from support\
+                        where supportId in (select *\
+                        from(SELECT supportId FROM support WHERE supportId < ? ORDER BY supportId DESC LIMIT 1) as t)";
+        connection.query(sql, param, (err, result) => {
+            for (var i = 0; i < result.length; i++) {
+                result = result[i].supportId
+            }
+            if (result.length == 0) {
+                return res.send('<script>alert("이전 글이 없습니다"); location.href = document.referrer;</script>');
+            }
+
+            if (err) {
+                return res.send('<script>alert("이전 글이 없습니다"); location.href = document.referrer;</script>');
+            }
+
+            res.redirect('/support/detail?supportId=' + result);
+        });
+    } catch (error) {
+        res.status(401).send(error.message);
+    }
+});
+// 다음페이지
+app.get('/support/next', async (req, res) => {
+    try {
+        const param = req.query.supportId;
+        const sql = "select supportId from support\
+                        where supportId in (select *\
+                        from(SELECT supportId FROM support WHERE supportId > ? ORDER BY supportId LIMIT 1) as t)";
+        connection.query(sql, param, (err, result) => {
+            for (var i = 0; i < result.length; i++) {
+                result = result[i].supportId
+            }
+            if (result.length == 0) {
+                return res.send('<script>alert("다음 글이 없습니다"); location.href = document.referrer;</script>');
+            }
+
+            if (err) {
+
+                return res.send('<script>alert("다음 글이 없습니다"); location.href = document.referrer;</script>');
+            }
+
+            res.redirect('/support/detail?supportId=' + result);
+        });
+    } catch (error) {
+        res.status(401).send(error.message);
+    }
+});
+
 
 app.use('/', routes);
 app.use('/admin',adminRoutes);

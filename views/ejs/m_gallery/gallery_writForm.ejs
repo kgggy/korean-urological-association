@@ -40,7 +40,7 @@
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">* 제목 *</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="galleryTitle" type="text" name="galleryTitle" value="">
+                              <input class="form-control" id="galleryTitle" type="text" name="galleryTitle" value="" maxlength="200">
                            </div>
                         </div>
                         <div class="form-group row">
@@ -136,6 +136,12 @@
             $("#editor").focus();
             return false;
          }
+
+         var convertContent = content.replace(/(<([^>]+)>)/ig,"");
+			if (convertContent.length > 3000) {
+				alert("입력 메세지는 3000자를 초과할 수 없습니다.");
+				return false;
+			}
 
          if (confirm("등록하시겠습니까?") == true) {
             $('input[name=galleryContent]').attr('value', content);

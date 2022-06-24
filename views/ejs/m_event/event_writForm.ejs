@@ -29,6 +29,7 @@
    .ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
       height: 400px;
    }
+   
 </style>
 <main class="main">
    <!-- Breadcrumb-->
@@ -56,7 +57,7 @@
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label" for="text-input">* 제목 *</label>
                            <div class="col-md-9">
-                              <input class="form-control" id="eventTitle" type="text" name="eventTitle" value="">
+                              <input class="form-control" id="eventTitle" type="text" name="eventTitle" value="" maxlength="300">
                            </div>
                         </div>
                         <div class="form-group row">
@@ -164,6 +165,24 @@
             console.error(error);
          });
 
+      //확장자 체크
+      $("input:file[name='file']").change(function () {
+         var str = $(this).val();
+         var fileName = str.split('\\').pop().toLowerCase();
+         // alert(fileName);
+         checkFileName(fileName);
+      });
+
+      //확장자 체크
+      function checkFileName(str) {
+         var ext = str.split('.').pop().toLowerCase();
+         // alert(ext);
+         if ($.inArray(ext, ['jpg', 'png', 'jpeg', 'gif']) == -1) {
+            alert(ext + '파일은 업로드 하실 수 없습니다.');
+            $("input:file[name='file']").val("");
+         }
+      }
+
       $("#enroll_btn").click(function () {
          const eventTitle = $("#eventTitle").val();
          const content = editor.getData();
@@ -189,7 +208,11 @@
             $("#eventDate").focus();
             return false;
          }
-
+         var convertContent = content.replace(/(<([^>]+)>)/ig,"");
+			if (convertContent.length > 3000) {
+				alert("입력 메세지는 3000자를 초과할 수 없습니다.");
+				return false;
+			}
          if (confirm("등록하시겠습니까?") == true) {
             $('input[name=eventContent]').attr('value', content);
             $("#eventWrite").attr("action", "eventWrite");

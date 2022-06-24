@@ -12,6 +12,8 @@ const m_event = require('./m_event.js');
 const m_vote = require('./m_vote.js');
 const m_blame = require('./m_blame.js');
 
+// const dialogflow_test = require('../api/dialogflow_test.js');
+
 router.use('/', (req, res, next) => {
     var app = req.query.app == undefined ? "" : req.query.app;
     if(app == ""){
@@ -47,5 +49,7 @@ router.use('/m_refer', m_refer);
 router.use('/m_event', m_event);
 router.use('/m_vote', m_vote);
 router.use('/m_blame', m_blame);
+
+// router.use('/dialogflow_test', dialogflow_test);
 
 module.exports = router;

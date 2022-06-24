@@ -30,7 +30,7 @@
       height: 400px;
    }
 </style>
-<main class="main">  
+<main class="main">
    <!-- Breadcrumb-->
    <ol class="breadcrumb">
       <li class="breadcrumb-item">Home</li>
@@ -53,7 +53,7 @@
                      <!-- 컨텐츠 -->
                      <form name="udtForm" role="form">
                         <input type="hidden" id="eventContent" name="eventContent" value="">
-                        <input type="hidden" name="eventFileRoute" value="">
+                        <input type="hidden" id="eventFileRoute" name="eventFileRoute" value="">
                         <input type="hidden" name="page" value="<%=page%>">
                         <input type="hidden" name="searchType1" value="<%=searchType1%>">
                         <div class="form-group row">
@@ -67,7 +67,7 @@
                            <label class="col-md-2 col-form-label" for="text-input">* 제목 *</label>
                            <div class="col-md-9">
                               <input class="form-control" id="eventTitle" type="text" name="eventTitle"
-                                 value="<%=result[0].eventTitle%>">
+                                 value="<%=result[0].eventTitle%>" maxlength="300">
                            </div>
                         </div>
                         <div class="form-group row">
@@ -111,7 +111,7 @@
                            <label class="col-md-2 col-form-label" for="text-input">투표대상1</label>
                            <div class="col-md-9">
                               <select class="dropdown" name="eventTarget1">
-                                 <option  value="전체" <%if(result[0].eventTarget1=="전체"){%> selected="selected" <%}%>>전체</option>
+                                 <option value="전체" <%if(result[0].eventTarget1=="전체"){%> selected="selected" <%}%>>전체</option>
                                  <option value="임원" <%if(result[0].eventTarget1=="임원"){%> selected="selected" <%}%>>임원</option>
                               </select>
                            </div>
@@ -134,10 +134,11 @@
                         </div>
                         <div class="form-group row">
                            <label class="col-md-2 col-form-label">첨부파일</label>
-                           <div class="file-wrap banner_img_wrap">
+                              <div class="col-md-9">
                               <% if(result[0].eventFileRoute != null && result[0].eventFileRoute != '') { %> <p>
                                     <span><%=fileOrgName%></span>
-                                    <button name="fileDelete" data-fileRoute="<%=result[0].eventFileRoute%>"
+                                    <button id="fileDelete" name="fileDelete"
+                                       data-fileRoute="<%=result[0].eventFileRoute%>"
                                        class="btn btn-block btn-outline-danger fileDelete">삭제</button>
                                     <% } else {%>
                                     <div style="display: flex; flex-direction: column; gap: 25px; padding-left: 15px">
@@ -179,6 +180,24 @@
             console.error(error);
          });
 
+      //확장자 체크
+      $("input:file[name='file']").change(function () {
+         var str = $(this).val();
+         var fileName = str.split('\\').pop().toLowerCase();
+         // alert(fileName);
+         checkFileName(fileName);
+      });
+
+      //확장자 체크
+      function checkFileName(str) {
+         var ext = str.split('.').pop().toLowerCase();
+         // alert(ext);
+         if ($.inArray(ext, ['jpg', 'png', 'jpeg', 'gif']) == -1) {
+            alert(ext + '파일은 업로드 하실 수 없습니다.');
+            $("input:file[name='file']").val("");
+         }
+      }
+
       var formObj = $("form[name='udtForm']");
       // 수정 폼 연결
       $("#update_btn").on("click", function () {
@@ -206,9 +225,14 @@
             $("#eventDate").focus();
             return false;
          }
-
+         var convertContent = content.replace(/(<([^>]+)>)/ig,"");
+			if (convertContent.length > 3000) {
+				alert("입력 메세지는 3000자를 초과할 수 없습니다.");
+				return false;
+			}
          if (confirm("수정하시겠습니까?") == true) {
             $('input[name=eventContent]').attr('value', content);
+            $('input[name=eventFileRoute').val($('#fileDelete').attr('data-fileRoute'));
             formObj.attr("action", "eventUpdate");
             formObj.attr("enctype", "multipart/form-data");
             formObj.attr("method", "post");
@@ -218,6 +242,7 @@
             return;
          }
       });
+
       //첨부파일 삭제
       $("[name=fileDelete]").on("click", function () {
          $('input[name=eventFileRoute').val($(this).attr('data-fileRoute'));

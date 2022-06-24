@@ -1,52 +1,76 @@
-    <main class="main">
-       <!-- Breadcrumb-->
-       <ol class="breadcrumb">
-          <li class="breadcrumb-item">Home</li>
-          <li class="breadcrumb-item">
-             <a style="font-weight: bold;">후원</a>
-          </li>
-          <li class="breadcrumb-item active">후원 상세</li>
-          <!-- Breadcrumb Menu-->
-       </ol>
+<style>
+   .textarea {
+      color: #5c6873;
+      background-color: #e4e7ea;
+      border: 1px solid #d9dee3;
+      padding: 0.4375rem 0.875rem;
+      appearance: none;
+      border-radius: 0.25rem;
+      overflow: auto;
+      margin: 0px;
+      padding: 10px;
+      overflow: auto;
+      white-space: pre-wrap;
+   }
 
-       <div class="container-fluid">
-          <div class="animated fadeIn">
-             <div class="row">
-                <div class="col-lg-6">
-                   <div class="card">
-                      <form name="udtForm" role="form">
-                         <input type="hidden" id="supportId" name="supportId" value="<%=result[0].supportId%>">
-                         <div class="card-header">
-                            <i class="fa fa-align-justify"></i> 후원 상세</div>
-                         <div class="card-body">
-                            <!-- 컨텐츠 -->
-                            <div class="form-group row">
-                               <label class="col-md-2 col-form-label" for="text-input">후원번호</label>
-                               <div class="col-md-9">
-                                  <input class="form-control" id="supportId" type="text" name="supportId"
-                                     disabled="disabled" value="<%=result[0].supportId%>">
-                               </div>
-                            </div>
-                            <div class="form-group row">
-                              <label class="col-md-2 col-form-label" for="text-input">배너이미지</label>
-                              <div class="col-md-9">
-                                 <img src="../../../<%= result[0].fileRoute %>" alt="사진" class="viewFormImg" />
-                              </div>
+   .none {
+      background-color: #e4e7ea;
+      border: 1px solid #d9dee3;
+      padding: 0.4375rem 0.875rem;
+      appearance: none;
+      border-radius: 0.255rem;
+      height: 40px;
+      margin: 0px;
+   }
+</style>
+<main class="main">
+   <!-- Breadcrumb-->
+   <ol class="breadcrumb">
+      <li class="breadcrumb-item">Home</li>
+      <li class="breadcrumb-item">
+         <a style="font-weight: bold;">후원</a>
+      </li>
+      <li class="breadcrumb-item active">후원 상세</li>
+      <!-- Breadcrumb Menu-->
+   </ol>
+
+   <div class="container-fluid">
+      <div class="animated fadeIn">
+         <div class="row">
+            <div class="col-lg-6">
+               <div class="card">
+                  <form name="udtForm" role="form">
+                     <input type="hidden" id="supportId" name="supportId" value="<%=result[0].supportId%>">
+                     <div class="card-header">
+                        <i class="fa fa-align-justify"></i> 후원 상세</div>
+                     <div class="card-body">
+                        <!-- 컨텐츠 -->
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">후원번호</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="supportId" type="text" name="supportId"
+                                 disabled="disabled" value="<%=result[0].supportId%>">
                            </div>
-                            <div class="form-group row">
-                               <label class="col-md-2 col-form-label" for="text-input">후원업체</label>
-                               <div class="col-md-9">
-                                  <input class="form-control" id="ucmtitle" type="text" name="ucmtitle"
-                                     disabled="disabled" value="<%=result[0].supportTitle%>">
-                               </div>
-                            </div>
-                            <div class="form-group row">
-                               <label class="col-md-2 col-form-label" for="text-input">내용</label>
-                               <div class="col-md-9">
-                                  <%-result[0].supportDetail%>
-                               </div>
-                            </div>
-                            <div class="form-group row">
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">배너이미지</label>
+                           <div class="col-md-9">
+                              <img src="../../../<%= result[0].supportBanner %>" alt="사진" class="viewFormImg" />
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">후원업체</label>
+                           <div class="col-md-9">
+                              <input class="form-control" id="ucmtitle" type="text" name="ucmtitle" disabled="disabled"
+                                 value="<%=result[0].supportTitle%>">
+                           </div>
+                        </div>
+                        <div class="form-group row">
+                           <label class="col-md-2 col-form-label" for="text-input">내용</label>
+                           <div class="col-md-9">
+                              <pre <%if(result[0].supportDetail==null||result[0].supportDetail==''){%>class="none"
+                                 <%}else{%>class="textarea" <%}%> disabled><%-result[0].supportDetail%></pre> </div>
+                                 </div> <div class="form-group row">
                                <label class="col-md-2 col-form-label" for="text-input">사이트</label>
                                <div class="col-md-9">
                                   <input class="form-control" id="supportUrl" type="text" name="supportUrl"
@@ -57,7 +81,7 @@
                                <label class="col-md-2 col-form-label" for="text-input">첨부파일</label>
                                <div class="col-md-9">
                                   <% if(result[0].fileRoute != null && result[0].fileRoute != '') {%>
-                                  <% for(var i = 1; i < result.length ; i++) { %>
+                                  <% for(var i = 0; i < result.length ; i++) { %>
                                   <!-- <img src="../../../<%= result[i].fileRoute %>" alt="사진"
                                         style="padding:0 50px 8px 0 !important; width:40%; vertical-align: top !important;" /> -->
                                   <p><span><%=result[i].fileOrgName%></span></p>

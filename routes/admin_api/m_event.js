@@ -104,7 +104,10 @@ router.get('/eventSelectOne', async (req, res) => {
                 fileOrgName = str[2];
                 if (fileOrgName == undefined) {
                     const str = result[0].eventFileRoute.split("\\");
-                    fileOrgName = str[2];
+                    const first = str[2];
+                    const str1 = result[0].eventFileRoute.split(".");
+                    const second = str1[1];
+                    fileOrgName = first.substring(0, first.length - 17).concat('.', second)
                 }
             } else {
                 fileOrgName = '';
@@ -171,7 +174,7 @@ router.post('/eventWrite', upload.single('file'), async (req, res, next) => {
                 }
                 const eventId = results[0].eventId;
                 let segment;
-                if(req.body.eventTarget1 == '임원') {
+                if (req.body.eventTarget1 == '임원') {
                     segment = ["executive"];
                 } else {
                     segment = ["All"];
@@ -194,7 +197,7 @@ router.post('/eventWrite', upload.single('file'), async (req, res, next) => {
                             id: eventId
                         }
                     };
-    
+
                     pushNotificationService.sendNotification(message, (error, results) => {
                         if (error) {
                             return next(error);
@@ -229,7 +232,10 @@ router.get('/eventUdtForm', async (req, res) => {
             var fileOrgName;
             if (result[0].eventFileRoute != null && result[0].eventFileRoute != '') {
                 const str = result[0].eventFileRoute.split("\\");
-                fileOrgName = str[2];
+                const first = str[2];
+                const str1 = result[0].eventFileRoute.split(".");
+                const second = str1[1];
+                fileOrgName = first.substring(0, first.length - 17).concat('.', second)
             } else {
                 fileOrgName = '';
             }
@@ -252,6 +258,7 @@ router.post('/eventUpdate', upload.single('file'), (req, res) => {
     try {
         const page = req.body.page;
         const searchType1 = req.body.searchType1;
+        console.log(req.body.eventFileRoute)
         const sql = "update event set eventTitle = ?, eventContent = ?, eventPlace = ?, eventPlaceDetail = ?,\
         eventDate = ?, startDate = if(? = '',null,?), endDate = if(? = '',null,?), eventFileRoute = ?, eventTarget1 = ?, eventTarget2 = ?\
         where eventId = ?";

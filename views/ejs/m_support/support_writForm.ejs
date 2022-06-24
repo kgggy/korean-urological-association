@@ -72,7 +72,9 @@
 								enctype="multipart/form-data">
 								<input type="hidden" name="supportDetail" value="">
 								<div class="form-group row">
-									<label class="col-md-2 col-form-label">* 배너 이미지 *<br><div style="font-size: 15px;">(이미지 크기는 200 * 50 에 <br>최적화되어있습니다.)</div></label>
+									<label class="col-md-2 col-form-label">* 배너 이미지 *<br>
+										<div style="font-size: 15px;">(이미지 크기는 200 * 50 에 <br>최적화되어있습니다.)</div>
+									</label>
 									<div style="display: flex; flex-direction: column; gap: 25px; padding-left: 15px">
 										<input type="file" id="main" name="file">
 									</div>
@@ -130,7 +132,7 @@
 	var formObj = $("form[name='bannerWritForm']");
 	$(document).ready(function () {
 		//확장자 체크
-		$("input:file[id='main']").change(function () {
+		$("input:file[name='file']").change(function () {
 			var str = $(this).val();
 			var fileName = str.split('\\').pop().toLowerCase();
 			// alert(fileName);
@@ -154,13 +156,19 @@
 			var supportTitle = $("#supportTitle").val();
 			var content = editor.getData();
 
-			if (supportImg == '') {
-				alert("배너이미지를 선택해주세요.");
-				return false;
-			}
+			// if (supportImg == '') {
+			// 	alert("배너이미지를 선택해주세요.");
+			// 	return false;
+			// }
 			if (supportTitle == "") {
 				alert("업체명을 입력하세요.");
 				$("#editor").focus();
+				return false;
+			}
+			var convertContent = content.replace(/(<([^>]+)>)/ig,"");
+			// console.log(convertContent)
+			if (convertContent.length > 3000) {
+				alert("입력 메세지는 3000자를 초과할 수 없습니다.");
 				return false;
 			}
 			if (confirm("등록하시겠습니까?") == true) {
@@ -177,11 +185,11 @@
 
 	//확장자 체크
 	function checkFileName(str) {
-      var ext = str.split('.').pop().toLowerCase();
-      // alert(ext);
-      if ($.inArray(ext, ['jpg', 'png', 'jpeg', 'gif']) == -1) {
-         alert(ext + '파일은 업로드 하실 수 없습니다.');
-         $("input:file[id='main']").val("");
-      }
-   }
+		var ext = str.split('.').pop().toLowerCase();
+		// alert(ext);
+		if ($.inArray(ext, ['jpg', 'png', 'jpeg', 'gif']) == -1) {
+			alert(ext + '파일은 업로드 하실 수 없습니다.');
+			$("input:file[name='file']").val("");
+		}
+	}
 </script>

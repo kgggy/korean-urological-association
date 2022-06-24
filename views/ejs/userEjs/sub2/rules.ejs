@@ -1,0 +1,74 @@
+<%- include('../../../partials/userHeader.ejs') %>
+<style>
+	.line {
+		line-height: 30px;
+	}
+
+	.download {
+		display: flex;
+		align-items: center;
+		margin-left: 30px;
+	}
+
+	.download_text {
+		font-size: 20px;
+		margin-left: 10px;
+		color: #2c58cf;
+	}
+</style>
+
+<div class="sub_top">
+	<!-- <div class="banner_text">
+		<p>더 큰 세상, 더 큰 내일</p>
+		<p>DAEGU HUMANITIE SCHOOL</p>
+	</div> -->
+	<div class="lnb_sec">
+		<dl class="lnb">
+			<dt><a href="/">HOME</a></dt>
+			<dd class="dep01">
+				<div class="subs">
+					<div class="select_text">총칙</div>
+				</div>
+			</dd>
+			<!-- <dd class="dep02">
+				<div id="subs2" class="subs">
+					<div id="sub2_txt" class="select_text">총칙</div>
+					<div class="select fa fa-angle-down"></div>
+				</div>
+				<ul class="sub_option">
+					<a href="/sub01_1"><li class="option">이사장인사말</li></a>
+					<a href="/sub01_2"><li class="option">대학연혁</li></a>
+					<a href="/sub01_3"><li class="option">조직도</li></a>
+					<a href="/sub01_4"><li class="option">오시는길</li></a>
+				</ul>
+			</dd> -->
+		</dl>
+	</div>
+</div>
+<div class="sub_wrap">
+	<div class="content_in">
+		<div class="sub_tit" style="margin-bottom: 0px">
+			<h3>총칙</h3>
+			<p class="titleEng">general rules</p>
+		</div>
+		<div class="board_view">
+			<!-- <div class="board_tit">
+				<div class="text"><p></p></div>
+			</div> -->
+			<div class="board_content line">
+				<%- results[0].content %>
+			</div>
+			<div class="file_wrap">
+				<span>첨부파일</span><br>
+				<br>
+				<div class="download">
+					<img src="/public/user/user/main/rules_download.png" style="width:30px"><a
+						href="../../../../<%= fileRoute %>" class="download_text" download>총칙 다운로드</a></div>
+			</div>
+			<!-- 컨텐츠 -->
+
+		</div>
+	</div>
+</div>
+
+<%- include('../../../partials/userFooter.ejs') %>

@@ -1,0 +1,68 @@
+<%- include('../../../partials/userHeader.ejs') %>
+<div class="sub_top">
+    <!-- <div class="banner_text">
+        <p>평생 공부하는 습관</p>
+        <p>DAEGU HUMANITIE SCHOOL</p>
+    </div> -->
+    <div class="lnb_sec">
+        <dl class="lnb">
+            <dt><a href="/">HOME</a></dt>
+            <dd class="dep01">
+                <div class="subs">
+                    <div class="select_text">후원광고</div>
+                </div>
+            </dd>
+            <!-- <dd class="dep02">
+                <div id="subs2" class="subs">
+                    <div id="sub2_txt" class="select_text">교과과정</div>
+                    <div class="select fa fa-angle-down"></div>
+                </div>
+                <ul class="sub_option">
+                    <a href="/user/curriculum">
+                        <li class="option">교과과정</li>
+                    </a>
+                    <a href="/user/schedule">
+                        <li class="option">학사일정</li>
+                    </a>
+                </ul>
+            </dd> -->
+        </dl>
+    </div>
+</div>
+<div class="registration">
+    <div class="content_in">
+        <div class="sub_tit">
+            <h3>후원광고</h3>
+            <p class="titleEng">support</p>
+        </div>
+
+        <div class="curriculum_content">
+            <% if(results.length == 0) { %>
+            <p class="noContent">등록된 후원광고가 없습니다.</p>
+            <% } %>
+            <ul>
+                <% for(var i = 0; i < results.length ; i++){  %>
+                <li>
+                    <% if(results[i].supportBanner == null){ %>
+                    <!-- <a href=""> -->
+                    <div class="img_wrap">
+                        <a href="/support/detail?supportId=<%= results[i].supportId %>">
+                            <img src="/public/user/user/main/default_logo.png" alt="">
+                        </a>
+                    </div>
+                    <!-- </a> -->
+                    <% } else { %>
+                    <!-- <a href=""> -->
+                    <div class="img_wrap">
+                        <a href="/support/detail?supportId=<%= results[i].supportId %>">
+                            <img src="../../../../<%= results[i].supportBanner %>" alt=""></a>
+                    </div>
+                    <!-- </a> -->
+                    <% } %>
+                    <p><span><%= results[i].supportTitle %> </span></p>
+                    <% } %>
+            </ul>
+        </div>
+    </div>
+</div>
+<%- include('../../../partials/userFooter.ejs') %>
