@@ -36,6 +36,7 @@
                         <input type="hidden" name="profileyn" value="">
                         <input type="hidden" name="fileId" value="">
                         <input type="hidden" name="fileRoute" value="">
+                        <input type="hidden" name="supportBanner" value="">
                         <input type="hidden" id="writContent" name="supportDetail" value="">
                         <!-- 컨텐츠 -->
                         <div class="mb-3 row">
@@ -95,7 +96,7 @@
                                     class="btn btn-block btn-outline-danger fileDelete">삭제</button></p>
                               <% } %>
                               <% if(result.length < 5) { %>
-                              <% for(var i = 0; i < 5-result.length; i++) {%>
+                              <% for(var i = 0; i < 4-result.length; i++) {%>
                               <br><input type="file" id="file" name="file" /><br>
                               <% } %>
                               <% } %>
@@ -184,6 +185,20 @@
          }
       });
 
+
+      //배너파일 삭제
+      // $("[name=supportBannerDelete]").on("click", function () {
+      //    $('input[name=supportId').val($(this).attr('data-supportId'));
+      //    $('input[name=supportBanner').val($(this).attr('data-supportBanner'));
+      //    if (confirm("실제 파일이 삭제됩니다. 정말 삭제하시겠습니까?") == true) {
+      //       formObj.attr("action", "supportBannerDelete");
+      //       formObj.attr("method", "get");
+      //       alert("삭제되었습니다.");
+      //       formObj.submit();
+      //    } else {
+      //       return;
+      //    }
+      // });
 
       //첨부파일 삭제
       $("[name=supportFileDelete]").on("click", function () {
