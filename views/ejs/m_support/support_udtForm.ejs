@@ -58,7 +58,7 @@
                            <% } else {%>
                            <div class="col-md-10"
                               style="display: flex; flex-direction: column; gap: 25px; padding-left: 15px">
-                              <input type="file" id="bannerImg" name="file">
+                              <input type="file" class="bannerFile" id="bannerImg" name="file">
                            </div>
                            <% } %>
                            <input type="hidden" id="bannerImg" name="bannerImg" value="<%=result[0].supportBanner%>">
@@ -152,11 +152,13 @@
       // 수정
       $("#update_btn").on("click", function () {
          var supportImg = $("#bannerImg").val();
+         var supportImg1 = $(".bannerFile").val();
+         // console.log(supportImg1)
          var supportTitle = $("#supportTitle").val();
          var content = editor.getData();
          // var bannerImg = $("#bannerImg").val();
 
-         if (supportImg == '') {
+         if (supportImg == '' && supportImg1 == '') {
             alert("배너이미지를 선택해주세요.");
             return false;
          }
