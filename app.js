@@ -77,7 +77,7 @@ app.get("/", async (req, res) => {
 	}
 
 })
-app.get("/greeting", (req, res) => {
+app.get("/greeting/web", (req, res) => {
 	var sql = "select * from greeting where id = 1";
 	  connection.query(sql, (err, results) => {
 			if (err) {
@@ -125,7 +125,7 @@ app.get("/tree", (req, res) => {
 		});
 	});
 })
-app.get("/support", (req, res) => {
+app.get("/support/web", (req, res) => {
 	var sql = "select * from support";
 	connection.query(sql, (err, results) => {
 		if (err) {
